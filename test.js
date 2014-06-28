@@ -3,16 +3,29 @@ var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
 
-it('Generate and inline critical-path CSS', function (done) {
-	critical({
-	  src: 'test/index.html',
+it('Generate critical-path CSS', function (done) {
+	var test = new critical();
+	test.generate({
 	  base: 'test/',
-	  styleOutput: 'test/styles.css',
+	  src: 'index.html',
+	  dest: 'styles/critical.css',
 	  width: '320',
-	  height: '480',
-	  dest: 'test/test1.html'
+	  height: '480'
 	}, function(output){
-		var expected  = fs.readFileSync('test/test1.expected.html');
+		var expected  = fs.readFileSync('test/styles/critical.css');
+		assert(expected == String(output));
+		done();
+	});
+});
+
+it('Inline critical-path CSS', function (done) {
+	var test = new critical();
+	test.inline({
+	  base: 'test/',
+	  src: 'index-critical.html',
+	  dest: 'index-final.html'
+	}, function(output){
+		var expected  = fs.readFileSync('test/index-test.html');
 		assert(expected == String(output));
 		done();
 	});

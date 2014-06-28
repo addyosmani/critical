@@ -13,13 +13,23 @@ npm install -g critical
 
 ```
 var critical = require('critical');
-critical({
-	  src: 'test/index.html',
+
+// Generate critical-path CSS
+var util = new critical();
+util.generate({
 	  base: 'test/',
-	  styleOutput: 'test/styles.css',
-	  width: '480',
-	  height: '320',
-	  target: 'test/inlined_index.html'
+	  src: 'index.html',
+	  dest: 'styles/main.css',
+	  width: '320',
+	  height: '480',
+	}, function(output){
+		// You now have critical-path CSS
+	});
+
+util.inline({
+	  base: 'test/',
+	  src: 'index-critical.html',
+	  dest: 'critical.html'
 	}, function(output){
 		// You now have HTML with inlined critical-path CSS
 	});
