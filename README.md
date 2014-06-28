@@ -24,8 +24,8 @@ critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
 	  dest: 'styles/main.css',
-	  width: '320',
-	  height: '480',
+	  width: 320,
+	  height: 480,
 	});
 ```
 
@@ -36,8 +36,8 @@ critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
 	  dest: 'styles/main.css',
-	  width: '320',
-	  height: '480',
+	  width: 320,
+	  height: 480,
 	}, function(output){
 		// You now have critical-path CSS
 	});

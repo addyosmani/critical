@@ -8,8 +8,8 @@ it('Generate critical-path CSS', function (done) {
 	  base: 'test/',
 	  src: 'index.html',
 	  dest: 'styles/critical.css',
-	  width: '320',
-	  height: '480'
+	  width: 320,
+	  height: 480
 	}, function(output){
 		var expected  = fs.readFileSync('test/styles/critical.css');
 		assert(expected == String(output));
