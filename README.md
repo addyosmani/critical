@@ -26,12 +26,34 @@ critical.generate({
 	  dest: 'styles/main.css',
 	  width: '320',
 	  height: '480',
+	});
+```
+
+Optionally, get back the output via a callback:
+
+```
+critical.generate({
+	  base: 'test/',
+	  src: 'index.html',
+	  dest: 'styles/main.css',
+	  width: '320',
+	  height: '480',
 	}, function(output){
 		// You now have critical-path CSS
 	});
 ```
 
 ###Inline critical-path CSS
+
+```
+critical.inline({
+	  base: 'test/',
+	  src: 'index-critical.html',
+	  dest: 'critical.html'
+	});
+```
+
+Optionally get back the output:
 
 ```
 critical.inline({
