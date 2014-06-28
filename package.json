@@ -21,10 +21,8 @@
   "author": "Addy Osmani",
   "license": "Apache2",
   "dependencies": {
-    "cheerio": "^0.17.0",
     "oust": "0.0.1",
     "penthouse": "^0.2.1",
-    "inliner": "^0.1.16",
     "inline-styles": "^1.0.0"
   },
   "devDependencies": {

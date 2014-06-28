@@ -4,8 +4,7 @@ var assert = require('assert');
 var critical = require('./index');
 
 it('Generate critical-path CSS', function (done) {
-	var test = new critical();
-	test.generate({
+	critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
 	  dest: 'styles/critical.css',
@@ -19,8 +18,7 @@ it('Generate critical-path CSS', function (done) {
 });
 
 it('Inline critical-path CSS', function (done) {
-	var test = new critical();
-	test.inline({
+	critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
 	  dest: 'index-final.html'

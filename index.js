@@ -14,15 +14,12 @@ var path      = require('path');
 var inliner   = require('inline-styles');
 
 /**
- * Critical path CSS generation & inlining
+ * Critical path CSS generation
  * @param  {object} opts Options
  * @param  {function} cb Callback
  * @accepts src, base, width, height, dest
  */
-
-function Critical(){};
-
-Critical.prototype.generate = function (opts, cb) {
+exports.generate = function (opts, cb) {
     opts = opts || {};
     cb = cb || function () {};
     var url = opts.base + opts.src;
@@ -41,12 +38,19 @@ Critical.prototype.generate = function (opts, cb) {
             console.log('Critical-path CSS generated.');
             // Write critical-path CSS
             fs.writeFileSync(opts.base + opts.dest, criticalCSS);
+            console.log('Output written to: ' + opts.base + opts.dest);
             cb(criticalCSS);
         }); 
     });  
 }
 
-Critical.prototype.inline = function (opts, cb) {
+/**
+ * Critical path CSS inlining
+ * @param  {object} opts Options
+ * @param  {function} cb Callback
+ * @accepts src, base, dest
+ */
+exports.inline = function (opts, cb) {
   opts = opts || {};
   cb = cb || function () {};
   var url = opts.base + opts.src;
@@ -60,4 +64,3 @@ Critical.prototype.inline = function (opts, cb) {
   cb(out);
 }
 
-module.exports = Critical;

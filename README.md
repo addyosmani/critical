@@ -11,12 +11,16 @@ npm install -g critical
 
 ## Usage
 
+Include:
+
 ```
 var critical = require('critical');
+```
 
-// Generate critical-path CSS
-var util = new critical();
-util.generate({
+###Generate critical-path CSS
+
+```
+critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
 	  dest: 'styles/main.css',
@@ -25,8 +29,12 @@ util.generate({
 	}, function(output){
 		// You now have critical-path CSS
 	});
+```
 
-util.inline({
+###Inline critical-path CSS
+
+```
+critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
 	  dest: 'critical.html'
