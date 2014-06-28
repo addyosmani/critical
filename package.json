@@ -1,0 +1,33 @@
+{
+  "name": "critical",
+  "version": "0.0.1",
+  "description": "Critical-path CSS generation & inlining",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha test.js --timeout 15000"
+  },
+  "files": [
+    "index.js"
+  ],
+  "keywords": [
+    "critical",
+    "path",
+    "css",
+    "optimization"
+  ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "author": "Addy Osmani",
+  "license": "Apache2",
+  "dependencies": {
+    "cheerio": "^0.17.0",
+    "oust": "0.0.1",
+    "penthouse": "^0.2.1",
+    "inliner": "^0.1.16",
+    "inline-styles": "^1.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^1.20.1"
+  }
+}
