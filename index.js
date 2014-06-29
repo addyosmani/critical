@@ -41,7 +41,7 @@ exports.generate = function (opts, cb) {
         }, function (err, criticalCSS) {
             if(opts.dest){
               // Write critical-path CSS
-              fs.writeFile(path.join(opts.base + opts.dest), criticalCSS);
+              fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS);
             }
             cb(err, criticalCSS);
         }); 
@@ -70,7 +70,7 @@ exports.inline = function (opts, cb) {
     var out = inliner(data, opts.base);
     if(opts.dest){
       // Write HTML with inlined CSS to dest
-      fs.writeFile(path.join(opts.base + opts.dest), out);
+      fs.writeFile(path.join(__dirname, opts.base + opts.dest), out);
     }
     cb(err, out);
   });
