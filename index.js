@@ -42,7 +42,7 @@ exports.generate = function (opts, cb) {
               // Write critical-path CSS
               fs.writeFile(path.join(opts.base + opts.dest), criticalCSS);
             }
-            cb(criticalCSS);
+            cb(err, criticalCSS);
         }); 
     });  
 }
@@ -69,7 +69,7 @@ exports.inline = function (opts, cb) {
       // Write HTML with inlined CSS to dest
       fs.writeFile(path.join(opts.base + opts.dest), out);
     }
-    cb(out);
+    cb(err, out);
   });
 }
 

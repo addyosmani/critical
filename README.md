@@ -37,7 +37,7 @@ critical.generate({
 	  src: 'index.html',
 	  width: 320,
 	  height: 480,
-	}, function(output){
+	}, function (err, output){
 		// You now have critical-path CSS
 		// Works with and without dest specified
 	});
@@ -59,7 +59,7 @@ Optionally get back the output:
 critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
-	}, function(output){
+	}, function (err, output){
 		// You now have HTML with inlined critical-path CSS
 		// Works with and without dest specified
 	});
