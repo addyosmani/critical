@@ -58,7 +58,7 @@ critical.generate({
 	});
 ```
 
-###Inline critical-path CSS
+###Inline `<style>` / critical CSS from generation
 
 Basic usage:
 
@@ -66,7 +66,18 @@ Basic usage:
 critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
-	  dest: 'critical.html'
+	  dest: 'inlined.html'
+	});
+```
+
+Minify and inline stylesheets:
+
+```
+critical.inline({
+	  base: 'test/',
+	  src: 'index-critical.html',
+	  dest: 'inlined-minified.html',
+	  minify: true
 	});
 ```
 
@@ -112,7 +123,7 @@ Type: `integer`
 ####minify
 Type: `boolean`
 
-(Generation only) Enable minification of CSS output
+Enable minification of CSS output
 
 ## Why?
 

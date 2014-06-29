@@ -67,7 +67,7 @@ it('inlines critical-path CSS successfully', function (done) {
 	critical.inline({
 	  base: 'fixture/',
 	  src: 'index-critical.html',
-	  dest: 'index-final.html'
+	  dest: 'test-final.html'
 	}, function (err, output){
 		assert(expected == String(output));
 		done();
@@ -78,6 +78,19 @@ it('inlines critical-path CSS without writing to disk', function (done) {
 	var expected  = fs.readFileSync('fixture/index-test.html');
 	critical.inline({
 	  base: 'fixture/',
+	  src: 'index-critical.html',
+	}, function (err, output){
+		assert(expected == String(output));
+		done();
+	});
+});
+
+it('inlines and minified critical-path CSS', function (done) {
+	var expected  = fs.readFileSync('fixture/index-inlined-minified.html');
+	critical.inline({
+	  base: 'fixture/',
+	  minify: true,
+	  dest: 'test-inlined-minified.html',
 	  src: 'index-critical.html',
 	}, function (err, output){
 		assert(expected == String(output));

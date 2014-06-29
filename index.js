@@ -11,7 +11,7 @@ var oust      = require('oust');
 var penthouse = require('penthouse');
 var fs        = require('fs');
 var path      = require('path');
-var inliner   = require('inline-styles');
+var inliner   = require('./inline-styles');
 var CleanCSS  = require('clean-css');
 
 /**
@@ -84,7 +84,7 @@ exports.inline = function (opts, cb) {
   // Inline the critical path CSS
   fs.readFile(url, function (err, data){
     if (err) throw err;
-    var out = inliner(data, opts.base);
+    var out = inliner(data, opts.base, opts.minify);
     if (opts.dest){
       // Write HTML with inlined CSS to dest
       fs.writeFile(path.join(__dirname, opts.base + opts.dest), out, function (err) {
