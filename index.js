@@ -38,9 +38,9 @@ exports.generate = function (opts, cb) {
             width : opts.width,   // viewport width
             height : opts.height   // viewport height
         }, function (err, criticalCSS) {
-            // Write critical-path CSS
             if(opts.dest){
-              fs.writeFile(opts.base + opts.dest, criticalCSS);
+              // Write critical-path CSS
+              fs.writeFile(path.join(opts.base + opts.dest), criticalCSS);
             }
             cb(criticalCSS);
         }); 
@@ -62,12 +62,14 @@ exports.inline = function (opts, cb) {
   cb = cb || function () {};
   var url = opts.base + opts.src;
   // Inline the critical path CSS
-  var html = fs.readFile(url);
-  var out = inliner(html, opts.base);
-  if(opts.dest){
-    // Write HTML with inlined CSS to dest
-    fs.writeFile(opts.base + opts.dest, out);
-  }
-  cb(out);
+  fs.readFile(url, function (err, data){
+    if(err) throw err;
+    var out = inliner(data, opts.base);
+    if(opts.dest){
+      // Write HTML with inlined CSS to dest
+      fs.writeFile(path.join(opts.base + opts.dest), out);
+    }
+    cb(out);
+  });
 }
 

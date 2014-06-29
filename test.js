@@ -5,13 +5,13 @@ var critical = require('./index');
 
 it('Generate critical-path CSS', function (done) {
 	critical.generate({
-	  base: 'test/',
+	  base: 'fixture/',
 	  src: 'index.html',
 	  dest: 'styles/critical.css',
 	  width: 320,
 	  height: 480
 	}, function(output){
-		var expected  = fs.readFile('test/styles/critical.css');
+		var expected  = fs.readFileSync('fixture/styles/critical.css');
 		assert(expected == String(output));
 		done();
 	});
@@ -19,12 +19,12 @@ it('Generate critical-path CSS', function (done) {
 
 it('Generate critical-path CSS without needing to write to disk', function (done) {
 	critical.generate({
-	  base: 'test/',
+	  base: 'fixture/',
 	  src: 'index.html',
 	  width: 320,
 	  height: 480
 	}, function(output){
-		var expected  = fs.readFile('test/styles/critical-pregenerated.css');
+		var expected  = fs.readFileSync('fixture/styles/critical-pregenerated.css');
 		assert(expected == String(output));
 		done();
 	});
@@ -32,11 +32,11 @@ it('Generate critical-path CSS without needing to write to disk', function (done
 
 it('Inline critical-path CSS', function (done) {
 	critical.inline({
-	  base: 'test/',
+	  base: 'fixture/',
 	  src: 'index-critical.html',
 	  dest: 'index-final.html'
 	}, function(output){
-		var expected  = fs.readFile('test/index-test.html');
+		var expected  = fs.readFileSync('fixture/index-test.html');
 		assert(expected == String(output));
 		done();
 	});
@@ -44,10 +44,10 @@ it('Inline critical-path CSS', function (done) {
 
 it('Inline critical-path CSS without needing to write to disk', function (done) {
 	critical.inline({
-	  base: 'test/',
+	  base: 'fixture/',
 	  src: 'index-critical.html',
 	}, function(output){
-		var expected  = fs.readFile('test/index-test.html');
+		var expected  = fs.readFileSync('fixture/index-test.html');
 		assert(expected == String(output));
 		done();
 	});
