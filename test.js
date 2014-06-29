@@ -22,6 +22,7 @@ it('throws on inlining if src and dest not specified', function (done) {
 });
 
 it('generates critical-path CSS successfully', function (done) {
+	var expected  = fs.readFileSync('fixture/styles/critical.css');
 	critical.generate({
 	  base: 'fixture/',
 	  src: 'index.html',
@@ -29,43 +30,42 @@ it('generates critical-path CSS successfully', function (done) {
 	  width: 320,
 	  height: 480
 	}, function (err, output){
-		var expected  = fs.readFileSync('fixture/styles/critical.css');
 		assert(expected == String(output));
 		done();
 	});
 });
 
 it('generates critical-path CSS without writing to disk', function (done) {
+	var expected  = fs.readFileSync('fixture/styles/critical-pregenerated.css');
 	critical.generate({
 	  base: 'fixture/',
 	  src: 'index.html',
 	  width: 320,
 	  height: 480
 	}, function (err, output){
-		var expected  = fs.readFileSync('fixture/styles/critical-pregenerated.css');
 		assert(expected == String(output));
 		done();
 	});
 });
 
 it('inlines critical-path CSS successfully', function (done) {
+	var expected  = fs.readFileSync('fixture/index-test.html');
 	critical.inline({
 	  base: 'fixture/',
 	  src: 'index-critical.html',
 	  dest: 'index-final.html'
 	}, function (err, output){
-		var expected  = fs.readFileSync('fixture/index-test.html');
 		assert(expected == String(output));
 		done();
 	});
 });
 
 it('inlines critical-path CSS without writing to disk', function (done) {
+	var expected  = fs.readFileSync('fixture/index-test.html');
 	critical.inline({
 	  base: 'fixture/',
 	  src: 'index-critical.html',
 	}, function (err, output){
-		var expected  = fs.readFileSync('fixture/index-test.html');
 		assert(expected == String(output));
 		done();
 	});
