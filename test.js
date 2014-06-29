@@ -35,6 +35,20 @@ it('generates critical-path CSS successfully', function (done) {
 	});
 });
 
+it('generates minified critical-path CSS successfully', function (done) {
+	var expected  = fs.readFileSync('fixture/styles/critical-min.css');
+	critical.generate({
+	  base: 'fixture/',
+	  src: 'index.html',
+	  minify: true,
+	  width: 320,
+	  height: 480
+	}, function (err, output){
+		assert(expected == String(output));
+		done();
+	});
+});
+
 it('generates critical-path CSS without writing to disk', function (done) {
 	var expected  = fs.readFileSync('fixture/styles/critical-pregenerated.css');
 	critical.generate({

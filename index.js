@@ -12,6 +12,7 @@ var penthouse = require('penthouse');
 var fs        = require('fs');
 var path      = require('path');
 var inliner   = require('inline-styles');
+var CleanCSS  = require('clean-css');
 
 /**
  * Critical path CSS generation
@@ -28,11 +29,11 @@ exports.generate = function (opts, cb) {
         return;
     }
 
-    if (!opts.height){
+    if (!opts.height) {
         opts.height = 320;
     }
 
-    if (!opts.width){
+    if (!opts.width) {
         opts.width = 480;
     }
 
@@ -47,14 +48,18 @@ exports.generate = function (opts, cb) {
             // What viewports do you care about?
             width : opts.width,   // viewport width
             height : opts.height   // viewport height
-        }, function (err, criticalCSS) {         
-            if (opts.dest) {
+        }, function (err, criticalCSS) {
+            if(opts.minify === true){
+              var minimized = new CleanCSS().minify(criticalCSS);
+              criticalCSS = minimized;
+            }          
+            if(opts.dest){
               // Write critical-path CSS
               fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS, function (err){
                 cb(err, criticalCSS)
               });
             } else {
-                cb(err, criticalCSS); 
+              cb(err, criticalCSS); 
             }
         }); 
     });  
