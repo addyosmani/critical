@@ -42,7 +42,7 @@ exports.generate = function (opts, cb) {
             console.log('Critical-path CSS generated.');
             // Write critical-path CSS
             if(opts.dest){
-              fs.writeFileSync(opts.base + opts.dest, criticalCSS);
+              fs.writeFile(opts.base + opts.dest, criticalCSS);
               console.log('Output written to: ' + opts.base + opts.dest);              
             }
             cb(criticalCSS);
@@ -65,12 +65,12 @@ exports.inline = function (opts, cb) {
   cb = cb || function () {};
   var url = opts.base + opts.src;
   // Inline the critical path CSS
-  var html = fs.readFileSync(url);
+  var html = fs.readFile(url);
   var out = inliner(html, opts.base);
   console.log('Critical-path CSS inlined.');
   if(opts.dest){
     // Write HTML with inlined CSS to dest
-    fs.writeFileSync(opts.base + opts.dest, out);
+    fs.writeFile(opts.base + opts.dest, out);
     console.log('Output written to ' + opts.base + opts.dest);
   }
   cb(out);
