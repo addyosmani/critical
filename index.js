@@ -12,6 +12,7 @@ var penthouse = require('penthouse');
 var fs        = require('fs');
 var path      = require('path');
 var inliner   = require('inline-styles');
+var CleanCSS  = require('clean-css');
 
 /**
  * Critical path CSS generation
@@ -48,6 +49,10 @@ exports.generate = function (opts, cb) {
             width : opts.width,   // viewport width
             height : opts.height   // viewport height
         }, function (err, criticalCSS) {
+            if(opts.minify === true){
+              var minimized = new CleanCSS().minify(criticalCSS);
+              criticalCSS = minimized;
+            }          
             if(opts.dest){
               // Write critical-path CSS
               fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS);
