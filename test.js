@@ -3,7 +3,7 @@ var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
 
-it('Generation should fail if src and dest not specified', function (done) {
+it('throws on CSS generation if src and dest not specified', function (done) {
 	critical.generate({}, function (err, output){
 	    if(/Error: A valid source and base path are required./.test(err[0])) {
 	        return true;
@@ -12,7 +12,7 @@ it('Generation should fail if src and dest not specified', function (done) {
 	});
 });
 
-it('Inlining should fail if src and dest not specified', function (done) {
+it('throws on inlining if src and dest not specified', function (done) {
 	critical.inline({}, function (err, output){
 	    if(/Error: A valid source and base path are required./.test(err[0])) {
 	        return true;
@@ -21,7 +21,7 @@ it('Inlining should fail if src and dest not specified', function (done) {
 	});
 });
 
-it('Generate critical-path CSS', function (done) {
+it('generates critical-path CSS successfully', function (done) {
 	critical.generate({
 	  base: 'fixture/',
 	  src: 'index.html',
@@ -35,7 +35,7 @@ it('Generate critical-path CSS', function (done) {
 	});
 });
 
-it('Generate critical-path CSS without needing to write to disk', function (done) {
+it('generates critical-path CSS without writing to disk', function (done) {
 	critical.generate({
 	  base: 'fixture/',
 	  src: 'index.html',
@@ -48,7 +48,7 @@ it('Generate critical-path CSS without needing to write to disk', function (done
 	});
 });
 
-it('Inline critical-path CSS', function (done) {
+it('inlines critical-path CSS successfully', function (done) {
 	critical.inline({
 	  base: 'fixture/',
 	  src: 'index-critical.html',
@@ -60,7 +60,7 @@ it('Inline critical-path CSS', function (done) {
 	});
 });
 
-it('Inline critical-path CSS without needing to write to disk', function (done) {
+it('inlines critical-path CSS without writing to disk', function (done) {
 	critical.inline({
 	  base: 'fixture/',
 	  src: 'index-critical.html',
