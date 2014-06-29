@@ -47,12 +47,15 @@ exports.generate = function (opts, cb) {
             // What viewports do you care about?
             width : opts.width,   // viewport width
             height : opts.height   // viewport height
-        }, function (err, criticalCSS) {
-            if(opts.dest){
+        }, function (err, criticalCSS) {         
+            if (opts.dest) {
               // Write critical-path CSS
-              fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS);
+              fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS, function (err){
+                cb(err, criticalCSS)
+              });
+            } else {
+                cb(err, criticalCSS); 
             }
-            cb(err, criticalCSS);
         }); 
     });  
 }
@@ -75,13 +78,16 @@ exports.inline = function (opts, cb) {
   var url = opts.base + opts.src;
   // Inline the critical path CSS
   fs.readFile(url, function (err, data){
-    if(err) throw err;
+    if (err) throw err;
     var out = inliner(data, opts.base);
-    if(opts.dest){
+    if (opts.dest){
       // Write HTML with inlined CSS to dest
-      fs.writeFile(path.join(__dirname, opts.base + opts.dest), out);
+      fs.writeFile(path.join(__dirname, opts.base + opts.dest), out, function (err) {
+        cb(err, out);
+      });
+    } else {
+        cb(err, out);
     }
-    cb(err, out);
   });
 }
 
