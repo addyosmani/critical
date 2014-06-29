@@ -19,6 +19,8 @@ var critical = require('critical');
 
 ###Generate critical-path CSS
 
+Basic usage:
+
 ```
 critical.generate({
 	  base: 'test/',
@@ -29,7 +31,7 @@ critical.generate({
 	});
 ```
 
-Optionally, get back the output via a callback:
+Generate and return output via a callback:
 
 ```
 critical.generate({
@@ -43,7 +45,22 @@ critical.generate({
 	});
 ```
 
+Generate and minify critical-path CSS:
+
+```
+critical.generate({
+	  base: 'test/',
+	  src: 'index.html',
+	  width: 320,
+	  dest: 'styles/styles.min.css',
+	  minify: true,
+	  height: 480
+	});
+```
+
 ###Inline critical-path CSS
+
+Basic usage:
 
 ```
 critical.inline({
@@ -53,7 +70,7 @@ critical.inline({
 	});
 ```
 
-Optionally get back the output:
+Inline and return output via a callback:
 
 ```
 critical.inline({
@@ -77,6 +94,11 @@ Type: `String`
 
 Location of the HTML source to be operated against.
 
+####dest
+Type: `String`
+
+Location of where to save the output of an operation.
+
 ####width
 Type: `integer`
 
@@ -87,10 +109,10 @@ Type: `integer`
 
 (Generation only) Height of the target viewport.
 
-####dest
-Type: `String`
+####minify
+Type: `boolean`
 
-Location of where to save the output of an operation.
+(Generation only) Enable minification of CSS output
 
 ## Why?
 
