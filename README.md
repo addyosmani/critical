@@ -65,6 +65,33 @@ critical.inline({
 	});
 ```
 
+###Options
+
+####base
+Type: `String`
+
+Base directory in which the source and destination are to be written.
+
+####src
+Type: `String`
+
+Location of the HTML source to be operated against.
+
+####width
+Type: `integer`
+
+(Generation only) Width of the target viewport.
+
+####height
+Type: `integer`
+
+(Generation only) Height of the target viewport.
+
+####dest
+Type: `String`
+
+Location of where to save the output of an operation.
+
 ## Why?
 
 ### Why is critical-path CSS important?
