@@ -29,7 +29,6 @@ exports.generate = function (opts, cb) {
     var url = opts.base + opts.src;
     // Oust extracts a list of your stylesheets
     oust({ src: url }, function (hrefs){
-        console.log('List of stylesheets extracted.');
         // Penthouse then determines your critical
         // path CSS using these as input.
         penthouse({
@@ -39,11 +38,9 @@ exports.generate = function (opts, cb) {
             width : opts.width,   // viewport width
             height : opts.height   // viewport height
         }, function (err, criticalCSS) {
-            console.log('Critical-path CSS generated.');
             // Write critical-path CSS
             if(opts.dest){
               fs.writeFile(opts.base + opts.dest, criticalCSS);
-              console.log('Output written to: ' + opts.base + opts.dest);              
             }
             cb(criticalCSS);
         }); 
@@ -67,11 +64,9 @@ exports.inline = function (opts, cb) {
   // Inline the critical path CSS
   var html = fs.readFile(url);
   var out = inliner(html, opts.base);
-  console.log('Critical-path CSS inlined.');
   if(opts.dest){
     // Write HTML with inlined CSS to dest
     fs.writeFile(opts.base + opts.dest, out);
-    console.log('Output written to ' + opts.base + opts.dest);
   }
   cb(out);
 }
