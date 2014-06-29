@@ -20,8 +20,12 @@ var inliner   = require('inline-styles');
  * @accepts src, base, width, height, dest
  */
 exports.generate = function (opts, cb) {
+    if (!opts.src && !opts.base) {
+        throw new Error( 'A valid source and base path are required.' );
+        process.exit(1);
+    }
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {};    
     var url = opts.base + opts.src;
     // Oust extracts a list of your stylesheets
     oust({ src: url }, function (hrefs){
@@ -53,6 +57,10 @@ exports.generate = function (opts, cb) {
  * @accepts src, base, dest
  */
 exports.inline = function (opts, cb) {
+  if (!opts.src && !opts.base) {
+      throw new Error( 'A valid source and base path are required.' );
+      process.exit(1);
+  }
   opts = opts || {};
   cb = cb || function () {};
   var url = opts.base + opts.src;
