@@ -31,6 +31,19 @@ critical.generate({
 	});
 ```
 
+Generate and minify critical-path CSS:
+
+```
+critical.generate({
+	  base: 'test/',
+	  src: 'index.html',
+	  width: 320,
+	  dest: 'styles/styles.min.css',
+	  minify: true,
+	  height: 480
+	});
+```
+
 Generate and return output via a callback:
 
 ```
@@ -42,19 +55,6 @@ critical.generate({
 	}, function (err, output){
 		// You now have critical-path CSS
 		// Works with and without dest specified
-	});
-```
-
-Generate and minify critical-path CSS:
-
-```
-critical.generate({
-	  base: 'test/',
-	  src: 'index.html',
-	  width: 320,
-	  dest: 'styles/styles.min.css',
-	  minify: true,
-	  height: 480
 	});
 ```
 
