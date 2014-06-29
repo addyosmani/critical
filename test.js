@@ -3,6 +3,24 @@ var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
 
+it('Generation should fail if src and dest not specified', function (done) {
+	critical.generate({}, function (err, output){
+	    if(/Error: A valid source and base path are required./.test(err[0])) {
+	        return true;
+	    }
+		done();
+	});
+});
+
+it('Inlining should fail if src and dest not specified', function (done) {
+	critical.inline({}, function (err, output){
+	    if(/Error: A valid source and base path are required./.test(err[0])) {
+	        return true;
+	    }
+		done();
+	});
+});
+
 it('Generate critical-path CSS', function (done) {
 	critical.generate({
 	  base: 'fixture/',
