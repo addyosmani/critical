@@ -13,7 +13,7 @@ npm install -g critical
 
 Include:
 
-```
+```sh
 var critical = require('critical');
 ```
 
@@ -21,7 +21,7 @@ var critical = require('critical');
 
 Basic usage:
 
-```
+```js
 critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
@@ -33,7 +33,7 @@ critical.generate({
 
 Generate and minify critical-path CSS:
 
-```
+```js
 critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
@@ -46,7 +46,7 @@ critical.generate({
 
 Generate and return output via a callback:
 
-```
+```js
 critical.generate({
 	  base: 'test/',
 	  src: 'index.html',
@@ -62,7 +62,7 @@ critical.generate({
 
 Basic usage:
 
-```
+```js
 critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
@@ -72,7 +72,7 @@ critical.inline({
 
 Minify and inline stylesheets:
 
-```
+```js
 critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
@@ -83,7 +83,7 @@ critical.inline({
 
 Inline and return output via a callback:
 
-```
+```js
 critical.inline({
 	  base: 'test/',
 	  src: 'index-critical.html',
