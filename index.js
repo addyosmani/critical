@@ -38,31 +38,33 @@ exports.generate = function (opts, cb) {
     }
 
     var url = opts.base + opts.src;
-    // Oust extracts a list of your stylesheets
-    oust({ src: url }, function (hrefs){
-        // Penthouse then determines your critical
-        // path CSS using these as input.
-        penthouse({
-            url : url,
-            css : opts.base + hrefs[0],
-            // What viewports do you care about?
-            width : opts.width,   // viewport width
-            height : opts.height   // viewport height
-        }, function (err, criticalCSS) {
-            if(opts.minify === true){
-              var minimized = new CleanCSS().minify(criticalCSS);
-              criticalCSS = minimized;
-            }          
-            if(opts.dest){
-              // Write critical-path CSS
-              fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS, function (err){
-                cb(err, criticalCSS)
-              });
-            } else {
-              cb(err, criticalCSS); 
-            }
-        }); 
-    });  
+    fs.readFile(url, function (err, html){
+      if (err) throw err;
+      // Oust extracts a list of your stylesheets      
+      var hrefs = oust(html, 'stylesheets');
+      // Penthouse then determines your critical
+      // path CSS using these as input.
+      penthouse({
+          url : url,
+          css : opts.base + hrefs[0],
+          // What viewports do you care about?
+          width : opts.width,   // viewport width
+          height : opts.height   // viewport height
+      }, function (err, criticalCSS) {
+          if(opts.minify === true){
+            var minimized = new CleanCSS().minify(criticalCSS);
+            criticalCSS = minimized;
+          }          
+          if(opts.dest){
+            // Write critical-path CSS
+            fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS, function (err){
+              cb(err, criticalCSS)
+            });
+          } else {
+            cb(err, criticalCSS); 
+          }
+      });   
+  });
 }
 
 /**

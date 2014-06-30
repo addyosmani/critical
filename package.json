@@ -21,7 +21,7 @@
   "author": "Addy Osmani",
   "license": "Apache2",
   "dependencies": {
-    "oust": "0.0.1",
+    "oust": "0.1.1",
     "penthouse": "^0.2.1",
     "clean-css": "~2.2.4",
     "cheerio": "^0.17.0",
