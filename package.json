@@ -1,6 +1,6 @@
 {
   "name": "critical",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Critical-path CSS generation & inlining",
   "main": "index.js",
   "scripts": {
