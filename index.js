@@ -97,3 +97,26 @@ exports.inline = function (opts, cb) {
   });
 }
 
+
+/**
+ * Generate and inline critical-path CSS
+ * @param  {object} opts Options
+ * @param  {function} cb Callback
+ * @accepts src, base, width, height, styleTarget, htmlTarget
+ */
+exports.generateInline = function (opts, cb) {
+  opts = opts || {};
+  cb = cb || function () {};
+  if (!opts.styleTarget && !opts.htmlTarget) {
+      cb(new Error('Valid style and HTML targets are required.'));
+      return;
+  }
+  var genOpts = opts, inlineOpts = opts;
+  genOpts.dest = opts.styleTarget;
+  exports.generate(genOpts, function (err, output) {
+    if (err) cb(err);
+    inlineOpts.dest = opts.htmlTarget;
+    exports.inline(inlineOpts);
+  });  
+}
+

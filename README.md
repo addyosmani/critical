@@ -17,6 +17,20 @@ Include:
 var critical = require('critical');
 ```
 
+###Generate and inline critical-path CSS
+
+```js
+critical.generateInline({
+    base: 'dist/',
+    src: 'index.html',
+    styleTarget: 'styles/main.css',
+    htmlTarget: 'index-critical.html',
+    width: 320,
+    height: 480,
+    minify: true
+});
+```
+
 ###Generate critical-path CSS
 
 Basic usage:
@@ -124,6 +138,16 @@ Type: `integer`
 Type: `boolean`
 
 Enable minification of CSS output
+
+####styleTarget
+Type: `string`
+
+(generateInline only) Destination for critical-path styles
+
+####htmlTarget
+Type: `string`
+
+(generateInline only) Destination for (critical-path CSS) style-inlined HTML
 
 ## Why?
 
