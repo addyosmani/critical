@@ -36,8 +36,7 @@ exports.generate = function (opts, cb) {
     if (!opts.width) {
         opts.width = 480;
     }
-
-    var url = opts.base + opts.src;
+    var url = path.join(process.cwd(), opts.base + opts.src);
     fs.readFile(url, function (err, html){
       if (err) throw err;
       // Oust extracts a list of your stylesheets      
@@ -46,7 +45,7 @@ exports.generate = function (opts, cb) {
       // path CSS using these as input.
       penthouse({
           url : url,
-          css : opts.base + hrefs[0],
+          css : path.join(process.cwd(), opts.base + hrefs[0]),
           // What viewports do you care about?
           width : opts.width,   // viewport width
           height : opts.height   // viewport height
@@ -57,7 +56,7 @@ exports.generate = function (opts, cb) {
           }          
           if(opts.dest){
             // Write critical-path CSS
-            fs.writeFile(path.join(__dirname, opts.base + opts.dest), criticalCSS, function (err){
+            fs.writeFile(path.join(process.cwd(), opts.base + opts.dest), criticalCSS, function (err){
               cb(err, criticalCSS)
             });
           } else {
@@ -89,7 +88,7 @@ exports.inline = function (opts, cb) {
     var out = inliner(data, opts.base, opts.minify);
     if (opts.dest){
       // Write HTML with inlined CSS to dest
-      fs.writeFile(path.join(__dirname, opts.base + opts.dest), out, function (err) {
+      fs.writeFile(path.join(process.cwd(), opts.base + opts.dest), out, function (err) {
         cb(err, out);
       });
     } else {
