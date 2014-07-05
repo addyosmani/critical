@@ -109,45 +109,17 @@ critical.inline({
 
 ### Options
 
-#### base
-Type: `String`
+| Name          | Type          | Description   |
+| ------------- | ------------- | ------------- |
+| base          | `string`      | Base directory in which the source and destination are to be written |
+| src           | `string`      | Location of the HTML source to be operated against |
+| dest          | `string`      | Location of where to save the output of an operation |
+| width         | `integer`     | (Generation only) Width of the target viewport |
+| height        | `integer`     | (Generation only) Height of the target viewport |
+| minify        | `boolean`     | Enable minification of CSS output |
+| styleTarget   | `string`      | (`generateInline` only) Destination for critical-path styles |
+| htmlTarget    | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
 
-Base directory in which the source and destination are to be written.
-
-#### src
-Type: `String`
-
-Location of the HTML source to be operated against.
-
-#### dest
-Type: `String`
-
-Location of where to save the output of an operation.
-
-#### width
-Type: `integer`
-
-(Generation only) Width of the target viewport.
-
-#### height
-Type: `integer`
-
-(Generation only) Height of the target viewport.
-
-#### minify
-Type: `boolean`
-
-Enable minification of CSS output
-
-#### styleTarget
-Type: `string`
-
-(`generateInline` only) Destination for critical-path styles
-
-#### htmlTarget
-Type: `string`
-
-(`generateInline` only) Destination for (critical-path CSS) style-inlined HTML
 
 ## Why?
 
