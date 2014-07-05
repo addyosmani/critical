@@ -125,18 +125,28 @@ critical.inline({
 
 ### Why is critical-path CSS important?
 
-> CSS is required to construct the render tree for your pages and JavaScript will often block on CSS during initial construction of the page. You should ensure that any non-essential CSS is marked as non-critical (e.g. print and other media queries), and that the amount of critical CSS and the time to deliver it is as small as possible.
+> CSS is required to construct the render tree for your pages and JavaScript
+will often block on CSS during initial construction of the page.
+You should ensure that any non-essential CSS is marked as non-critical
+(e.g. print and other media queries), and that the amount of critical CSS
+and the time to deliver it is as small as possible.
 
 ### Why should critical-path CSS be inlined?
 
-> For best performance, you may want to consider inlining the critical CSS directly into the HTML document. This eliminates additional roundtrips in the critical path and if done correctly can be used to deliver a “one roundtrip” critical path length where only the HTML is a blocking resource.
+> For best performance, you may want to consider inlining the critical CSS
+directly into the HTML document. This eliminates additional roundtrips
+in the critical path and if done correctly can be used to deliver a
+“one roundtrip” critical path length where only the HTML is a blocking resource.
 
 
 ## FAQ
 
 ### When should I just use Penthouse directly?
 
-I recommend using Penthouse directly if your app has a large number of styles or stylesheets being dynamically injected into the DOM. Critical is best used when your page uses a fixed set of stylesheets as we can automatically scrape this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
+I recommend using Penthouse directly if your app has a large number of styles
+or stylesheets being dynamically injected into the DOM. Critical is best used
+when your page uses a fixed set of stylesheets as we can automatically scrape
+this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
 
 
 ## License
