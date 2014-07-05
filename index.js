@@ -22,7 +22,7 @@ var CleanCSS  = require('clean-css');
  */
 exports.generate = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {}; 
+    cb = cb || function () {};
 
     if (!opts.src && !opts.base) {
         cb(new Error('A valid source and base path are required.'));
@@ -39,7 +39,7 @@ exports.generate = function (opts, cb) {
     var url = path.join(process.cwd(), opts.base + opts.src);
     fs.readFile(url, function (err, html){
       if (err) throw err;
-      // Oust extracts a list of your stylesheets      
+      // Oust extracts a list of your stylesheets
       var hrefs = oust(html, 'stylesheets');
       // Penthouse then determines your critical
       // path CSS using these as input.
@@ -48,21 +48,21 @@ exports.generate = function (opts, cb) {
           css : path.join(process.cwd(), opts.base + hrefs[0]),
           // What viewports do you care about?
           width : opts.width,   // viewport width
-          height : opts.height   // viewport height
+          height : opts.height  // viewport height
       }, function (err, criticalCSS) {
           if(opts.minify === true){
             var minimized = new CleanCSS().minify(criticalCSS);
             criticalCSS = minimized;
-          }          
+          }
           if(opts.dest){
             // Write critical-path CSS
             fs.writeFile(path.join(process.cwd(), opts.base + opts.dest), criticalCSS, function (err){
               cb(err, criticalCSS)
             });
           } else {
-            cb(err, criticalCSS); 
+            cb(err, criticalCSS);
           }
-      });   
+      });
   });
 }
 
@@ -117,6 +117,5 @@ exports.generateInline = function (opts, cb) {
     if (err) cb(err);
     inlineOpts.dest = opts.htmlTarget;
     exports.inline(inlineOpts);
-  });  
+  });
 }
-

@@ -11,7 +11,7 @@ module.exports = function(html, base, minify) {
   var dom = cheerio.load(String(html))
   injectStyles(dom)
   return new Buffer(dom.html())
-  
+
   function injectStyles(dom) {
     var styles = [];
     dom('link').each(function(idx, el) {
@@ -31,9 +31,9 @@ module.exports = function(html, base, minify) {
       }
     })
   }
-  
+
   function isLocal(href) {
     return href && !url.parse(href).hostname;
   }
-  
+
 }
