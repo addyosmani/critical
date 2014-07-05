@@ -5,7 +5,7 @@ var critical = require('./index');
 
 it('throws on CSS generation if src and dest not specified', function (done) {
     critical.generate({}, function (err, output){
-        if(/Error: A valid source and base path are required./.test(err[0])) {
+        if (/Error: A valid source and base path are required./.test(err[0])) {
             return true;
         }
         done();
@@ -14,7 +14,7 @@ it('throws on CSS generation if src and dest not specified', function (done) {
 
 it('throws on inlining if src and dest not specified', function (done) {
     critical.inline({}, function (err, output){
-        if(/Error: A valid source and base path are required./.test(err[0])) {
+        if (/Error: A valid source and base path are required./.test(err[0])) {
             return true;
         }
         done();
@@ -78,7 +78,7 @@ it('inlines critical-path CSS without writing to disk', function (done) {
     var expected = fs.readFileSync('fixture/index-test.html');
     critical.inline({
       base: 'fixture/',
-      src: 'index-critical.html',
+      src: 'index-critical.html'
     }, function (err, output){
         assert(expected == String(output));
         done();
@@ -91,7 +91,7 @@ it('inlines and minified critical-path CSS', function (done) {
       base: 'fixture/',
       minify: true,
       dest: 'test-inlined-minified.html',
-      src: 'index-critical.html',
+      src: 'index-critical.html'
     }, function (err, output){
         assert(expected == String(output));
         done();

@@ -44,27 +44,27 @@ exports.generate = function (opts, cb) {
       // Penthouse then determines your critical
       // path CSS using these as input.
       penthouse({
-          url : url,
-          css : path.join(process.cwd(), opts.base + hrefs[0]),
+          url: url,
+          css: path.join(process.cwd(), opts.base + hrefs[0]),
           // What viewports do you care about?
-          width : opts.width,   // viewport width
-          height : opts.height  // viewport height
+          width: opts.width,   // viewport width
+          height: opts.height  // viewport height
       }, function (err, criticalCSS) {
-          if(opts.minify === true){
+          if (opts.minify === true){
             var minimized = new CleanCSS().minify(criticalCSS);
             criticalCSS = minimized;
           }
-          if(opts.dest){
+          if (opts.dest){
             // Write critical-path CSS
             fs.writeFile(path.join(process.cwd(), opts.base + opts.dest), criticalCSS, function (err){
-              cb(err, criticalCSS)
+              cb(err, criticalCSS);
             });
           } else {
             cb(err, criticalCSS);
           }
       });
   });
-}
+};
 
 /**
  * Critical path CSS inlining
@@ -95,7 +95,7 @@ exports.inline = function (opts, cb) {
         cb(err, out);
     }
   });
-}
+};
 
 
 /**
@@ -118,4 +118,4 @@ exports.generateInline = function (opts, cb) {
     inlineOpts.dest = opts.htmlTarget;
     exports.inline(inlineOpts);
   });
-}
+};
