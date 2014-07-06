@@ -13,7 +13,8 @@ module.exports = function(html, base, minify) {
   return new Buffer(dom.html());
 
   function injectStyles(dom) {
-    dom('link').each(function(el) {
+    var styles = [];
+    dom('link').each(function(idx, el) {
       el = dom(el);
       var href = el.attr('href');
       if (el.attr('rel') === 'stylesheet' && isLocal(href)) {
@@ -28,7 +29,7 @@ module.exports = function(html, base, minify) {
         var inlinedTag = "<style>\n" + inlinedStyles + '\n</style>';
         el.replaceWith(inlinedTag);
       }
-    });
+    })
   }
 
   function isLocal(href) {

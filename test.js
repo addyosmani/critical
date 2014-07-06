@@ -30,7 +30,7 @@ it('generates critical-path CSS successfully', function (done) {
       width: 320,
       height: 480
     }, function (err, output){
-        assert(expected == String(output));
+        assert(expected == output);
         done();
     });
 });
@@ -57,20 +57,20 @@ it('generates critical-path CSS without writing to disk', function (done) {
       width: 320,
       height: 480
     }, function (err, output){
-        assert(expected == String(output));
+        assert(expected == output);
         done();
     });
 });
 
 it('inlines critical-path CSS successfully', function (done) {
-    var expected = fs.readFileSync('fixture/index-test.html');
+    var expected = fs.readFileSync('fixture/index-final.html');
     critical.inline({
       base: 'fixture/',
       src: 'index-critical.html',
       dest: 'test-final.html'
     }, function (err, output){
-        assert(expected == String(output));
-        done();
+      assert(expected == output);
+      done();
     });
 });
 
@@ -80,8 +80,8 @@ it('inlines critical-path CSS without writing to disk', function (done) {
       base: 'fixture/',
       src: 'index-critical.html'
     }, function (err, output){
-        assert(expected == String(output));
-        done();
+      assert(expected == output);
+      done();
     });
 });
 
@@ -90,10 +90,10 @@ it('inlines and minified critical-path CSS', function (done) {
     critical.inline({
       base: 'fixture/',
       minify: true,
-      dest: 'test-inlined-minified.html',
-      src: 'index-critical.html'
+      src: 'index-critical.html',
+      dest: 'test-inlined-minified.html'
     }, function (err, output){
-        assert(expected == String(output));
-        done();
+      assert(expected == output);
+      done();
     });
 });

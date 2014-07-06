@@ -57,10 +57,10 @@ exports.generate = function (opts, cb) {
           if (opts.dest){
             // Write critical-path CSS
             fs.writeFile(path.join(process.cwd(), opts.base + opts.dest), criticalCSS, function (err){
-              cb(err, criticalCSS);
+              cb(err, criticalCSS.toString());
             });
           } else {
-            cb(err, criticalCSS);
+            cb(err, criticalCSS.toString());
           }
       });
   });
@@ -89,10 +89,10 @@ exports.inline = function (opts, cb) {
     if (opts.dest){
       // Write HTML with inlined CSS to dest
       fs.writeFile(path.join(process.cwd(), opts.base + opts.dest), out, function (err) {
-        cb(err, out);
+        cb(err, out.toString());
       });
     } else {
-        cb(err, out);
+        cb(err, out.toString());
     }
   });
 };
