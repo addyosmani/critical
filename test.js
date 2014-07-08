@@ -3,21 +3,15 @@ var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
 
-it('throws on CSS generation if src and dest not specified', function (done) {
-    critical.generate({}, function (err, output){
-        if (/Error: A valid source and base path are required./.test(err[0])) {
-            return true;
-        }
-        done();
+it('throws on CSS generation if src and dest not specified', function () {
+    assert.throws(function () {
+        critical.generate({});
     });
 });
 
-it('throws on inlining if src and dest not specified', function (done) {
-    critical.inline({}, function (err, output){
-        if (/Error: A valid source and base path are required./.test(err[0])) {
-            return true;
-        }
-        done();
+it('throws on inlining if src and dest not specified', function () {
+    assert.throws(function () {
+        critical.inline({});
     });
 });
 
