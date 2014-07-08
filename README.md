@@ -1,13 +1,14 @@
-critical
-========
+# critical [![Build Status](https://travis-ci.org/addyosmani/critical.svg?branch=master)](https://travis-ci.org/addyosmani/critical)
 
 > Critical Path CSS generation & inlining
 
-## Installation
+
+## Install
 
 ```sh
-npm install -g critical
+$ npm install --save critical
 ```
+
 
 ## Usage
 
@@ -66,7 +67,7 @@ critical.generate({
     src: 'index.html',
     width: 320,
     height: 480
-}, function (err, output){
+}, function (err, output) {
     // You now have critical-path CSS
     // Works with and without dest specified
 });
