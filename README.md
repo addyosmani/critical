@@ -2,6 +2,7 @@
 
 > Critical Path CSS generation & inlining
 
+A module by @addyosmani and @sindresorhus
 
 ## Install
 
