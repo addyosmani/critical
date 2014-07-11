@@ -143,6 +143,11 @@ in the critical path and if done correctly can be used to deliver a
 
 ## FAQ
 
+### Are there any sample projects available using Critical?
+
+Why, yes!. Take a look at [this](https://github.com/addyosmani/critical-path-css-demo) Gulp project
+which demonstrates using Critical to generate and inline critical-path CSS.
+
 ### When should I just use Penthouse directly?
 
 I recommend using [Penthouse](http://npmjs.org/package/penthouse) directly if your app has a large number of styles
