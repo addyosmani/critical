@@ -1,7 +1,7 @@
 {
   "name": "critical",
   "version": "0.1.3",
-  "description": "Critical-path CSS generation & inlining",
+  "description": "Extract & Inline Critical-path CSS from HTML",
   "author": "Addy Osmani",
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",

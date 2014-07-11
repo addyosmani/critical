@@ -1,6 +1,6 @@
 # critical [![Build Status](https://travis-ci.org/addyosmani/critical.svg?branch=master)](https://travis-ci.org/addyosmani/critical)
 
-> Critical Path CSS generation & inlining
+> Extract & Inline Critical-path CSS from HTML
 
 A module by [@addyosmani](http://github.com/addyosmani) and [@sindresorhus](http://github.com/sindresorhus)
 
@@ -145,7 +145,7 @@ in the critical path and if done correctly can be used to deliver a
 
 ### When should I just use Penthouse directly?
 
-I recommend using Penthouse directly if your app has a large number of styles
+I recommend using [Penthouse](http://npmjs.org/package/penthouse) directly if your app has a large number of styles
 or stylesheets being dynamically injected into the DOM. Critical is best used
 when your page uses a fixed set of stylesheets as we can automatically scrape
 this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
