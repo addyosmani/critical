@@ -23,13 +23,13 @@ var critical = require('critical');
 
 ```js
 critical.generateInline({
-    base: 'dist/',
-    src: 'index.html',
-    styleTarget: 'styles/main.css',
-    htmlTarget: 'index-critical.html',
-    width: 320,
-    height: 480,
-    minify: true
+    base: 'dist/', // Your base directory
+    src: 'index.html', // HTML source
+    htmlTarget: 'index-critical.html', // Target for final HTML output
+    styleTarget: 'styles/main.css', // Target for generated critical-path CSS
+    width: 320, // Viewport width
+    height: 480, // Viewport height
+    minify: true // Minify critical-path CSS when inlining
 });
 ```
 
