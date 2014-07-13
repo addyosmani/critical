@@ -2,6 +2,9 @@
 var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
+var css = require('css');
+var chai = require('chai');
+var should = chai.should();
 
 it('throws on CSS generation if src and dest not specified', function () {
     assert.throws(function () {
@@ -25,7 +28,9 @@ it('generates critical-path CSS successfully', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        assert.strictEqual(expected, output);
+        var resultAst = css.parse(output);
+        var expectedAst = css.parse(expected);
+        resultAst.should.eql(expectedAst);
         done();
     });
 });
@@ -40,7 +45,9 @@ it('generates minified critical-path CSS successfully', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        assert.strictEqual(expected, output);
+        var resultAst = css.parse(output);
+        var expectedAst = css.parse(expected);
+        resultAst.should.eql(expectedAst);
         done();
     });
 });
@@ -54,7 +61,7 @@ it('generates critical-path CSS without writing to disk', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        assert.strictEqual(expected, output);
+        output.should.eql(expected);
         done();
     });
 });
@@ -67,7 +74,7 @@ it('inlines critical-path CSS successfully', function (done) {
       src: 'index-critical.html',
       dest: 'test-final.html'
     }, function (err, output) {
-      assert.strictEqual(expected, output);
+      output.should.eql(expected);
       done();
     });
 });
@@ -79,7 +86,7 @@ it('inlines critical-path CSS without writing to disk', function (done) {
       base: 'fixture/',
       src: 'index-critical.html'
     }, function (err, output) {
-      assert.strictEqual(expected, output);
+      output.should.eql(expected);
       done();
     });
 });
@@ -93,7 +100,7 @@ it('inlines and minified critical-path CSS', function (done) {
       src: 'index-critical.html',
       dest: 'test-inlined-minified.html'
     }, function (err, output) {
-      assert.strictEqual(expected, output);
+      output.should.eql(expected);
       done();
     });
 });

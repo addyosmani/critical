@@ -29,6 +29,8 @@
     "penthouse": "^0.2.1"
   },
   "devDependencies": {
-    "mocha": "*"
+    "mocha": "*",
+    "css": "*",
+    "chai": "*"
   }
 }
