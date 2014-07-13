@@ -78,10 +78,10 @@ exports.generate = function (opts, cb) {
                         return;
                     }
 
-                    cb(null, criticalCSS.toString());
+                    cb(null, criticalCSS.toString('utf-8').replace(lineBreak, ''));
                 });
             } else {
-                cb(null, criticalCSS.toString());
+                cb(null, criticalCSS.toString('utf-8').replace(lineBreak, ''));
             }
         });
     });
@@ -110,8 +110,6 @@ exports.inline = function (opts, cb) {
 
         var out = inliner(data, opts.base, opts.minify);
 
-        out = out.toString('utf-8').replace(lineBreak, '');
-
         if (opts.dest) {
             // Write HTML with inlined CSS to dest
             fs.writeFile(path.join(opts.base, opts.dest), out, function (err) {
@@ -120,10 +118,10 @@ exports.inline = function (opts, cb) {
                     return;
                 }
 
-                cb(null, out.toString());
+                cb(null, out.toString('utf-8').replace(lineBreak, ''));
             });
         } else {
-            cb(null, out.toString());
+            cb(null, out.toString('utf-8').replace(lineBreak, ''));
         }
     });
 };

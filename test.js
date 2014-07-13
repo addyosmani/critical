@@ -21,9 +21,9 @@ it('throws on inlining if src and dest not specified', function () {
     });
 });
 
-/*
+
 it('generates critical-path CSS successfully', function (done) {
-    var expected = fs.readFile('fixture/styles/critical.css', 'utf8');
+    var expected = fs.readFileSync('fixture/styles/critical.css', 'utf8').replace(lineBreak, '');
 
     critical.generate({
       base: 'fixture/',
@@ -32,13 +32,14 @@ it('generates critical-path CSS successfully', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        var resultAst = css.parse(output);
-        var expectedAst = css.parse(expected);
-        resultAst.should.eql(expectedAst);
+        //var resultAst = css.parse(output);
+        //var expectedAst = css.parse(expected);
+        //resultAst.should.eql(expectedAst);
+assert.equal(output, expected);
         done();
     });
 });
-*/
+
 
 it('generates critical-path CSS without writing to disk', function () {
     var expected = fs.readFileSync('fixture/styles/critical-pregenerated.css', 'utf8').replace(lineBreak, '');
@@ -49,43 +50,38 @@ it('generates critical-path CSS without writing to disk', function () {
       width: 320,
       height: 480
     }, function (err, output) {
-        //var resultAst = css.parse(output);
-        //var expectedAst = css.parse(expected);
-        //resultAst.should.eql(expectedAst);
-/////works  output = output.toString('utf-8').replace(lineBreak, '');
         assert.equal(output, expected);
-        //done();
     });
 });
 
 /*
 it('inlines critical-path CSS successfully', function (done) {
-    var expected = fs.readFileSync('fixture/index-final.html', 'utf8');
+    var expected = fs.readFileSync('fixture/index-final.html', 'utf8').replace(lineBreak, '');
 
     critical.inline({
       base: 'fixture/',
       src: 'index-critical.html',
       dest: 'test-final.html'
     }, function (err, output) {
-      output.should.eql(expected);
+      assert.equal(output, expected);
       done();
     });
 });
 
 it('inlines critical-path CSS without writing to disk', function (done) {
-    var expected = fs.readFileSync('fixture/index-test.html', 'utf8');
+    var expected = fs.readFileSync('fixture/index-test.html', 'utf8').replace(lineBreak, '');
 
     critical.inline({
       base: 'fixture/',
       src: 'index-critical.html'
     }, function (err, output) {
-      output.should.eql(expected);
+      assert.equal(output, expected);
       done();
     });
 });
 
 it('inlines and minified critical-path CSS', function (done) {
-    var expected = fs.readFileSync('fixture/index-inlined-minified.html', 'utf8');
+    var expected = fs.readFileSync('fixture/index-inlined-minified.html', 'utf8').replace(lineBreak, '');
 
     critical.inline({
       base: 'fixture/',
@@ -93,7 +89,7 @@ it('inlines and minified critical-path CSS', function (done) {
       src: 'index-critical.html',
       dest: 'test-inlined-minified.html'
     }, function (err, output) {
-      output.should.eql(expected);
+      assert.equal(output, expected);
       done();
     });
 });
