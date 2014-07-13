@@ -14,6 +14,8 @@ var CleanCSS = require('clean-css');
 var oust = require('oust');
 var inliner = require('./inline-styles');
 
+var isWindows = process.platform == 'win32';
+var lineBreak = isWindows ? /\r\n/g : /\n/g;
 /**
  * Critical path CSS generation
  * @param  {object} opts Options
@@ -44,6 +46,8 @@ exports.generate = function (opts, cb) {
             return;
         }
 
+//html = html.toString().replace(lineBreak, '');
+
         // Oust extracts a list of your stylesheets
         var hrefs = oust(html, 'stylesheets');
         // Penthouse then determines your critical
@@ -59,6 +63,8 @@ exports.generate = function (opts, cb) {
                 cb(err);
                 return;
             }
+
+           criticalCSS = criticalCSS.toString('utf-8').replace(lineBreak, '');
 
             if (opts.minify === true) {
                 criticalCSS = new CleanCSS().minify(criticalCSS);
@@ -103,6 +109,8 @@ exports.inline = function (opts, cb) {
         }
 
         var out = inliner(data, opts.base, opts.minify);
+
+        out = out.toString('utf-8').replace(lineBreak, '');
 
         if (opts.dest) {
             // Write HTML with inlined CSS to dest
