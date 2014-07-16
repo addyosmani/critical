@@ -150,10 +150,18 @@ that walks through how to use it in a simple webapp.
 
 ### When should I just use Penthouse directly?
 
-I recommend using [Penthouse](https://github.com/pocketjoso/penthouse) directly if your app has a large number of styles
-or stylesheets being dynamically injected into the DOM. Critical is best used
-when your page uses a fixed set of stylesheets as we can automatically scrape
-this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
+The main differences between Critical and [Penthouse](https://github.com/pocketjoso/penthouse), a module we
+use, are:
+
+* Critical will automatically extract stylesheets from your HTML from which to generate critical-path CSS from,
+whilst other modules generally require you to specify this upfront.
+* Critical provides methods for inlining critical-path CSS (a common logical next-step once your CSS is generated)
+* Since we tackle both generation and inlining, we're able to abstract away some of the ugly boilerplate otherwise
+involved in tackling these problems separately.
+
+That said, if your site or app has a large number of styles or styles which are being dynamically injected into
+the DOM (sometimes common in Angular apps) I recommend using Penthouse directly. It will require you to supply
+styles upfront, but this may provide a higher level of accuracy if you find Critical isn't serving your needs.
 
 ### What other alternatives to Critical are available?
 
