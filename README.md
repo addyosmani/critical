@@ -154,3 +154,9 @@ I recommend using [Penthouse](http://npmjs.org/package/penthouse) directly if yo
 or stylesheets being dynamically injected into the DOM. Critical is best used
 when your page uses a fixed set of stylesheets as we can automatically scrape
 this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
+
+### What other alternatives to Critical are available?
+
+FilamentGroup maintain a [criticalCSS](https://github.com/filamentgroup/criticalCSS) node module, which
+similar to [Penthouse](http://npmjs.org/package/penthouse) will find and output the critical-path CSS for
+your pages.
