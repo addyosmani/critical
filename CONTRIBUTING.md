@@ -7,7 +7,6 @@ does the issue have to do with styles not being correctly captured? If so, test 
 If it works with Penthouse then it's a Critical bug and we encourage you to open up a [new ticket](https://github.com/addyosmani/critical/issues/new) with details.
 Does the bug have to do with inlining styles, general module failures or installation issues? Those are also
 possibly Critical bugs and we will strive to take a look at them.
-with inline styles or just general errors with running the module?
 1. Working on a patch? File a bug at https://github.com/addyosmani/critical/issues (if there
 isn’t one already). If your patch is going to be large it might be a good idea
 to get the discussion started early. We are happy to discuss it in a new issue beforehand.
