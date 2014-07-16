@@ -1,8 +1,8 @@
 # critical [![Build Status](https://travis-ci.org/addyosmani/critical.svg?branch=master)](https://travis-ci.org/addyosmani/critical)
 
-> Extract & Inline Critical-path CSS from HTML
+![](http://i.imgur.com/lAzmBD2.png)
 
-With thanks to our [contributors](https://github.com/addyosmani/critical/graphs/contributors) for helping make Critical better.
+Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ## Install
 
@@ -150,7 +150,7 @@ that walks through how to use it in a simple webapp.
 
 ### When should I just use Penthouse directly?
 
-I recommend using [Penthouse](http://npmjs.org/package/penthouse) directly if your app has a large number of styles
+I recommend using [Penthouse](https://github.com/pocketjoso/penthouse) directly if your app has a large number of styles
 or stylesheets being dynamically injected into the DOM. Critical is best used
 when your page uses a fixed set of stylesheets as we can automatically scrape
 this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
@@ -158,5 +158,18 @@ this for you, avoiding the overhead of passing known styles yourself manually to
 ### What other alternatives to Critical are available?
 
 FilamentGroup maintain a [criticalCSS](https://github.com/filamentgroup/criticalCSS) node module, which
-similar to [Penthouse](http://npmjs.org/package/penthouse) will find and output the critical-path CSS for
+similar to [Penthouse](https://github.com/pocketjoso/penthouse) will find and output the critical-path CSS for
 your pages.
+
+### Is Critical stable and suitable for production use?
+
+Many of the current tools around critical-path CSS are in an experimental stage and are constantly striving
+to improve. The same could be said of Critical. It hasn't been extensively tested on a ton of sites and it's
+very possible something may well break. That said, we welcome you to try it out on your project and report
+bugs if you find them.
+
+## Can I contribute?
+
+Of course. We appreciate all of our [contributors](https://github.com/addyosmani/critical/graphs/contributors) and
+welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
+free to open up an issue and we can discuss it.
