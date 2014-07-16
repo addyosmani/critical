@@ -1,6 +1,11 @@
+/*
+  This is a fork of the inline-styles module by @maxogden
+  with support for minification. The original module can be
+  found here: https://github.com/maxogden/inline-styles
+*/
+
 var cheerio = require('cheerio');
 var path = require('path');
-// Fork of inline-styles with minification support
 var fs = require('fs');
 var url = require('url');
 var inliner = require('imageinliner');
