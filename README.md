@@ -2,14 +2,13 @@
 
 > Extract & Inline Critical-path CSS from HTML
 
-A module by [@addyosmani](http://github.com/addyosmani) and [@sindresorhus](http://github.com/sindresorhus)
+With thanks to our [contributors](https://github.com/addyosmani/critical/graphs/contributors) for helping make Critical better.
 
 ## Install
 
 ```sh
 $ npm install --save critical
 ```
-
 
 ## Usage
 
@@ -26,7 +25,7 @@ critical.generateInline({
     base: 'dist/', // Your base directory
     src: 'index.html', // HTML source
     htmlTarget: 'index-critical.html', // Target for final HTML output
-    styleTarget: 'styles/main.css', // Target for generated critical-path CSS
+    styleTarget: 'styles/main.css', // Target for generated critical-path CSS (which we inline)
     width: 320, // Viewport width
     height: 480, // Viewport height
     minify: true // Minify critical-path CSS when inlining
@@ -146,7 +145,8 @@ in the critical path and if done correctly can be used to deliver a
 ### Are there any sample projects available using Critical?
 
 Why, yes!. Take a look at [this](https://github.com/addyosmani/critical-path-css-demo) Gulp project
-which demonstrates using Critical to generate and inline critical-path CSS.
+which demonstrates using Critical to generate and inline critical-path CSS. It also includes a mini-tutorial
+that walks through how to use it in a simple webapp.
 
 ### When should I just use Penthouse directly?
 
