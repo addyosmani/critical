@@ -154,9 +154,3 @@ I recommend using [Penthouse](http://npmjs.org/package/penthouse) directly if yo
 or stylesheets being dynamically injected into the DOM. Critical is best used
 when your page uses a fixed set of stylesheets as we can automatically scrape
 this for you, avoiding the overhead of passing known styles yourself manually to Penthouse.
-
-
-## License
-
-Apache 2.0  
-Copyright 2014 Google Inc
