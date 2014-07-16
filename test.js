@@ -1,3 +1,10 @@
+/*
+  Unit tests for Critical.
+  
+  Note: At present, our tests will pass on Unix based systems but fail on
+  Windows. This is a known issue to do with line-endings which we hope to
+  address in the very near future.
+*/
 'use strict';
 var fs = require('fs');
 var assert = require('assert');
