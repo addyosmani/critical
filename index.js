@@ -1,9 +1,6 @@
 /*
  * critical
  * http://github.com/addyosmani/critical
- *
- * Copyright (c) 2014 Google Inc.
- * Licensed under an Apache 2 license.
  */
 
 'use strict';
