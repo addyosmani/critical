@@ -28,17 +28,17 @@ critical.generateInline({
     // HTML source
     src: 'index.html',
     
-    // Target for final HTML output
-    htmlTarget: 'index-critical.html',
-    
-    // Target for generated critical-path CSS (which we inline)
-    styleTarget: 'styles/main.css',
-    
     // Viewport width
     width: 320,
     
     // Viewport height
     height: 480,
+    
+    // Target for final HTML output
+    htmlTarget: 'index-critical.html',
+    
+    // Target for generated critical-path CSS (which we inline)
+    styleTarget: 'styles/main.css',
     
     // Minify critical-path CSS when inlining
     minify: true
