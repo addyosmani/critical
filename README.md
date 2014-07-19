@@ -10,6 +10,11 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 $ npm install --save critical
 ```
 
+## Demo projects
+
+* [Optimize a basic page with Gulp](https://github.com/addyosmani/critical-path-css-demo) with a [tutorial](https://github.com/addyosmani/critical-path-css-demo#tutorial)
+* [Optimize an Angular app with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
+
 ## Usage
 
 Include:
