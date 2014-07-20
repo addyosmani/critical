@@ -13,7 +13,8 @@ $ npm install --save critical
 ## Demo projects
 
 * [Optimize a basic page with Gulp](https://github.com/addyosmani/critical-path-css-demo) with a [tutorial](https://github.com/addyosmani/critical-path-css-demo#tutorial)
-* [Optimize an Angular app with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
+* [Optimize an Angular boilerplate with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
+* [Optimize a Weather app with Gulp](https://github.com/addyosmani/critical-css-weather-app)
 
 ## Usage
 
