@@ -33,6 +33,12 @@ critical.generateInline({
     
     // HTML source
     src: 'index.html',
+
+    // Your CSS directory (optional)
+    cssPath: 'dist/styles/',
+
+    // Your CSS File (optional)
+    css: 'dist/styles/main.css',
     
     // Viewport width
     width: 320,

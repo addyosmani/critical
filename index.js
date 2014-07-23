@@ -36,18 +36,34 @@ exports.generate = function (opts, cb) {
     var url = path.join(opts.base, opts.src);
 
     fs.readFile(url, function (err, html) {
+        var css,hrefs;
         if (err) {
             cb(err);
             return;
         }
 
         // Oust extracts a list of your stylesheets
-        var hrefs = oust(html, 'stylesheets');
+        hrefs = oust(html.toString('utf8'), 'stylesheets');
+
         // Penthouse then determines your critical
         // path CSS using these as input.
+        // @todo consider all stylesheets
+        if (opts.css) {
+            css = opts.css;
+        } else if (opts.cssPath) {
+            css = path.join(opts.cssPath,path.basename(hrefs[0]));
+        } else {
+            css = path.join(opts.base, hrefs[0]);
+        }
+
+        if (!fs.existsSync(css)) {
+            throw 'Could not find CSS "' + css +'"';
+        }
+
+
         penthouse({
             url: url,
-            css: path.join(opts.base, hrefs[0]),
+            css: css,
             // What viewports do you care about?
             width: opts.width,   // viewport width
             height: opts.height  // viewport height

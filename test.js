@@ -32,7 +32,7 @@ it('generates critical-path CSS successfully', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        assert.strictEqual(expected, output);
+        assert.strictEqual(output, expected);
         done();
     });
 });
@@ -47,7 +47,23 @@ it('generates minified critical-path CSS successfully', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        assert.strictEqual(expected, output);
+        assert.strictEqual(output, expected);
+        done();
+    });
+});
+
+it('generates minified critical-path CSS successfully with external css file configured', function (done) {
+    var expected = fs.readFileSync('fixture/styles/critical-min.css', 'utf8');
+
+    critical.generate({
+        base: 'fixture/',
+        src: 'index.html',
+        css: ['external/styles/main.css','fixture/styles/unused.css'],
+        minify: true,
+        width: 320,
+        height: 480
+    }, function (err, output) {
+        assert.strictEqual(output, expected);
         done();
     });
 });
@@ -61,7 +77,7 @@ it('generates critical-path CSS without writing to disk', function (done) {
       width: 320,
       height: 480
     }, function (err, output) {
-        assert.strictEqual(expected, output);
+        assert.strictEqual(output, expected);
         done();
     });
 });
@@ -74,7 +90,7 @@ it('inlines critical-path CSS successfully', function (done) {
       src: 'index-critical.html',
       dest: 'test-final.html'
     }, function (err, output) {
-      assert.strictEqual(expected, output);
+      assert.strictEqual(output, expected);
       done();
     });
 });
@@ -86,7 +102,7 @@ it('inlines critical-path CSS without writing to disk', function (done) {
       base: 'fixture/',
       src: 'index-critical.html'
     }, function (err, output) {
-      assert.strictEqual(expected, output);
+      assert.strictEqual(output, expected);
       done();
     });
 });
@@ -100,7 +116,7 @@ it('inlines and minified critical-path CSS', function (done) {
       src: 'index-critical.html',
       dest: 'test-inlined-minified.html'
     }, function (err, output) {
-      assert.strictEqual(expected, output);
+      assert.strictEqual(output, expected);
       done();
     });
 });
