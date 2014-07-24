@@ -58,19 +58,19 @@ exports.generate = function (opts, cb) {
             });
         }
 
-        // combine all css files to one bid stylesheet
+    // combine all css files to one bid stylesheet
     }).reduce(function (total, fileName) {
-        return fs.readFileAsync(fileName, "utf8").then(function(contents) {
+        return fs.readFileAsync(fileName, "utf8").then(function (contents) {
             return total + os.EOL + contents;
         });
 
 
-        // write contents to tmp file
+    // write contents to tmp file
     }, '').then(function (css) {
         return fs.writeFileAsync(TMPCSS, css);
 
 
-        // let penthouseAsync do the rest
+    // let penthouseAsync do the rest
     }).then(function () {
         return penthouseAsync({
             url: url,
@@ -80,14 +80,14 @@ exports.generate = function (opts, cb) {
             height: opts.height  // viewport height
         });
 
-        // cleanup tmp css
+    // cleanup tmp css
     }).then(function (criticalCSS) {
         return fs.unlinkAsync(TMPCSS).then(function () {
             return criticalCSS;
         });
 
 
-        // Penthouse callback
+    // Penthouse callback
     }).then(function (criticalCSS) {
         if (opts.minify === true) {
             criticalCSS = new CleanCSS().minify(criticalCSS);
@@ -102,12 +102,14 @@ exports.generate = function (opts, cb) {
             return criticalCSS;
         }
 
-        // callback success
+    // return err on error
     }).catch(function (err) {
         cb(err);
+
+    // callback success
     }).then(function (criticalCSS) {
         cb(null, criticalCSS.toString());
-        // return err on error
+
     }).done();
 };
 
