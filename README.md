@@ -34,11 +34,8 @@ critical.generateInline({
     // HTML source
     src: 'index.html',
 
-    // Your CSS directory (optional)
-    cssPath: 'dist/styles/',
-
-    // Your CSS File (optional)
-    css: 'dist/styles/main.css',
+    // Your CSS Files (optional)
+    css: ['dist/styles/main.css'],
     
     // Viewport width
     width: 320,
@@ -140,6 +137,7 @@ critical.inline({
 | base          | `string`      | Base directory in which the source and destination are to be written |
 | src           | `string`      | Location of the HTML source to be operated against |
 | dest          | `string`      | Location of where to save the output of an operation |
+| css           | `array`       | Use this CSS files instead of the ones exctracted from the HTML |
 | width         | `integer`     | (Generation only) Width of the target viewport |
 | height        | `integer`     | (Generation only) Height of the target viewport |
 | minify        | `boolean`     | Enable minification of CSS output |
