@@ -103,11 +103,11 @@ exports.generate = function (opts, cb) {
         }
 
         // callback success
+    }).catch(function (err) {
+        cb(err);
     }).then(function (criticalCSS) {
         cb(null, criticalCSS.toString());
         // return err on error
-    }).catch(function (err) {
-        cb(err);
     }).done();
 };
 
