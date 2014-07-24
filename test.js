@@ -10,6 +10,17 @@ var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
 
+/**
+ * Strip whitespaces, tabs and newlines and replace with one space.
+ * Usefull when comparing string contents.
+ * @param string
+ */
+function stripWhitespace(string) {
+    return string.replace(/[\r\n]+/mg,' ').replace(/\s+/gm,'');
+}
+
+
+
 it('throws on CSS generation if src and dest not specified', function () {
     assert.throws(function () {
         critical.generate({});
@@ -32,7 +43,7 @@ it('generates critical-path CSS successfully', function (done) {
       width: 320,
       height: 70
     }, function (err, output) {
-        assert.strictEqual(output, expected);
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         done();
     });
 });
@@ -47,7 +58,7 @@ it('generates minified critical-path CSS successfully', function (done) {
       width: 320,
       height: 70
     }, function (err, output) {
-        assert.strictEqual(output, expected);
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         done();
     });
 });
@@ -58,12 +69,16 @@ it('generates minified critical-path CSS successfully with external css file con
     critical.generate({
         base: 'fixture/',
         src: 'index.html',
-        css: ['external/styles/main.css','fixture/styles/unused.css'],
+        css: [
+            'external/styles/main.css',
+            'fixture/bower_components/bootstrap/dist/css/bootstrap.css',
+            'fixture/styles/unused.css'
+        ],
         minify: true,
         width: 320,
         height: 70
     }, function (err, output) {
-        assert.strictEqual(output, expected);
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         done();
     });
 });
@@ -77,7 +92,7 @@ it('generates critical-path CSS without writing to disk', function (done) {
       width: 320,
       height: 70
     }, function (err, output) {
-        assert.strictEqual(output, expected);
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         done();
     });
 });
@@ -90,7 +105,7 @@ it('inlines critical-path CSS successfully', function (done) {
       src: 'index-critical.html',
       dest: 'test-final.html'
     }, function (err, output) {
-      assert.strictEqual(output, expected);
+      assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
       done();
     });
 });
@@ -102,7 +117,7 @@ it('inlines critical-path CSS without writing to disk', function (done) {
       base: 'fixture/',
       src: 'index-critical.html'
     }, function (err, output) {
-      assert.strictEqual(output, expected);
+      assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
       done();
     });
 });
@@ -116,7 +131,7 @@ it('inlines and minified critical-path CSS', function (done) {
       src: 'index-critical.html',
       dest: 'test-inlined-minified.html'
     }, function (err, output) {
-      assert.strictEqual(output, expected);
+      assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
       done();
     });
 });
