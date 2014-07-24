@@ -30,7 +30,7 @@ it('generates critical-path CSS successfully', function (done) {
       src: 'index.html',
       dest: 'styles/critical.css',
       width: 320,
-      height: 480
+      height: 70
     }, function (err, output) {
         assert.strictEqual(output, expected);
         done();
@@ -45,7 +45,7 @@ it('generates minified critical-path CSS successfully', function (done) {
       src: 'index.html',
       minify: true,
       width: 320,
-      height: 480
+      height: 70
     }, function (err, output) {
         assert.strictEqual(output, expected);
         done();
@@ -61,7 +61,7 @@ it('generates minified critical-path CSS successfully with external css file con
         css: ['external/styles/main.css','fixture/styles/unused.css'],
         minify: true,
         width: 320,
-        height: 480
+        height: 70
     }, function (err, output) {
         assert.strictEqual(output, expected);
         done();
@@ -75,7 +75,7 @@ it('generates critical-path CSS without writing to disk', function (done) {
       base: 'fixture/',
       src: 'index.html',
       width: 320,
-      height: 480
+      height: 70
     }, function (err, output) {
         assert.strictEqual(output, expected);
         done();
