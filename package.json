@@ -22,6 +22,7 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
+    "bluebird": "^2.2.2",
     "cheerio": "^0.17.0",
     "clean-css": "^2.2.4",
     "imageinliner": "^0.2.2",

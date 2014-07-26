@@ -10,6 +10,16 @@ var penthouse = require('penthouse');
 var CleanCSS = require('clean-css');
 var oust = require('oust');
 var inliner = require('./inline-styles');
+var Promise = require("bluebird");
+var os = require('os');
+
+
+// promisify fs
+Promise.promisifyAll(fs);
+
+var penthouseAsync = Promise.promisify(penthouse);
+
+var TMPCSS = '.tmp.css';
 
 /**
  * Critical path CSS generation
@@ -19,7 +29,8 @@ var inliner = require('./inline-styles');
  */
 exports.generate = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {
+    };
 
     if (!opts.src || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -35,47 +46,71 @@ exports.generate = function (opts, cb) {
 
     var url = path.join(opts.base, opts.src);
 
-    fs.readFile(url, function (err, html) {
-        if (err) {
-            cb(err);
-            return;
+    // read html file to get css files
+    fs.readFileAsync(url).then(function (html) {
+        // consider opts.css and map to array if it's a string
+        if (opts.css) {
+            return (typeof opts.css === 'string') ? [opts.css] : opts.css;
+        } else {
+            // Oust extracts a list of your stylesheets
+            return oust(html.toString('utf8'), 'stylesheets').map(function (href) {
+                return path.join(opts.base, href);
+            });
         }
 
-        // Oust extracts a list of your stylesheets
-        var hrefs = oust(html, 'stylesheets');
-        // Penthouse then determines your critical
-        // path CSS using these as input.
-        penthouse({
+    // combine all css files to one bid stylesheet
+    }).reduce(function (total, fileName) {
+        return fs.readFileAsync(fileName, "utf8").then(function (contents) {
+            return total + os.EOL + contents;
+        });
+
+
+    // write contents to tmp file
+    }, '').then(function (css) {
+        return fs.writeFileAsync(TMPCSS, css);
+
+
+    // let penthouseAsync do the rest
+    }).then(function () {
+        return penthouseAsync({
             url: url,
-            css: path.join(opts.base, hrefs[0]),
+            css: TMPCSS,
             // What viewports do you care about?
             width: opts.width,   // viewport width
             height: opts.height  // viewport height
-        }, function (err, criticalCSS) {
-            if (err) {
-                cb(err);
-                return;
-            }
-
-            if (opts.minify === true) {
-                criticalCSS = new CleanCSS().minify(criticalCSS);
-            }
-
-            if (opts.dest) {
-                // Write critical-path CSS
-                fs.writeFile(path.join(opts.base, opts.dest), criticalCSS, function (err) {
-                    if (err) {
-                        cb(err);
-                        return;
-                    }
-
-                    cb(null, criticalCSS.toString());
-                });
-            } else {
-                cb(null, criticalCSS.toString());
-            }
         });
-    });
+
+    // cleanup tmp css
+    }).then(function (criticalCSS) {
+        return fs.unlinkAsync(TMPCSS).then(function () {
+            return criticalCSS;
+        });
+
+
+    // Penthouse callback
+    }).then(function (criticalCSS) {
+        if (opts.minify === true) {
+            criticalCSS = new CleanCSS().minify(criticalCSS);
+        }
+
+        if (opts.dest) {
+            // Write critical-path CSS
+            return fs.writeFileAsync(path.join(opts.base, opts.dest), criticalCSS).then(function () {
+                return criticalCSS;
+            });
+        } else {
+            return criticalCSS;
+        }
+
+    // return err on error
+    }).catch(function (err) {
+        cb(err);
+
+    // callback success
+    }).then(function (criticalCSS) {
+        cb(null, criticalCSS.toString());
+
+    }).done();
 };
 
 /**
@@ -86,7 +121,8 @@ exports.generate = function (opts, cb) {
  */
 exports.inline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {
+    };
 
     if (!opts.src || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -125,7 +161,8 @@ exports.inline = function (opts, cb) {
  */
 exports.generateInline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {
+    };
 
     if (!opts.styleTarget || !opts.htmlTarget) {
         throw new Error('Valid style and HTML targets are required.');
