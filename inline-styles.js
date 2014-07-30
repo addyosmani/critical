@@ -23,7 +23,7 @@ module.exports = function(html, base, minify) {
       el = dom(el);
       var href = el.attr('href');
       if (el.attr('rel') === 'stylesheet' && isLocal(href)) {
-        var dir = path.dirname(href);
+        var dir = base + path.dirname(href);
         var file = path.join(base, href);
         var style = fs.readFileSync(file);
         var inlined = inliner.css(style.toString(), { cssBasePath: dir });
