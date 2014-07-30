@@ -27,7 +27,7 @@
     "clean-css": "^2.2.4",
     "imageinliner": "^0.2.2",
     "oust": "^0.2.0",
-    "penthouse": "^0.2.1"
+    "penthouse": "^0.2.5"
   },
   "devDependencies": {
     "mocha": "*"
