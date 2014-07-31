@@ -99,7 +99,7 @@ exports.inline = function (opts, cb) {
             return;
         }
 
-        var out = inliner(data, opts.base, opts.minify);
+        var out = inliner(data, opts);
 
         if (opts.dest) {
             // Write HTML with inlined CSS to dest

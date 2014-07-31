@@ -11,8 +11,10 @@ var url = require('url');
 var inliner = require('imageinliner');
 var CleanCSS = require('clean-css');
 
-module.exports = function(html, base, minify) {
-  base = base || process.cwd();
+module.exports = function(html, opts) {
+  var base = opts.base || process.cwd();
+  var minify = opts.minify;
+  var maxImageSize = opts.maxImageFileSize || 10240;
   var dom = cheerio.load(String(html));
   injectStyles(dom);
   return new Buffer(dom.html());
@@ -26,11 +28,14 @@ module.exports = function(html, base, minify) {
         var dir = base + path.dirname(href);
         var file = path.join(base, href);
         var style = fs.readFileSync(file);
-        var inlined = inliner.css(style.toString(), { cssBasePath: dir });
+        var inlined = inliner.css(style.toString(), { maxImageFileSize: maxImageSize, cssBasePath: dir });
         var inlinedStyles = inlined.toString();
         if (minify) {
           inlinedStyles = new CleanCSS().minify(inlinedStyles);
         }
+
+        inlinedStyles = rebaseRelativePaths(base, dir, inlinedStyles);
+
         var inlinedTag = "<style>\n" + inlinedStyles + '\n</style>';
         el.replaceWith(inlinedTag);
       }
@@ -41,4 +46,34 @@ module.exports = function(html, base, minify) {
     return href && !url.parse(href).hostname;
   }
 
+  function rebaseRelativePaths(basePath, cssPath, cssStr){
+    var base,
+        beginsWith,
+        nests,
+        newPath;
+        
+    var paths = cssStr.match(/url\((.+?)\)/g);
+    var pathDiff = cssPath.replace(basePath).split("/").length;
+
+    if(paths){
+      for(var i=0, j=paths.length; i<j; i++){
+        paths[i] = paths[i].match(/url\((.+?)\)/)[1];
+
+        beginsWith = paths[i].split('/')[0].replace(/['"]/, "");
+
+        if(beginsWith === '..'){
+          newPath = paths[i];
+          for(var k=0; k < pathDiff; k++){
+            newPath = newPath.replace("../", "");
+          }
+          cssStr = cssStr.replace(paths[i], newPath);
+        }else{
+          // the relative path is within the cssPath, so append it
+          newPath = cssPath.replace(basePath, "") + "/" + paths[i].replace(/['"]/g, "");
+          cssStr = cssStr.replace(paths[i], newPath);
+        }
+      }
+    }
+     return cssStr;
+  }
 };
