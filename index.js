@@ -10,6 +10,7 @@ var penthouse = require('penthouse');
 var CleanCSS = require('clean-css');
 var oust = require('oust');
 var inliner = require('./inline-styles');
+var sourceInliner = require('inline-critical');
 var Promise = require("bluebird");
 var os = require('os');
 
@@ -161,17 +162,10 @@ exports.inline = function (opts, cb) {
  */
 exports.generateInline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {
-    };
-
-    if (!opts.styleTarget || !opts.htmlTarget) {
-        throw new Error('Valid style and HTML targets are required.');
-    }
+    cb = cb || function () {};
 
     var genOpts = opts;
-    var inlineOpts = opts;
-
-    genOpts.dest = opts.styleTarget;
+    genOpts.dest = opts.styleTarget || '';
 
     exports.generate(genOpts, function (err, output) {
         if (err) {
@@ -179,7 +173,24 @@ exports.generateInline = function (opts, cb) {
             return;
         }
 
-        inlineOpts.dest = opts.htmlTarget;
-        exports.inline(inlineOpts);
+        // Inline generated css
+        fs.readFileAsync(path.join(opts.base, opts.src))
+        .then(function (html) {
+            return sourceInliner(html, output, opts.minify);
+        }).then(function (final) {
+            if (opts.htmlTarget) {
+                return fs.writeFileAsync(path.join(opts.base, opts.htmlTarget), final).then(function () {
+                    return final;
+                });
+            } else {
+                return final;
+            }
+        // error callback
+        }).catch(function (err) {
+            cb(err);
+        // callback success
+        }).then(function (final) {
+            cb(null, final.toString());
+        }).done();
     });
 };
