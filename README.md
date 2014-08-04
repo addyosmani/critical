@@ -33,6 +33,9 @@ critical.generateInline({
     
     // HTML source
     src: 'index.html',
+
+    // Your CSS Files (optional)
+    css: ['dist/styles/main.css'],
     
     // Viewport width
     width: 320,

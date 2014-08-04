@@ -1,6 +1,6 @@
 {
   "name": "critical",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Extract & Inline Critical-path CSS from HTML",
   "author": "Addy Osmani",
   "license": "Apache-2.0",
@@ -22,11 +22,12 @@
     "node": ">=0.10.0"
   },
   "dependencies": {
+    "bluebird": "^2.2.2",
     "cheerio": "^0.17.0",
     "clean-css": "^2.2.4",
     "imageinliner": "^0.2.2",
     "oust": "^0.2.0",
-    "penthouse": "^0.2.1"
+    "penthouse": "^0.2.5"
   },
   "devDependencies": {
     "mocha": "*"
