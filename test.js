@@ -135,3 +135,44 @@ it('inlines and minified critical-path CSS', function (done) {
       done();
     });
 });
+
+
+it('ganerates and inlines critical-path CSS successfully', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
+
+    critical.generateInline({
+        base: 'fixture/',
+        src: 'index.html',
+        htmlTarget: 'test-inlined-async-final.html'
+    }, function (err, output) {
+        var out = fs.readFileSync('fixture/test-inlined-async-final.html', 'utf8');
+        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
+        done();
+    });
+});
+
+it('inlines critical-path CSS without writing to disk', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
+    critical.generateInline({
+        base: 'fixture/',
+        src: 'index.html'
+    }, function (err, output) {
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+        done();
+    });
+});
+
+it('inlines and minified critical-path CSS', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-async-minified-final.html', 'utf8');
+
+    critical.generateInline({
+        base: 'fixture/',
+        minify: true,
+        src: 'index.html',
+        htmlTarget: 'test-inlined-async-minified-final.html'
+    }, function (err, output) {
+        var out = fs.readFileSync('fixture/test-inlined-async-minified-final.html', 'utf8');
+        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
+        done();
+    });
+});
