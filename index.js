@@ -66,7 +66,7 @@ exports.generate = function (opts, cb) {
             // inline images
             var dir = opts.base + path.dirname(fileName).replace(new RegExp('^'+opts.base),'');
 
-            var inlined = imageInliner.css(content.toString(), { maxImageFileSize: 10240, cssBasePath: dir, rootImagePath:  opts.base });
+            var inlined = imageInliner.css(content.toString(), { /* // Waiting for rebaseRelativePaths from #28 maxImageFileSize: 10240, */ cssBasePath: dir, rootImagePath:  opts.base });
             return inlined.toString();
 
         });
