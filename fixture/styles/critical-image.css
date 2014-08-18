@@ -33,6 +33,9 @@ body {
     margin-bottom: 30px;
   }
 }
+.header {
+  background: transparent url('../../images/critical-big.png');
+}
 
 
 
