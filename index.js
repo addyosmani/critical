@@ -11,6 +11,7 @@ var CleanCSS = require('clean-css');
 var oust = require('oust');
 var inliner = require('./inline-styles');
 var sourceInliner = require('inline-critical');
+var imageInliner = require('imageinliner');
 var Promise = require("bluebird");
 var os = require('os');
 
@@ -58,13 +59,21 @@ exports.generate = function (opts, cb) {
                 return path.join(opts.base, href);
             });
         }
+    // read files
+    }).map(function(fileName){
+        return fs.readFileAsync(fileName, "utf8").then(function(content) {
 
-    // combine all css files to one bid stylesheet
-    }).reduce(function (total, fileName) {
-        return fs.readFileAsync(fileName, "utf8").then(function (contents) {
-            return total + os.EOL + contents;
+            // inline images
+            var dir = opts.base + path.dirname(fileName).replace(new RegExp('^'+opts.base),'');
+
+            var inlined = imageInliner.css(content.toString(), { /* // Waiting for rebaseRelativePaths from #28 maxImageFileSize: 10240, */ cssBasePath: dir, rootImagePath:  opts.base });
+            return inlined.toString();
+
         });
 
+    // combine all css files to one bid stylesheet
+    }).reduce(function (total, contents) {
+        return total + os.EOL + contents;
 
     // write contents to tmp file
     }, '').then(function (css) {
