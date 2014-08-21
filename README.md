@@ -132,18 +132,17 @@ critical.inline({
 
 ### Options
 
-| Name          | Type          | Description   |
-| ------------- | ------------- | ------------- |
-| base          | `string`      | Base directory in which the source and destination are to be written |
-| src           | `string`      | Location of the HTML source to be operated against |
-| dest          | `string`      | Location of where to save the output of an operation |
-| css           | `array`       | Use this CSS files instead of the ones exctracted from the HTML |
-| width         | `integer`     | (Generation only) Width of the target viewport |
-| height        | `integer`     | (Generation only) Height of the target viewport |
-| minify        | `boolean`     | Enable minification of CSS output |
-| styleTarget   | `string`      | (`generateInline` only) Destination for critical-path styles |
-| htmlTarget    | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
-
+| Name             | Type          | Description   |
+| ---------------- | ------------- | ------------- |
+| base             | `string`      | Base directory in which the source and destination are to be written |
+| src              | `string`      | Location of the HTML source to be operated against |
+| dest             | `string`      | Location of where to save the output of an operation |
+| width            | `integer`     | (Generation only) Width of the target viewport |
+| height           | `integer`     | (Generation only) Height of the target viewport |
+| minify           | `boolean`     | Enable minification of CSS output |
+| styleTarget      | `string`      | (`generateInline` only) Destination for critical-path styles |
+| htmlTarget       | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
+| maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
 
 ## Why?
 
