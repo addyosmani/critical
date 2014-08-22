@@ -20,7 +20,6 @@ function stripWhitespace(string) {
 }
 
 
-
 it('throws on CSS generation if src and dest not specified', function () {
     assert.throws(function () {
         critical.generate({});
@@ -180,11 +179,9 @@ it('inlines and minified critical-path CSS', function (done) {
 
 it('inlines and critical-path CSS and relative images', function (done) {
     var expected = fs.readFileSync('fixture/styles/critical-image-expected.css', 'utf8');
-
     critical.generate({
         base: 'fixture/',
         src: 'index-image.html',
-        dest: 'styles/critical-image.css',
         width: 320,
         height: 70
     }, function (err, output) {
@@ -203,7 +200,6 @@ it('inlines and critical-path CSS and absolute images', function (done) {
     critical.generate({
         base: 'fixture/',
         src: 'index-image-absolute.html',
-        dest: 'styles/critical-image.css',
         width: 320,
         height: 70
     }, function (err, output) {
@@ -215,22 +211,22 @@ it('inlines and critical-path CSS and absolute images', function (done) {
         done();
     });
 });
-// Waiting for rebaseRelativePaths from #28
-//it('inlines and critical-path CSS and skips to big images', function (done) {
-//    var expected = fs.readFileSync('fixture/styles/critical-image-big-expected.css', 'utf8');
-//
-//    critical.generate({
-//        base: 'fixture/',
-//        src: 'index-image-big.html',
-//        dest: 'styles/critical-image.css',
-//        width: 320,
-//        height: 70
-//    }, function (err, output) {
-//        if (err) {
-//            assert.fail(err);
-//        } else {
-//            assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
-//        }
-//        done();
-//    });
-//});
+
+
+it('inlines and critical-path CSS and skips to big images', function (done) {
+    var expected = fs.readFileSync('fixture/styles/critical-image-big-expected.css', 'utf8');
+
+    critical.generate({
+        base: 'fixture/',
+        src: 'index-image-big.html',
+        width: 320,
+        height: 70
+    }, function (err, output) {
+        if (err) {
+            assert.fail(err);
+        } else {
+            assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+        }
+        done();
+    });
+});
