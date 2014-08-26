@@ -31,8 +31,7 @@ var TMPCSS = '.tmp.css';
  */
 exports.generate = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {
-    };
+    cb = cb || function () {};
 
     if (!opts.src || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -46,7 +45,11 @@ exports.generate = function (opts, cb) {
         opts.width = 480;
     }
 
-    var url = path.join(opts.base, opts.src);
+    // src can either be absolute or relative to opts.base
+    var url = opts.src;
+    if (opts.src !== path.resolve(opts.src)) {
+        url = path.join(opts.base,opts.src);
+    }
 
     // read html file to get css files
     fs.readFileAsync(url).then(function (html) {
@@ -62,13 +65,22 @@ exports.generate = function (opts, cb) {
     // read files
     }).map(function(fileName){
         return fs.readFileAsync(fileName, "utf8").then(function(content) {
+            // get path to css file
+            var dir = path.dirname(fileName);
+            var inlined = imageInliner.css(content.toString(), { maxImageFileSize: 10240, cssBasePath: dir, rootImagePath:  opts.base });
 
-            // inline images
-            var dir = opts.base + path.dirname(fileName).replace(new RegExp('^'+opts.base),'');
+            // normalize relative paths
+            return inlined.toString().replace(/url\(['"]?([^'"\)]+)['"]?\)/g, function (match, filePath) {
+                // do nothing for absolute paths, urls and data-uris
+                if (/^data\:/.test(filePath) || /(?:^\/)|(?:\:\/\/)/.test(filePath)) {
+                    return match;
+                }
+                // create path relative to opts.base
+                var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
 
-            var inlined = imageInliner.css(content.toString(), { /* // Waiting for rebaseRelativePaths from #28 maxImageFileSize: 10240, */ cssBasePath: dir, rootImagePath:  opts.base });
-            return inlined.toString();
-
+                // prepend / to make it absolute
+                return match.replace(filePath, path.join('/', relativeToBase));
+            });
         });
 
     // combine all css files to one bid stylesheet
