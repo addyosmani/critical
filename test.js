@@ -10,6 +10,8 @@ var fs = require('fs');
 var assert = require('assert');
 var critical = require('./index');
 
+process.setMaxListeners(0);
+
 /**
  * Strip whitespaces, tabs and newlines and replace with one space.
  * Usefull when comparing string contents.
@@ -227,6 +229,31 @@ it('inlines and critical-path CSS and skips to big images', function (done) {
         } else {
             assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         }
+        done();
+    });
+});
+
+it('handles parallel calls', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-async-minified-final.html', 'utf8');
+
+    critical.generateInline({
+        base: 'fixture/',
+        minify: true,
+        src: 'index.html',
+        htmlTarget: 'test-inlined-async-minified-final.html'
+    }, function (err, output) {
+        var out = fs.readFileSync('fixture/test-inlined-async-minified-final.html', 'utf8');
+        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
+    });
+
+    critical.generateInline({
+        base: 'fixture/',
+        minify: true,
+        src: 'index.html',
+        htmlTarget: 'test-inlined-async-minified-final.html'
+    }, function (err, output) {
+        var out = fs.readFileSync('fixture/test-inlined-async-minified-final.html', 'utf8');
+        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
         done();
     });
 });
