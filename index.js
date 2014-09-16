@@ -14,6 +14,7 @@ var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
 var Promise = require("bluebird");
 var os = require('os');
+var crypto = require('crypto');
 
 
 // promisify fs
@@ -21,7 +22,7 @@ Promise.promisifyAll(fs);
 
 var penthouseAsync = Promise.promisify(penthouse);
 
-var TMPCSS = '.tmp.css';
+
 
 /**
  * Critical path CSS generation
@@ -30,6 +31,8 @@ var TMPCSS = '.tmp.css';
  * @accepts src, base, width, height, dest
  */
 exports.generate = function (opts, cb) {
+    var seed = crypto.randomBytes(20);
+    var TMPCSS = crypto.createHash('md5').update(seed).digest('hex');
     opts = opts || {};
     cb = cb || function () {};
 
