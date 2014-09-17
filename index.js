@@ -14,14 +14,12 @@ var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
 var Promise = require("bluebird");
 var os = require('os');
-var crypto = require('crypto');
+var uuid = require('uuid');
 
 
-// promisify fs
+// promisify fs and penthouse
 Promise.promisifyAll(fs);
-
 var penthouseAsync = Promise.promisify(penthouse);
-
 
 
 /**
@@ -31,8 +29,7 @@ var penthouseAsync = Promise.promisify(penthouse);
  * @accepts src, base, width, height, dest
  */
 exports.generate = function (opts, cb) {
-    var seed = crypto.randomBytes(20);
-    var TMPCSS = crypto.createHash('md5').update(seed).digest('hex');
+    var TMPCSS = '.' + uuid.v4();
     opts = opts || {};
     cb = cb || function () {};
 

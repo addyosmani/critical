@@ -8,6 +8,7 @@
 'use strict';
 var fs = require('fs');
 var assert = require('assert');
+var async = require('async');
 var critical = require('./index');
 
 process.setMaxListeners(0);
@@ -234,26 +235,26 @@ it('inlines and critical-path CSS and skips to big images', function (done) {
 });
 
 it('handles parallel calls', function (done) {
-    var expected = fs.readFileSync('fixture/index-inlined-async-minified-final.html', 'utf8');
+    var expected1 = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
+    var expected2 = fs.readFileSync('fixture/index-inlined-async-minified-final.html', 'utf8');
 
-    critical.generateInline({
-        base: 'fixture/',
-        minify: true,
-        src: 'index.html',
-        htmlTarget: 'test-inlined-async-minified-final.html'
-    }, function (err, output) {
-        var out = fs.readFileSync('fixture/test-inlined-async-minified-final.html', 'utf8');
-        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
-    });
-
-    critical.generateInline({
-        base: 'fixture/',
-        minify: true,
-        src: 'index.html',
-        htmlTarget: 'test-inlined-async-minified-final.html'
-    }, function (err, output) {
-        var out = fs.readFileSync('fixture/test-inlined-async-minified-final.html', 'utf8');
-        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
+    async.parallel({
+        first: function(cb) {
+            critical.generateInline({
+                base: 'fixture/',
+                src: 'index.html'
+            }, cb);
+        },
+        second: function(cb) {
+            critical.generateInline({
+                base: 'fixture/',
+                minify: true,
+                src: 'index.html'
+            },cb);
+        }
+    }, function(err, results){
+        assert.strictEqual(stripWhitespace(results.first), stripWhitespace(expected1));
+        assert.strictEqual(stripWhitespace(results.second), stripWhitespace(expected2));
         done();
     });
 });
