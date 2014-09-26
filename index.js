@@ -67,10 +67,15 @@ exports.generate = function (opts, cb) {
         return fs.readFileAsync(fileName, "utf8").then(function(content) {
             // get path to css file
             var dir = path.dirname(fileName);
-            var inlined = imageInliner.css(content.toString(), { maxImageFileSize: 10240, cssBasePath: dir, rootImagePath:  opts.base });
+            var maxFileSize = opts.maxImageFileSize || 10240;
+
+            // #40 already inlined background images cause problems with imageinliner
+            if (opts.inlineImages) {
+                content = imageInliner.css(content.toString(), { maxImageFileSize: maxFileSize, cssBasePath: dir, rootImagePath: opts.base });
+            }
 
             // normalize relative paths
-            return inlined.toString().replace(/url\(['"]?([^'"\)]+)['"]?\)/g, function (match, filePath) {
+            return content.toString().replace(/url\(['"]?([^'"\)]+)['"]?\)/g, function (match, filePath) {
                 // do nothing for absolute paths, urls and data-uris
                 if (/^data\:/.test(filePath) || /(?:^\/)|(?:\:\/\/)/.test(filePath)) {
                     return match;

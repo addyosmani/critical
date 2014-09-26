@@ -138,6 +138,22 @@ it('inlines and minified critical-path CSS', function (done) {
     });
 });
 
+it('inlines and minified critical-path CSS and consider "inlineImages" option', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-noimage-minified.html', 'utf8');
+
+    critical.inline({
+        base: 'fixture/',
+        minify: true,
+        src: 'index-critical-image.html',
+        dest: 'test-inlined-noimage-minified.html',
+        inlineImages: false
+    }, function (err, output) {
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+        done();
+    });
+});
+
+
 
 it('ganerates and inlines critical-path CSS successfully', function (done) {
     var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
@@ -186,7 +202,8 @@ it('inlines and critical-path CSS and relative images', function (done) {
         base: 'fixture/',
         src: 'index-image.html',
         width: 320,
-        height: 70
+        height: 70,
+        inlineImages: true
     }, function (err, output) {
         if (err) {
             assert.fail(err);
@@ -204,7 +221,8 @@ it('inlines and critical-path CSS and absolute images', function (done) {
         base: 'fixture/',
         src: 'index-image-absolute.html',
         width: 320,
-        height: 70
+        height: 70,
+        inlineImages: true
     }, function (err, output) {
         if (err) {
             assert.fail(err);
@@ -223,7 +241,26 @@ it('inlines and critical-path CSS and skips to big images', function (done) {
         base: 'fixture/',
         src: 'index-image-big.html',
         width: 320,
-        height: 70
+        height: 70,
+        inlineImages: true
+    }, function (err, output) {
+        if (err) {
+            assert.fail(err);
+        } else {
+            assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+        }
+        done();
+    });
+});
+
+it('considers "inlineImages" option', function (done) {
+    var expected = fs.readFileSync('fixture/styles/critical-skip-images-expected.css', 'utf8');
+    critical.generate({
+        base: 'fixture/',
+        src: 'index-image.html',
+        width: 320,
+        height: 70,
+        inlineImages: false
     }, function (err, output) {
         if (err) {
             assert.fail(err);
