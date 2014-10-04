@@ -10,6 +10,11 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 $ npm install --save critical
 ```
 
+## Build plugins
+
+* [grunt-critical](https://github.com/bezoerb/grunt-critical)
+* Gulp users should use Critical directly
+
 ## Demo projects
 
 * [Optimize a basic page with Gulp](https://github.com/addyosmani/critical-path-css-demo) with a [tutorial](https://github.com/addyosmani/critical-path-css-demo#tutorial)
