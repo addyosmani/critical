@@ -29,7 +29,7 @@
     "inline-critical": "0.0.4",
     "oust": "^0.2.0",
     "penthouse": "^0.2.5",
-    "uuid": "^1.4.1"
+    "uuid": "~2.0.1"
   },
   "devDependencies": {
     "async": "^0.9.0",
