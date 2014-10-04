@@ -142,6 +142,7 @@ critical.inline({
 | minify           | `boolean`     | Enable minification of CSS output |
 | styleTarget      | `string`      | (`generateInline` only) Destination for critical-path styles |
 | htmlTarget       | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
+| inlineImages     | `boolean`     | Inline images (default: false)
 | maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
 
 ## Why?
