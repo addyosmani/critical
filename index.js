@@ -57,8 +57,10 @@ exports.generate = function (opts, cb) {
         if (opts.css) {
             return (typeof opts.css === 'string') ? [opts.css] : opts.css;
         } else {
-            // Oust extracts a list of your stylesheets
-            return oust(html.toString('utf8'), 'stylesheets').map(function (href) {
+            // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
+            return oust(html.toString('utf8'), 'stylesheets').filter(function(href) {
+                return !/(^\/\/)|(:\/\/)/.test(href);
+            }).map(function (href) {
                 return path.join(opts.base, href);
             });
         }
