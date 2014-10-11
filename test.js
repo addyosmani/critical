@@ -173,7 +173,9 @@ it('inlines critical-path CSS without writing to disk', function (done) {
     var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
     critical.generateInline({
         base: 'fixture/',
-        src: 'index.html'
+        src: 'index.html',
+        inlineImages: false,
+        dest: 'test-inlined-inlined-async-final.html'
     }, function (err, output) {
         assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         done();
@@ -292,6 +294,18 @@ it('handles parallel calls', function (done) {
     }, function(err, results){
         assert.strictEqual(stripWhitespace(results.first), stripWhitespace(expected1));
         assert.strictEqual(stripWhitespace(results.second), stripWhitespace(expected2));
+        done();
+    });
+});
+
+it('inlines critical-path CSS ignoring remote stylesheets', function (done) {
+    var expected = fs.readFileSync('fixture/index-external-inlined-async-final.html', 'utf8');
+    critical.generateInline({
+        base: 'fixture/',
+        src: 'index-external.html',
+        inlineImages: false
+    }, function (err, output) {
+        assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
         done();
     });
 });
