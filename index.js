@@ -111,7 +111,7 @@ exports.generate = function (opts, cb) {
 
     // cleanup tmp css
     }).then(function (criticalCSS) {
-        return fs.unlinkAsync(TMPCSS).then(function () {
+        return fs.unlinkAsync(TMPCSS).finally(function () {
             return criticalCSS;
         });
 
