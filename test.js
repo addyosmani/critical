@@ -309,3 +309,17 @@ it('inlines critical-path CSS ignoring remote stylesheets', function (done) {
         done();
     });
 });
+
+it('does not screw up width win32 paths', function (done) {
+    critical.generate({
+        base: 'fixture/',
+        src: 'index-image-path.html',
+        inlineImages: false
+    }, function (err, output) {
+        assert.strictEqual(
+            stripWhitespace(output),
+            stripWhitespace('.header{ background: transparent url(\'/images/critical.png\'); }')
+        );
+        done();
+    });
+});

@@ -6,6 +6,7 @@
 'use strict';
 var fs = require('fs');
 var path = require('path');
+var slash = require('slash');
 var penthouse = require('penthouse');
 var CleanCSS = require('clean-css');
 var oust = require('oust');
@@ -20,6 +21,13 @@ var uuid = require('uuid');
 // promisify fs and penthouse
 Promise.promisifyAll(fs);
 var penthouseAsync = Promise.promisify(penthouse);
+
+/**
+ * Fixup slashes in file paths for windows
+ */
+function normalizePath(str) {
+    return process.platform === 'win32' ? slash(str) : str;
+}
 
 
 /**
@@ -86,7 +94,7 @@ exports.generate = function (opts, cb) {
                 var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
 
                 // prepend / to make it absolute
-                return match.replace(filePath, path.join('/', relativeToBase));
+                return normalizePath(match.replace(filePath, path.join('/', relativeToBase)));
             });
         });
 
