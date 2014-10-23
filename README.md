@@ -148,7 +148,7 @@ critical.inline({
 | width            | `integer`     | (Generation only) Width of the target viewport |
 | height           | `integer`     | (Generation only) Height of the target viewport |
 | minify           | `boolean`     | Enable minification of CSS output |
-| extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's save to use for multiple HTML files referencing the same stylesheet|
+| extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet|
 | styleTarget      | `string`      | (`generateInline` only) Destination for critical-path styles |
 | htmlTarget       | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
 | inlineImages     | `boolean`     | Inline images (default: false)
