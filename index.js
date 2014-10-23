@@ -214,7 +214,11 @@ exports.generateInline = function (opts, cb) {
         // Inline generated css
         fs.readFileAsync(path.join(opts.base, opts.src))
         .then(function (html) {
-            return sourceInliner(html, output, opts.minify);
+            return sourceInliner(html, output, {
+                minify: opts.minify || false,
+                extract: opts.extract || false,
+                basePath: opts.base || process.cwd()
+            });
         }).then(function (final) {
             if (opts.htmlTarget) {
                 return fs.writeFileAsync(path.join(opts.base, opts.htmlTarget), final).then(function () {

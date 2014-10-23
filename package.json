@@ -26,7 +26,7 @@
     "cheerio": "^0.17.0",
     "clean-css": "^2.2.4",
     "imageinliner": "^0.2.2",
-    "inline-critical": "0.0.4",
+    "inline-critical": "0.0.5",
     "oust": "^0.2.0",
     "penthouse": "^0.2.5",
     "slash": "^1.0.0",

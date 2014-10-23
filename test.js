@@ -1,6 +1,6 @@
 /*
   Unit tests for Critical.
-  
+
   Note: At present, our tests will pass on Unix based systems but fail on
   Windows. This is a known issue to do with line-endings which we hope to
   address in the very near future.
@@ -320,6 +320,22 @@ it('does not screw up width win32 paths', function (done) {
             stripWhitespace(output),
             stripWhitespace('.header{ background: transparent url(\'/images/critical.png\'); }')
         );
+        done();
+    });
+});
+
+it('inlines and extracts critical-path CSS', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-async-extracted-final.html', 'utf8');
+
+    critical.generateInline({
+        base: 'fixture/',
+        minify: true,
+        extract: true,
+        src: 'index.html',
+        htmlTarget: 'test-inlined-async-extracted-final.html'
+    }, function (err, output) {
+        var out = fs.readFileSync('fixture/test-inlined-async-extracted-final.html', 'utf8');
+        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
         done();
     });
 });
