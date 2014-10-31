@@ -37,6 +37,9 @@ critical.generateInline({
     base: 'dist/',
 
     // HTML source
+    html: '<html>...</html>',
+    
+    // HTML source file
     src: 'index.html',
 
     // Your CSS Files (optional)
@@ -143,6 +146,7 @@ critical.inline({
 | Name             | Type          | Description   |
 | ---------------- | ------------- | ------------- |
 | base             | `string`      | Base directory in which the source and destination are to be written |
+| html             | `string`      | HTML source to be operated against. This option takes precedence over the `src` option |
 | src              | `string`      | Location of the HTML source to be operated against |
 | dest             | `string`      | Location of where to save the output of an operation |
 | width            | `integer`     | (Generation only) Width of the target viewport |
@@ -153,6 +157,20 @@ critical.inline({
 | htmlTarget       | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
 | inlineImages     | `boolean`     | Inline images (default: false)
 | maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
+
+## CLI
+
+critical works well with standard input.
+
+```shell
+cat test/fixture/index.html | critical --base test/fixture > critical.css
+```
+
+You can also pass in the critical CSS file as an option.
+
+```shell
+critical test/fixture/index.html --base test/fixture > critical.css
+```
 
 ## Why?
 
