@@ -5,28 +5,78 @@
 
 'use strict';
 var fs = require('fs');
+var _ = require('lodash');
+var tmp = require('tmp');
 var path = require('path');
 var slash = require('slash');
 var penthouse = require('penthouse');
 var CleanCSS = require('clean-css');
 var oust = require('oust');
-var inliner = require('./inline-styles');
+var inliner = require('./helper/inline-styles');
 var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
 var Promise = require("bluebird");
 var os = require('os');
-var uuid = require('uuid');
 
 
 // promisify fs and penthouse
 Promise.promisifyAll(fs);
 var penthouseAsync = Promise.promisify(penthouse);
+var tmpfile = Promise.promisify(tmp.file);
+
+tmp.setGracefulCleanup();
+
+/**
+ * get path from result array
+ * @param resultArray
+ * @returns {*}
+ */
+function resolveTmp(resultArray) {
+    return _.first(resultArray);
+}
 
 /**
  * Fixup slashes in file paths for windows
  */
 function normalizePath(str) {
     return process.platform === 'win32' ? slash(str) : str;
+}
+
+/**
+ * Get content based on options
+ * could either be a html string or a local file
+ * @param opts
+ * @returns {{promise: *, tmpfiles: Array}}
+ */
+function getContentPromise(opts) {
+
+    // fetch html source if passed via options
+    return new Promise(function (resolve, reject) {
+        if (opts.html) {
+            resolve(opts.html);
+        } else {
+            reject();
+        }
+
+    }).then(function (html) {
+         return tmpfile({dir: opts.base, postfix: '.html'})
+             .then(resolveTmp)
+             .then(function(path){
+                 opts.url = path;
+                 return fs.writeFileAsync(opts.url, html).then(function () {
+                     return html;
+                 });
+             });
+
+    // otherwise try to fetch local file
+    }).catch(function () {
+        // src can either be absolute or relative to opts.base
+        if (opts.src !== path.resolve(opts.src)) {
+            opts.url = path.join(opts.base, opts.src);
+        }
+
+        return fs.readFileAsync(opts.url);
+    });
 }
 
 
@@ -37,11 +87,11 @@ function normalizePath(str) {
  * @accepts src, base, width, height, dest
  */
 exports.generate = function (opts, cb) {
-    var TMPCSS = '.' + uuid.v4();
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {
+    };
 
-    if (!opts.src || !opts.base) {
+    if (!(opts.src || opts.html) || !opts.base) {
         throw new Error('A valid source and base path are required.');
     }
 
@@ -53,35 +103,34 @@ exports.generate = function (opts, cb) {
         opts.width = 480;
     }
 
-    // src can either be absolute or relative to opts.base
-    var url = opts.src;
-    if (opts.src !== path.resolve(opts.src)) {
-        url = path.join(opts.base,opts.src);
-    }
 
-    // read html file to get css files
-    fs.readFileAsync(url).then(function (html) {
+    // use content to fetch used css files
+    getContentPromise(opts).then(function (html) {
         // consider opts.css and map to array if it's a string
         if (opts.css) {
             return (typeof opts.css === 'string') ? [opts.css] : opts.css;
         } else {
             // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
-            return oust(html.toString('utf8'), 'stylesheets').filter(function(href) {
+            return oust(html.toString('utf8'), 'stylesheets').filter(function (href) {
                 return !/(^\/\/)|(:\/\/)/.test(href);
             }).map(function (href) {
                 return path.join(opts.base, href);
             });
         }
-    // read files
-    }).map(function(fileName){
-        return fs.readFileAsync(fileName, "utf8").then(function(content) {
+        // read files
+    }).map(function (fileName) {
+        return fs.readFileAsync(fileName, "utf8").then(function (content) {
             // get path to css file
             var dir = path.dirname(fileName);
             var maxFileSize = opts.maxImageFileSize || 10240;
 
             // #40 already inlined background images cause problems with imageinliner
             if (opts.inlineImages) {
-                content = imageInliner.css(content.toString(), { maxImageFileSize: maxFileSize, cssBasePath: dir, rootImagePath: opts.base });
+                content = imageInliner.css(content.toString(), {
+                    maxImageFileSize: maxFileSize,
+                    cssBasePath: dir,
+                    rootImagePath: opts.base
+                });
             }
 
             // normalize relative paths
@@ -104,27 +153,23 @@ exports.generate = function (opts, cb) {
 
     // write contents to tmp file
     }, '').then(function (css) {
-        return fs.writeFileAsync(TMPCSS, css);
-
+        return tmpfile({dir: opts.base, postfix: '.css'})
+            .then(resolveTmp)
+            .then(function(path){
+                return fs.writeFileAsync(path,css).then(function(){
+                   return path;
+                });
+            });
 
     // let penthouseAsync do the rest
-    }).then(function () {
+    }).then(function (csspath) {
         return penthouseAsync({
-            url: url,
-            css: TMPCSS,
+            url: opts.url,
+            css: csspath,
             // What viewports do you care about?
             width: opts.width,   // viewport width
             height: opts.height  // viewport height
         });
-
-    // cleanup tmp css
-    }).then(function (criticalCSS) {
-        return fs.unlinkAsync(TMPCSS).then(function () {
-            return criticalCSS;
-        }).error(function(){
-            return criticalCSS;
-        });
-
 
     // Penthouse callback
     }).then(function (criticalCSS) {
@@ -142,13 +187,13 @@ exports.generate = function (opts, cb) {
         }
 
     // return err on error
+    }).then(function (criticalCSS) {
+        cb(null, criticalCSS.toString());
+
     }).catch(function (err) {
         cb(err);
 
     // callback success
-    }).then(function (criticalCSS) {
-        cb(null, criticalCSS.toString());
-
     }).done();
 };
 
@@ -200,7 +245,8 @@ exports.inline = function (opts, cb) {
  */
 exports.generateInline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {
+    };
 
     var genOpts = opts;
     genOpts.dest = opts.styleTarget || '';
@@ -212,8 +258,7 @@ exports.generateInline = function (opts, cb) {
         }
 
         // Inline generated css
-        fs.readFileAsync(path.join(opts.base, opts.src))
-        .then(function (html) {
+        getContentPromise(opts).then(function (html) {
             return sourceInliner(html, output, {
                 minify: opts.minify || false,
                 extract: opts.extract || false,
@@ -227,10 +272,10 @@ exports.generateInline = function (opts, cb) {
             } else {
                 return final;
             }
-        // error callback
+            // error callback
         }).catch(function (err) {
             cb(err);
-        // callback success
+            // callback success
         }).then(function (final) {
             cb(null, final.toString());
         }).done();

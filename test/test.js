@@ -9,9 +9,10 @@
 var fs = require('fs');
 var assert = require('assert');
 var async = require('async');
-var critical = require('./index');
+var critical = require('../src/critical');
 
 process.setMaxListeners(0);
+process.chdir('test');
 
 /**
  * Strip whitespaces, tabs and newlines and replace with one space.
@@ -332,6 +333,22 @@ it('inlines and extracts critical-path CSS', function (done) {
         minify: true,
         extract: true,
         src: 'index.html',
+        htmlTarget: 'test-inlined-async-extracted-final.html'
+    }, function (err, output) {
+        var out = fs.readFileSync('fixture/test-inlined-async-extracted-final.html', 'utf8');
+        assert.strictEqual(stripWhitespace(out), stripWhitespace(expected));
+        done();
+    });
+});
+
+it('inlines and extracts critical-path CSS from html source', function (done) {
+    var expected = fs.readFileSync('fixture/index-inlined-async-extracted-final.html', 'utf8');
+
+    critical.generateInline({
+        base: 'fixture/',
+        minify: true,
+        extract: true,
+        html: fs.readFileSync('fixture/index.html'),
         htmlTarget: 'test-inlined-async-extracted-final.html'
     }, function (err, output) {
         var out = fs.readFileSync('fixture/test-inlined-async-extracted-final.html', 'utf8');
