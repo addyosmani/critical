@@ -9,11 +9,12 @@
     "test": "mocha test/test.js --timeout 50000"
   },
   "files": [
+    "bin/critical",
     "src/critical.js",
     "src/helper/inline-styles.js"
   ],
   "bin": {
-    "critical": "bin/critical"
+    "critical": "./bin/critical"
   },
   "main": "src/critical.js",
   "keywords": [
