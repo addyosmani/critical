@@ -73,6 +73,8 @@ function getContentPromise(opts) {
         // src can either be absolute or relative to opts.base
         if (opts.src !== path.resolve(opts.src)) {
             opts.url = path.join(opts.base, opts.src);
+        } else {
+            opts.url = opts.src;
         }
 
         return fs.readFileAsync(opts.url);
