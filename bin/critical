@@ -7,6 +7,7 @@ var critical = require('../src/critical');
 var stdin = require('get-stdin');
 var path = require('path');
 var os = require('os');
+var _ = require('lodash');
 var ok;
 
 
@@ -38,6 +39,25 @@ var cli = meow({
     }
 });
 
+// cleanup cli flags and assert cammelcase keeps camelcase
+cli.flags = _.reduce(cli.flags,function(res,val,key){
+    if (key.length <= 1) {
+        return res;
+    }
+    switch (key) {
+        case 'htmltarget':
+            res.htmlTarget = val;
+            break;
+        case 'styletarget':
+            res.styleTarget = val;
+            break;
+        default:
+            res[key] = val;
+            break;
+    }
+
+    return res;
+},{});
 
 function run(data) {
     var opts = objectAssign({ base: process.cwd()}, cli.flags);
