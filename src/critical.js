@@ -74,7 +74,7 @@ function getContentPromise(opts) {
         if (opts.src !== path.resolve(opts.src)) {
             opts.url = path.join(opts.base, opts.src);
         } else {
-            opts.url = opts.src;
+            opts.url = path.relative(process.cwd(), opts.src);
         }
 
         return fs.readFileAsync(opts.url);
@@ -166,7 +166,7 @@ exports.generate = function (opts, cb) {
     // let penthouseAsync do the rest
     }).then(function (csspath) {
         return penthouseAsync({
-            url: opts.url,
+            url: normalizePath(opts.url),
             css: csspath,
             // What viewports do you care about?
             width: opts.width,   // viewport width

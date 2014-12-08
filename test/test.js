@@ -389,7 +389,6 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync('fixture/styles/critical.css', 'utf8');
             cp.stdout.on('data', function (data) {
-                fs.writeFileSync('tmp.cli.css', data);
                 assert.strictEqual(stripWhitespace(data), stripWhitespace(expected));
                 done();
             });
