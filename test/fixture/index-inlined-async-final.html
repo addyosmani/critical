@@ -336,11 +336,14 @@ ul{
 }
 
 </style>
+<script>
+    (function(u){function loadCSS(e,t,n){"use strict";function r(){for(var t,i=0;i<d.length;i++)d[i].href&&d[i].href.indexOf(e)>-1&&(t=!0);t?o.media=n||"all":setTimeout(r)}var o=window.document.createElement("link"),i=t||window.document.getElementsByTagName("script")[0],d=window.document.styleSheets;return o.rel="stylesheet",o.href=e,o.media="only x",i.parentNode.insertBefore(o,i),r(),o}for(var i in u){loadCSS(u[i]);}}(['styles/main.css','bower_components/bootstrap/dist/css/bootstrap.css']));
+</script>
 <noscript>
 <link rel="stylesheet" href="styles/main.css">
 <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
 </noscript>
-        
+
         <!-- endbuild -->
 
     </head>
@@ -415,8 +418,5 @@ ul{
         <!-- build:js scripts/main.js -->
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
-<script>
-(function(d,u){for (var i in u) {var l=d.createElement('link');var r=d.getElementsByTagName('script')[0];l.type='text/css';l.rel='stylesheet';l.media='only x';l.href=u[i];r.parentNode.insertBefore(l,r);(function(l){setTimeout( function(){l.media='all';});})(l)}}(document,['styles/main.css','bower_components/bootstrap/dist/css/bootstrap.css']));
-</script>
 </body>
 </html>
