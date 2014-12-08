@@ -34,7 +34,7 @@
     "get-stdin": "^3.0.0",
     "imageinliner": "^0.2.2",
     "indent-string": "^1.2.0",
-    "inline-critical": "0.0.8",
+    "inline-critical": "^0.0.9",
     "lodash": "^2.4.1",
     "meow": "^2.0.0",
     "object-assign": "^1.0.0",
