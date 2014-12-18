@@ -40,6 +40,7 @@
     "object-assign": "^1.0.0",
     "oust": "^0.2.0",
     "penthouse": "^0.2.5",
+    "request": "^2.51.0",
     "slash": "^1.0.0",
     "tmp": "0.0.24"
   },
