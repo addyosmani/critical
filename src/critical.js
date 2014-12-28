@@ -17,6 +17,7 @@ var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
 var Promise = require("bluebird");
 var os = require('os');
+var request = require('request');
 
 
 // promisify fs and penthouse
@@ -40,6 +41,21 @@ function resolveTmp(resultArray) {
  */
 function normalizePath(str) {
     return process.platform === 'win32' ? slash(str) : str;
+}
+
+
+function isExternal(href) {
+    return /(^\/\/)|(:\/\/)/.test(href);
+}
+
+function getHttpResource(url) {
+    return new Promise(function (resolve, reject) {
+        request(url, function (err, resp, body) {
+            if (err) return reject(err);
+            if (resp.statusCode !== 200) return reject('Wrong status code ' + resp.statusCode + ' for ' + url);
+            resolve(body);
+        });
+    });
 }
 
 /**
@@ -70,6 +86,11 @@ function getContentPromise(opts) {
 
     // otherwise try to fetch local file
     }).catch(function () {
+        if (opts.remoteUrl) {
+            opts.url = opts.remoteUrl;
+            return getHttpResource(opts.url);
+        }
+
         // src can either be absolute or relative to opts.base
         if (opts.src !== path.resolve(opts.src)) {
             opts.url = path.join(opts.base, opts.src);
@@ -93,7 +114,7 @@ exports.generate = function (opts, cb) {
     cb = cb || function () {
     };
 
-    if (!(opts.src || opts.html) || !opts.base) {
+    if (!(opts.src || opts.html || opts.remoteUrl) || !opts.base) {
         throw new Error('A valid source and base path are required.');
     }
 
@@ -105,6 +126,7 @@ exports.generate = function (opts, cb) {
         opts.width = 480;
     }
 
+    opts.externalDomains = opts.externalDomains || [];
 
     // use content to fetch used css files
     getContentPromise(opts).then(function (html) {
@@ -114,14 +136,33 @@ exports.generate = function (opts, cb) {
         } else {
             // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
             return oust(html.toString('utf8'), 'stylesheets').filter(function (href) {
-                return !/(^\/\/)|(:\/\/)/.test(href);
+                if (!isExternal(href)) {
+                    return true;
+                }
+
+                var found = false;
+                opts.externalDomains.forEach(function (domain) {
+                    if (href.indexOf(domain) === 0) found = true;
+                });
+                return found;
             }).map(function (href) {
-                return path.join(opts.base, href);
+                if (!isExternal(href)) {
+                    return path.join(opts.base, href);
+                } else {
+                    return href;
+                }
             });
         }
         // read files
     }).map(function (fileName) {
-        return fs.readFileAsync(fileName, "utf8").then(function (content) {
+        var promise;
+        if (isExternal(fileName)) {
+            promise = getHttpResource(fileName);
+        } else {
+            promise = fs.readFileAsync(fileName, "utf8");
+        }
+
+        return promise.then(function (content) {
             // get path to css file
             var dir = path.dirname(fileName);
             var maxFileSize = opts.maxImageFileSize || 10240;
