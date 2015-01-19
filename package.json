@@ -16,6 +16,7 @@
   "bin": {
     "critical": "./bin/critical"
   },
+  "preferGlobal": true,
   "main": "src/critical.js",
   "keywords": [
     "critical",
