@@ -200,6 +200,19 @@ $ critical test/fixture/index.html --base test/fixture > critical.css
 ```
 
 
+## Gulp
+
+```js
+var critical = require('critical').stream;
+
+// Generate & Inline Critical-path CSS
+gulp.task('critical', function () {
+    return gulp.src('dist/*.html')
+        .pipe(critical({base: 'dist/',css: ['dist/styles/components.css','dist/styles/main.css']}))
+        .pipe(gulp.dest('dist'));
+});
+```
+
 ## Why?
 
 ### Why is critical-path CSS important?
