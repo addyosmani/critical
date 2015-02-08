@@ -40,7 +40,7 @@
     "meow": "^2.0.0",
     "object-assign": "^2.0.0",
     "oust": "^0.2.0",
-    "penthouse": "0.2.53",
+    "penthouse": "0.3.0",
     "slash": "^1.0.0",
     "tempfile": "^1.1.0",
     "tmp": "0.0.24"

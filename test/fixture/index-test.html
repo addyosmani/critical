@@ -64,30 +64,6 @@ body {
 a {
   background: transparent;
 }
-@media print {
-  * {
-    color: #000 !important;
-    text-shadow: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-  }
-  a{
-    text-decoration: underline;
-  }
-  a[href]:after {
-    content: " (" attr(href) ")";
-  }
-  a[href^="#"]:after {
-    content: "";
-  }
-  h3 {
-    orphans: 3;
-    widows: 3;
-  }
-  h3 {
-    page-break-after: avoid;
-  }
-}
 * {
   -webkit-box-sizing: border-box;
      -moz-box-sizing: border-box;
