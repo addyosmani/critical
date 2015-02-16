@@ -1,25 +1,29 @@
 # critical [![Build Status](https://travis-ci.org/addyosmani/critical.svg?branch=master)](https://travis-ci.org/addyosmani/critical)
 
+> Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
+
 ![](http://i.imgur.com/lAzmBD2.png)
 
-Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ## Install
 
-```sh
+```
 $ npm install --save critical
 ```
 
+
 ## Build plugins
 
-* [grunt-critical](https://github.com/bezoerb/grunt-critical)
-* Gulp users should use Critical directly
+- [grunt-critical](https://github.com/bezoerb/grunt-critical)
+- Gulp users should use Critical directly
+
 
 ## Demo projects
 
-* [Optimize a basic page with Gulp](https://github.com/addyosmani/critical-path-css-demo) with a [tutorial](https://github.com/addyosmani/critical-path-css-demo#tutorial)
-* [Optimize an Angular boilerplate with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
-* [Optimize a Weather app with Gulp](https://github.com/addyosmani/critical-css-weather-app)
+- [Optimize a basic page with Gulp](https://github.com/addyosmani/critical-path-css-demo) with a [tutorial](https://github.com/addyosmani/critical-path-css-demo#tutorial)
+- [Optimize an Angular boilerplate with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
+- [Optimize a Weather app with Gulp](https://github.com/addyosmani/critical-css-weather-app)
+
 
 ## Usage
 
@@ -38,7 +42,7 @@ critical.generateInline({
 
     // HTML source
     html: '<html>...</html>',
-    
+
     // HTML source file
     src: 'index.html',
 
@@ -141,6 +145,7 @@ critical.inline({
 });
 ```
 
+
 ### Options
 
 | Name             | Type          | Description   |
@@ -158,19 +163,21 @@ critical.inline({
 | inlineImages     | `boolean`     | Inline images (default: false)
 | maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
 
+
 ## CLI
 
 critical works well with standard input.
 
-```shell
-cat test/fixture/index.html | critical --base test/fixture > critical.css
+```
+$ cat test/fixture/index.html | critical --base test/fixture > critical.css
 ```
 
 You can also pass in the critical CSS file as an option.
 
-```shell
-critical test/fixture/index.html --base test/fixture > critical.css
 ```
+$ critical test/fixture/index.html --base test/fixture > critical.css
+```
+
 
 ## Why?
 
@@ -226,8 +233,14 @@ to improve. The same could be said of Critical. It hasn't been extensively teste
 very possible something may well break. That said, we welcome you to try it out on your project and report
 bugs if you find them.
 
+
 ## Can I contribute?
 
 Of course. We appreciate all of our [contributors](https://github.com/addyosmani/critical/graphs/contributors) and
 welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
 free to open up an issue and we can discuss it.
+
+
+## License
+
+Apache-2.0 © Addy Osmani
