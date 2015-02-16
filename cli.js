@@ -7,11 +7,10 @@ var objectAssign = require('object-assign');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
-var critical = require('../src/critical');
+var critical = require('./');
 var ok;
 
 var cli = meow({
-    pkg: '../package.json',
     help: [
         'Usage: critical <input> [<option>]',
         '',

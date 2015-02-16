@@ -12,7 +12,7 @@ var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
 var Promise = require('bluebird');
 var tempfile = require('tempfile');
-var inliner = require('./helper/inline-styles');
+var inliner = require('./lib/inline-styles');
 
 
 // promisify fs and penthouse

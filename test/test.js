@@ -10,7 +10,7 @@ var assert = require('assert');
 var execFile = require('child_process').execFile;
 var async = require('async');
 var mockery = require('mockery');
-var critical = require('../src/critical');
+var critical = require('../');
 var pkg = require('../package.json');
 
 process.setMaxListeners(0);
@@ -215,6 +215,7 @@ describe('Module', function () {
             } else {
                 assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
             }
+
             done();
         });
     });
@@ -234,6 +235,7 @@ describe('Module', function () {
             } else {
                 assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
             }
+
             done();
         });
     });
@@ -360,7 +362,6 @@ describe('Module', function () {
     });
 });
 
-// binary
 describe('CLI', function () {
     describe('acceptance', function () {
         it('should return the version', function (done) {
@@ -401,7 +402,7 @@ describe('CLI', function () {
                 useCleanCache: true
             });
 
-            mockery.registerMock('../src/critical', {
+            mockery.registerMock('../', {
                 generate: function (opts) {
                     this.mockOpts = opts;
                     this.method = 'generate';
@@ -434,15 +435,15 @@ describe('CLI', function () {
                 '-e', 'extract'
             ];
 
-            require('../bin/critical');
+            require('../cli');
 
-            assert.strictEqual(this.mockOpts.width,300);
-            assert.strictEqual(this.mockOpts.height,400);
-            assert.strictEqual(this.mockOpts.css,'css');
-            assert.strictEqual(this.mockOpts.htmlTarget,'htmlTarget');
-            assert.strictEqual(this.mockOpts.styleTarget,'styleTarget');
-            assert.strictEqual(this.mockOpts.minify,'minify');
-            assert.strictEqual(this.mockOpts.extract,'extract');
+            assert.strictEqual(this.mockOpts.width, 300);
+            assert.strictEqual(this.mockOpts.height, 400);
+            assert.strictEqual(this.mockOpts.css, 'css');
+            assert.strictEqual(this.mockOpts.htmlTarget, 'htmlTarget');
+            assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
+            assert.strictEqual(this.mockOpts.minify, 'minify');
+            assert.strictEqual(this.mockOpts.extract, 'extract');
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -459,15 +460,15 @@ describe('CLI', function () {
                 '--extract', 'extract'
             ];
 
-            require('../bin/critical');
+            require('../cli');
 
-            assert.strictEqual(this.mockOpts.width,300);
-            assert.strictEqual(this.mockOpts.height,400);
-            assert.strictEqual(this.mockOpts.css,'css');
-            assert.strictEqual(this.mockOpts.htmlTarget,'htmlTarget');
-            assert.strictEqual(this.mockOpts.styleTarget,'styleTarget');
-            assert.strictEqual(this.mockOpts.minify,'minify');
-            assert.strictEqual(this.mockOpts.extract,'extract');
+            assert.strictEqual(this.mockOpts.width, 300);
+            assert.strictEqual(this.mockOpts.height, 400);
+            assert.strictEqual(this.mockOpts.css, 'css');
+            assert.strictEqual(this.mockOpts.htmlTarget, 'htmlTarget');
+            assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
+            assert.strictEqual(this.mockOpts.minify, 'minify');
+            assert.strictEqual(this.mockOpts.extract, 'extract');
         });
 
         it('should use "generateInline" when passing htmltarget', function () {
@@ -478,9 +479,9 @@ describe('CLI', function () {
                 '--htmlTarget', 'htmlTarget'
             ];
 
-            require('../bin/critical');
+            require('../cli');
 
-            assert.strictEqual(this.method,'generateInline');
+            assert.strictEqual(this.method, 'generateInline');
         });
 
         it('should use "generate" when not passing htmltarget', function () {
@@ -490,9 +491,9 @@ describe('CLI', function () {
                 'fixture/index.html'
             ];
 
-            require('../bin/critical');
+            require('../cli');
 
-            assert.strictEqual(this.method,'generate');
+            assert.strictEqual(this.method, 'generate');
         });
 
         it('should rewrite "styleTarget" to "dest" when using "generate"', function () {
@@ -503,10 +504,10 @@ describe('CLI', function () {
                 '--styleTarget', 'styleTarget'
             ];
 
-            require('../bin/critical');
+            require('../cli');
 
-            assert.strictEqual(this.method,'generate');
-            assert.strictEqual(this.mockOpts.dest,'styleTarget');
+            assert.strictEqual(this.method, 'generate');
+            assert.strictEqual(this.mockOpts.dest, 'styleTarget');
         });
     });
 });

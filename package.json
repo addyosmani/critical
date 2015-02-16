@@ -9,15 +9,14 @@
     "test": "mocha test/test.js --timeout 100000"
   },
   "files": [
-    "bin/critical",
-    "src/critical.js",
-    "src/helper/inline-styles.js"
+    "cli.js",
+    "index.js",
+    "lib"
   ],
   "bin": {
-    "critical": "./bin/critical"
+    "critical": "cli.js"
   },
   "preferGlobal": true,
-  "main": "src/critical.js",
   "keywords": [
     "critical",
     "path",
