@@ -1,23 +1,18 @@
-/*
- * critical
- * http://github.com/addyosmani/critical
- */
-
 'use strict';
 var fs = require('fs');
+var os = require('os');
+var path = require('path');
 var _ = require('lodash');
 var tmp = require('tmp');
-var path = require('path');
 var slash = require('slash');
 var penthouse = require('penthouse');
 var CleanCSS = require('clean-css');
 var oust = require('oust');
-var inliner = require('./helper/inline-styles');
 var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
-var Promise = require("bluebird");
-var os = require('os');
+var Promise = require('bluebird');
 var tempfile = require('tempfile');
+var inliner = require('./helper/inline-styles');
 
 
 // promisify fs and penthouse
@@ -58,17 +53,15 @@ function getContentPromise(opts) {
         } else {
             reject();
         }
-
     }).then(function (html) {
          return tmpfile({dir: opts.base, postfix: '.html'})
              .then(resolveTmp)
-             .then(function(path){
+             .then(function (path) {
                  opts.url = path;
                  return fs.writeFileAsync(opts.url, html).then(function () {
                      return html;
                  });
              });
-
     // otherwise try to fetch local file
     }).catch(function () {
         // src can either be absolute or relative to opts.base
@@ -91,8 +84,7 @@ function getContentPromise(opts) {
  */
 exports.generate = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {
-    };
+    cb = cb || function () {};
 
     if (!(opts.src || opts.html) || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -106,23 +98,22 @@ exports.generate = function (opts, cb) {
         opts.width = 480;
     }
 
-
     // use content to fetch used css files
     getContentPromise(opts).then(function (html) {
         // consider opts.css and map to array if it's a string
         if (opts.css) {
-            return (typeof opts.css === 'string') ? [opts.css] : opts.css;
-        } else {
-            // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
-            return oust(html.toString('utf8'), 'stylesheets').filter(function (href) {
-                return !/(^\/\/)|(:\/\/)/.test(href);
-            }).map(function (href) {
-                return path.join(opts.base, href);
-            });
+            return typeof opts.css === 'string' ? [opts.css] : opts.css;
         }
+
+        // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
+        return oust(html.toString(), 'stylesheets').filter(function (href) {
+            return !/(^\/\/)|(:\/\/)/.test(href);
+        }).map(function (href) {
+            return path.join(opts.base, href);
+        });
         // read files
     }).map(function (fileName) {
-        return fs.readFileAsync(fileName, "utf8").then(function (content) {
+        return fs.readFileAsync(fileName, 'utf8').then(function (content) {
             // get path to css file
             var dir = path.dirname(fileName);
             var maxFileSize = opts.maxImageFileSize || 10240;
@@ -142,6 +133,7 @@ exports.generate = function (opts, cb) {
                 if (/^data\:/.test(filePath) || /(?:^\/)|(?:\:\/\/)/.test(filePath)) {
                     return match;
                 }
+
                 // create path relative to opts.base
                 var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
 
@@ -157,7 +149,7 @@ exports.generate = function (opts, cb) {
     // write contents to tmp file
     }, '').then(function (css) {
         var csspath = tempfile('.css');
-        return fs.writeFileAsync(csspath,css).then(function(){
+        return fs.writeFileAsync(csspath,css).then(function () {
             return csspath;
         });
 
@@ -189,10 +181,8 @@ exports.generate = function (opts, cb) {
     // return err on error
     }).then(function (criticalCSS) {
         cb(null, criticalCSS.toString());
-
     }).catch(function (err) {
         cb(err);
-
     // callback success
     }).done();
 };
@@ -205,8 +195,7 @@ exports.generate = function (opts, cb) {
  */
 exports.inline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {
-    };
+    cb = cb || function () {};
 
     if (!opts.src || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -245,8 +234,7 @@ exports.inline = function (opts, cb) {
  */
 exports.generateInline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {
-    };
+    cb = cb || function () {};
 
     var genOpts = opts;
     genOpts.dest = opts.styleTarget || '';

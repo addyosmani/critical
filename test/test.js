@@ -1,19 +1,17 @@
 /*
- Unit tests for Critical.
-
  Note: At present, our tests will pass on Unix based systems but fail on
  Windows. This is a known issue to do with line-endings which we hope to
  address in the very near future.
- */
+*/
 'use strict';
+var path = require('path');
 var fs = require('fs');
 var assert = require('assert');
-var async = require('async');
-var critical = require('../src/critical');
-var path = require('path');
 var execFile = require('child_process').execFile;
-var pkg = require('../package.json');
+var async = require('async');
 var mockery = require('mockery');
+var critical = require('../src/critical');
+var pkg = require('../package.json');
 
 process.setMaxListeners(0);
 process.chdir('test');
@@ -27,9 +25,8 @@ function stripWhitespace(string) {
     return string.replace(/[\r\n]+/mg, ' ').replace(/\s+/gm, '');
 }
 
-/* globals describe,it, beforeEach, afterEach */
+/*globals describe, it, beforeEach, afterEach */
 describe('Module', function () {
-
     it('throws on CSS generation if src and dest not specified', function () {
         assert.throws(function () {
             critical.generate({});
@@ -160,7 +157,6 @@ describe('Module', function () {
         });
     });
 
-
     it('ganerates and inlines critical-path CSS successfully', function (done) {
         var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
 
@@ -177,6 +173,7 @@ describe('Module', function () {
 
     it('inlines critical-path CSS without writing to disk', function (done) {
         var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
+
         critical.generateInline({
             base: 'fixture/',
             src: 'index.html',
@@ -203,9 +200,9 @@ describe('Module', function () {
         });
     });
 
-
     it('inlines and critical-path CSS and relative images', function (done) {
         var expected = fs.readFileSync('fixture/styles/critical-image-expected.css', 'utf8');
+
         critical.generate({
             base: 'fixture/',
             src: 'index-image.html',
@@ -241,7 +238,6 @@ describe('Module', function () {
         });
     });
 
-
     it('inlines and critical-path CSS and skips to big images', function (done) {
         var expected = fs.readFileSync('fixture/styles/critical-image-big-expected.css', 'utf8');
 
@@ -263,6 +259,7 @@ describe('Module', function () {
 
     it('considers "inlineImages" option', function (done) {
         var expected = fs.readFileSync('fixture/styles/critical-skip-images-expected.css', 'utf8');
+
         critical.generate({
             base: 'fixture/',
             src: 'index-image.html',
@@ -365,7 +362,6 @@ describe('Module', function () {
 
 // binary
 describe('CLI', function () {
-
     describe('acceptance', function () {
         it('should return the version', function (done) {
             var cp = execFile('node', [path.join(__dirname, '../', pkg.bin.critical), '--version', '--no-update-notifier']);
@@ -394,6 +390,7 @@ describe('CLI', function () {
             });
         });
     });
+
     describe('mocked', function () {
         beforeEach(function () {
             this.origArgv = process.argv;
