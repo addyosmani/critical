@@ -54,7 +54,7 @@ describe('Module', function () {
         });
     });
 
-    it('generates multi-dimension critical-path CSS successfully', function (done) {
+    it.skip('generates multi-dimension critical-path CSS successfully', function (done) {
         var expected = fs.readFileSync('fixture/test-adaptive-final.css', 'utf8');
         critical.generate({
             base: 'fixture/',
@@ -393,7 +393,6 @@ describe('CLI', function () {
             });
         });
 
-
         it('should work well with the critical CSS file passed as an option', function (done) {
             var cp = execFile('node', [
                 path.join(__dirname, '../', pkg.bin.critical),
@@ -421,7 +420,7 @@ describe('CLI', function () {
                 useCleanCache: true
             });
 
-            mockery.registerMock('../', {
+            mockery.registerMock('./', {
                 generate: function (opts) {
                     this.mockOpts = opts;
                     this.method = 'generate';
