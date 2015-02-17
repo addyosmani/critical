@@ -54,6 +54,25 @@ describe('Module', function () {
         });
     });
 
+    it('generates multi-dimension critical-path CSS successfully', function (done) {
+        var expected = fs.readFileSync('fixture/test-adaptive-final.css', 'utf8');
+        critical.generate({
+            base: 'fixture/',
+            src: 'test-adaptive.html',
+            dimensions: [{
+                width: 100,
+                height: 70
+            }, {
+                width: 1000,
+                height: 70
+            }]
+        }, function (err, output) {
+            assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+            done();
+        });
+    });
+
+
     it('generates minified critical-path CSS successfully', function (done) {
         var expected = fs.readFileSync('fixture/styles/critical-min.css', 'utf8');
 

@@ -110,6 +110,26 @@ critical.generate({
 });
 ```
 
+### Generate critical-path CSS with multiple resolutions
+
+When your site is adaptive and you want to deliver critical CSS for multiple screen resolutions this is a useful option.
+*note:* (your final output will be minified as to eliminate duplicate rule inclusion)
+
+```js
+critical.generate({
+    base: 'test/',
+    src: 'index.html',
+    dest: 'styles/main.css',
+    dimensions: [{
+        height: 200,
+        width: 500
+    }, {
+        height: 900,
+        width: 1200
+    }]
+});
+```
+
 ### Inline `<style>` / critical CSS from generation
 
 Basic usage:
@@ -156,6 +176,7 @@ critical.inline({
 | dest             | `string`      | Location of where to save the output of an operation |
 | width            | `integer`     | (Generation only) Width of the target viewport |
 | height           | `integer`     | (Generation only) Height of the target viewport |
+| dimensions       | `array`       | (Generation only) an array of objects containing height and width.
 | minify           | `boolean`     | Enable minification of CSS output |
 | extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet|
 | styleTarget      | `string`      | (`generateInline` only) Destination for critical-path styles |

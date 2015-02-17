@@ -23,6 +23,22 @@ var tmpfile = Promise.promisify(tmp.file);
 tmp.setGracefulCleanup();
 
 /**
+ * returns a string of combined and deduped css rules.
+ * @param cssArray
+ * @returns {String}
+ */
+function combineCss(cssArray) {
+   if (cssArray.length == 1) {
+      return cssArray[0].toString();
+   }
+
+   return new CleanCSS({mediaMerging: true}).minify(
+      _.invoke(cssArray, 'toString')
+      .join(' ')
+   );
+}
+
+/**
  * get path from result array
  * @param resultArray
  * @returns {*}
@@ -80,7 +96,7 @@ function getContentPromise(opts) {
  * Critical path CSS generation
  * @param  {object} opts Options
  * @param  {function} cb Callback
- * @accepts src, base, width, height, dest
+ * @accepts src, base, width, height, dimensions, dest
  */
 exports.generate = function (opts, cb) {
     opts = opts || {};
@@ -90,101 +106,100 @@ exports.generate = function (opts, cb) {
         throw new Error('A valid source and base path are required.');
     }
 
-    if (!opts.height) {
-        opts.height = 320;
+    if (!opts.dimensions) {
+        opts.dimensions = [{
+            height: opts.height || 320,
+            width: opts.width || 480
+        }]
     }
 
-    if (!opts.width) {
-        opts.width = 480;
-    }
-
-    // use content to fetch used css files
-    getContentPromise(opts).then(function (html) {
-        // consider opts.css and map to array if it's a string
-        if (opts.css) {
-            return typeof opts.css === 'string' ? [opts.css] : opts.css;
-        }
-
-        // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
-        return oust(html.toString(), 'stylesheets').filter(function (href) {
-            return !/(^\/\/)|(:\/\/)/.test(href);
-        }).map(function (href) {
-            return path.join(opts.base, href);
-        });
-        // read files
-    }).map(function (fileName) {
-        return fs.readFileAsync(fileName, 'utf8').then(function (content) {
-            // get path to css file
-            var dir = path.dirname(fileName);
-            var maxFileSize = opts.maxImageFileSize || 10240;
-
-            // #40 already inlined background images cause problems with imageinliner
-            if (opts.inlineImages) {
-                content = imageInliner.css(content.toString(), {
-                    maxImageFileSize: maxFileSize,
-                    cssBasePath: dir,
-                    rootImagePath: opts.base
-                });
+    Promise.map(opts.dimensions, function(dimensions) {
+        // use content to fetch used css files
+        return getContentPromise(opts).then(function (html) {
+            // consider opts.css and map to array if it's a string
+            if (opts.css) {
+                return typeof opts.css === 'string' ? [opts.css] : opts.css;
             }
 
-            // normalize relative paths
-            return content.toString().replace(/url\(['"]?([^'"\)]+)['"]?\)/g, function (match, filePath) {
-                // do nothing for absolute paths, urls and data-uris
-                if (/^data\:/.test(filePath) || /(?:^\/)|(?:\:\/\/)/.test(filePath)) {
-                    return match;
+            // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
+            return oust(html.toString(), 'stylesheets').filter(function (href) {
+                return !/(^\/\/)|(:\/\/)/.test(href);
+            }).map(function (href) {
+                return path.join(opts.base, href);
+            });
+            // read files
+        }).map(function (fileName) {
+            return fs.readFileAsync(fileName, 'utf8').then(function (content) {
+                // get path to css file
+                var dir = path.dirname(fileName);
+                var maxFileSize = opts.maxImageFileSize || 10240;
+
+                // #40 already inlined background images cause problems with imageinliner
+                if (opts.inlineImages) {
+                    content = imageInliner.css(content.toString(), {
+                        maxImageFileSize: maxFileSize,
+                        cssBasePath: dir,
+                        rootImagePath: opts.base
+                    });
                 }
+                // normalize relative paths
+                return content.toString().replace(/url\(['"]?([^'"\)]+)['"]?\)/g, function (match, filePath) {
+                    // do nothing for absolute paths, urls and data-uris
+                    if (/^data\:/.test(filePath) || /(?:^\/)|(?:\:\/\/)/.test(filePath)) {
+                        return match;
+                    }
 
-                // create path relative to opts.base
-                var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
+                    // create path relative to opts.base
+                    var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
 
-                // prepend / to make it absolute
-                return normalizePath(match.replace(filePath, path.join('/', relativeToBase)));
+                    // prepend / to make it absolute
+                    return normalizePath(match.replace(filePath, path.join('/', relativeToBase)));
+                });
             });
-        });
 
-    // combine all css files to one bid stylesheet
-    }).reduce(function (total, contents) {
-        return total + os.EOL + contents;
+        // combine all css files to one bid stylesheet
+        }).reduce(function (total, contents) {
+            return total + os.EOL + contents;
 
-    // write contents to tmp file
-    }, '').then(function (css) {
-        var csspath = tempfile('.css');
-        return fs.writeFileAsync(csspath,css).then(function () {
-            return csspath;
-        });
-
-    // let penthouseAsync do the rest
-    }).then(function (csspath) {
-        return penthouseAsync({
-            url: normalizePath(opts.url),
-            css: csspath,
-            // What viewports do you care about?
-            width: opts.width,   // viewport width
-            height: opts.height  // viewport height
-        });
-
-    // Penthouse callback
-    }).then(function (criticalCSS) {
-        if (opts.minify === true) {
-            criticalCSS = new CleanCSS().minify(criticalCSS);
-        }
-
-        if (opts.dest) {
-            // Write critical-path CSS
-            return fs.writeFileAsync(path.join(opts.base, opts.dest), criticalCSS).then(function () {
-                return criticalCSS;
+        // write contents to tmp file
+        }, '').then(function (css) {
+            var csspath = tempfile('.css');
+            return fs.writeFileAsync(csspath,css).then(function () {
+                return csspath;
             });
-        } else {
+        // let penthouseAsync do the rest
+        }).then(function (csspath) {
+            return penthouseAsync({
+                url: normalizePath(opts.url),
+                css: csspath,
+                // What viewports do you care about?
+                width: dimensions.width,   // viewport width
+                height: dimensions.height  // viewport height
+            });
+        })
+    })
+    .then(function (criticalCSS) {
+      criticalCSS = combineCss(criticalCSS);
+
+      if (opts.minify === true) {
+         criticalCSS = new CleanCSS().minify(criticalCSS);
+      }
+
+      if (opts.dest) {
+         // Write critical-path CSS
+         return fs.writeFileAsync(path.join(opts.base, opts.dest), criticalCSS).then(function () {
             return criticalCSS;
-        }
-
-    // return err on error
-    }).then(function (criticalCSS) {
-        cb(null, criticalCSS.toString());
-    }).catch(function (err) {
-        cb(err);
-    // callback success
-    }).done();
+         });
+      } else {
+         return criticalCSS;
+      }
+    })
+   .then(function(finalCss) {
+      cb(null, finalCss);
+   })
+   .catch(function (err) {
+      cb(err);
+   }).done();
 };
 
 /**
