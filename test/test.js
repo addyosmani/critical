@@ -54,11 +54,11 @@ describe('Module', function () {
         });
     });
 
-    it.skip('generates multi-dimension critical-path CSS successfully', function (done) {
-        var expected = fs.readFileSync('fixture/test-adaptive-final.css', 'utf8');
+    it('generates multi-dimension critical-path CSS successfully', function (done) {
+        var expected = fs.readFileSync('fixture/adaptive-final.css', 'utf8');
         critical.generate({
             base: 'fixture/',
-            src: 'test-adaptive.html',
+            src: 'adaptive.html',
             dimensions: [{
                 width: 100,
                 height: 70
