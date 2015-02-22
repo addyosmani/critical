@@ -176,7 +176,7 @@ describe('Module', function () {
         });
     });
 
-    it('ganerates and inlines critical-path CSS successfully', function (done) {
+    it('generates and inlines critical-path CSS successfully', function (done) {
         var expected = fs.readFileSync('fixture/index-inlined-async-final.html', 'utf8');
 
         critical.generateInline({
