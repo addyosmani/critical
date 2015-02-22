@@ -46,8 +46,8 @@ describe('Module', function () {
             base: 'fixture/',
             src: 'index.html',
             dest: 'styles/critical.css',
-            width: 320,
-            height: 70
+            width: 1300,
+            height: 900
         }, function (err, output) {
             assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
             done();
@@ -80,8 +80,8 @@ describe('Module', function () {
             base: 'fixture/',
             src: 'index.html',
             minify: true,
-            width: 320,
-            height: 70
+            width: 1300,
+            height: 900
         }, function (err, output) {
             assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
             done();
@@ -100,8 +100,8 @@ describe('Module', function () {
                 'fixture/styles/unused.css'
             ],
             minify: true,
-            width: 320,
-            height: 70
+            width: 1300,
+            height: 900
         }, function (err, output) {
             assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
             done();
@@ -114,8 +114,8 @@ describe('Module', function () {
         critical.generate({
             base: 'fixture/',
             src: 'index.html',
-            width: 320,
-            height: 70
+            width: 1300,
+            height: 900
         }, function (err, output) {
             assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
             done();
@@ -225,8 +225,8 @@ describe('Module', function () {
         critical.generate({
             base: 'fixture/',
             src: 'index-image.html',
-            width: 320,
-            height: 70,
+            width: 1300,
+            height: 900,
             inlineImages: true
         }, function (err, output) {
             if (err) {
@@ -245,8 +245,8 @@ describe('Module', function () {
         critical.generate({
             base: 'fixture/',
             src: 'index-image-absolute.html',
-            width: 320,
-            height: 70,
+            width: 1300,
+            height: 900,
             inlineImages: true
         }, function (err, output) {
             if (err) {
@@ -265,8 +265,8 @@ describe('Module', function () {
         critical.generate({
             base: 'fixture/',
             src: 'index-image-big.html',
-            width: 320,
-            height: 70,
+            width: 1300,
+            height: 900,
             inlineImages: true
         }, function (err, output) {
             if (err) {
@@ -284,8 +284,8 @@ describe('Module', function () {
         critical.generate({
             base: 'fixture/',
             src: 'index-image.html',
-            width: 320,
-            height: 70,
+            width: 1300,
+            height: 900,
             inlineImages: false
         }, function (err, output) {
             if (err) {
@@ -398,8 +398,8 @@ describe('CLI', function () {
                 path.join(__dirname, '../', pkg.bin.critical),
                 'fixture/index.html',
                 '--base', 'fixture',
-                '--width', '320',
-                '--height', '70'
+                '--width', '1300',
+                '--height', '900'
             ]);
 
             var expected = fs.readFileSync('fixture/styles/critical.css', 'utf8');
