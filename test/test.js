@@ -334,6 +334,33 @@ describe('Module', function () {
         });
     });
 
+    it('inlines critical-path CSS with extract ignoring remote stylesheets', function (done) {
+        var expected = fs.readFileSync('fixture/index-external-extract-expected.html', 'utf8');
+        critical.generateInline({
+            base: 'fixture/',
+            src: 'index-external.html',
+            minify: true,
+            extract: true,
+            htmlTarget: 'test-extract-external.html'
+        }, function (err, output) {
+            assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+            done();
+        });
+    });
+
+    it('inlines and minified critical-path CSS without screwing svg images ', function (done) {
+        var expected = fs.readFileSync('fixture/index-svg-expected.html', 'utf8');
+
+        critical.generateInline({
+            base: 'fixture/',
+            minify: true,
+            src: 'index-svg.html',
+        }, function (err, output) {
+            assert.strictEqual(stripWhitespace(output), stripWhitespace(expected));
+            done();
+        });
+    });
+
     it('does not screw up width win32 paths', function (done) {
         critical.generate({
             base: 'fixture/',
