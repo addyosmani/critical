@@ -108,8 +108,8 @@ exports.generate = function (opts, cb) {
 
     if (!opts.dimensions) {
         opts.dimensions = [{
-            height: opts.height || 320,
-            width: opts.width || 480
+            height: opts.height || 1300,
+            width: opts.width || 900
         }]
     }
 
