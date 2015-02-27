@@ -1,0 +1,170 @@
+'use strict';
+var assert = require('chai').assert;
+var exec = require('child_process').exec;
+var execFile = require('child_process').execFile;
+var fs = require('fs');
+var mockery = require('mockery');
+var path = require('path');
+var pkg = require('../package.json');
+
+process.chdir(path.resolve(__dirname));
+process.setMaxListeners(0);
+
+describe('CLI', function () {
+    describe('acceptance', function () {
+        it('should return the version', function (done) {
+            var cp = execFile('node', [path.join(__dirname, '../', pkg.bin.critical), '--version', '--no-update-notifier']);
+            var expected = pkg.version;
+
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(data.replace(/\r\n|\n/g, ''), expected);
+                done();
+            });
+        });
+
+        it('should work well with the critical CSS file passed as an option', function (done) {
+            var cp = execFile('node', [
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/default.html',
+                '--base', 'fixtures',
+                '--width', '1300',
+                '--height', '900'
+            ]);
+
+            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(data, expected);
+                done();
+            });
+        });
+
+        it('should work well with the critical CSS file piped to critical', function (done) {
+            var cp = exec('cat fixtures/default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
+
+            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(data, expected);
+                done();
+            });
+        });
+    });
+
+    describe('mocked', function () {
+        beforeEach(function () {
+            this.origArgv = process.argv;
+            this.origExit = process.exit;
+
+            mockery.enable({
+                warnOnUnregistered: false,
+                useCleanCache: true
+            });
+
+            mockery.registerMock('./', {
+                generate: function (opts) {
+                    this.mockOpts = opts;
+                    this.method = 'generate';
+                }.bind(this),
+                generateInline: function (opts) {
+                    this.mockOpts = opts;
+                    this.method = 'generateInline';
+                }.bind(this)
+            });
+        });
+
+        afterEach(function () {
+            mockery.deregisterAll();
+            mockery.disable();
+            process.argv = this.origArgv;
+            process.exit = this.origExit;
+        });
+
+        it('should pass the correct opts when using short opts', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixture/default.html',
+                '-c', 'css',
+                '-w', '300',
+                '-h', '400',
+                '-H', 'htmlTarget',
+                '-S', 'styleTarget',
+                '-m', 'minify',
+                '-e', 'extract'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.mockOpts.width, 300);
+            assert.strictEqual(this.mockOpts.height, 400);
+            assert.strictEqual(this.mockOpts.css, 'css');
+            assert.strictEqual(this.mockOpts.htmlTarget, 'htmlTarget');
+            assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
+            assert.strictEqual(this.mockOpts.minify, 'minify');
+            assert.strictEqual(this.mockOpts.extract, 'extract');
+        });
+
+        it('should pass the correct opts when using long opts', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/default.html',
+                '--css', 'css',
+                '--width', '300',
+                '--height', '400',
+                '--htmlTarget', 'htmlTarget',
+                '--styleTarget', 'styleTarget',
+                '--minify', 'minify',
+                '--extract', 'extract'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.mockOpts.width, 300);
+            assert.strictEqual(this.mockOpts.height, 400);
+            assert.strictEqual(this.mockOpts.css, 'css');
+            assert.strictEqual(this.mockOpts.htmlTarget, 'htmlTarget');
+            assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
+            assert.strictEqual(this.mockOpts.minify, 'minify');
+            assert.strictEqual(this.mockOpts.extract, 'extract');
+        });
+
+        it('should use "generateInline" when passing htmltarget', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/default.html',
+                '--htmlTarget', 'htmlTarget'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.method, 'generateInline');
+        });
+
+        it('should use "generate" when not passing htmltarget', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/default.html'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.method, 'generate');
+        });
+
+        it('should rewrite "styleTarget" to "dest" when using "generate"', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/default.html',
+                '--styleTarget', 'styleTarget'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.method, 'generate');
+            assert.strictEqual(this.mockOpts.dest, 'styleTarget');
+        });
+    });
+});

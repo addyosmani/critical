@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
-    "test": "mocha test/test.js --timeout 100000"
+    "test": "jshint . && mocha test/*.js --timeout 100000"
   },
   "files": [
     "cli.js",
@@ -46,6 +46,8 @@
   },
   "devDependencies": {
     "async": "^0.9.0",
+    "chai": "^2.1.0",
+    "jshint": "^2.6.0",
     "mocha": "*",
     "mockery": "^1.4.0"
   }
