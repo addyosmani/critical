@@ -15,7 +15,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'default.html',
+            src: 'generate-default.html',
             dest: target,
             width: 1300,
             height: 900
@@ -28,7 +28,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'adaptive.html',
+            src: 'generate-adaptive.html',
             dest: target,
             dimensions: [{
                 width: 100,
@@ -46,7 +46,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'default.html',
+            src: 'generate-default.html',
             minify: true,
             dest: target,
             width: 1300,
@@ -60,7 +60,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'default-nostyle.html',
+            src: 'generate-default-nostyle.html',
             css: [
                 'fixtures/styles/main.css',
                 'fixtures/styles/bootstrap.css'
@@ -78,7 +78,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'image.html',
+            src: 'generate-image.html',
             css: [
                 'fixtures/styles/image-relative.css'
             ],
@@ -95,7 +95,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'image.html',
+            src: 'generate-image.html',
             css: [
                 'fixtures/styles/image-absolute.css'
             ],
@@ -112,7 +112,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'image.html',
+            src: 'generate-image.html',
             css: [
                 'fixtures/styles/image-big.css'
             ],
@@ -129,7 +129,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'image.html',
+            src: 'generate-image.html',
             css: [
                 'fixtures/styles/image-relative.css'
             ],
@@ -146,7 +146,7 @@ describe('Module - generate', function () {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'image.html',
+            src: 'generate-image.html',
             css: [
                 'fixtures/styles/some/path/image.css'
             ],

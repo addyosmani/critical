@@ -25,7 +25,7 @@ describe('CLI', function () {
         it('should work well with the critical CSS file passed as an option', function (done) {
             var cp = execFile('node', [
                 path.join(__dirname, '../', pkg.bin.critical),
-                'fixtures/default.html',
+                'fixtures/generate-default.html',
                 '--base', 'fixtures',
                 '--width', '1300',
                 '--height', '900'
@@ -39,7 +39,7 @@ describe('CLI', function () {
         });
 
         it('should work well with the critical CSS file piped to critical', function (done) {
-            var cp = exec('cat fixtures/default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
+            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
 
             var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
@@ -82,7 +82,7 @@ describe('CLI', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
-                'fixture/default.html',
+                'fixtures/generate-default.html',
                 '-c', 'css',
                 '-w', '300',
                 '-h', '400',
@@ -107,7 +107,7 @@ describe('CLI', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
-                'fixtures/default.html',
+                'fixtures/generate-default.html',
                 '--css', 'css',
                 '--width', '300',
                 '--height', '400',
@@ -132,7 +132,7 @@ describe('CLI', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
-                'fixtures/default.html',
+                'fixtures/generate-default.html',
                 '--htmlTarget', 'htmlTarget'
             ];
 
@@ -145,7 +145,7 @@ describe('CLI', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
-                'fixtures/default.html'
+                'fixtures/generate-default.html'
             ];
 
             require('../cli');
@@ -157,7 +157,7 @@ describe('CLI', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
-                'fixtures/default.html',
+                'fixtures/generate-default.html',
                 '--styleTarget', 'styleTarget'
             ];
 
