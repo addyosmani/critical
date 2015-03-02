@@ -50,10 +50,10 @@ critical.generateInline({
     css: ['dist/styles/main.css'],
 
     // Viewport width
-    width: 320,
+    width: 1300,
 
     // Viewport height
-    height: 480,
+    height: 900,
 
     // Target for final HTML output
     htmlTarget: 'index-critical.html',
@@ -78,8 +78,8 @@ critical.generate({
     base: 'test/',
     src: 'index.html',
     dest: 'styles/main.css',
-    width: 320,
-    height: 480
+    width: 1300,
+    height: 900
 });
 ```
 
@@ -91,8 +91,8 @@ critical.generate({
     src: 'index.html',
     dest: 'styles/styles.min.css',
     minify: true,
-    width: 320,
-    height: 480
+    width: 1300,
+    height: 900
 });
 ```
 
@@ -102,8 +102,8 @@ Generate and return output via a callback:
 critical.generate({
     base: 'test/',
     src: 'index.html',
-    width: 320,
-    height: 480
+    width: 1300,
+    height: 900
 }, function (err, output) {
     // You now have critical-path CSS
     // Works with and without dest specified

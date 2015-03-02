@@ -25,7 +25,6 @@ var tmpfile = Promise.promisify(tmp.file);
 
 tmp.setGracefulCleanup();
 
-
 /**
  * returns a string of combined and deduped css rules.
  * @param cssArray
@@ -104,8 +103,8 @@ exports.generate = function (opts, cb) {
 
     if (!opts.dimensions) {
         opts.dimensions = [{
-            height: opts.height || 320,
-            width: opts.width || 480
+            height: opts.height || 1300,
+            width: opts.width || 900
         }];
     }
 
@@ -116,6 +115,7 @@ exports.generate = function (opts, cb) {
             if (opts.css) {
                 return typeof opts.css === 'string' ? [opts.css] : opts.css;
             }
+
             // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
             return oust(html.toString(), 'stylesheets').filter(function (href) {
                 return !/(^\/\/)|(:\/\/)/.test(href);
@@ -172,8 +172,7 @@ exports.generate = function (opts, cb) {
                 height: dimensions.height  // viewport height
             });
         });
-    })
-    .then(function (criticalCSS) {
+    }).then(function (criticalCSS) {
         criticalCSS = combineCss(criticalCSS);
 
         if (opts.minify === true) {
@@ -188,12 +187,10 @@ exports.generate = function (opts, cb) {
         } else {
             return criticalCSS;
         }
-    })
-    .then(function (finalCss) {
-        cb(null, finalCss);
-    })
-    .catch(function (err) {
+    }).catch(function (err) {
         cb(err);
+    }).then(function (finalCss) {
+        cb(null, finalCss);
     }).done();
 };
 
