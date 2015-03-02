@@ -10,6 +10,7 @@ var CleanCSS = require('clean-css');
 var oust = require('oust');
 var sourceInliner = require('inline-critical');
 var imageInliner = require('imageinliner');
+/* jshint -W079 */
 var Promise = require('bluebird');
 var tempfile = require('tempfile');
 var inliner = require('./lib/inline-styles');
@@ -28,14 +29,14 @@ tmp.setGracefulCleanup();
  * @returns {String}
  */
 function combineCss(cssArray) {
-   if (cssArray.length == 1) {
-      return cssArray[0].toString();
-   }
+    if (cssArray.length == 1) {
+        return cssArray[0].toString();
+    }
 
-   return new CleanCSS({mediaMerging: true}).minify(
-      _.invoke(cssArray, 'toString')
-      .join(' ')
-   );
+    return new CleanCSS({mediaMerging: true}).minify(
+        _.invoke(cssArray, 'toString')
+            .join(' ')
+    );
 }
 
 /**
@@ -61,25 +62,18 @@ function normalizePath(str) {
  * @returns {{promise: *, tmpfiles: Array}}
  */
 function getContentPromise(opts) {
-
-    // fetch html source if passed via options
-    return new Promise(function (resolve, reject) {
-        if (opts.html) {
-            resolve(opts.html);
-        } else {
-            reject();
-        }
-    }).then(function (html) {
-         return tmpfile({dir: opts.base, postfix: '.html'})
-             .then(resolveTmp)
-             .then(function (path) {
-                 opts.url = path;
-                 return fs.writeFileAsync(opts.url, html).then(function () {
-                     return html;
-                 });
-             });
-    // otherwise try to fetch local file
-    }).catch(function () {
+    // html passed in directly -> create tmp file and set opts.url
+    if (opts.html) {
+        return tmpfile({dir: opts.base, postfix: '.html'})
+            .then(resolveTmp)
+            .then(function (path) {
+                opts.url = path;
+                return fs.writeFileAsync(opts.url, opts.html).then(function () {
+                    return opts.html;
+                });
+            });
+        // use src file provided
+    } else {
         // src can either be absolute or relative to opts.base
         if (opts.src !== path.resolve(opts.src)) {
             opts.url = path.join(opts.base, opts.src);
@@ -88,7 +82,7 @@ function getContentPromise(opts) {
         }
 
         return fs.readFileAsync(opts.url);
-    });
+    }
 }
 
 
@@ -110,10 +104,10 @@ exports.generate = function (opts, cb) {
         opts.dimensions = [{
             height: opts.height || 1300,
             width: opts.width || 900
-        }]
+        }];
     }
 
-    Promise.map(opts.dimensions, function(dimensions) {
+    Promise.map(opts.dimensions, function (dimensions) {
         // use content to fetch used css files
         return getContentPromise(opts).then(function (html) {
             // consider opts.css and map to array if it's a string
@@ -157,17 +151,17 @@ exports.generate = function (opts, cb) {
                 });
             });
 
-        // combine all css files to one bid stylesheet
+            // combine all css files to one bid stylesheet
         }).reduce(function (total, contents) {
             return total + os.EOL + contents;
 
-        // write contents to tmp file
+            // write contents to tmp file
         }, '').then(function (css) {
             var csspath = tempfile('.css');
-            return fs.writeFileAsync(csspath,css).then(function () {
+            return fs.writeFileAsync(csspath, css).then(function () {
                 return csspath;
             });
-        // let penthouseAsync do the rest
+            // let penthouseAsync do the rest
         }).then(function (csspath) {
             return penthouseAsync({
                 url: normalizePath(opts.url),
@@ -176,30 +170,27 @@ exports.generate = function (opts, cb) {
                 width: dimensions.width,   // viewport width
                 height: dimensions.height  // viewport height
             });
-        })
-    })
-    .then(function (criticalCSS) {
-      criticalCSS = combineCss(criticalCSS);
+        });
+    }).then(function (criticalCSS) {
+        criticalCSS = combineCss(criticalCSS);
 
-      if (opts.minify === true) {
-         criticalCSS = new CleanCSS().minify(criticalCSS);
-      }
+        if (opts.minify === true) {
+            criticalCSS = new CleanCSS().minify(criticalCSS);
+        }
 
-      if (opts.dest) {
-         // Write critical-path CSS
-         return fs.writeFileAsync(path.join(opts.base, opts.dest), criticalCSS).then(function () {
+        if (opts.dest) {
+            // Write critical-path CSS
+            return fs.writeFileAsync(path.join(opts.base, opts.dest), criticalCSS).then(function () {
+                return criticalCSS;
+            });
+        } else {
             return criticalCSS;
-         });
-      } else {
-         return criticalCSS;
-      }
-    })
-   .then(function(finalCss) {
-      cb(null, finalCss);
-   })
-   .catch(function (err) {
-      cb(err);
-   }).done();
+        }
+    }).catch(function (err) {
+        cb(err);
+    }).then(function (finalCss) {
+        cb(null, finalCss);
+    }).done();
 };
 
 /**
