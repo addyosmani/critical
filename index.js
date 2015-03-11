@@ -188,6 +188,7 @@ exports.generate = function (opts, cb) {
         }
     }).catch(function (err) {
         cb(err);
+        throw new Promise.CancellationError();
     }).then(function (finalCss) {
         cb(null, finalCss);
     }).done();
