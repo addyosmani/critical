@@ -191,7 +191,7 @@ exports.generate = function (opts, cb) {
         throw new Promise.CancellationError();
     }).then(function (finalCss) {
         cb(null, finalCss);
-    }).done();
+    }).catch(Promise.CancellationError,function(){}).done();
 };
 
 /**
