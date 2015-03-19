@@ -10,20 +10,22 @@ var _ = require('lodash');
 var critical = require('./');
 var ok;
 
+var help = [
+    'Usage: critical <input> [<option>]',
+    '',
+    'Options:',
+    '   -b, --base              Your base directory',
+    '   -c, --css               Your CSS Files (optional)',
+    '   -w, --width             Viewport width',
+    '   -h, --height            Viewport height',
+    '   -H, --htmlTarget        Target for final HTML output',
+    '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)',
+    '   -m, --minify            Minify critical-path CSS when inlining',
+    '   -e, --extract           Extract inlined styles from referenced stylesheets'
+].join('\n');
+
 var cli = meow({
-    help: [
-        'Usage: critical <input> [<option>]',
-        '',
-        'Options:',
-        '   -b, --base              Your base directory',
-        '   -c, --css               Your CSS Files (optional)',
-        '   -w, --width             Viewport width',
-        '   -h, --height            Viewport height',
-        '   -H, --htmlTarget        Target for final HTML output',
-        '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)',
-        '   -m, --minify            Minify critical-path CSS when inlining',
-        '   -e, --extract           Extract inlined styles from referenced stylesheets'
-    ].join('\n')
+    help: help
 }, {
     alias: {
         b: 'base',
@@ -38,7 +40,7 @@ var cli = meow({
 });
 
 // cleanup cli flags and assert cammelcase keeps camelcase
-cli.flags = _.reduce(cli.flags, function (res,val,key) {
+cli.flags = _.reduce(cli.flags, function (res, val, key) {
     if (key.length <= 1) {
         return res;
     }
@@ -58,6 +60,13 @@ cli.flags = _.reduce(cli.flags, function (res,val,key) {
     return res;
 }, {});
 
+function error(err) {
+    process.stderr.write(indentString(err.message || err, '   Error: '));
+    process.stderr.write(os.EOL);
+    process.stderr.write(indentString(help, '   '));
+    process.exit(1);
+}
+
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);
     var command = opts.htmlTarget ? 'generateInline' : 'generate';
@@ -74,32 +83,29 @@ function run(data) {
         opts.src = cli.input[0] ? path.resolve(cli.input[0]) : '';
     }
 
-    critical[command](opts, function (err, val) {
-        if (err) {
-            process.stderr.write(indentString(err.message || err,'  Error: '));
-            process.stderr.write(os.EOL);
-            cli.showHelp();
-        } else {
-            process.stdout.write(val);
-        }
-    });
-}
-
-try {
-    if (cli.input[0]) {
-        run();
-    } else {
-        stdin(run);
-        setTimeout(function () {
-            if (ok) {
-                return;
+    try {
+        critical[command](opts, function (err, val) {
+            if (err) {
+                error(err);
+            } else {
+                process.stdout.write(val);
             }
-
-            cli.showHelp();
-        }, 100);
+        });
+    } catch (err) {
+        error(err);
     }
-} catch (err) {
-    process.stderr.write(indentString(err.message, '  Error: '));
-    process.stderr.write(os.EOL);
-    cli.showHelp();
 }
+
+
+if (cli.input[0]) {
+    run();
+} else {
+    stdin(run);
+    setTimeout(function () {
+        if (ok) {
+            return;
+        }
+        cli.showHelp();
+    }, 100);
+}
+

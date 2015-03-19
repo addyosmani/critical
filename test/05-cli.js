@@ -47,6 +47,14 @@ describe('CLI', function () {
                 done();
             });
         });
+
+        it('should exit with code 1', function (done) {
+            execFile('node', [path.join(__dirname, '../', pkg.bin.critical), 'fixtures/not-exists.html'], function (err) {
+                assert.isObject(err);
+                assert.strictEqual(err.code,1);
+                done();
+            });
+        });
     });
 
     describe('mocked', function () {
