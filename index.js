@@ -38,7 +38,7 @@ function combineCss(cssArray) {
     return new CleanCSS({mediaMerging: true}).minify(
         _.invoke(cssArray, 'toString')
             .join(' ')
-    );
+    ).styles;
 }
 
 /**
@@ -176,7 +176,7 @@ exports.generate = function (opts, cb) {
         criticalCSS = combineCss(criticalCSS);
 
         if (opts.minify === true) {
-            criticalCSS = new CleanCSS().minify(criticalCSS);
+            criticalCSS = new CleanCSS().minify(criticalCSS).styles;
         }
 
         if (opts.dest) {

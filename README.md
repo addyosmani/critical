@@ -1,4 +1,4 @@
-# critical [![Build Status](https://travis-ci.org/addyosmani/critical.svg?branch=master)](https://travis-ci.org/addyosmani/critical)
+# critical [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
 
 > Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
@@ -278,3 +278,13 @@ free to open up an issue and we can discuss it.
 ## License
 
 Apache-2.0 © Addy Osmani
+
+
+[npm-url]: https://npmjs.org/package/critical
+[npm-image]: https://badge.fury.io/js/critical.svg
+
+[travis-url]: https://travis-ci.org/addyosmani/critical
+[travis-image]: https://travis-ci.org/addyosmani/critical.svg?branch=master
+
+[depstat-url]: https://david-dm.org/addyosmani/critical
+[depstat-image]: https://david-dm.org/addyosmani/critical.svg
