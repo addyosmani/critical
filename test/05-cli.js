@@ -6,6 +6,8 @@ var fs = require('fs');
 var mockery = require('mockery');
 var path = require('path');
 var pkg = require('../package.json');
+var nn = require('normalize-newline');
+var skipWin = process.platform === 'win32'? it.skip : it;
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -33,17 +35,18 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
-                assert.strictEqual(data, expected);
+                assert.strictEqual(nn(data), nn(expected));
                 done();
             });
         });
 
-        it('should work well with the critical CSS file piped to critical', function (done) {
+        // no 'cat' in windows
+        skipWin('should work well with the critical CSS file piped to critical', function (done) {
             var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
 
             var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
-                assert.strictEqual(data, expected);
+                assert.strictEqual(nn(data), nn(expected));
                 done();
             });
         });

@@ -49,6 +49,7 @@
     "chai": "^2.1.0",
     "jshint": "^2.6.0",
     "mocha": "*",
-    "mockery": "^1.4.0"
+    "mockery": "^1.4.0",
+    "normalize-newline": "^1.0.2"
   }
 }
