@@ -1,0 +1,34 @@
+# http://www.appveyor.com/docs/appveyor-yml
+
+version: "{build}"
+
+clone_depth: 10
+
+init:
+  - git config --global core.autocrlf true
+
+environment:
+  matrix:
+    - nodejs_version: 0.10
+    - nodejs_version: 0.12
+    - nodejs_version: 1
+
+install:
+  - ps: Install-Product node $env:nodejs_version
+  - npm install -g grunt-cli
+  - npm install
+
+build: off
+
+test_script:
+  - node --version && npm --version
+  - npm test
+
+matrix:
+  fast_finish: true
+
+cache:
+  - '%LOCALAPPDATA%\Temp\phantomjs -> package.json' # phantomjs download location
+  - '%APPDATA%\npm\node_modules -> package.json'    # global npm modules
+  - '%APPDATA%\npm-cache -> package.json'           # npm cache
+  - 'node_modules -> package.json'                  # local npm modules
