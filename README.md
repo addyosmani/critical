@@ -1,5 +1,4 @@
-# critical [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Dependency Status][depstat-image]][depstat-url]
-
+# critical [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Build status][appveyor-image]][appveyor-url] [![Dependency Status][depstat-image]][depstat-url]
 > Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ![](http://i.imgur.com/lAzmBD2.png)
@@ -272,6 +271,9 @@ Apache-2.0 © Addy Osmani
 
 [travis-url]: https://travis-ci.org/addyosmani/critical
 [travis-image]: https://travis-ci.org/addyosmani/critical.svg?branch=master
+
+[appveyor-url]: https://ci.appveyor.com/project/bezoerb/critical/branch/master
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/cn6jw7r3ur0gmyg6/branch/master?svg=true
 
 [depstat-url]: https://david-dm.org/addyosmani/critical
 [depstat-image]: https://david-dm.org/addyosmani/critical.svg
