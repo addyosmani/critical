@@ -55,6 +55,7 @@
     "should": "^4.6.2",
     "stream-array": "^1.0.1",
     "stream-assert": "^2.0.2",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "normalize-newline": "^1.0.2"
   }
 }

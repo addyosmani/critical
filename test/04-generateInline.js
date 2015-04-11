@@ -5,6 +5,7 @@ var critical = require('../');
 var path = require('path');
 var read = require('./helper/testhelper').read;
 var assertCritical = require('./helper/testhelper').assertCritical;
+var nn = require('normalize-newline');
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -53,8 +54,8 @@ describe('Module - generateInline', function () {
                 }, cb);
             }
         }, function (err, results) {
-            assert.strictEqual(results.first, expected1);
-            assert.strictEqual(results.second, expected2);
+            assert.strictEqual(nn(results.first), nn(expected1));
+            assert.strictEqual(nn(results.second), nn(expected2));
             done();
         });
     });

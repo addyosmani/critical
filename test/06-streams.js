@@ -15,6 +15,8 @@ var pkg = require('../package.json');
 var array = require('stream-array');
 var read = require('./helper/testhelper').read;
 
+var nn = require('normalize-newline');
+
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
@@ -94,11 +96,11 @@ describe('Streams', function () {
             .pipe(streamAssert.length(2))
             .pipe(streamAssert.first(function (d) {
                 path.extname(d.path).should.eql('.html');
-                assert.strictEqual(d.contents.toString('utf8'), expected1);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
             }))
             .pipe(streamAssert.second(function (d) {
                 path.extname(d.path).should.eql('.html');
-                assert.strictEqual(d.contents.toString('utf8'), expected2);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected2);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -112,7 +114,7 @@ describe('Streams', function () {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.first(function (d) {
                 path.extname(d.path).should.eql('.html');
-                assert.strictEqual(d.contents.toString('utf8'), expected);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -133,11 +135,11 @@ describe('Streams', function () {
             .pipe(streamAssert.length(2))
             .pipe(streamAssert.nth(0,function (d) {
                 path.extname(d.path).should.eql('.css');
-                assert.strictEqual(d.contents.toString('utf8'), expected1);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
             }))
             .pipe(streamAssert.nth(1,function (d) {
                 path.extname(d.path).should.eql('.css');
-                assert.strictEqual(d.contents.toString('utf8'), expected2);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected2);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -159,7 +161,7 @@ describe('Streams', function () {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0,function (d) {
                 path.extname(d.path).should.eql('.css');
-                assert.strictEqual(d.contents.toString('utf8'), expected);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -179,7 +181,7 @@ describe('Streams', function () {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0,function (d) {
                 path.extname(d.path).should.eql('.html');
-                assert.strictEqual(d.contents.toString('utf8'), expected);
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });

@@ -4,6 +4,7 @@ var assert = require('chai').assert;
 var CleanCSS = require('clean-css');
 var fs = require('fs');
 var path = require('path');
+var nn = require('normalize-newline');
 
 function readAndRemove(file) {
     var content = read(file);
@@ -30,8 +31,8 @@ function assertCritical(target, expected, done) {
 
         var dest = readAndRemove(path.join('fixtures', target));
 
-        assert.strictEqual(dest, expected);
-        assert.strictEqual(output, expected);
+        assert.strictEqual(nn(dest), nn(expected));
+        assert.strictEqual(nn(output), nn(expected));
 
         done();
     };
