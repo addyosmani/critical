@@ -155,7 +155,22 @@ describe('Module - generate', function () {
             height: 900,
             inlineImages: true
         }, assertCritical(target, expected, done));
+    });
 
+    it('should respect pathPrefix', function (done) {
+        var expected = read('expected/path-prefix.css');
+        var target = 'path-prefix.css';
 
+        critical.generate({
+            base: 'fixtures/',
+            src: 'path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            pathPrefix: ''//empty string most likely to candidate for failure if change in code results in checking option lazily
+        }, assertCritical(target, expected, done));
     });
 });
