@@ -146,8 +146,8 @@ exports.generate = function (opts, cb) {
                     // create path relative to opts.base
                     var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
 
-                    // prepend / to make it absolute
-                    return normalizePath(match.replace(filePath, path.join('/', relativeToBase)));
+                    var pathPrefix = (typeof opts.pathPrefix === "undefined") ? "/" : opts.pathPrefix;
+                    return normalizePath(match.replace(filePath, path.join(pathPrefix, relativeToBase)));
                 });
             });
 
