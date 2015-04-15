@@ -14,7 +14,7 @@ function readAndRemove(file) {
 
 function read(file, minify) {
     var content = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
-    return minify ? new CleanCSS().minify(content).styles : content;
+    return minify ? new CleanCSS().minify(content).styles : nn(content);
 }
 
 /**
