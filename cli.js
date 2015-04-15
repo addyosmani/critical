@@ -21,7 +21,8 @@ var help = [
     '   -H, --htmlTarget        Target for final HTML output',
     '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)',
     '   -m, --minify            Minify critical-path CSS when inlining',
-    '   -e, --extract           Extract inlined styles from referenced stylesheets'
+    '   -e, --extract           Extract inlined styles from referenced stylesheets',
+    '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) '
 ].join('\n');
 
 var cli = meow({
@@ -35,7 +36,8 @@ var cli = meow({
         H: 'htmlTarget',
         S: 'styleTarget',
         m: 'minify',
-        e: 'extract'
+        e: 'extract',
+        p: 'pathPrefix'
     }
 });
 
@@ -51,6 +53,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'styletarget':
             res.styleTarget = val;
+            break;
+        case 'pathprefix':
+            res.pathPrefix = val;
             break;
         default:
             res[key] = val;

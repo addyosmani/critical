@@ -98,7 +98,8 @@ describe('CLI', function () {
                 '-H', 'htmlTarget',
                 '-S', 'styleTarget',
                 '-m', 'minify',
-                '-e', 'extract'
+                '-e', 'extract',
+                '-p', 'pathPrefix'
             ];
 
             require('../cli');
@@ -110,6 +111,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
+            assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -123,7 +125,8 @@ describe('CLI', function () {
                 '--htmlTarget', 'htmlTarget',
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
-                '--extract', 'extract'
+                '--extract', 'extract',
+                '--pathPrefix', 'pathPrefix'
             ];
 
             require('../cli');
@@ -135,6 +138,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
+            assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
         });
 
         it('should use "generateInline" when passing htmltarget', function () {
