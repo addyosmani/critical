@@ -64,7 +64,10 @@ critical.generateInline({
     minify: true,
 
     // Extract inlined styles from referenced stylesheets
-    extract: true
+    extract: true,
+    
+    // Prefix for asset directory
+    pathPrefix: '/MySubfolderDocrot',
 });
 ```
 
@@ -177,7 +180,7 @@ critical.inline({
 | height           | `integer`     | (Generation only) Height of the target viewport |
 | dimensions       | `array`       | (Generation only) an array of objects containing height and width.
 | minify           | `boolean`     | Enable minification of CSS output |
-| extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet|
+| extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
 | styleTarget      | `string`      | (`generateInline` only) Destination for critical-path styles |
 | htmlTarget       | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
 | inlineImages     | `boolean`     | Inline images (default: false)
