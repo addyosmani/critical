@@ -61,7 +61,7 @@ describe('Module - generateInline', function () {
     });
 
     it('should inline critical-path CSS ignoring remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external.html');
+        var expected = read('expected/generateInline-external-minified.html');
         var target = '.generateInline-external.html';
 
         critical.generateInline({

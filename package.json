@@ -32,6 +32,7 @@
     "clean-css": "^3.1.9",
     "cli": "^0.6.6",
     "get-stdin": "^4.0.1",
+    "gulp-util": "^3.0.2",
     "imageinliner": "^0.2.3",
     "indent-string": "^1.2.0",
     "inline-critical": "^0.1.2",
@@ -42,6 +43,7 @@
     "penthouse": "^0.3.1",
     "slash": "^1.0.0",
     "tempfile": "^1.1.0",
+    "through2": "^0.6.3",
     "tmp": "0.0.25"
   },
   "devDependencies": {
@@ -50,6 +52,10 @@
     "jshint": "^2.6.0",
     "mocha": "*",
     "mockery": "^1.4.0",
+    "should": "^4.6.2",
+    "stream-array": "^1.0.1",
+    "stream-assert": "^2.0.2",
+    "vinyl-source-stream": "^1.0.0",
     "normalize-newline": "^1.0.2"
   }
 }
