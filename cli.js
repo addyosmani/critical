@@ -18,11 +18,16 @@ var help = [
     '   -c, --css               Your CSS Files (optional)',
     '   -w, --width             Viewport width',
     '   -h, --height            Viewport height',
-    '   -H, --htmlTarget        Target for final HTML output',
-    '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)',
     '   -m, --minify            Minify critical-path CSS when inlining',
+    '   -i, --inline            Generate the HTML with inlined critical-path CSS',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
-    '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) '
+    '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
+    '   ----------------------------------------------------------------------.',
+    '   Deprecated - use "--inline" to retrieve the modified HTML',
+    '   critical source.html --inline > dest.html',
+    '   -----------------------------------------------------------------------',
+    '   -H, --htmlTarget        Target for final HTML output',
+    '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)'
 ].join('\n');
 
 var cli = meow({
@@ -34,6 +39,7 @@ var cli = meow({
         w: 'width',
         h: 'height',
         H: 'htmlTarget',
+        i: 'inline',
         S: 'styleTarget',
         m: 'minify',
         e: 'extract',
@@ -57,6 +63,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
         case 'pathprefix':
             res.pathPrefix = val;
             break;
+        case 'inline':
+            res.inline = val || typeof val === 'undefined';
+            break;
         default:
             res[key] = val;
             break;
@@ -74,7 +83,7 @@ function error(err) {
 
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);
-    var command = opts.htmlTarget ? 'generateInline' : 'generate';
+    var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {
         opts.dest = opts.styleTarget || '';

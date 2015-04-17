@@ -166,6 +166,44 @@ describe('CLI', function () {
             assert.strictEqual(this.method, 'generate');
         });
 
+        it('should use "generateInline" when passing --inline', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/generate-default.html',
+                '--inline', 'htmlTarget'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.method, 'generateInline');
+        });
+
+        it('should use "generate" when not passing --inline', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/generate-default.html'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.method, 'generate');
+        });
+
+        it('should use "generate" when not passing falsy value for --inline', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/generate-default.html',
+                '--inline',false
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.method, 'generate');
+        });
+
         it('should rewrite "styleTarget" to "dest" when using "generate"', function () {
             process.argv = [
                 'node',
