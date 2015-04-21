@@ -29,7 +29,7 @@ function assertCritical(target, expected, done) {
         assert.isNull(err, !!err && err);
         assert.isDefined(output, 'Should produce output');
 
-        var dest = readAndRemove(path.join('fixtures', target));
+        var dest = readAndRemove(target);
 
         assert.strictEqual(nn(dest), nn(expected));
         assert.strictEqual(nn(output), nn(expected));

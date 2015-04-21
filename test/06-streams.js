@@ -85,27 +85,7 @@ describe('Streams', function () {
             });
     });
 
-    it('should use "generateInline" if inline option is not set', function (done) {
-        var stream = critical.stream({base: path.join(__dirname, 'fixtures'), minify: true});
-
-        var expected1 = read('expected/generateInline-minified.html');
-        var expected2 = read('expected/generateInline-external-minified.html');
-
-        getVinyl('generateInline.html', 'generateInline-external.html')
-            .pipe(stream)
-            .pipe(streamAssert.length(2))
-            .pipe(streamAssert.first(function (d) {
-                path.extname(d.path).should.eql('.html');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
-            }))
-            .pipe(streamAssert.second(function (d) {
-                path.extname(d.path).should.eql('.html');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected2);
-            }))
-            .pipe(streamAssert.end(done));
-    });
-
-    it('should use "generateInline" if inline option is true', function (done) {
+    it('should use "generateInline" if inline option is set', function (done) {
         var stream = critical.stream({base: path.join(__dirname, 'fixtures'), inline: true});
         var expected = read('expected/generateInline.html');
 
@@ -171,7 +151,8 @@ describe('Streams', function () {
             base: path.join(__dirname, 'fixtures'),
             width: 1920,
             height: 3840,
-            css: ['fixtures/styles/main.css']
+            css: ['fixtures/styles/main.css'],
+            inline: true
         });
 
         var expected = read('expected/streams-default.html');

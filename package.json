@@ -31,6 +31,7 @@
     "cheerio": "^0.19.0",
     "clean-css": "^3.1.9",
     "cli": "^0.6.6",
+    "fs-extra": "^0.18.2",
     "get-stdin": "^4.0.1",
     "gulp-util": "^3.0.2",
     "imageinliner": "^0.2.3",

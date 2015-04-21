@@ -28,7 +28,8 @@ describe('CLI', function () {
                 'fixtures/generate-default.html',
                 '--base', 'fixtures',
                 '--width', '1300',
-                '--height', '900'
+                '--height', '900',
+                '--no-inline'
             ]);
 
             var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
@@ -40,7 +41,7 @@ describe('CLI', function () {
 
         // pipes don't work on windows
         skipWin('should work well with the critical CSS file piped to critical', function (done) {
-            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
+            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900 --inline false');
 
             var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
@@ -99,7 +100,8 @@ describe('CLI', function () {
                 '-S', 'styleTarget',
                 '-m', 'minify',
                 '-e', 'extract',
-                '-p', 'pathPrefix'
+                '-p', 'pathPrefix',
+                '-i'
             ];
 
             require('../cli');
@@ -112,6 +114,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.strictEqual(this.mockOpts.inline, true);
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -126,7 +129,8 @@ describe('CLI', function () {
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
                 '--extract', 'extract',
-                '--pathPrefix', 'pathPrefix'
+                '--pathPrefix', 'pathPrefix',
+                '--inline'
             ];
 
             require('../cli');
@@ -139,6 +143,46 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.strictEqual(this.mockOpts.inline, true);
+        });
+
+        it('should set inline to false when prefixed with --no', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/generate-default.html',
+                '--no-inline'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.mockOpts.inline, false);
+        });
+
+        it('should set inline to false when passing false', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/generate-default.html',
+                '-i','false'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.mockOpts.inline, false);
+        });
+
+        it('should set inline to false when passing 0', function () {
+            process.argv = [
+                'node',
+                path.join(__dirname, '../', pkg.bin.critical),
+                'fixtures/generate-default.html',
+                '-i','0'
+            ];
+
+            require('../cli');
+
+            assert.strictEqual(this.mockOpts.inline, false);
         });
 
         it('should use "generateInline" when passing htmltarget', function () {

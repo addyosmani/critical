@@ -10,7 +10,7 @@ var nn = require('normalize-newline');
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
-describe('Module - generateInline', function () {
+describe('Module - generateInline (deprecated)', function () {
 
     it('should generate and inline critical-path CSS', function (done) {
         var expected = read('expected/generateInline.html');

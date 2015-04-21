@@ -1,198 +1,94 @@
 'use strict';
-var fs = require('fs');
-var os = require('os');
+var fs = require('fs-extra');
 var path = require('path');
 var _ = require('lodash');
-var tmp = require('tmp');
-var slash = require('slash');
-var penthouse = require('penthouse');
-var CleanCSS = require('clean-css');
-var oust = require('oust');
 var sourceInliner = require('inline-critical');
-var imageInliner = require('imageinliner');
 /* jshint -W079 */
 var Promise = require('bluebird');
-var tempfile = require('tempfile');
 var inliner = require('./lib/inline-styles');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
+var core = require('./lib/core.js');
 
-// promisify fs and penthouse
 Promise.promisifyAll(fs);
-var penthouseAsync = Promise.promisify(penthouse);
-var tmpfile = Promise.promisify(tmp.file);
 
-tmp.setGracefulCleanup();
-
-/**
- * returns a string of combined and deduped css rules.
- * @param cssArray
- * @returns {String}
- */
-function combineCss(cssArray) {
-    if (cssArray.length == 1) {
-        return cssArray[0].toString();
-    }
-
-    return new CleanCSS({mediaMerging: true}).minify(
-        _.invoke(cssArray, 'toString')
-            .join(' ')
-    ).styles;
-}
-
-/**
- * get path from result array
- * @param resultArray
- * @returns {*}
- */
-function resolveTmp(resultArray) {
-    return _.first(resultArray);
-}
-
-/**
- * Fixup slashes in file paths for windows
- */
-function normalizePath(str) {
-    return process.platform === 'win32' ? slash(str) : str;
-}
-
-/**
- * Get content based on options
- * could either be a html string or a local file
- * @param opts
- * @returns {{promise: *, tmpfiles: Array}}
- */
-function getContentPromise(opts) {
-    // html passed in directly -> create tmp file and set opts.url
-    if (opts.html) {
-        return tmpfile({dir: opts.base, postfix: '.html'})
-            .then(resolveTmp)
-            .then(function (path) {
-                opts.url = path;
-                return fs.writeFileAsync(opts.url, opts.html).then(function () {
-                    return opts.html;
-                });
-            });
-        // use src file provided
-    } else {
-        // src can either be absolute or relative to opts.base
-        if (opts.src !== path.resolve(opts.src)) {
-            opts.url = path.join(opts.base, opts.src);
-        } else {
-            opts.url = path.relative(process.cwd(), opts.src);
-        }
-
-        return fs.readFileAsync(opts.url);
-    }
-}
 
 /**
  * Critical path CSS generation
  * @param  {object} opts Options
  * @param  {function} cb Callback
  * @accepts src, base, width, height, dimensions, dest
+ * @return {Promise}|undefined
  */
 exports.generate = function (opts, cb) {
-    opts = opts || {};
-    cb = cb || function () {};
-
-    if (!(opts.src || opts.html) || !opts.base) {
-        throw new Error('A valid source and base path are required.');
-    }
-
-    if (!opts.dimensions) {
-        opts.dimensions = [{
-            height: opts.height || 1300,
+    opts = _.defaults(opts,{
+        dimensions: [{
+            height:  opts.height || 1300,
             width: opts.width || 900
-        }];
-    }
+        }]
+    });
 
-    Promise.map(opts.dimensions, function (dimensions) {
-        // use content to fetch used css files
-        return getContentPromise(opts).then(function (html) {
-            // consider opts.css and map to array if it's a string
-            if (opts.css) {
-                return typeof opts.css === 'string' ? [opts.css] : opts.css;
-            }
 
-            // Oust extracts a list of your stylesheets (ignoring remote stylesheets)
-            return oust(html.toString(), 'stylesheets').filter(function (href) {
-                return !/(^\/\/)|(:\/\/)/.test(href);
-            }).map(function (href) {
-                return path.join(opts.base, href);
-            });
-        // read files
-        }).map(function (fileName) {
-            return fs.readFileAsync(fileName, 'utf8').then(function (content) {
-                // get path to css file
-                var dir = path.dirname(fileName);
-                var maxFileSize = opts.maxImageFileSize || 10240;
+    // generate critical css
+    var corePromise = core.generate(opts);
 
-                // #40 already inlined background images cause problems with imageinliner
-                if (opts.inlineImages) {
-                    content = imageInliner.css(content.toString(), {
-                        maxImageFileSize: maxFileSize,
-                        cssBasePath: dir,
-                        rootImagePath: opts.base
-                    });
-                }
-                // normalize relative paths
-                return content.toString().replace(/url\(['"]?([^'"\)]+)['"]?\)/g, function (match, filePath) {
-                    // do nothing for absolute paths, urls and data-uris
-                    if (/^data\:/.test(filePath) || /(?:^\/)|(?:\:\/\/)/.test(filePath)) {
-                        return match;
-                    }
-
-                    // create path relative to opts.base
-                    var relativeToBase = path.relative(path.resolve(opts.base), path.resolve(path.join(dir, filePath)));
-
-                    var pathPrefix = (typeof opts.pathPrefix === "undefined") ? "/" : opts.pathPrefix;
-                    return normalizePath(match.replace(filePath, path.join(pathPrefix, relativeToBase)));
-                });
-            });
-
-        // combine all css files to one bid stylesheet
-        }).reduce(function (total, contents) {
-            return total + os.EOL + contents;
-
-        // write contents to tmp file
-        }, '').then(function (css) {
-            var csspath = tempfile('.css');
-            return fs.writeFileAsync(csspath, css).then(function () {
-                return csspath;
-            });
-        // let penthouseAsync do the rest
-        }).then(function (csspath) {
-            return penthouseAsync({
-                url: normalizePath(opts.url),
-                css: csspath,
-                // What viewports do you care about?
-                width: dimensions.width,   // viewport width
-                height: dimensions.height  // viewport height
+    // inline
+    if (opts.inline) {
+        corePromise = Promise.props({
+            html: core.getContentPromise(opts),
+            css: corePromise
+        }).then(function (result) {
+            return sourceInliner(result.html, result.css, {
+                minify: opts.minify || false,
+                extract: opts.extract || false,
+                basePath: opts.base || process.cwd()
             });
         });
-    }).then(function (criticalCSS) {
-        criticalCSS = combineCss(criticalCSS);
+    }
 
-        if (opts.minify === true) {
-            criticalCSS = new CleanCSS().minify(criticalCSS).styles;
-        }
-
-        if (opts.dest) {
-            // Write critical-path CSS
-            return fs.writeFileAsync(path.join(opts.base, opts.dest), criticalCSS).then(function () {
-                return criticalCSS;
+    // save to file
+    if (opts.dest) {
+        corePromise = corePromise.then(function (output) {
+            var file = path.resolve(opts.dest);
+            var dir = path.dirname(file);
+            return fs.ensureDirAsync(dir).then(function(){
+               return fs.writeFileAsync(path.resolve(opts.dest), output);
+            }).then(function () {
+                return output;
             });
-        } else {
-            return criticalCSS;
-        }
-    }).catch(function (err) {
-        cb(err);
-        throw new Promise.CancellationError();
-    }).then(function (finalCss) {
-        cb(null, finalCss);
-    }).catch(Promise.CancellationError,function(){}).done();
+        });
+    }
+
+    // return promise if callback is not defined
+    if (_.isFunction(cb)) {
+        corePromise.catch(function (err) {
+            cb(err);
+            throw new Promise.CancellationError();
+        }).then(function (output) {
+            cb(null, output.toString());
+        }).catch(Promise.CancellationError,function(){}).done();
+    } else {
+        return corePromise;
+    }
+};
+
+
+/**
+ * deprecated will be removed in the next version
+ * @param opts
+ * @param cb
+ * @returns {Promise}|undefined
+ */
+exports.generateInline = function (opts, cb) {
+    opts.inline = true;
+    if (opts.htmlTarget) {
+        opts.dest = opts.htmlTarget;
+    } else if (opts.styleTarget) {
+        // return error
+    }
+
+    return exports.generate(opts, cb);
 };
 
 /**
@@ -200,6 +96,7 @@ exports.generate = function (opts, cb) {
  * @param  {object} opts Options
  * @param  {function} cb Callback
  * @accepts src, base, dest
+ * @deprecated
  */
 exports.inline = function (opts, cb) {
     opts = opts || {};
@@ -220,7 +117,7 @@ exports.inline = function (opts, cb) {
 
         if (opts.dest) {
             // Write HTML with inlined CSS to dest
-            fs.writeFile(path.join(opts.base, opts.dest), out, function (err) {
+            fs.writeFile(path.resolve(opts.dest), out, function (err) {
                 if (err) {
                     cb(err);
                     return;
@@ -234,49 +131,7 @@ exports.inline = function (opts, cb) {
     });
 };
 
-/**
- * Generate and inline critical-path CSS
- * @param  {object} opts Options
- * @param  {function} cb Callback
- * @accepts src, base, width, height, styleTarget, htmlTarget
- */
-exports.generateInline = function (opts, cb) {
-    opts = opts || {};
-    cb = cb || function () {};
 
-    var genOpts = opts;
-    genOpts.dest = opts.styleTarget || '';
-
-    exports.generate(genOpts, function (err, output) {
-        if (err) {
-            cb(err);
-            return;
-        }
-
-        // Inline generated css
-        getContentPromise(opts).then(function (html) {
-            return sourceInliner(html, output, {
-                minify: opts.minify || false,
-                extract: opts.extract || false,
-                basePath: opts.base || process.cwd()
-            });
-        }).then(function (final) {
-            if (opts.htmlTarget) {
-                return fs.writeFileAsync(path.join(opts.base, opts.htmlTarget), final).then(function () {
-                    return final;
-                });
-            } else {
-                return final;
-            }
-            // error callback
-        }).catch(function (err) {
-            cb(err);
-            // callback success
-        }).then(function (final) {
-            cb(null, final.toString());
-        }).done();
-    });
-};
 
 /**
  * Streams wrapper for critical
@@ -286,9 +141,6 @@ exports.generateInline = function (opts, cb) {
  */
 exports.stream = function (opts) {
     opts = opts || {};
-
-    // parse options
-    var command = opts.inline === false ? 'generate' : 'generateInline';
 
     if (!opts.base) {
         throw new PluginError('critical', 'A valid base path is required.');
@@ -308,7 +160,7 @@ exports.stream = function (opts) {
             html: file.contents.toString()
         });
 
-        exports[command](options, function (err, data) {
+        exports.generate(options, function (err, data) {
             if (err) {
                 return new PluginError('critical', err.message);
             }
@@ -323,5 +175,3 @@ exports.stream = function (opts) {
         });
     });
 };
-
-
