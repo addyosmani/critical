@@ -168,14 +168,15 @@ critical.generate({
 
 | Name             | Type          | Description   |
 | ---------------- | ------------- | ------------- |
+| inline           | `boolean`     | Inline critical-path CSS using filamentgroup's loadCSS  |
 | base             | `string`      | Base directory in which the source and destination are to be written |
 | html             | `string`      | HTML source to be operated against. This option takes precedence over the `src` option |
 | src              | `string`      | Location of the HTML source to be operated against |
 | dest             | `string`      | Location of where to save the output of an operation |
-| width            | `integer`     | (Generation only) Width of the target viewport |
-| height           | `integer`     | (Generation only) Height of the target viewport |
-| dimensions       | `array`       | (Generation only) an array of objects containing height and width.
-| minify           | `boolean`     | Enable minification of CSS output |
+| width            | `integer`     | Width of the target viewport |
+| height           | `integer`     | Height of the target viewport |
+| dimensions       | `array`       | An array of objects containing height and width.
+| minify           | `boolean`     | Enable minification of generated critical-path CSS |
 | extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
 | inlineImages     | `boolean`     | Inline images (default: false)
 | maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
