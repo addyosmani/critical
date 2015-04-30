@@ -13,6 +13,7 @@ var imageInliner = require('imageinliner');
 /* jshint -W079 */
 var Promise = require('bluebird');
 var tempfile = require('tempfile');
+var filterCss = require('filter-css');
 var inliner = require('./lib/inline-styles');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
@@ -174,6 +175,10 @@ exports.generate = function (opts, cb) {
         });
     }).then(function (criticalCSS) {
         criticalCSS = combineCss(criticalCSS);
+
+        if (opts.ignore) {
+            criticalCSS = filterCss(criticalCSS,opts.ignore);
+        }
 
         if (opts.minify === true) {
             criticalCSS = new CleanCSS().minify(criticalCSS).styles;

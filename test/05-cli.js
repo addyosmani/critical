@@ -99,7 +99,8 @@ describe('CLI', function () {
                 '-S', 'styleTarget',
                 '-m', 'minify',
                 '-e', 'extract',
-                '-p', 'pathPrefix'
+                '-p', 'pathPrefix',
+                '-I', '/ignore/'
             ];
 
             require('../cli');
@@ -112,6 +113,8 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.isArray(this.mockOpts.ignore);
+            assert.instanceOf(this.mockOpts.ignore[0],RegExp);
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -122,6 +125,7 @@ describe('CLI', function () {
                 '--css', 'css',
                 '--width', '300',
                 '--height', '400',
+                '--ignore', 'ignore',
                 '--htmlTarget', 'htmlTarget',
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
@@ -139,6 +143,8 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.isArray(this.mockOpts.ignore);
+            assert.include(this.mockOpts.ignore,'ignore');
         });
 
         it('should use "generateInline" when passing htmltarget', function () {

@@ -20,6 +20,7 @@ var help = [
     '   -h, --height            Viewport height',
     '   -m, --minify            Minify critical-path CSS when inlining',
     '   -i, --inline            Generate the HTML with inlined critical-path CSS',
+    '   -I, --ignore            RegExp, @type or selector to ignore',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
     '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
     '   ----------------------------------------------------------------------.',
@@ -40,6 +41,7 @@ var cli = meow({
         h: 'height',
         H: 'htmlTarget',
         i: 'inline',
+        I: 'ignore',
         S: 'styleTarget',
         m: 'minify',
         e: 'extract',
@@ -65,6 +67,20 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'inline':
             res.inline = val || typeof val === 'undefined';
+            break;
+        case 'ignore':
+            if (_.isString(val) || _.isRegExp(val)) {
+                val = [val];
+            }
+            res.ignore = _.map(val || [], function(ignore) {
+                // check regex
+                var match = ignore.match(/^\/(.*)\/([igmy]+)?$/);
+
+                if (match) {
+                    return new RegExp(_.escapeRegExp(match[1]),match[2]);
+                }
+                return ignore;
+            });
             break;
         default:
             res[key] = val;
