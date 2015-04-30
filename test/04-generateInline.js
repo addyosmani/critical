@@ -35,11 +35,11 @@ describe('Module - generateInline (deprecated)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle parallel calls', function (done) {
+    it('should handle multiple calls', function (done) {
         var expected1 = read('expected/generateInline.html');
         var expected2 = read('expected/generateInline-minified.html');
 
-        async.parallel({
+        async.series({
             first: function (cb) {
                 critical.generateInline({
                     base: 'fixtures/',
