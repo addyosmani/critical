@@ -35,7 +35,7 @@
     "gulp-util": "^3.0.2",
     "imageinliner": "^0.2.3",
     "indent-string": "^1.2.0",
-    "inline-critical": "^0.1.2",
+    "inline-critical": "^0.1.4",
     "lodash": "^3.2.0",
     "meow": "^3.0.0",
     "object-assign": "^2.0.0",
