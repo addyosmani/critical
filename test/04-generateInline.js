@@ -103,6 +103,7 @@ describe('Module - generateInline (deprecated)', function () {
     it('should inline and extract critical-path CSS', function (done) {
         var expected = read('expected/generateInline-extract.html');
         var target = '.generateInline-extract.html';
+
         critical.generateInline({
             base: 'fixtures/',
             minify: true,
@@ -115,6 +116,7 @@ describe('Module - generateInline (deprecated)', function () {
     it('should inline and extract critical-path CSS from html source', function (done) {
         var expected = read('expected/generateInline-extract.html');
         var target = '.generateInline-extract-src.html';
+
         critical.generateInline({
             base: 'fixtures/',
             minify: true,

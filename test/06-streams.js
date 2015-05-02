@@ -55,8 +55,7 @@ describe('Streams', function () {
     it('should emit error on streamed file', function(done){
         var stream = critical.stream({base: path.join(__dirname,'fixtures')});
         var fakeFilePath = path.join(__dirname, 'fixtures','generate-default.html');
-
-
+        
         fs.createReadStream(fakeFilePath)
             .pipe(vinylStream())
             .pipe(stream)
