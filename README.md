@@ -35,7 +35,10 @@ var critical = require('critical');
 ### Generate and inline critical-path CSS
 
 ```js
-critical.generateInline({
+critical.generate({
+    // Inline the generated critical-path CSS 
+    inline: true
+    
     // Your base directory
     base: 'dist/',
 
@@ -55,10 +58,7 @@ critical.generateInline({
     height: 900,
 
     // Target for final HTML output
-    htmlTarget: 'index-critical.html',
-
-    // Target for generated critical-path CSS (which we inline)
-    styleTarget: 'styles/main.css',
+    dest: 'index-critical.html',
 
     // Minify critical-path CSS when inlining
     minify: true,
@@ -98,7 +98,7 @@ critical.generate({
 });
 ```
 
-Generate and return output via a callback:
+Generate and return output via callback:
 
 ```js
 critical.generate({
@@ -109,6 +109,24 @@ critical.generate({
 }, function (err, output) {
     // You now have critical-path CSS
     // Works with and without dest specified
+    ...
+});
+```
+
+Generate and return output via promise:
+
+```js
+critical.generate({
+    base: 'test/',
+    src: 'index.html',
+    width: 1300,
+    height: 900
+}).then(function(output) {
+    // You now have critical-path CSS
+    // Works with and without dest specified
+    ...
+}).error(function (err) {
+    ...
 });
 ```
 
@@ -132,38 +150,16 @@ critical.generate({
 });
 ```
 
-### Inline `<style>` / critical CSS from generation
+### Generate critical-path CSS and ignore specific selectors
 
-Basic usage:
-
-```js
-critical.inline({
-    base: 'test/',
-    src: 'index-critical.html',
-    dest: 'inlined.html'
-});
-```
-
-Minify and inline stylesheets:
+This is a usefull option when you want to defer loading of webfonts 
 
 ```js
-critical.inline({
+critical.generate({
     base: 'test/',
-    src: 'index-critical.html',
-    dest: 'inlined-minified.html',
-    minify: true
-});
-```
-
-Inline and return output via a callback:
-
-```js
-critical.inline({
-    base: 'test/',
-    src: 'index-critical.html'
-}, function (err, output){
-    // You now have HTML with inlined critical-path CSS
-    // Works with and without dest specified
+    src: 'index.html',
+    dest: 'styles/main.css',
+    ignore: ['@font-face',/(some|regexp)/,'.my-selector']
 });
 ```
 
@@ -172,17 +168,16 @@ critical.inline({
 
 | Name             | Type          | Description   |
 | ---------------- | ------------- | ------------- |
+| inline           | `boolean`     | Inline critical-path CSS using filamentgroup's loadCSS  |
 | base             | `string`      | Base directory in which the source and destination are to be written |
 | html             | `string`      | HTML source to be operated against. This option takes precedence over the `src` option |
 | src              | `string`      | Location of the HTML source to be operated against |
 | dest             | `string`      | Location of where to save the output of an operation |
-| width            | `integer`     | (Generation only) Width of the target viewport |
-| height           | `integer`     | (Generation only) Height of the target viewport |
-| dimensions       | `array`       | (Generation only) an array of objects containing height and width.
-| minify           | `boolean`     | Enable minification of CSS output |
+| width            | `integer`     | Width of the target viewport |
+| height           | `integer`     | Height of the target viewport |
+| dimensions       | `array`       | An array of objects containing height and width.
+| minify           | `boolean`     | Enable minification of generated critical-path CSS |
 | extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
-| styleTarget      | `string`      | (`generateInline` only) Destination for critical-path styles |
-| htmlTarget       | `string`      | (`generateInline` only) Destination for (critical-path CSS) style-inlined HTML |
 | inlineImages     | `boolean`     | Inline images (default: false)
 | maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
 | pathPrefix       | `string`      | (defaults to `/`) Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
@@ -193,7 +188,7 @@ critical.inline({
 critical works well with standard input.
 
 ```
-$ cat test/fixture/index.html | critical --base test/fixture > critical.css
+$ cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
 ```
 
 You can also pass in the critical CSS file as an option.
@@ -211,7 +206,7 @@ var critical = require('critical').stream;
 // Generate & Inline Critical-path CSS
 gulp.task('critical', function () {
     return gulp.src('dist/*.html')
-        .pipe(critical({base: 'dist/',css: ['dist/styles/components.css','dist/styles/main.css']}))
+        .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css','dist/styles/main.css']}))
         .pipe(gulp.dest('dist'));
 });
 ```
