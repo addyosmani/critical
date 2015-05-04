@@ -9,6 +9,7 @@ describe('Module', function () {
             assert.instanceOf(err,Error);
             done();
         });
+
         assert.isUndefined(tmp);
     });
 
@@ -29,6 +30,7 @@ describe('Module', function () {
             assert.instanceOf(err,Error);
             done();
         });
+
         assert.isUndefined(tmp);
     });
 

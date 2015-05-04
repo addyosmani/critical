@@ -162,7 +162,7 @@ describe('Module - generate', function () {
 
     it('should respect pathPrefix', function (done) {
         var expected = read('expected/path-prefix.css');
-        var target = 'path-prefix.css';
+        var target = '.path-prefix.css';
 
         critical.generate({
             base: 'fixtures/',
