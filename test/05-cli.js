@@ -7,7 +7,7 @@ var mockery = require('mockery');
 var path = require('path');
 var pkg = require('../package.json');
 var nn = require('normalize-newline');
-var skipWin = process.platform === 'win32'? it.skip : it;
+var skipWin = process.platform === 'win32' ? it.skip : it;
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -16,7 +16,7 @@ describe('CLI', function () {
     describe('acceptance', function () {
         // empty stdout on appveyor? runs correct on manual test with Windows 7
         skipWin('should return the version', function (done) {
-            execFile('node', [path.join(__dirname, '../', pkg.bin.critical), '--version', '--no-update-notifier'], function(error, stdout){
+            execFile('node', [path.join(__dirname, '../', pkg.bin), '--version', '--no-update-notifier'], function (error, stdout) {
                 assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), pkg.version);
                 done();
             });
@@ -24,7 +24,7 @@ describe('CLI', function () {
 
         it('should work well with the critical CSS file passed as an option', function (done) {
             var cp = execFile('node', [
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '--base', 'fixtures',
                 '--width', '1300',
@@ -32,7 +32,7 @@ describe('CLI', function () {
                 '--no-inline'
             ]);
 
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
                 assert.strictEqual(nn(data), nn(expected));
                 done();
@@ -41,9 +41,8 @@ describe('CLI', function () {
 
         // pipes don't work on windows
         skipWin('should work well with the critical CSS file piped to critical', function (done) {
-            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin.critical) + ' --base fixtures --width 1300 --height 900 --inline false');
-
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin) + ' --base fixtures --width 1300 --height 900 ');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
                 assert.strictEqual(nn(data), nn(expected));
                 done();
@@ -51,9 +50,9 @@ describe('CLI', function () {
         });
 
         it('should exit with code 1', function (done) {
-            execFile('node', [path.join(__dirname, '../', pkg.bin.critical), 'fixtures/not-exists.html'], function (err) {
+            execFile('node', [path.join(__dirname, '../', pkg.bin), 'fixtures/not-exists.html'], function (err) {
                 assert.isObject(err);
-                assert.strictEqual(err.code,1);
+                assert.strictEqual(err.code, 1);
                 done();
             });
         });
@@ -91,7 +90,7 @@ describe('CLI', function () {
         it('should pass the correct opts when using short opts', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '-c', 'css',
                 '-w', '300',
@@ -120,7 +119,7 @@ describe('CLI', function () {
         it('should pass the correct opts when using long opts', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '--css', 'css',
                 '--width', '300',
@@ -164,7 +163,7 @@ describe('CLI', function () {
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
                 'fixtures/generate-default.html',
-                '-i','false'
+                '-i', 'false'
             ];
 
             require('../cli');
@@ -177,7 +176,7 @@ describe('CLI', function () {
                 'node',
                 path.join(__dirname, '../', pkg.bin.critical),
                 'fixtures/generate-default.html',
-                '-i','0'
+                '-i', '0'
             ];
 
             require('../cli');
@@ -188,7 +187,7 @@ describe('CLI', function () {
         it('should use "generateInline" when passing htmltarget', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '--htmlTarget', 'htmlTarget'
             ];
@@ -201,7 +200,7 @@ describe('CLI', function () {
         it('should use "generate" when not passing htmltarget', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html'
             ];
 
@@ -213,7 +212,7 @@ describe('CLI', function () {
         it('should use "generateInline" when passing --inline', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '--inline', 'htmlTarget'
             ];
@@ -226,7 +225,7 @@ describe('CLI', function () {
         it('should use "generate" when not passing --inline', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html'
             ];
 
@@ -238,9 +237,9 @@ describe('CLI', function () {
         it('should use "generate" when not passing falsy value for --inline', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
-                '--inline',false
+                '--inline', false
             ];
 
             require('../cli');
@@ -251,7 +250,7 @@ describe('CLI', function () {
         it('should rewrite "styleTarget" to "dest" when using "generate"', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '--styleTarget', 'styleTarget'
             ];

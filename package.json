@@ -9,13 +9,11 @@
     "test": "jshint . && mocha test/*.js --timeout 100000"
   },
   "files": [
-    "cli.js",
     "index.js",
+    "cli.js",
     "lib"
   ],
-  "bin": {
-    "critical": "cli.js"
-  },
+  "bin": "cli.js",
   "preferGlobal": true,
   "keywords": [
     "critical",
@@ -29,7 +27,7 @@
   "dependencies": {
     "bluebird": "^2.2.2",
     "cheerio": "^0.19.0",
-    "clean-css": "3.2.9",
+    "clean-css": "3.2.10",
     "cli": "^0.6.6",
     "fs-extra": "^0.18.2",
     "get-stdin": "^4.0.1",
