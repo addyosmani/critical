@@ -70,7 +70,10 @@ critical.generateInline({
     pathPrefix: '/MySubfolderDocrot',
     
     // ignore css rules
-    ignore: ['@font-face',/some-regexp/],
+    ignore: ['font-face',/some-regexp/]
+    
+    // overwrite default options
+    ignoreOptions: {}
 });
 ```
 
@@ -190,6 +193,7 @@ critical.inline({
 | maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
 | pathPrefix       | `string`      | (defaults to `/`) Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
 | ignore           | `array`       | Ignore css rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples. 
+| ignoreOptions    | `array`       | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options). 
 
 
 ## CLI

@@ -177,7 +177,7 @@ exports.generate = function (opts, cb) {
         criticalCSS = combineCss(criticalCSS);
 
         if (opts.ignore) {
-            criticalCSS = filterCss(criticalCSS,opts.ignore);
+            criticalCSS = filterCss(criticalCSS,opts.ignore,opts.ignoreOptions || {});
         }
 
         if (opts.minify === true) {
