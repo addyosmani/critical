@@ -9,13 +9,11 @@
     "test": "jshint . && mocha test/*.js --timeout 100000"
   },
   "files": [
-    "cli.js",
     "index.js",
+    "cli.js",
     "lib"
   ],
-  "bin": {
-    "critical": "cli.js"
-  },
+  "bin": "cli.js",
   "preferGlobal": true,
   "keywords": [
     "critical",
