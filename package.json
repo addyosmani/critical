@@ -27,7 +27,7 @@
   "dependencies": {
     "bluebird": "^2.2.2",
     "cheerio": "^0.19.0",
-    "clean-css": "^3.1.9",
+    "clean-css": "3.2.10",
     "cli": "^0.6.6",
     "filter-css": "^0.1.0",
     "get-stdin": "^4.0.1",
