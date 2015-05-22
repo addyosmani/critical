@@ -13,51 +13,6 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('CLI', function () {
-    describe('acceptance', function () {
-        // empty stdout on appveyor? runs correct on manual test with Windows 7
-        skipWin('should return the version', function (done) {
-            execFile('node', [path.join(__dirname, '../', pkg.bin), '--version', '--no-update-notifier'], function (error, stdout) {
-                assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), pkg.version);
-                done();
-            });
-        });
-
-        it('should work well with the critical CSS file passed as an option', function (done) {
-            var cp = execFile('node', [
-                path.join(__dirname, '../', pkg.bin),
-                'fixtures/generate-default.html',
-                '--base', 'fixtures',
-                '--width', '1300',
-                '--height', '900',
-                '--no-inline'
-            ]);
-
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-            cp.stdout.on('data', function (data) {
-                assert.strictEqual(nn(data), nn(expected));
-                done();
-            });
-        });
-
-        // pipes don't work on windows
-        skipWin('should work well with the critical CSS file piped to critical', function (done) {
-            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin) + ' --base fixtures --width 1300 --height 900 ');
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-            cp.stdout.on('data', function (data) {
-                assert.strictEqual(nn(data), nn(expected));
-                done();
-            });
-        });
-
-        it('should exit with code 1', function (done) {
-            execFile('node', [path.join(__dirname, '../', pkg.bin), 'fixtures/not-exists.html'], function (err) {
-                assert.isObject(err);
-                assert.strictEqual(err.code, 1);
-                done();
-            });
-        });
-    });
-
     describe('mocked', function () {
         beforeEach(function () {
             this.origArgv = process.argv;
@@ -148,7 +103,7 @@ describe('CLI', function () {
         it('should set inline to false when prefixed with --no', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '--no-inline'
             ];
@@ -161,7 +116,7 @@ describe('CLI', function () {
         it('should set inline to false when passing false', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '-i', 'false'
             ];
@@ -174,7 +129,7 @@ describe('CLI', function () {
         it('should set inline to false when passing 0', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin.critical),
+                path.join(__dirname, '../', pkg.bin),
                 'fixtures/generate-default.html',
                 '-i', '0'
             ];
@@ -261,4 +216,51 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.dest, 'styleTarget');
         });
     });
+
+    describe('acceptance', function () {
+        // empty stdout on appveyor? runs correct on manual test with Windows 7
+        skipWin('should return the version', function (done) {
+            execFile('node', [path.join(__dirname, '../', pkg.bin), '--version', '--no-update-notifier'], function (error, stdout) {
+                assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), pkg.version);
+                done();
+            });
+        });
+
+        it('should work well with the critical CSS file passed as an option', function (done) {
+            var cp = execFile('node', [
+                path.join(__dirname, '../', pkg.bin),
+                'fixtures/generate-default.html',
+                '--base', 'fixtures',
+                '--width', '1300',
+                '--height', '900',
+                '--no-inline'
+            ]);
+
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(nn(data), nn(expected));
+                done();
+            });
+        });
+
+        // pipes don't work on windows
+        skipWin('should work well with the critical CSS file piped to critical', function (done) {
+            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin) + ' --base fixtures --width 1300 --height 900 ');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(nn(data), nn(expected));
+                done();
+            });
+        });
+
+        it('should exit with code 1', function (done) {
+            execFile('node', [path.join(__dirname, '../', pkg.bin), 'fixtures/not-exists.html'], function (err) {
+                assert.isObject(err);
+                assert.strictEqual(err.code, 1);
+                done();
+            });
+        });
+    });
+
+
 });
