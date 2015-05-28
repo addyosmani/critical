@@ -53,6 +53,7 @@
     "mocha": "*",
     "mockery": "^1.4.0",
     "normalize-newline": "^1.0.2",
+    "read-package-json": "^2.0.0",
     "should": "^6.0.1",
     "stream-array": "^1.0.1",
     "stream-assert": "^2.0.2",
