@@ -158,7 +158,7 @@ describe('CLI', function () {
         it('should set inline to false when prefixed with --no', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', this.pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--no-inline'
             ];
@@ -171,7 +171,7 @@ describe('CLI', function () {
         it('should set inline to false when passing false', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', this.pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '-i', 'false'
             ];
@@ -184,7 +184,7 @@ describe('CLI', function () {
         it('should set inline to false when passing 0', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', this.pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '-i', '0'
             ];
