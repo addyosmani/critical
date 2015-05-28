@@ -5,7 +5,7 @@ var execFile = require('child_process').execFile;
 var fs = require('fs');
 var mockery = require('mockery');
 var path = require('path');
-var pkg = require('../package.json');
+var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var skipWin = process.platform === 'win32'? it.skip : it;
 
@@ -13,18 +13,26 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('CLI', function () {
+
+    beforeEach(function(done){
+        readJson('../package.json',function(err,data){
+            this.pkg = data;
+            done();
+        }.bind(this));
+    });
+
     describe('acceptance', function () {
         // empty stdout on appveyor? runs correct on manual test with Windows 7
         skipWin('should return the version', function (done) {
-            execFile('node', [path.join(__dirname, '../', pkg.bin), '--version', '--no-update-notifier'], function(error, stdout){
-                assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), pkg.version);
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], function(error, stdout){
+                assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), this.pkg.version);
                 done();
-            });
+            }.bind(this));
         });
 
         it('should work well with the critical CSS file passed as an option', function (done) {
             var cp = execFile('node', [
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--base', 'fixtures',
                 '--width', '1300',
@@ -40,7 +48,7 @@ describe('CLI', function () {
 
         // pipes don't work on windows
         skipWin('should work well with the critical CSS file piped to critical', function (done) {
-            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', pkg.bin) + ' --base fixtures --width 1300 --height 900');
+            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
 
             var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
@@ -50,7 +58,7 @@ describe('CLI', function () {
         });
 
         it('should exit with code 1', function (done) {
-            execFile('node', [path.join(__dirname, '../', pkg.bin), 'fixtures/not-exists.html'], function (err) {
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err) {
                 assert.isObject(err);
                 assert.strictEqual(err.code,1);
                 done();
@@ -90,7 +98,7 @@ describe('CLI', function () {
         it('should pass the correct opts when using short opts', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '-c', 'css',
                 '-w', '300',
@@ -117,7 +125,7 @@ describe('CLI', function () {
         it('should pass the correct opts when using long opts', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--css', 'css',
                 '--width', '300',
@@ -144,7 +152,7 @@ describe('CLI', function () {
         it('should use "generateInline" when passing htmltarget', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--htmlTarget', 'htmlTarget'
             ];
@@ -157,7 +165,7 @@ describe('CLI', function () {
         it('should use "generate" when not passing htmltarget', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html'
             ];
 
@@ -169,7 +177,7 @@ describe('CLI', function () {
         it('should use "generateInline" when passing --inline', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--inline', 'htmlTarget'
             ];
@@ -182,7 +190,7 @@ describe('CLI', function () {
         it('should use "generate" when not passing --inline', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html'
             ];
 
@@ -194,7 +202,7 @@ describe('CLI', function () {
         it('should use "generate" when not passing falsy value for --inline', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--inline',false
             ];
@@ -207,7 +215,7 @@ describe('CLI', function () {
         it('should rewrite "styleTarget" to "dest" when using "generate"', function () {
             process.argv = [
                 'node',
-                path.join(__dirname, '../', pkg.bin),
+                path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--styleTarget', 'styleTarget'
             ];
