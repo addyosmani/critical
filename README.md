@@ -138,6 +138,19 @@ critical.generate({
 });
 ```
 
+### Generate critical-path CSS and ignore specific selectors
+
+This is a usefull option when you e.g. want to defer loading of webfonts or background images.
+
+```js
+critical.generate({
+    base: 'test/',
+    src: 'index.html',
+    dest: 'styles/main.css',
+    ignore: ['@font-face',/url\(/]
+});
+```
+
 ### Inline `<style>` / critical CSS from generation
 
 Basic usage:
