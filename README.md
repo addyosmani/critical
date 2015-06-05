@@ -121,7 +121,7 @@ critical.generate({
     src: 'index.html',
     width: 1300,
     height: 900
-}).then(function(output) {
+}).then(function (output) {
     // You now have critical-path CSS
     // Works with and without dest specified
     ...
@@ -149,20 +149,6 @@ critical.generate({
     }]
 });
 ```
-
-### Generate critical-path CSS and ignore specific selectors
-
-This is a usefull option when you want to defer loading of webfonts 
-
-```js
-critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    dest: 'styles/main.css',
-    ignore: ['@font-face',/(some|regexp)/,'.my-selector']
-});
-```
-
 
 ### Options
 
