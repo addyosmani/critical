@@ -64,7 +64,7 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             res.pathPrefix = val;
             break;
         case 'inline':
-            res.inline = val || typeof val === 'undefined';
+            res.inline = val && val !== 'false' || typeof val === 'undefined';
             break;
         default:
             res[key] = val;
