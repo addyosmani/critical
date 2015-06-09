@@ -36,11 +36,11 @@ var critical = require('critical');
 
 ```js
 critical.generate({
-    // Inline the generated critical-path CSS 
+    // Inline the generated critical-path CSS
     // - true generates HTML
     // - false generates CSS
     inline: true
-    
+
     // Your base directory
     base: 'dist/',
 
@@ -59,7 +59,7 @@ critical.generate({
     // Viewport height
     height: 900,
 
-    // Target for final HTML output. 
+    // Target for final HTML output.
     // use some css file when the inline option is not set
     dest: 'index-critical.html',
 
@@ -68,13 +68,13 @@ critical.generate({
 
     // Extract inlined styles from referenced stylesheets
     extract: true,
-    
+
     // Prefix for asset directory
     pathPrefix: '/MySubfolderDocrot',
-    
+
     // ignore css rules
     ignore: ['font-face',/some-regexp/]
-    
+
     // overwrite default options
     ignoreOptions: {}
 });
@@ -115,6 +115,7 @@ critical.generate({
     base: 'test/',
     src: 'index.html',
     dest: 'index-critical.html',
+    minify: true,
     width: 1300,
     height: 900
 });
@@ -172,19 +173,19 @@ critical.generate({
 });
 ```
 
-### Generate critical-path CSS without @font-face
+### Generate critical-path CSS and ignore specific selectors
 
-When your site is adaptive and you want to deliver critical CSS for multiple screen resolutions this is a useful option.
-*note:* (your final output will be minified as to eliminate duplicate rule inclusion)
+This is a usefull option when you e.g. want to defer loading of webfonts or background images.
 
 ```js
 critical.generate({
     base: 'test/',
     src: 'index.html',
     dest: 'styles/main.css',
-    ignore: ['@font-face']
+    ignore: ['@font-face',/url\(/]
 });
 ```
+
 
 ### Options
 
@@ -203,8 +204,8 @@ critical.generate({
 | inlineImages     | `boolean`     | `false` | Inline images
 | maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
 | pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
-| ignore           | `array`       | `[]` | Ignore css rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples. 
-| ignoreOptions    | `object`       | `{}` | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options). 
+| ignore           | `array`       | `[]` | Ignore css rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
+| ignoreOptions    | `object`       | `{}` | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options).
 
 
 ## CLI
