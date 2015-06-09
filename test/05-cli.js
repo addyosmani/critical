@@ -59,7 +59,7 @@ describe('CLI', function () {
 
         it('should exit with code 1', function (done) {
             execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err) {
-                assert.isObject(err);
+                assert.typeOf(err,'Error');
                 assert.strictEqual(err.code,1);
                 done();
             });
