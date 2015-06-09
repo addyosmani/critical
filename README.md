@@ -37,6 +37,8 @@ var critical = require('critical');
 ```js
 critical.generate({
     // Inline the generated critical-path CSS 
+    // - true generates HTML
+    // - false generates CSS
     inline: true
     
     // Your base directory
@@ -57,7 +59,8 @@ critical.generate({
     // Viewport height
     height: 900,
 
-    // Target for final HTML output
+    // Target for final HTML output. 
+    // use some css file when the inline option is not set
     dest: 'index-critical.html',
 
     // Minify critical-path CSS when inlining
@@ -93,6 +96,19 @@ critical.generate({
     src: 'index.html',
     dest: 'styles/styles.min.css',
     minify: true,
+    width: 1300,
+    height: 900
+});
+```
+
+Generate, minify and inline critical-path CSS:
+
+```js
+critical.generate({
+    inline: true,
+    base: 'test/',
+    src: 'index.html',
+    dest: 'index-critical.html',
     width: 1300,
     height: 900
 });
@@ -152,21 +168,21 @@ critical.generate({
 
 ### Options
 
-| Name             | Type          | Description   |
-| ---------------- | ------------- | ------------- |
-| inline           | `boolean`     | Inline critical-path CSS using filamentgroup's loadCSS  |
-| base             | `string`      | Base directory in which the source and destination are to be written |
-| html             | `string`      | HTML source to be operated against. This option takes precedence over the `src` option |
-| src              | `string`      | Location of the HTML source to be operated against |
-| dest             | `string`      | Location of where to save the output of an operation |
-| width            | `integer`     | Width of the target viewport |
-| height           | `integer`     | Height of the target viewport |
-| dimensions       | `array`       | An array of objects containing height and width.
-| minify           | `boolean`     | Enable minification of generated critical-path CSS |
-| extract          | `boolean`     | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
-| inlineImages     | `boolean`     | Inline images (default: false)
-| maxImageFileSize | `integer`     | Sets a max file size (in bytes) for base64 inlined images
-| pathPrefix       | `string`      | (defaults to `/`) Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
+| Name             | Type          | Default | Description   |
+| ---------------- | ------------- | ------------- |------------- |
+| inline           | `boolean`     | `false` | Inline critical-path CSS using filamentgroup's loadCSS  |
+| base             | `string`      | | Base directory in which the source and destination are to be written |
+| html             | `string`      | | HTML source to be operated against. This option takes precedence over the `src` option |
+| src              | `string`      | | Location of the HTML source to be operated against |
+| dest             | `string`      | | Location of where to save the output of an operation |
+| width            | `integer`     | `900`  | Width of the target viewport |
+| height           | `integer`     | `1300` | Height of the target viewport |
+| dimensions       | `array`       | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
+| minify           | `boolean`     | `false` | Enable minification of generated critical-path CSS |
+| extract          | `boolean`     | `false` | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
+| inlineImages     | `boolean`     | `false` | Inline images
+| maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
+| pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
 
 
 ## CLI
