@@ -10,7 +10,7 @@ var nn = require('normalize-newline');
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
-describe('Module - generateInline', function () {
+describe('Module - generateInline (deprecated)', function () {
 
     it('should generate and inline critical-path CSS', function (done) {
         var expected = read('expected/generateInline.html');
@@ -35,11 +35,11 @@ describe('Module - generateInline', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle parallel calls', function (done) {
+    it('should handle multiple calls', function (done) {
         var expected1 = read('expected/generateInline.html');
         var expected2 = read('expected/generateInline-minified.html');
 
-        async.parallel({
+        async.series({
             first: function (cb) {
                 critical.generateInline({
                     base: 'fixtures/',
@@ -103,6 +103,7 @@ describe('Module - generateInline', function () {
     it('should inline and extract critical-path CSS', function (done) {
         var expected = read('expected/generateInline-extract.html');
         var target = '.generateInline-extract.html';
+
         critical.generateInline({
             base: 'fixtures/',
             minify: true,
@@ -115,6 +116,7 @@ describe('Module - generateInline', function () {
     it('should inline and extract critical-path CSS from html source', function (done) {
         var expected = read('expected/generateInline-extract.html');
         var target = '.generateInline-extract-src.html';
+
         critical.generateInline({
             base: 'fixtures/',
             minify: true,

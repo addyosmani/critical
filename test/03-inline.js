@@ -7,7 +7,7 @@ var assertCritical = require('./helper/testhelper').assertCritical;
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
-describe('Module - inline', function () {
+describe('Module - inline (deprecated)', function () {
     it('inlines critical-path CSS successfully', function (done) {
         var expected = read('expected/inline.html');
         var target = '.inline.html';
