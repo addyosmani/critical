@@ -48,7 +48,6 @@
   "devDependencies": {
     "async": "^1.2.1",
     "chai": "^3.0.0",
-    "csso": "^1.3.11",
     "jshint": "^2.6.0",
     "mocha": "*",
     "mockery": "^1.4.0",
