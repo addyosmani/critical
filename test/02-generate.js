@@ -311,4 +311,34 @@ describe('Module - generate', function () {
             inline: true
         }, assertCritical(target, expected, done));
     });
+
+    it('should consider "ignore" option', function (done) {
+        var expected = read('expected/generate-ignore.css');
+        var target = '.ignore.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default.html',
+            dest: target,
+            ignore: ['@media','.header',/jumbotron/],
+
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should handle empty "ignore" array', function (done) {
+        var expected = read('expected/generate-default.css', true);
+        var target = '.ignore.min.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default.html',
+            dest: target,
+            ignore: [],
+            minify: true,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
 });

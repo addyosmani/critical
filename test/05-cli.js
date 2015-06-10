@@ -110,6 +110,7 @@ describe('CLI', function () {
                 '-m', 'minify',
                 '-e', 'extract',
                 '-p', 'pathPrefix',
+                '-I', '/ignore/',
                 '-i'
             ];
 
@@ -123,6 +124,8 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.isArray(this.mockOpts.ignore);
+            assert.instanceOf(this.mockOpts.ignore[0],RegExp);
             assert.strictEqual(this.mockOpts.inline, true);
         });
 
@@ -134,6 +137,7 @@ describe('CLI', function () {
                 '--css', 'css',
                 '--width', '300',
                 '--height', '400',
+                '--ignore', 'ignore',
                 '--htmlTarget', 'htmlTarget',
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
@@ -152,6 +156,8 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.isArray(this.mockOpts.ignore);
+            assert.include(this.mockOpts.ignore,'ignore');
             assert.strictEqual(this.mockOpts.inline, true);
         });
 
