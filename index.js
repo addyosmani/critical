@@ -13,7 +13,6 @@ var core = require('./lib/core.js');
 
 Promise.promisifyAll(fs);
 
-
 /**
  * Critical path CSS generation
  * @param  {object} opts Options
@@ -28,7 +27,6 @@ exports.generate = function (opts, cb) {
             width: opts.width || 900
         }]
     });
-
 
     // generate critical css
     var corePromise = core.generate(opts);
@@ -59,7 +57,6 @@ exports.generate = function (opts, cb) {
             });
         });
     }
-
 
     // return promise if callback is not defined
     if (_.isFunction(cb)) {
