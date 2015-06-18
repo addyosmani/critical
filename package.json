@@ -22,7 +22,7 @@
     "optimization"
   ],
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
   "dependencies": {
     "bluebird": "^2.2.2",
