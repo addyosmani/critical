@@ -37,7 +37,7 @@
     "indent-string": "^1.2.0",
     "inline-critical": "^0.2.1",
     "lodash": "^3.2.0",
-    "meow": "^3.0.0",
+    "meow": "^3.3.0",
     "object-assign": "^3.0.0",
     "oust": "^0.2.3",
     "penthouse": "^0.3.1",
