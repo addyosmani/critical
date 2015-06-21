@@ -31,6 +31,18 @@ exports.generate = function (opts, cb) {
     // generate critical css
     var corePromise = core.generate(opts);
 
+    // @deprecated
+    // should be removed in next major release
+    if (opts.styleTarget) {
+        corePromise.then(function (output) {
+            var file = path.resolve(opts.styleTarget);
+            var dir = path.dirname(file);
+            return fs.ensureDirAsync(dir).then(function(){
+                return fs.writeFileAsync(path.resolve(opts.styleTarget), output);
+            });
+        });
+    }
+
     // inline
     if (opts.inline) {
         corePromise = Promise.props({

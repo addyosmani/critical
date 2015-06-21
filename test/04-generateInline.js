@@ -4,6 +4,7 @@ var async = require('async');
 var critical = require('../');
 var path = require('path');
 var read = require('./helper/testhelper').read;
+var readAndRemove = require('./helper/testhelper').readAndRemove;
 var assertCritical = require('./helper/testhelper').assertCritical;
 var nn = require('normalize-newline');
 
@@ -124,6 +125,24 @@ describe('Module - generateInline (deprecated)', function () {
             html: read('fixtures/generateInline.html'),
             htmlTarget: target
         }, assertCritical(target, expected, done));
+    });
+
+    it('should generate and inline critical-path CSS and store css', function (done) {
+        var expected = read('expected/generateInline.html');
+        var expectedCss = read('expected/generate-default.css',true);
+        var target = '.generateInline.html';
+        var styleTarget = '.generateInline.css';
+
+        critical.generateInline({
+            base: 'fixtures/',
+            src: 'generateInline.html',
+            htmlTarget: target,
+            styleTarget: styleTarget
+        }, assertCritical(target, expected, function(){
+            var styles = readAndRemove(styleTarget,true);
+            assert.strictEqual(styles, expectedCss);
+            done();
+        }));
     });
 
 });

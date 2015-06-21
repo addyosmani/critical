@@ -6,8 +6,8 @@ var fs = require('fs');
 var path = require('path');
 var nn = require('normalize-newline');
 
-function readAndRemove(file) {
-    var content = read(file);
+function readAndRemove(file, minify) {
+    var content = read(file, minify);
     fs.unlinkSync(path.join(__dirname, '..', file));
     return content;
 }
@@ -40,5 +40,6 @@ function assertCritical(target, expected, done) {
 
 module.exports = {
     assertCritical: assertCritical,
-    read: read
+    read: read,
+    readAndRemove: readAndRemove
 };
