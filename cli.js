@@ -29,7 +29,7 @@ var help = [
     '   -----------------------------------------------------------------------',
     '   -H, --htmlTarget        Target for final HTML output',
     '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)'
-].join('\n');
+];
 
 var cli = meow({
     help: help

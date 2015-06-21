@@ -22,7 +22,7 @@
     "optimization"
   ],
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=0.12.0"
   },
   "dependencies": {
     "bluebird": "^2.2.2",
@@ -37,7 +37,7 @@
     "indent-string": "^1.2.0",
     "inline-critical": "^0.2.1",
     "lodash": "^3.2.0",
-    "meow": "^3.0.0",
+    "meow": "^3.3.0",
     "object-assign": "^3.0.0",
     "oust": "^0.2.3",
     "penthouse": "^0.3.1",
