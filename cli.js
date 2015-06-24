@@ -93,7 +93,7 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
 function error(err) {
     process.stderr.write(indentString(err.message || err, '   Error: '));
     process.stderr.write(os.EOL);
-    process.stderr.write(indentString(help, '   '));
+    process.stderr.write(indentString(help.join(os.EOL), '   '));
     process.exit(1);
 }
 
