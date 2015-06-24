@@ -57,10 +57,11 @@ describe('CLI', function () {
             });
         });
 
-        it('should exit with code 1', function (done) {
-            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err) {
+        it('should exit with code 1 and show help', function (done) {
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function(err, stdout, stderr){
                 assert.typeOf(err,'Error');
                 assert.strictEqual(err.code,1);
+                assert.include(stderr, 'Usage:');
                 done();
             });
         });
