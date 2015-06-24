@@ -32,7 +32,7 @@ Include:
 var critical = require('critical');
 ```
 
-### Generate and inline critical-path CSS
+Full blown example with available options:
 
 ```js
 critical.generate({
@@ -77,6 +77,21 @@ critical.generate({
 
     // overwrite default options
     ignoreOptions: {}
+});
+```
+
+### Generate and inline critical-path CSS
+
+Basic usage:
+
+```js
+critical.generate({
+    inline: true,
+    base: 'test/',
+    src: 'index.html',
+    dest: 'index-critical.html',
+    width: 1300,
+    height: 900
 });
 ```
 
