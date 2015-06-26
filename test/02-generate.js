@@ -341,4 +341,19 @@ describe('Module - generate', function () {
             height: 900
         }, assertCritical(target, expected, done));
     });
+
+    it('should handle ignore "@font-face"', function (done) {
+        var expected = read('expected/generate-ignorefont.css', true);
+        var target = '.ignorefont.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-ignorefont.html',
+            dest: target,
+            ignore: ['@font-face'],
+            minify: true,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
 });

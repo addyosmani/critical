@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Font-face</title>
+    <style type="text/css">
+body {
+  font-family: 'PT Sans', sans-serif;
+}
+</style>
+<script>
+(function(u){function loadCSS(e,t,n){"use strict";function r(){for(var t,i=0;i<d.length;i++)d[i].href&&d[i].href.indexOf(e)>-1&&(t=!0);t?o.media=n||"all":setTimeout(r)}var o=window.document.createElement("link"),i=t||window.document.getElementsByTagName("script")[0],d=window.document.styleSheets;return o.rel="stylesheet",o.href=e,o.media="only x",i.parentNode.insertBefore(o,i),r(),o}for(var i in u){loadCSS(u[i]);}}(['styles/font.css']));
+</script>
+<noscript>
+<link rel="stylesheet" href="styles/font.css">
+</noscript>
+</head>
+<body>
+    <h1>should be styled by @font-face</h1>
+
+</body>
+</html>

@@ -145,7 +145,7 @@ describe('Streams', function () {
             .pipe(streamAssert.end(done));
     });
 
-    it('should use ignore css files not specified when using css option (inline)', function (done) {
+    it('should ignore css files not specified when using css option (inline)', function (done) {
         var stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             width: 1920,
@@ -157,6 +157,46 @@ describe('Streams', function () {
         var expected = read('expected/streams-default.html');
 
         getVinyl('streams-default.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0,function (d) {
+                path.extname(d.path).should.eql('.html');
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+            }))
+            .pipe(streamAssert.end(done));
+    });
+
+    it('should respect ignore option (inline)', function(done){
+        var stream = critical.stream({
+            base: path.join(__dirname, 'fixtures'),
+            css: ['fixtures/styles/font.css'],
+            inline: false,
+            ignore: [/font-face/]
+        });
+
+        var expected = read('expected/generate-ignorefont.css');
+
+        getVinyl('generate-ignorefont.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0,function (d) {
+                path.extname(d.path).should.eql('.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+            }))
+            .pipe(streamAssert.end(done));
+    });
+
+    it('should respect ignore option (inline)', function(done){
+        var stream = critical.stream({
+            base: path.join(__dirname, 'fixtures'),
+            css: ['fixtures/styles/font.css'],
+            inline: true,
+            ignore: ['@font-face']
+        });
+
+        var expected = read('expected/generate-ignorefont.html');
+
+        getVinyl('generate-ignorefont.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0,function (d) {
