@@ -30,12 +30,12 @@
     "clean-css": "3.3.1",
     "cli": "^0.8.0",
     "filter-css": "^0.1.0",
-    "fs-extra": "^0.18.2",
+    "fs-extra": "^0.22.1",
     "get-stdin": "^4.0.1",
     "gulp-util": "^3.0.2",
     "imageinliner": "^0.2.3",
     "indent-string": "^1.2.0",
-    "inline-critical": "^0.2.1",
+    "inline-critical": "^0.4.0",
     "lodash": "^3.2.0",
     "meow": "^3.3.0",
     "object-assign": "^3.0.0",
@@ -43,7 +43,7 @@
     "penthouse": "^0.3.1",
     "slash": "^1.0.0",
     "tempfile": "^1.1.0",
-    "through2": "^0.6.3",
+    "through2": "^2.0.0",
     "tmp": "0.0.26"
   },
   "devDependencies": {
@@ -54,7 +54,7 @@
     "mockery": "^1.4.0",
     "normalize-newline": "^1.0.2",
     "read-package-json": "^2.0.0",
-    "should": "^6.0.1",
+    "should": "^7.0.2",
     "stream-array": "^1.0.1",
     "stream-assert": "^2.0.2",
     "vinyl-source-stream": "^1.0.0"
