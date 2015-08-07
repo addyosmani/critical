@@ -73,7 +73,7 @@ critical.generate({
     pathPrefix: '/MySubfolderDocrot',
 
     // ignore css rules
-    ignore: ['font-face',/some-regexp/]
+    ignore: ['font-face',/some-regexp/],
 
     // overwrite default options
     ignoreOptions: {}
