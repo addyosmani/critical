@@ -9,6 +9,10 @@ var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var skipWin = process.platform === 'win32' ? it.skip : it;
 
+var finalhandler = require('finalhandler');
+var http = require('http');
+var serveStatic = require('serve-static');
+
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
@@ -67,7 +71,39 @@ describe('CLI', function () {
         });
     });
 
+    describe('acceptance (remote)', function () {
+        var server;
 
+        before(function(){
+            var serve = serveStatic('fixtures', {'index': ['generate-default.html']});
+
+            server = http.createServer(function(req, res){
+                var done = finalhandler(req, res);
+                serve(req, res, done);
+            });
+            server.listen(3000);
+        });
+
+        after(function(){
+            server.close();
+        });
+
+        it('should generate critical path css from external resource', function(done){
+            var cp = execFile('node', [
+                path.join(__dirname, '../', this.pkg.bin.critical),
+                'http://localhost:3000',
+                '--base', 'fixtures',
+                '--width', '1300',
+                '--height', '900'
+            ]);
+
+            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(nn(data), nn(expected));
+                done();
+            });
+        });
+    });
 
     describe('mocked', function () {
         beforeEach(function () {
