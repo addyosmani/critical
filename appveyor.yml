@@ -9,12 +9,13 @@ init:
 
 environment:
   matrix:
-    - nodejs_version: 0.10
-    - nodejs_version: 0.12
-    - nodejs_version: 1
+    - nodejs_version: "0.12"
+    - nodejs_version: "4"
 
 install:
   - ps: Install-Product node $env:nodejs_version
+  - npm -g install npm@2
+  - set PATH=%APPDATA%\npm;%PATH%
   - npm install
 
 build: off
