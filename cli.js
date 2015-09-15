@@ -8,6 +8,7 @@ var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
 var critical = require('./');
+var file = require('./lib/fileHelper');
 var ok;
 
 var help = [
@@ -97,9 +98,6 @@ function error(err) {
     process.exit(1);
 }
 
-function isExternal(href) {
-    return /(^\/\/)|(:\/\/)/.test(href);
-}
 
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);
@@ -115,7 +113,7 @@ function run(data) {
         opts.html = data;
     } else {
         opts.src = cli.input[0];
-        if (opts.src && !isExternal(opts.src)) {
+        if (opts.src && !file.isExternal(opts.src)) {
             opts.src = path.resolve(cli.input[0]);
         }
     }
