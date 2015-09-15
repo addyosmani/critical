@@ -97,6 +97,10 @@ function error(err) {
     process.exit(1);
 }
 
+function isExternal(href) {
+    return /(^\/\/)|(:\/\/)/.test(href);
+}
+
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);
     var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
@@ -110,7 +114,10 @@ function run(data) {
     if (data) {
         opts.html = data;
     } else {
-        opts.src = cli.input[0] ? path.resolve(cli.input[0]) : '';
+        opts.src = cli.input[0];
+        if (opts.src && !isExternal(opts.src)) {
+            opts.src = path.resolve(cli.input[0]);
+        }
     }
 
     try {
