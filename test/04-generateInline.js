@@ -7,6 +7,8 @@ var read = require('./helper/testhelper').read;
 var readAndRemove = require('./helper/testhelper').readAndRemove;
 var assertCritical = require('./helper/testhelper').assertCritical;
 var nn = require('normalize-newline');
+var gc = require('../lib/gc');
+gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);

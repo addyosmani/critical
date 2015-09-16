@@ -6,6 +6,8 @@ var assertCritical = require('./helper/testhelper').assertCritical;
 var nn = require('normalize-newline');
 var assert = require('chai').assert;
 var async = require('async');
+var gc = require('../lib/gc');
+gc.skipExceptions();
 
 
 var finalhandler = require('finalhandler');
@@ -609,19 +611,19 @@ describe('Module - generate (remote)', function () {
         });
     });
 
-    it('should inline critical-path CSS ignoring remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external-minified.html');
-        var target = '.generateInline-external.html';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline-external.html',
-            inlineImages: false,
-            minify: true,
-            dest: target,
-            inline: true
-        }, assertCritical(target, expected, done));
-    });
+    //it('should inline critical-path CSS ignoring remote stylesheets', function (done) {
+    //    var expected = read('expected/generateInline-external-minified.html');
+    //    var target = '.generateInline-external.html';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'http://localhost:3000/generateInline-external.html',
+    //        inlineImages: false,
+    //        minify: true,
+    //        dest: target,
+    //        inline: true
+    //    }, assertCritical(target, expected, done));
+    //});
 
     it('should inline critical-path CSS handling remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-minified2.html');
@@ -638,13 +640,28 @@ describe('Module - generate (remote)', function () {
     });
 
 
-    it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external-extract.html');
+    //it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
+    //    var expected = read('expected/generateInline-external-extract.html');
+    //    var target = '.generateInline-external-extract.html';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'http://localhost:3000/generateInline-external.html',
+    //        inlineImages: false,
+    //        minify: true,
+    //        extract: true,
+    //        dest: target,
+    //        inline: true
+    //    }, assertCritical(target, expected, done));
+    //});
+
+    it('should inline critical-path CSS with extract option handling remote stylesheets', function (done) {
+        var expected = read('expected/generateInline-external-extract2.html');
         var target = '.generateInline-external-extract.html';
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline-external.html',
+            src: 'http://localhost:3000/generateInline-external2.html',
             inlineImages: false,
             minify: true,
             extract: true,

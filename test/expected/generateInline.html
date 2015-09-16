@@ -309,8 +309,8 @@ ul{
   float: right !important;
 }
 </style>
-<script>
-(function(u){function loadCSS(e,n,t){"use strict";var o=window.document.createElement("link"),d=n||window.document.getElementsByTagName("script")[0],i=window.document.styleSheets;return o.rel="stylesheet",o.href=e,o.media="only x",d.parentNode.insertBefore(o,d),o.onloadcssdefined=function(e){for(var n,t=0;t<i.length;t++)i[t].href&&i[t].href===o.href&&(n=!0);n?e():setTimeout(function(){o.onloadcssdefined(e)})},o.onloadcssdefined(function(){o.media=t||"all"}),o}for(var i in u){loadCSS(u[i]);}}(['styles/main.css','styles/bootstrap.css']));
+<script id="loadcss">
+(function(u,s){function loadCSS(e,n,t){"use strict";var o=window.document.createElement("link"),d=n||window.document.getElementsByTagName("script")[0],i=window.document.styleSheets;return o.rel="stylesheet",o.href=e,o.media="only x",d.parentNode.insertBefore(o,d),o.onloadcssdefined=function(e){for(var n,t=0;t<i.length;t++)i[t].href&&i[t].href===o.href&&(n=!0);n?e():setTimeout(function(){o.onloadcssdefined(e)})},o.onloadcssdefined(function(){o.media=t||"all"}),o}for(var i in u){loadCSS(u[i],s);}}(['styles/main.css','styles/bootstrap.css'],document.getElementById("loadcss")));
 </script>
 <noscript>
 <link rel="stylesheet" href="styles/main.css">

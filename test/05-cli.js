@@ -8,6 +8,8 @@ var path = require('path');
 var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var skipWin = process.platform === 'win32' ? it.skip : it;
+var gc = require('../lib/gc');
+gc.skipExceptions();
 
 var finalhandler = require('finalhandler');
 var http = require('http');
