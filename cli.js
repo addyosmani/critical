@@ -24,6 +24,9 @@ var help = [
     '   -I, --ignore            RegExp, @type or selector to ignore',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
     '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
+    '   --ii, --inlineImages    Inline images',
+    '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
+    '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
     '   ----------------------------------------------------------------------.',
     '   Deprecated - use "--inline" to retrieve the modified HTML',
     '   critical source.html --inline > dest.html',
@@ -46,7 +49,8 @@ var cli = meow({
         S: 'styleTarget',
         m: 'minify',
         e: 'extract',
-        p: 'pathPrefix'
+        p: 'pathPrefix',
+        ii: 'inlineImages'
     }
 });
 
@@ -68,6 +72,19 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'inline':
             res.inline = val && val !== 'false' || typeof val === 'undefined';
+            break;
+        case 'inlineimages':
+            res.inlineImages = val;
+            break;
+        case 'maxfilesize':
+            res.maxFileSize = val;
+            break;
+        case 'assetpaths':
+        case 'assetPaths':
+            if (_.isString(val)) {
+                val = [val];
+            }
+            res.assetPaths = val;
             break;
         case 'ignore':
             if (_.isString(val) || _.isRegExp(val)) {

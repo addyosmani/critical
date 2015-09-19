@@ -182,7 +182,11 @@ describe('CLI', function () {
                 '--minify', 'minify',
                 '--extract', 'extract',
                 '--pathPrefix', 'pathPrefix',
-                '--inline'
+                '--inline',
+                '--inlineImages',
+                '--maxFileSize', '1024',
+                '--assetPaths', 'assetPath1',
+                '--assetPaths', 'assetPath2'
             ];
 
             require('../cli');
@@ -198,6 +202,12 @@ describe('CLI', function () {
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore,'ignore');
             assert.strictEqual(this.mockOpts.inline, true);
+            assert.strictEqual(this.mockOpts.inlineImages, true);
+            assert.isArray(this.mockOpts.assetPaths);
+            assert.include(this.mockOpts.assetPaths,'assetPath1');
+            assert.include(this.mockOpts.assetPaths,'assetPath2');
+            assert.strictEqual(this.mockOpts.maxFileSize, 1024);
+
         });
 
         it('should set inline to false when prefixed with --no', function () {

@@ -381,6 +381,7 @@ describe('Module - generate (remote)', function () {
         server.close();
     });
 
+
     it('should generate critical-path CSS', function (done) {
         var expected = read('expected/generate-default.css');
         var target = '.critical.css';
@@ -462,6 +463,24 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should inline relative images fetched over http', function (done) {
+        var expected = read('expected/generate-image.css');
+        var target = '.image-relative.css';
+
+        critical.generate({
+            base: './', // image could not be fetched locally
+            src: 'http://localhost:3000/generate-image.html',
+            css: [
+                'fixtures/styles/image-relative.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: true,
+            assetPaths: ['http://localhost:3000/','http://localhost:3000/styles']
+        }, assertCritical(target, expected, done));
+    });
+
     it('should inline absolute images', function (done) {
         var expected = read('expected/generate-image.css');
         var target = '.image-absolute.css';
@@ -476,6 +495,24 @@ describe('Module - generate (remote)', function () {
             width: 1300,
             height: 900,
             inlineImages: true
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should inline absolute images fetched over http', function (done) {
+        var expected = read('expected/generate-image.css');
+        var target = '.image-absolute.css';
+
+        critical.generate({
+            base: './',
+            src: 'http://localhost:3000/generate-image.html',
+            css: [
+                'fixtures/styles/image-absolute.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: true,
+            assetPaths: ['http://localhost:3000/','http://localhost:3000/styles']
         }, assertCritical(target, expected, done));
     });
 
