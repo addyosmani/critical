@@ -172,7 +172,7 @@ exports.stream = function (opts) {
 
         exports.generate(options, function (err, data) {
             if (err) {
-                return new PluginError('critical', err.message);
+                return cb(new PluginError('critical', err.message));
             }
 
             // rename file if not inlined
