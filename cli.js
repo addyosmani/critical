@@ -8,6 +8,7 @@ var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
 var critical = require('./');
+var file = require('./lib/fileHelper');
 var ok;
 
 var help = [
@@ -23,6 +24,9 @@ var help = [
     '   -I, --ignore            RegExp, @type or selector to ignore',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
     '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
+    '   --ii, --inlineImages    Inline images',
+    '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
+    '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
     '   ----------------------------------------------------------------------.',
     '   Deprecated - use "--inline" to retrieve the modified HTML',
     '   critical source.html --inline > dest.html',
@@ -45,7 +49,8 @@ var cli = meow({
         S: 'styleTarget',
         m: 'minify',
         e: 'extract',
-        p: 'pathPrefix'
+        p: 'pathPrefix',
+        ii: 'inlineImages'
     }
 });
 
@@ -67,6 +72,19 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'inline':
             res.inline = val && val !== 'false' || typeof val === 'undefined';
+            break;
+        case 'inlineimages':
+            res.inlineImages = val;
+            break;
+        case 'maxfilesize':
+            res.maxFileSize = val;
+            break;
+        case 'assetpaths':
+        case 'assetPaths':
+            if (_.isString(val)) {
+                val = [val];
+            }
+            res.assetPaths = val;
             break;
         case 'ignore':
             if (_.isString(val) || _.isRegExp(val)) {
@@ -97,6 +115,7 @@ function error(err) {
     process.exit(1);
 }
 
+
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);
     var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
@@ -110,7 +129,10 @@ function run(data) {
     if (data) {
         opts.html = data;
     } else {
-        opts.src = cli.input[0] ? path.resolve(cli.input[0]) : '';
+        opts.src = cli.input[0];
+        if (opts.src && !file.isExternal(opts.src)) {
+            opts.src = path.resolve(cli.input[0]);
+        }
     }
 
     try {

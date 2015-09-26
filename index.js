@@ -9,7 +9,8 @@ var inliner = require('./lib/inline-styles');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
-var core = require('./lib/core.js');
+var core = require('./lib/core');
+var file = require('./lib/fileHelper');
 
 Promise.promisifyAll(fs);
 
@@ -46,7 +47,7 @@ exports.generate = function (opts, cb) {
     // inline
     if (opts.inline) {
         corePromise = Promise.props({
-            html: core.getContentPromise(opts),
+            html: file.getContentPromise(opts),
             css: corePromise
         }).then(function (result) {
             return sourceInliner(result.html, result.css, {
@@ -172,7 +173,7 @@ exports.stream = function (opts) {
 
         exports.generate(options, function (err, data) {
             if (err) {
-                return new PluginError('critical', err.message);
+                return cb(new PluginError('critical', err.message));
             }
 
             // rename file if not inlined

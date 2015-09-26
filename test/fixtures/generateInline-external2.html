@@ -8,80 +8,9 @@
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
         <!-- build:css styles/main.css -->
-        <style type="text/css">
-body {
-    padding-top: 20px;
-    padding-bottom: 20px;
-}
-
-
-.header,
-.marketing{
-    padding-left: 15px;
-    padding-right: 15px;
-}
-
-
-.header {
-    border-bottom: 1px solid #e5e5e5;
-}
-
-
-.header h3 {
-    margin-top: 0;
-    margin-bottom: 0;
-    line-height: 40px;
-    padding-bottom: 19px;
-}
-
-
-.jumbotron {
-    text-align: center;
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.jumbotron .btn {
-    font-size: 21px;
-    padding: 14px 24px;
-}
-
-
-.marketing {
-    margin: 40px 0;
-}
-
-
-@media screen and (min-width: 768px) {
-    .container {
-        max-width: 730px;
-    }
-
-    
-    .header,
-    .marketing{
-        padding-left: 0;
-        padding-right: 0;
-    }
-
-    
-    .header {
-        margin-bottom: 30px;
-    }
-    
-    
-    .jumbotron {
-        border-bottom: 0;
-    }
-}
-</style>
-<script id="loadcss">
-(function(u,s){function loadCSS(e,n,t){"use strict";var o=window.document.createElement("link"),d=n||window.document.getElementsByTagName("script")[0],i=window.document.styleSheets;return o.rel="stylesheet",o.href=e,o.media="only x",d.parentNode.insertBefore(o,d),o.onloadcssdefined=function(e){for(var n,t=0;t<i.length;t++)i[t].href&&i[t].href===o.href&&(n=!0);n?e():setTimeout(function(){o.onloadcssdefined(e)})},o.onloadcssdefined(function(){o.media=t||"all"}),o}for(var i in u){loadCSS(u[i],s);}}(['styles/main.css','styles/bootstrap.css'],document.getElementById("loadcss")));
-</script>
-<noscript>
-<link rel="stylesheet" href="styles/main.css">
-<link rel="stylesheet" href="styles/bootstrap.css">
-</noscript>
-        
+        <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="https://raw.githubusercontent.com/twbs/bootstrap/v3.1.1/dist/css/bootstrap.css" />
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Merriweather:300,700,700italic,300italic|Open+Sans:700,400">
         <!-- endbuild -->
 
     </head>
@@ -120,5 +49,5 @@ body {
                 <p>♥ from the Yeoman team</p>
             </div>
         </div>
-</body>
+    </body>
 </html>

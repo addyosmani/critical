@@ -8,6 +8,12 @@ var path = require('path');
 var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var skipWin = process.platform === 'win32' ? it.skip : it;
+var gc = require('../lib/gc');
+gc.skipExceptions();
+
+var finalhandler = require('finalhandler');
+var http = require('http');
+var serveStatic = require('serve-static');
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -67,7 +73,39 @@ describe('CLI', function () {
         });
     });
 
+    describe('acceptance (remote)', function () {
+        var server;
 
+        before(function(){
+            var serve = serveStatic('fixtures', {'index': ['generate-default.html']});
+
+            server = http.createServer(function(req, res){
+                var done = finalhandler(req, res);
+                serve(req, res, done);
+            });
+            server.listen(3000);
+        });
+
+        after(function(){
+            server.close();
+        });
+
+        it('should generate critical path css from external resource', function(done){
+            var cp = execFile('node', [
+                path.join(__dirname, '../', this.pkg.bin.critical),
+                'http://localhost:3000',
+                '--base', 'fixtures',
+                '--width', '1300',
+                '--height', '900'
+            ]);
+
+            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', function (data) {
+                assert.strictEqual(nn(data), nn(expected));
+                done();
+            });
+        });
+    });
 
     describe('mocked', function () {
         beforeEach(function () {
@@ -144,7 +182,11 @@ describe('CLI', function () {
                 '--minify', 'minify',
                 '--extract', 'extract',
                 '--pathPrefix', 'pathPrefix',
-                '--inline'
+                '--inline',
+                '--inlineImages',
+                '--maxFileSize', '1024',
+                '--assetPaths', 'assetPath1',
+                '--assetPaths', 'assetPath2'
             ];
 
             require('../cli');
@@ -160,6 +202,12 @@ describe('CLI', function () {
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore,'ignore');
             assert.strictEqual(this.mockOpts.inline, true);
+            assert.strictEqual(this.mockOpts.inlineImages, true);
+            assert.isArray(this.mockOpts.assetPaths);
+            assert.include(this.mockOpts.assetPaths,'assetPath1');
+            assert.include(this.mockOpts.assetPaths,'assetPath2');
+            assert.strictEqual(this.mockOpts.maxFileSize, 1024);
+
         });
 
         it('should set inline to false when prefixed with --no', function () {
