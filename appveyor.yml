@@ -4,9 +4,6 @@ version: "{build}"
 
 clone_depth: 10
 
-init:
-  - git config --global core.autocrlf true
-
 environment:
   matrix:
     - nodejs_version: "0.12"
