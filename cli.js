@@ -152,12 +152,12 @@ function run(data) {
 if (cli.input[0]) {
     run();
 } else {
-    stdin(run);
+    // get stdin
+    stdin().then(run);
     setTimeout(function () {
         if (ok) {
             return;
         }
-        cli.showHelp();
+        run();
     }, 100);
 }
-
