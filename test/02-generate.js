@@ -31,6 +31,19 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should generate critical-path CSS with query string in file name', function (done) {
+        var expected = read('expected/generate-default.css');
+        var target = '.critical.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default-querystring.html',
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
     it('should generate multi-dimension critical-path CSS', function (done) {
         var expected = read('expected/generate-adaptive.css', 'utf8');
         var target = '.adaptive.css';
