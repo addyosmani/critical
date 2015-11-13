@@ -111,7 +111,7 @@ describe('CLI', function () {
         beforeEach(function () {
             this.origArgv = process.argv;
             this.origExit = process.exit;
-
+            
             mockery.enable({
                 warnOnUnregistered: false,
                 useCleanCache: true
@@ -223,20 +223,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.inline, false);
         });
 
-        it('should set inline to false when passing false', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html',
-                '-i', 'false'
-            ];
-
-            require('../cli');
-
-            assert.strictEqual(this.mockOpts.inline, false);
-        });
-
-        it('should set inline to false when passing 0', function () {
+        it('should set inline to false when passing a falsy value', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', this.pkg.bin.critical),

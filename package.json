@@ -27,7 +27,7 @@
   "dependencies": {
     "bluebird": "^2.2.2",
     "cheerio": "^0.19.0",
-    "clean-css": "^3.4.6",
+    "clean-css": "3.4.6",
     "cli": "^0.11.0",
     "filter-css": "^0.1.0",
     "fs-extra": "^0.24.0",
@@ -35,7 +35,7 @@
     "gulp-util": "^3.0.2",
     "imageinliner": "^0.2.3",
     "indent-string": "^2.1.0",
-    "inline-critical": "^0.4.1",
+    "inline-critical": "^1.0.0",
     "lodash": "^3.2.0",
     "meow": "^3.3.0",
     "mime-types": "^2.1.6",
