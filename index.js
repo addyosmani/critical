@@ -22,7 +22,8 @@ Promise.promisifyAll(fs);
  * @return {Promise}|undefined
  */
 exports.generate = function (opts, cb) {
-    opts = _.defaults(opts,{
+    opts = _.defaults(opts || {},{
+        base: file.guessBasePath(opts || {}),
         dimensions: [{
             height:  opts.height || 1300,
             width: opts.width || 900
