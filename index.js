@@ -25,8 +25,8 @@ exports.generate = function (opts, cb) {
     opts = _.defaults(opts || {},{
         base: file.guessBasePath(opts || {}),
         dimensions: [{
-            height:  opts.height || 1300,
-            width: opts.width || 900
+            height:  opts.height || 900,
+            width: opts.width || 1300
         }]
     });
 
