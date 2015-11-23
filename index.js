@@ -152,11 +152,6 @@ exports.inline = function (opts, cb) {
  * @returns {*}
  */
 exports.stream = function (opts) {
-    opts = opts || {};
-
-    if (!opts.base) {
-        throw new PluginError('critical', 'A valid base path is required.');
-    }
 
     // return stream
     return through2.obj(function (file, enc, cb) {
@@ -168,7 +163,7 @@ exports.stream = function (opts) {
             return this.emit('error', new PluginError('critical', 'Streaming not supported'));
         }
 
-        var options = _.assign(opts, {
+        var options = _.assign(opts || {}, {
             html: file.contents.toString()
         });
 
@@ -178,7 +173,7 @@ exports.stream = function (opts) {
             }
 
             // rename file if not inlined
-            if (opts.inline === false) {
+            if (!opts.inline) {
                 file.path = replaceExtension(file.path, '.css');
             }
 

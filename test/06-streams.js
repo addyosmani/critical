@@ -46,14 +46,6 @@ function getVinyl(file) {
 
 // binary
 describe('Streams', function () {
-
-    it('should throw error if required param is missing', function () {
-        /* jshint -W068 */
-        (function () {
-            critical.stream();
-        }).should.throw('A valid base path is required.');
-    });
-
     it('should emit error on streamed file', function(done){
         var stream = critical.stream({base: path.join(__dirname,'fixtures')});
         var fakeFilePath = path.join(__dirname, 'fixtures','generate-default.html');
