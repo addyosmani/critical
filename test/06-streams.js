@@ -46,6 +46,10 @@ function getVinyl(file) {
 
 // binary
 describe('Streams', function () {
+    after(function(){
+        process.emit('cleanup');
+    });
+
     it('should emit error on streamed file', function(done){
         var stream = critical.stream({base: path.join(__dirname,'fixtures')});
         var fakeFilePath = path.join(__dirname, 'fixtures','generate-default.html');

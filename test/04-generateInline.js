@@ -14,7 +14,9 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('Module - generateInline (deprecated)', function () {
-
+    after(function(){
+        process.emit('cleanup');
+    });
     it('should generate and inline critical-path CSS', function (done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';

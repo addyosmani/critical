@@ -27,6 +27,10 @@ describe('CLI', function () {
         }.bind(this));
     });
 
+    after(function(){
+        process.emit('cleanup');
+    });
+
     describe('acceptance', function () {
         // empty stdout on appveyor? runs correct on manual test with Windows 7
         skipWin('should return the version', function (done) {
@@ -111,7 +115,7 @@ describe('CLI', function () {
         beforeEach(function () {
             this.origArgv = process.argv;
             this.origExit = process.exit;
-            
+
             mockery.enable({
                 warnOnUnregistered: false,
                 useCleanCache: true

@@ -18,6 +18,9 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('Module - generate', function () {
+    after(function(){
+        process.emit('cleanup');
+    });
     it('should generate critical-path CSS', function (done) {
         var expected = read('expected/generate-default.css');
         var target = '.critical.css';
@@ -392,6 +395,7 @@ describe('Module - generate (remote)', function () {
 
     after(function(){
         server.close();
+        process.emit('cleanup');
     });
 
 
