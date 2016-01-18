@@ -2,4 +2,5 @@ node_modules
 test/fixture/test-*
 test/fixture/styles/main.9a350a2d.css
 test/fixtures/styles/bootstrap.11bdb61e.css
+test/fixtures/styles/bootstrap.cce7f1a3.css
 test/fixture/bower_components/bootstrap/dist/css/*

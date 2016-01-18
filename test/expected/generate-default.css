@@ -88,7 +88,6 @@ h1 {
 
 html {
   font-size: 62.5%;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 body {
@@ -219,11 +218,6 @@ ul {
   text-align: center;
   white-space: nowrap;
   vertical-align: middle;
-  cursor: pointer;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
   background-image: none;
   border: 1px solid transparent;
   border-radius: 4px;
@@ -241,8 +235,6 @@ ul {
   line-height: 1.33;
   border-radius: 6px;
 }
-
-
 
 .nav {
   padding-left: 0;
