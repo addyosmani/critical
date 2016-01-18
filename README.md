@@ -226,6 +226,10 @@ critical.generate({
 
 ## CLI
 
+```
+$ npm install -g critical
+```
+
 critical works well with standard input.
 
 ```
