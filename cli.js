@@ -90,12 +90,12 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             if (_.isString(val) || _.isRegExp(val)) {
                 val = [val];
             }
-            res.ignore = _.map(val || [], function(ignore) {
+            res.ignore = _.map(val || [], function (ignore) {
                 // check regex
                 var match = ignore.match(/^\/(.*)\/([igmy]+)?$/);
 
                 if (match) {
-                    return new RegExp(_.escapeRegExp(match[1]),match[2]);
+                    return new RegExp(_.escapeRegExp(match[1]), match[2]);
                 }
                 return ignore;
             });
@@ -114,7 +114,6 @@ function error(err) {
     process.stderr.write(indentString(help.join(os.EOL), '   '));
     process.exit(1);
 }
-
 
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);
@@ -147,7 +146,6 @@ function run(data) {
         error(err);
     }
 }
-
 
 if (cli.input[0]) {
     run();

@@ -1,3 +1,4 @@
+/* eslint-env node, mocha */
 'use strict';
 var assert = require('chai').assert;
 var exec = require('child_process').exec;
@@ -19,22 +20,22 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('CLI', function () {
-
-    beforeEach(function(done){
-        readJson('../package.json',function(err,data){
+    beforeEach(function (done) {
+        readJson('../package.json', function (err, data) {
+            assert.isNull(err, Boolean(err) && err);
             this.pkg = data;
             done();
         }.bind(this));
     });
 
-    after(function(){
+    after(function () {
         process.emit('cleanup');
     });
 
     describe('acceptance', function () {
         // empty stdout on appveyor? runs correct on manual test with Windows 7
         skipWin('should return the version', function (done) {
-            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], function(error, stdout){
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], function (error, stdout) {
                 assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), this.pkg.version);
                 done();
             }.bind(this));
@@ -49,7 +50,7 @@ describe('CLI', function () {
                 '--height', '900'
             ]);
 
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
                 assert.strictEqual(nn(data), nn(expected));
                 done();
@@ -60,7 +61,7 @@ describe('CLI', function () {
         skipWin('should work well with the critical CSS file piped to critical', function (done) {
             var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
 
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
                 assert.strictEqual(nn(data), nn(expected));
                 done();
@@ -68,9 +69,9 @@ describe('CLI', function () {
         });
 
         it('should exit with code 1 and show help', function (done) {
-            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function(err, stdout, stderr){
-                assert.typeOf(err,'Error');
-                assert.strictEqual(err.code,1);
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err, stdout, stderr) {
+                assert.typeOf(err, 'Error');
+                assert.strictEqual(err.code, 1);
                 assert.include(stderr, 'Usage:');
                 done();
             });
@@ -80,21 +81,21 @@ describe('CLI', function () {
     describe('acceptance (remote)', function () {
         var server;
 
-        before(function(){
-            var serve = serveStatic('fixtures', {'index': ['generate-default.html']});
+        before(function () {
+            var serve = serveStatic('fixtures', {index: ['generate-default.html']});
 
-            server = http.createServer(function(req, res){
+            server = http.createServer(function (req, res) {
                 var done = finalhandler(req, res);
                 serve(req, res, done);
             });
             server.listen(3000);
         });
 
-        after(function(){
+        after(function () {
             server.close();
         });
 
-        it('should generate critical path css from external resource', function(done){
+        it('should generate critical path css from external resource', function (done) {
             var cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'http://localhost:3000',
@@ -103,7 +104,7 @@ describe('CLI', function () {
                 '--height', '900'
             ]);
 
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
                 assert.strictEqual(nn(data), nn(expected));
                 done();
@@ -168,7 +169,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);
-            assert.instanceOf(this.mockOpts.ignore[0],RegExp);
+            assert.instanceOf(this.mockOpts.ignore[0], RegExp);
             assert.strictEqual(this.mockOpts.inline, true);
         });
 
@@ -204,14 +205,13 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);
-            assert.include(this.mockOpts.ignore,'ignore');
+            assert.include(this.mockOpts.ignore, 'ignore');
             assert.strictEqual(this.mockOpts.inline, true);
             assert.strictEqual(this.mockOpts.inlineImages, true);
             assert.isArray(this.mockOpts.assetPaths);
-            assert.include(this.mockOpts.assetPaths,'assetPath1');
-            assert.include(this.mockOpts.assetPaths,'assetPath2');
+            assert.include(this.mockOpts.assetPaths, 'assetPath1');
+            assert.include(this.mockOpts.assetPaths, 'assetPath2');
             assert.strictEqual(this.mockOpts.maxFileSize, 1024);
-
         });
 
         it('should set inline to false when prefixed with --no', function () {

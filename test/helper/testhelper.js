@@ -26,7 +26,7 @@ function read(file, minify) {
  */
 function assertCritical(target, expected, done) {
     return function (err, output) {
-        assert.isNull(err, !!err && err);
+        assert.isNull(err, Boolean(err) && err);
         assert.isDefined(output, 'Should produce output');
 
         var dest = readAndRemove(target);

@@ -1,3 +1,4 @@
+/* eslint-env node, mocha */
 'use strict';
 var assert = require('chai').assert;
 var async = require('async');
@@ -14,7 +15,7 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('Module - generateInline (deprecated)', function () {
-    after(function(){
+    after(function () {
         process.emit('cleanup');
     });
     it('should generate and inline critical-path CSS', function (done) {
@@ -59,6 +60,7 @@ describe('Module - generateInline (deprecated)', function () {
                 }, cb);
             }
         }, function (err, results) {
+            assert.isNull(err, Boolean(err) && err);
             assert.strictEqual(nn(results.first), nn(expected1));
             assert.strictEqual(nn(results.second), nn(expected2));
             done();
@@ -77,7 +79,6 @@ describe('Module - generateInline (deprecated)', function () {
             htmlTarget: target
         }, assertCritical(target, expected, done));
     });
-
 
     it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-extract.html');
@@ -133,7 +134,7 @@ describe('Module - generateInline (deprecated)', function () {
 
     it('should generate and inline critical-path CSS and store css', function (done) {
         var expected = read('expected/generateInline.html');
-        var expectedCss = read('expected/generate-default.css',true);
+        var expectedCss = read('expected/generate-default.css', true);
         var target = '.generateInline.html';
         var styleTarget = '.generateInline.css';
 
@@ -142,11 +143,10 @@ describe('Module - generateInline (deprecated)', function () {
             src: 'generateInline.html',
             htmlTarget: target,
             styleTarget: styleTarget
-        }, assertCritical(target, expected, function(){
-            var styles = readAndRemove(styleTarget,true);
+        }, assertCritical(target, expected, function () {
+            var styles = readAndRemove(styleTarget, true);
             assert.strictEqual(styles, expectedCss);
             done();
         }));
     });
-
 });
