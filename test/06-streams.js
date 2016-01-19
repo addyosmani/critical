@@ -22,7 +22,7 @@ process.setMaxListeners(0);
 
 /**
  * Get vinyl file object
- * 
+ *
  * @returns {*|StreamArray|exports}
  */
 function getVinyl() {
