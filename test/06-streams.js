@@ -82,6 +82,26 @@ describe('Streams', function () {
             });
     });
 
+    it.skip('should work inside folders', function (done) {
+        var stream = critical.stream({
+            base: path.join(__dirname, 'fixtures'),
+            inline: false,
+            minify: true,
+            inlineImages: true
+        });
+
+        var expected1 = read('expected/generate-default.css', true);
+
+        getVinyl('folder/generate-default.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
+            }))
+            .pipe(streamAssert.end(done));
+    });
+
     it('should use "generateInline" if inline option is set', function (done) {
         var stream = critical.stream({base: path.join(__dirname, 'fixtures'), inline: true});
         var expected = read('expected/generateInline.html');
