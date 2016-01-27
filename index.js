@@ -10,7 +10,7 @@ var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
 var core = require('./lib/core');
-var file = require('./lib/fileHelper');
+var FileHelper = require('./lib/fileHelper');
 
 Promise.promisifyAll(fs);
 
@@ -23,10 +23,10 @@ Promise.promisifyAll(fs);
  */
 exports.generate = function (opts, cb) {
 
-    opts = _.defaults(opts || {},{
-        base: file.guessBasePath(opts || {}),
+    opts = _.defaults(opts || {}, {
+        base: FileHelper.guessBasePath(opts || {}),
         dimensions: [{
-            height:  opts.height || 900,
+            height: opts.height || 900,
             width: opts.width || 1300
         }]
     });
@@ -40,7 +40,7 @@ exports.generate = function (opts, cb) {
         corePromise.then(function (output) {
             var file = path.resolve(opts.styleTarget);
             var dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(function(){
+            return fs.ensureDirAsync(dir).then(function () {
                 return fs.writeFileAsync(path.resolve(opts.styleTarget), output);
             });
         });
@@ -49,10 +49,10 @@ exports.generate = function (opts, cb) {
     // inline
     if (opts.inline) {
         corePromise = Promise.props({
-            html: file.getContentPromise(opts),
+            file: FileHelper.getVinylPromise(opts),
             css: corePromise
         }).then(function (result) {
-            return sourceInliner(result.html, result.css, {
+            return sourceInliner(result.file.contents.toString(), result.css, {
                 minify: opts.minify || false,
                 extract: opts.extract || false,
                 basePath: opts.base || process.cwd()
@@ -65,8 +65,8 @@ exports.generate = function (opts, cb) {
         corePromise = corePromise.then(function (output) {
             var file = path.resolve(opts.dest);
             var dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(function(){
-               return fs.writeFileAsync(path.resolve(opts.dest), output);
+            return fs.ensureDirAsync(dir).then(function () {
+                return fs.writeFileAsync(path.resolve(opts.dest), output);
             }).then(function () {
                 return output;
             });
@@ -80,12 +80,12 @@ exports.generate = function (opts, cb) {
             throw new Promise.CancellationError();
         }).then(function (output) {
             cb(null, output.toString());
-        }).catch(Promise.CancellationError,function(){}).done();
+        }).catch(Promise.CancellationError, function () {
+        }).done();
     } else {
         return corePromise;
     }
 };
-
 
 /**
  * deprecated will be removed in the next version
@@ -113,7 +113,8 @@ exports.generateInline = function (opts, cb) {
  */
 exports.inline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {};
+    cb = cb || function () {
+        };
 
     if (!opts.src || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -144,8 +145,6 @@ exports.inline = function (opts, cb) {
     });
 };
 
-
-
 /**
  * Streams wrapper for critical
  *
@@ -165,7 +164,7 @@ exports.stream = function (opts) {
         }
 
         var options = _.assign(opts || {}, {
-            html: file.contents.toString()
+            src: file
         });
 
         exports.generate(options, function (err, data) {
