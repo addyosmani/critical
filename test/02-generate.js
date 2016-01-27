@@ -21,126 +21,140 @@ describe('Module - generate', function () {
     after(function(){
         process.emit('cleanup');
     });
-    it('should generate critical-path CSS', function (done) {
-        var expected = read('expected/generate-default.css');
-        var target = '.critical.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-default.html',
-            dest: target,
-            width: 1300,
-            height: 900
-        }, assertCritical(target, expected, done));
-    });
-
-    it('should generate critical-path CSS with query string in file name', function (done) {
-        var expected = read('expected/generate-default.css');
-        var target = '.critical.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-default-querystring.html',
-            dest: target,
-            width: 1300,
-            height: 900
-        }, assertCritical(target, expected, done));
-    });
-
-    it('should generate multi-dimension critical-path CSS', function (done) {
-        var expected = read('expected/generate-adaptive.css', 'utf8');
-        var target = '.adaptive.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-adaptive.html',
-            dest: target,
-            dimensions: [{
-                width: 100,
-                height: 70
-            }, {
-                width: 1000,
-                height: 70
-            }]
-        }, assertCritical(target, expected, done));
-    });
-
-    it('should generate minified critical-path CSS', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = '.critical.min.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-default.html',
-            minify: true,
-            dest: target,
-            width: 1300,
-            height: 900
-        }, assertCritical(target, expected, done));
-    });
-
-    it('should generate minified critical-path CSS successfully with external css file configured', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = '.nostyle.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-default-nostyle.html',
-            css: [
-                'fixtures/styles/main.css',
-                'fixtures/styles/bootstrap.css'
-            ],
-            minify: true,
-            dest: target,
-            width: 1300,
-            height: 900
-        }, assertCritical(target, expected, done));
-    });
-
-    it('should inline relative images', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image-relative.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-image.html',
-            css: [
-                'fixtures/styles/image-relative.css'
-            ],
-            dest: target,
-            width: 1300,
-            height: 900,
-            inlineImages: true
-        }, assertCritical(target, expected, done));
-    });
-
-    it('should inline relative images from folder', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image-relative.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'folder/generate-image.html',
-            css: [
-                'fixtures/styles/image-relative.css'
-            ],
-            dest: target,
-            width: 1300,
-            height: 900,
-            inlineImages: true
-        }, assertCritical(target, expected, done));
-    });
+    //it('should generate critical-path CSS', function (done) {
+    //    var expected = read('expected/generate-default.css');
+    //    var target = '.critical.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'generate-default.html',
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should generate critical-path CSS with query string in file name', function (done) {
+    //    var expected = read('expected/generate-default.css');
+    //    var target = '.critical.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'generate-default-querystring.html',
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should generate multi-dimension critical-path CSS', function (done) {
+    //    var expected = read('expected/generate-adaptive.css', 'utf8');
+    //    var target = '.adaptive.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'generate-adaptive.html',
+    //        dest: target,
+    //        dimensions: [{
+    //            width: 100,
+    //            height: 70
+    //        }, {
+    //            width: 1000,
+    //            height: 70
+    //        }]
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should generate minified critical-path CSS', function (done) {
+    //    var expected = read('expected/generate-default.css', true);
+    //    var target = '.critical.min.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'generate-default.html',
+    //        minify: true,
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should generate minified critical-path CSS successfully with external css file configured', function (done) {
+    //    var expected = read('expected/generate-default.css', true);
+    //    var target = '.nostyle.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'generate-default-nostyle.html',
+    //        css: [
+    //            'fixtures/styles/main.css',
+    //            'fixtures/styles/bootstrap.css'
+    //        ],
+    //        minify: true,
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should inline relative images', function (done) {
+    //    var expected = read('expected/generate-image.css');
+    //    var target = '.image-relative.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'generate-image.html',
+    //        css: [
+    //            'fixtures/styles/image-relative.css'
+    //        ],
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900,
+    //        inlineImages: true
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should inline relative images from folder', function (done) {
+    //    var expected = read('expected/generate-image.css');
+    //    var target = '.image-relative.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'folder/generate-image.html',
+    //        css: [
+    //            'fixtures/styles/image-relative.css'
+    //        ],
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900,
+    //        inlineImages: true
+    //    }, assertCritical(target, expected, done));
+    //});
+    //
+    //it('should rewrite relative images for html outside root', function (done) {
+    //    var expected = read('expected/generate-image-relative.css');
+    //    var target = '.image-relative.css';
+    //
+    //    critical.generate({
+    //        base: 'fixtures/',
+    //        src: 'folder/generate-image.html',
+    //        css: [
+    //            'fixtures/styles/image-relative.css'
+    //        ],
+    //        dest: target,
+    //        width: 1300,
+    //        height: 900,
+    //        inlineImages: false
+    //    }, assertCritical(target, expected, done));
+    //});
 
     it('should rewrite relative images for html outside root', function (done) {
-        var expected = read('expected/generate-image-relative.css');
-        var target = '.image-relative.css';
+        var expected = read('expected/generate-image-relative-subfolder.css');
+        var target = '.image-relative-subfolder.css';
 
         critical.generate({
             base: 'fixtures/',
-            src: 'folder/generate-image.html',
-            css: [
-                'fixtures/styles/image-relative.css'
-            ],
+            src: 'folder/subfolder/generate-image-absolute.html',
             dest: target,
             width: 1300,
             height: 900,
