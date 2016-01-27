@@ -114,6 +114,57 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should inline relative images from folder', function (done) {
+        var expected = read('expected/generate-image.css');
+        var target = '.image-relative.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'folder/generate-image.html',
+            css: [
+                'fixtures/styles/image-relative.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: true
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should rewrite relative images for html outside root', function (done) {
+        var expected = read('expected/generate-image-relative.css');
+        var target = '.image-relative.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'folder/generate-image.html',
+            css: [
+                'fixtures/styles/image-relative.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: false
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should rewrite relative images for html inside root', function (done) {
+        var expected = read('expected/generate-image-skip.css');
+        var target = '.image-relative.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-image.html',
+            css: [
+                'fixtures/styles/image-relative.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: false
+        }, assertCritical(target, expected, done));
+    });
+
     it('should inline absolute images', function (done) {
         var expected = read('expected/generate-image.css');
         var target = '.image-absolute.css';
