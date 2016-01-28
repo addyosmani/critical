@@ -113,8 +113,7 @@ exports.generateInline = function (opts, cb) {
  */
 exports.inline = function (opts, cb) {
     opts = opts || {};
-    cb = cb || function () {
-        };
+    cb = cb || function () {};
 
     if (!opts.src || !opts.base) {
         throw new Error('A valid source and base path are required.');
@@ -152,7 +151,6 @@ exports.inline = function (opts, cb) {
  * @returns {*}
  */
 exports.stream = function (opts) {
-
     // return stream
     return through2.obj(function (file, enc, cb) {
         if (file.isNull()) {

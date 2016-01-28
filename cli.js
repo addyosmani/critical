@@ -91,12 +91,12 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             if (_.isString(val) || _.isRegExp(val)) {
                 val = [val];
             }
-            res.ignore = _.map(val || [], function(ignore) {
+            res.ignore = _.map(val || [], function (ignore) {
                 // check regex
                 var match = ignore.match(/^\/(.*)\/([igmy]+)?$/);
 
                 if (match) {
-                    return new RegExp(_.escapeRegExp(match[1]),match[2]);
+                    return new RegExp(_.escapeRegExp(match[1]), match[2]);
                 }
                 return ignore;
             });
@@ -147,7 +147,6 @@ function run(data) {
         error(err);
     }
 }
-
 
 if (cli.input[0]) {
     run();

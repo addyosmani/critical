@@ -1,3 +1,4 @@
+/* eslint-env node, mocha */
 'use strict';
 var critical = require('../');
 var path = require('path');
@@ -9,7 +10,6 @@ var async = require('async');
 var gc = require('../lib/gc');
 gc.skipExceptions();
 
-
 var finalhandler = require('finalhandler');
 var http = require('http');
 var serveStatic = require('serve-static');
@@ -18,7 +18,7 @@ process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 describe('Module - generate', function () {
-    after(function(){
+    after(function () {
         process.emit('cleanup');
     });
     it('should generate critical-path CSS', function (done) {
@@ -260,7 +260,7 @@ describe('Module - generate', function () {
             dest: target,
             width: 1300,
             height: 900,
-            pathPrefix: ''//empty string most likely to candidate for failure if change in code results in checking option lazily,
+            pathPrefix: ''
         }, assertCritical(target, expected, done));
     });
 
@@ -280,7 +280,7 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate and inline, if "inline" option is set', function(done) {
+    it('should generate and inline, if "inline" option is set', function (done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';
 
@@ -338,6 +338,7 @@ describe('Module - generate', function () {
                 }, cb);
             }
         }, function (err, results) {
+            assert.isNull(err, Boolean(err) && err);
             assert.strictEqual(nn(results.first), nn(expected1));
             assert.strictEqual(nn(results.second), nn(expected2));
             done();
@@ -357,7 +358,6 @@ describe('Module - generate', function () {
             inline: true
         }, assertCritical(target, expected, done));
     });
-
 
     it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-extract.html');
@@ -423,7 +423,7 @@ describe('Module - generate', function () {
             base: 'fixtures/',
             src: 'generate-default.html',
             dest: target,
-            ignore: ['@media','.header',/jumbotron/],
+            ignore: ['@media', '.header', /jumbotron/],
 
             width: 1300,
             height: 900
@@ -464,26 +464,24 @@ describe('Module - generate', function () {
 describe('Module - generate (remote)', function () {
     var server;
 
-    before(function(){
-        var serve = serveStatic('fixtures', {'index': ['index.html', 'index.htm']});
+    before(function () {
+        var serve = serveStatic('fixtures', {index: ['index.html', 'index.htm']});
 
-        server = http.createServer(function(req, res){
+        server = http.createServer(function (req, res) {
             var done = finalhandler(req, res);
             serve(req, res, done);
         });
         server.listen(3000);
     });
 
-    after(function(){
+    after(function () {
         server.close();
         process.emit('cleanup');
     });
 
-
     it('should generate critical-path CSS', function (done) {
         var expected = read('expected/generate-default.css');
         var target = '.critical.css';
-
 
         critical.generate({
             base: 'fixtures/',
@@ -566,7 +564,8 @@ describe('Module - generate (remote)', function () {
         var target = '.image-relative.css';
 
         critical.generate({
-            base: './', // image could not be fetched locally
+            // image could not be fetched locally
+            base: './',
             src: 'http://localhost:3000/generate-image.html',
             css: [
                 'fixtures/styles/image-relative.css'
@@ -575,7 +574,7 @@ describe('Module - generate (remote)', function () {
             width: 1300,
             height: 900,
             inlineImages: true,
-            assetPaths: ['http://localhost:3000/','http://localhost:3000/styles']
+            assetPaths: ['http://localhost:3000/', 'http://localhost:3000/styles']
         }, assertCritical(target, expected, done));
     });
 
@@ -610,7 +609,7 @@ describe('Module - generate (remote)', function () {
             width: 1300,
             height: 900,
             inlineImages: true,
-            assetPaths: ['http://localhost:3000/','http://localhost:3000/styles']
+            assetPaths: ['http://localhost:3000/', 'http://localhost:3000/styles']
         }, assertCritical(target, expected, done));
     });
 
@@ -678,7 +677,8 @@ describe('Module - generate (remote)', function () {
             dest: target,
             width: 1300,
             height: 900,
-            pathPrefix: ''//empty string most likely to candidate for failure if change in code results in checking option lazily,
+            // empty string most likely to candidate for failure if change in code results in checking option lazily,
+            pathPrefix: ''
         }, assertCritical(target, expected, done));
     });
 
@@ -698,7 +698,7 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate and inline, if "inline" option is set', function(done) {
+    it('should generate and inline, if "inline" option is set', function (done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';
 
@@ -756,25 +756,12 @@ describe('Module - generate (remote)', function () {
                 }, cb);
             }
         }, function (err, results) {
+            assert.isNull(err, Boolean(err) && err);
             assert.strictEqual(nn(results.first), nn(expected1));
             assert.strictEqual(nn(results.second), nn(expected2));
             done();
         });
     });
-
-    //it('should inline critical-path CSS ignoring remote stylesheets', function (done) {
-    //    var expected = read('expected/generateInline-external-minified.html');
-    //    var target = '.generateInline-external.html';
-    //
-    //    critical.generate({
-    //        base: 'fixtures/',
-    //        src: 'http://localhost:3000/generateInline-external.html',
-    //        inlineImages: false,
-    //        minify: true,
-    //        dest: target,
-    //        inline: true
-    //    }, assertCritical(target, expected, done));
-    //});
 
     it('should inline critical-path CSS handling remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-minified2.html');
@@ -789,22 +776,6 @@ describe('Module - generate (remote)', function () {
             inline: true
         }, assertCritical(target, expected, done));
     });
-
-
-    //it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
-    //    var expected = read('expected/generateInline-external-extract.html');
-    //    var target = '.generateInline-external-extract.html';
-    //
-    //    critical.generate({
-    //        base: 'fixtures/',
-    //        src: 'http://localhost:3000/generateInline-external.html',
-    //        inlineImages: false,
-    //        minify: true,
-    //        extract: true,
-    //        dest: target,
-    //        inline: true
-    //    }, assertCritical(target, expected, done));
-    //});
 
     it('should inline critical-path CSS with extract option handling remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-extract2.html');
@@ -856,7 +827,7 @@ describe('Module - generate (remote)', function () {
             base: 'fixtures/',
             src: 'http://localhost:3000/generate-default.html',
             dest: target,
-            ignore: ['@media','.header',/jumbotron/],
+            ignore: ['@media', '.header', /jumbotron/],
 
             width: 1300,
             height: 900
