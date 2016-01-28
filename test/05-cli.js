@@ -95,7 +95,7 @@ describe('CLI', function () {
             });
         });
 
-        skipWin('should work well with the html file inside a folder piped to critical', function (done) {
+        skipWin('should show warning on piped file without relative links and use "/"', function (done) {
             var cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
 
