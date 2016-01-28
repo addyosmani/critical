@@ -22,7 +22,6 @@ Promise.promisifyAll(fs);
  * @return {Promise}|undefined
  */
 exports.generate = function (opts, cb) {
-
     opts = _.defaults(opts || {}, {
         base: FileHelper.guessBasePath(opts || {}),
         dimensions: [{

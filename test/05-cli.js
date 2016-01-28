@@ -66,7 +66,7 @@ describe('CLI', function () {
                 '--height', '900'
             ]);
 
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
                 assert.strictEqual(nn(data), nn(expected));
                 done();
@@ -86,30 +86,26 @@ describe('CLI', function () {
 
         skipWin('should work well with the html file inside a folder piped to critical', function (done) {
             var cmd = 'cat fixtures/folder/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-default.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
 
-            exec(cmd, function(error, stdout, stderr) {
+            exec(cmd, function (error, stdout) {
                 assert.isNull(error);
                 assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
                 done();
             });
-
-
-
         });
 
         skipWin('should work well with the html file inside a folder piped to critical', function (done) {
             var cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
-            var expected = fs.readFileSync(path.join(__dirname,'expected/generate-image-absolute.css'), 'utf8');
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
 
-            exec(cmd, function(error, stdout, stderr) {
+            exec(cmd, function (error, stdout, stderr) {
                 assert.isNull(error);
                 assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
                 assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'pathPrefix\' option.');
                 done();
             });
         });
-
 
         it('should exit with code 1 and show help', function (done) {
             execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err, stdout, stderr) {
