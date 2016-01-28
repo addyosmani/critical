@@ -1,17 +1,15 @@
 /*
  * Unit tests for Critical.
  */
-/* jshint -W098 */
+/* eslint-env node, mocha */
 'use strict';
 var path = require('path');
 var fs = require('fs');
 var assert = require('chai').assert;
-var should = require('should');
 var vinylStream = require('vinyl-source-stream');
 var streamAssert = require('stream-assert');
 var gutil = require('gulp-util');
 var critical = require('../');
-var pkg = require('../package.json');
 var array = require('stream-array');
 var read = require('./helper/testhelper').read;
 
@@ -24,14 +22,14 @@ process.setMaxListeners(0);
 
 /**
  * Get vinyl file object
- * @param file
+ *
  * @returns {*|StreamArray|exports}
  */
-function getVinyl(file) {
+function getVinyl() {
     var args = Array.prototype.slice.call(arguments);
 
     function create(filepath) {
-        var file = path.join(__dirname, 'fixtures',filepath);
+        var file = path.join(__dirname, 'fixtures', filepath);
         return new gutil.File({
             cwd: __dirname,
             base: path.dirname(file),
@@ -43,41 +41,39 @@ function getVinyl(file) {
     return array(args.map(create));
 }
 
-
 // binary
 describe('Streams', function () {
-    after(function(){
+    after(function () {
         process.emit('cleanup');
     });
 
-    it('should emit error on streamed file', function(done){
-        var stream = critical.stream({base: path.join(__dirname,'fixtures')});
-        var fakeFilePath = path.join(__dirname, 'fixtures','generate-default.html');
+    it('should emit error on streamed file', function (done) {
+        var stream = critical.stream({base: path.join(__dirname, 'fixtures')});
+        var fakeFilePath = path.join(__dirname, 'fixtures', 'generate-default.html');
 
         fs.createReadStream(fakeFilePath)
             .pipe(vinylStream())
             .pipe(stream)
-            .on('data', function(data) {
-                assert.fail(null,data,'Should not emit data');
+            .on('data', function (data) {
+                assert.fail(null, data, 'Should not emit data');
             })
             .on('error', function (err) {
-                err.message.should.eql('Streaming not supported');
+                assert.strictEqual(err.message, 'Streaming not supported');
                 done();
             });
     });
 
-
-    it('should support vinyl buffer streams', function(done){
-        var stream = critical.stream({base: path.join(__dirname,'fixtures')});
+    it('should support vinyl buffer streams', function (done) {
+        var stream = critical.stream({base: path.join(__dirname, 'fixtures')});
 
         getVinyl('generate-default.html')
             .pipe(stream)
-            .on('data', function(data) {
+            .on('data', function (data) {
                 assert.ok(data);
                 done();
             })
             .on('error', function (err) {
-                assert.fail(null,err,'Should not emit an error');
+                assert.fail(null, err, 'Should not emit an error');
                 done();
             });
     });
@@ -90,7 +86,7 @@ describe('Streams', function () {
             .pipe(stream)
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.first(function (d) {
-                path.extname(d.path).should.eql('.html');
+                assert.strictEqual(path.extname(d.path), '.html');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
@@ -110,12 +106,12 @@ describe('Streams', function () {
         getVinyl('generate-default.html', 'generate-image.html')
             .pipe(stream)
             .pipe(streamAssert.length(2))
-            .pipe(streamAssert.nth(0,function (d) {
-                path.extname(d.path).should.eql('.css');
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
             }))
-            .pipe(streamAssert.nth(1,function (d) {
-                path.extname(d.path).should.eql('.css');
+            .pipe(streamAssert.nth(1, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected2);
             }))
             .pipe(streamAssert.end(done));
@@ -131,13 +127,13 @@ describe('Streams', function () {
             css: ['fixtures/styles/main.css']
         });
 
-        var expected = read('fixtures/styles/main.css',true);
+        var expected = read('fixtures/styles/main.css', true);
 
         getVinyl('generate-default.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0,function (d) {
-                path.extname(d.path).should.eql('.css');
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
@@ -157,14 +153,14 @@ describe('Streams', function () {
         getVinyl('streams-default.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0,function (d) {
-                path.extname(d.path).should.eql('.html');
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.html');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should respect ignore option (inline)', function(done){
+    it('should respect ignore option (inline)', function (done) {
         var stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             css: ['fixtures/styles/font.css'],
@@ -177,14 +173,14 @@ describe('Streams', function () {
         getVinyl('generate-ignorefont.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0,function (d) {
-                path.extname(d.path).should.eql('.css');
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should respect ignore option (inline)', function(done){
+    it('should respect ignore option (inline)', function (done) {
         var stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             css: ['fixtures/styles/font.css'],
@@ -197,8 +193,8 @@ describe('Streams', function () {
         getVinyl('generate-ignorefont.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0,function (d) {
-                path.extname(d.path).should.eql('.html');
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.html');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));

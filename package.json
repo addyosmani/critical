@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
-    "test": "jshint . && mocha test/*.js --timeout 100000"
+    "test": "xo && mocha test/*.js --timeout 100000"
   },
   "files": [
     "index.js",
@@ -59,15 +59,17 @@
     "async": "^1.2.1",
     "chai": "^3.0.0",
     "connect": "^3.4.0",
-    "jshint": "^2.6.0",
     "mocha": "*",
     "mockery": "^1.4.0",
     "normalize-newline": "^2.0.0",
     "read-package-json": "^2.0.0",
     "serve-static": "^1.10.0",
-    "should": "^8.1.1",
     "stream-array": "^1.0.1",
     "stream-assert": "^2.0.2",
-    "vinyl-source-stream": "^1.0.0"
+    "vinyl-source-stream": "^1.0.0",
+    "xo": "^0.12.1"
+  },
+  "xo": {
+    "space": 4
   }
 }

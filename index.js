@@ -22,11 +22,10 @@ Promise.promisifyAll(fs);
  * @return {Promise}|undefined
  */
 exports.generate = function (opts, cb) {
-
-    opts = _.defaults(opts || {},{
+    opts = _.defaults(opts || {}, {
         base: file.guessBasePath(opts || {}),
         dimensions: [{
-            height:  opts.height || 900,
+            height: opts.height || 900,
             width: opts.width || 1300
         }]
     });
@@ -40,7 +39,7 @@ exports.generate = function (opts, cb) {
         corePromise.then(function (output) {
             var file = path.resolve(opts.styleTarget);
             var dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(function(){
+            return fs.ensureDirAsync(dir).then(function () {
                 return fs.writeFileAsync(path.resolve(opts.styleTarget), output);
             });
         });
@@ -65,8 +64,8 @@ exports.generate = function (opts, cb) {
         corePromise = corePromise.then(function (output) {
             var file = path.resolve(opts.dest);
             var dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(function(){
-               return fs.writeFileAsync(path.resolve(opts.dest), output);
+            return fs.ensureDirAsync(dir).then(function () {
+                return fs.writeFileAsync(path.resolve(opts.dest), output);
             }).then(function () {
                 return output;
             });
@@ -80,12 +79,12 @@ exports.generate = function (opts, cb) {
             throw new Promise.CancellationError();
         }).then(function (output) {
             cb(null, output.toString());
-        }).catch(Promise.CancellationError,function(){}).done();
+        }).catch(Promise.CancellationError, function () {
+        }).done();
     } else {
         return corePromise;
     }
 };
-
 
 /**
  * deprecated will be removed in the next version
@@ -144,8 +143,6 @@ exports.inline = function (opts, cb) {
     });
 };
 
-
-
 /**
  * Streams wrapper for critical
  *
@@ -153,7 +150,6 @@ exports.inline = function (opts, cb) {
  * @returns {*}
  */
 exports.stream = function (opts) {
-
     // return stream
     return through2.obj(function (file, enc, cb) {
         if (file.isNull()) {
