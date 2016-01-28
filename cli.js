@@ -2,6 +2,7 @@
 'use strict';
 var os = require('os');
 var path = require('path');
+var chalk = require('chalk');
 var meow = require('meow');
 var objectAssign = require('object-assign');
 var indentString = require('indent-string');
@@ -109,12 +110,11 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
 }, {});
 
 function error(err) {
-    process.stderr.write(indentString(err.message || err, '   Error: '));
+    process.stderr.write(indentString(err.message || err, chalk.red('   Error: ')));
     process.stderr.write(os.EOL);
     process.stderr.write(indentString(help.join(os.EOL), '   '));
     process.exit(1);
 }
-
 
 function run(data) {
     var opts = objectAssign({base: process.cwd()}, cli.flags);

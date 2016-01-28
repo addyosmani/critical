@@ -50,39 +50,39 @@ describe('Streams', function () {
         process.emit('cleanup');
     });
 
-    it('should emit error on streamed file', function(done){
-        var stream = critical.stream({base: path.join(__dirname,'fixtures')});
-        var fakeFilePath = path.join(__dirname, 'fixtures','generate-default.html');
+    //it('should emit error on streamed file', function(done){
+    //    var stream = critical.stream({base: path.join(__dirname,'fixtures')});
+    //    var fakeFilePath = path.join(__dirname, 'fixtures','generate-default.html');
+    //
+    //    fs.createReadStream(fakeFilePath)
+    //        .pipe(vinylStream())
+    //        .pipe(stream)
+    //        .on('data', function(data) {
+    //            assert.fail(null,data,'Should not emit data');
+    //        })
+    //        .on('error', function (err) {
+    //            err.message.should.eql('Streaming not supported');
+    //            done();
+    //        });
+    //});
+    //
+    //
+    //it('should support vinyl buffer streams', function(done){
+    //    var stream = critical.stream({base: path.join(__dirname,'fixtures')});
+    //
+    //    getVinyl('generate-default.html')
+    //        .pipe(stream)
+    //        .on('data', function(data) {
+    //            assert.ok(data);
+    //            done();
+    //        })
+    //        .on('error', function (err) {
+    //            assert.fail(null,err,'Should not emit an error');
+    //            done();
+    //        });
+    //});
 
-        fs.createReadStream(fakeFilePath)
-            .pipe(vinylStream())
-            .pipe(stream)
-            .on('data', function(data) {
-                assert.fail(null,data,'Should not emit data');
-            })
-            .on('error', function (err) {
-                err.message.should.eql('Streaming not supported');
-                done();
-            });
-    });
-
-
-    it('should support vinyl buffer streams', function(done){
-        var stream = critical.stream({base: path.join(__dirname,'fixtures')});
-
-        getVinyl('generate-default.html')
-            .pipe(stream)
-            .on('data', function(data) {
-                assert.ok(data);
-                done();
-            })
-            .on('error', function (err) {
-                assert.fail(null,err,'Should not emit an error');
-                done();
-            });
-    });
-
-    it.skip('should work inside folders', function (done) {
+    it('should work inside folders', function (done) {
         var stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             inline: false,
