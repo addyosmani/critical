@@ -4,4 +4,4 @@ node_js:
   - 'stable'
   - '0.12'
 before_install:
-  - npm cache clean
+  - npm install
