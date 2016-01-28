@@ -264,6 +264,22 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should detect pathPrefix', function (done) {
+        var expected = read('expected/path-prefix.css');
+        var target = '.path-prefix.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
     it('should generate and inline, if "inline" option is set', function(done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';
@@ -663,6 +679,22 @@ describe('Module - generate (remote)', function () {
             width: 1300,
             height: 900,
             pathPrefix: ''//empty string most likely to candidate for failure if change in code results in checking option lazily,
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should detect pathPrefix', function (done) {
+        var expected = read('expected/path-prefix.css');
+        var target = '.path-prefix.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'http://localhost:3000/path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900
         }, assertCritical(target, expected, done));
     });
 

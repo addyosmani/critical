@@ -52,6 +52,7 @@
     "request": "^2.61.0",
     "serve-static": "^1.10.0",
     "slash": "^1.0.0",
+    "supports-color": "^3.1.2",
     "tempfile": "^1.1.0",
     "through2": "^2.0.0",
     "tmp": "0.0.28"
