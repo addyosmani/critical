@@ -160,13 +160,6 @@ exports.stream = function (opts) {
             return this.emit('error', new PluginError('critical', 'Streaming not supported'));
         }
 
-        // we're checking for isVinyl inside
-        // this is only available for objects created by
-        // vinyl >= v0.5.3
-        if (!file.hasOwnProperty('_isVinyl')) {
-            file._isVinyl = true;
-        }
-
         var options = _.assign(opts || {}, {
             src: file
         });
