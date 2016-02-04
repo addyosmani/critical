@@ -15,7 +15,6 @@ var http = require('http');
 var serveStatic = require('serve-static');
 
 process.chdir(path.resolve(__dirname));
-process.setMaxListeners(0);
 
 describe('Module - generate', function () {
     after(function () {

@@ -12,7 +12,6 @@ var gc = require('../lib/gc');
 gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
-process.setMaxListeners(0);
 
 describe('Module - generateInline (deprecated)', function () {
     after(function () {
