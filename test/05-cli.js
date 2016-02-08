@@ -102,7 +102,7 @@ describe('CLI', function () {
             exec(cmd, function (error, stdout, stderr) {
                 assert.isNull(error);
                 assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
-                assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'pathPrefix\' option.');
+                assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'folder\' option.');
                 done();
             });
         });
@@ -192,6 +192,7 @@ describe('CLI', function () {
                 '-S', 'styleTarget',
                 '-m', 'minify',
                 '-e', 'extract',
+                '-f', 'folder',
                 '-p', 'pathPrefix',
                 '-I', '/ignore/',
                 '-i'
@@ -207,6 +208,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.isArray(this.mockOpts.ignore);
             assert.instanceOf(this.mockOpts.ignore[0], RegExp);
             assert.strictEqual(this.mockOpts.inline, true);
@@ -225,6 +227,7 @@ describe('CLI', function () {
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
                 '--extract', 'extract',
+                '--folder', 'folder',
                 '--pathPrefix', 'pathPrefix',
                 '--inline',
                 '--inlineImages',
@@ -242,6 +245,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
+            assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore, 'ignore');
