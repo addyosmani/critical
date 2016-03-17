@@ -21,10 +21,11 @@ var help = [
     '   -h, --height            Viewport height',
     '   -m, --minify            Minify critical-path CSS when inlining',
     '   -i, --inline            Generate the HTML with inlined critical-path CSS',
-    '   -I, --ignore            RegExp, @type or selector to ignore',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
     '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
     '   --ii, --inlineImages    Inline images',
+    '   --ignore                RegExp, @type or selector to ignore',
+    '   --include               RegExp, @type or selector to include',
     '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
     '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
     '   ----------------------------------------------------------------------.',
@@ -86,18 +87,19 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             }
             res.assetPaths = val;
             break;
+        case 'include':
         case 'ignore':
             if (_.isString(val) || _.isRegExp(val)) {
                 val = [val];
             }
-            res.ignore = _.map(val || [], function (ignore) {
+            res[key] = _.map(val || [], function (entry) {
                 // check regex
-                var match = ignore.match(/^\/(.*)\/([igmy]+)?$/);
+                var match = entry.match(/^\/(.*)\/([igmy]+)?$/);
 
                 if (match) {
                     return new RegExp(_.escapeRegExp(match[1]), match[2]);
                 }
-                return ignore;
+                return entry;
             });
             break;
         default:
