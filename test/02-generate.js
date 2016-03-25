@@ -200,6 +200,23 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should respect domainPrefix', function (done) {
+        var expected = read('expected/domain-prefix.css');
+        var target = '.path-prefix.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            domainPrefix: '//cdn.example.com'
+        }, assertCritical(target, expected, done));
+    });
+
     it('should generate and inline, if "inline" option is set', function (done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';
@@ -613,6 +630,23 @@ describe('Module - generate (remote)', function () {
             height: 900,
             // empty string most likely to candidate for failure if change in code results in checking option lazily,
             pathPrefix: ''
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should respect domainPrefix', function (done) {
+        var expected = read('expected/domain-prefix.css');
+        var target = '.path-prefix.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'http://localhost:3000/path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900,
+            domainPrefix: '//cdn.example.com'
         }, assertCritical(target, expected, done));
     });
 

@@ -23,6 +23,7 @@ var help = [
     '   -i, --inline            Generate the HTML with inlined critical-path CSS',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
     '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
+    '   -D, --domainPrefix      Domain (with scheme) to prepend CSS assets with (defaults to empty string) ',
     '   --ii, --inlineImages    Inline images',
     '   --ignore                RegExp, @type or selector to ignore',
     '   --include               RegExp, @type or selector to include',
@@ -51,6 +52,7 @@ var cli = meow({
         m: 'minify',
         e: 'extract',
         p: 'pathPrefix',
+        D: 'domainPrefix',
         ii: 'inlineImages'
     }
 });
@@ -70,6 +72,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'pathprefix':
             res.pathPrefix = val;
+            break;
+        case 'domainprefix':
+            res.domainPrefix = val;
             break;
         case 'inline':
             res.inline = val && val !== 'false' || typeof val === 'undefined';

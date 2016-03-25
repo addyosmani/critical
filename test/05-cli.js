@@ -154,6 +154,7 @@ describe('CLI', function () {
                 '-m', 'minify',
                 '-e', 'extract',
                 '-p', 'pathPrefix',
+                '-D', 'domainPrefix',
                 '-i'
             ];
 
@@ -167,6 +168,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.strictEqual(this.mockOpts.domainPrefix, 'domainPrefix');
             assert.strictEqual(this.mockOpts.inline, true);
         });
 
@@ -185,6 +187,7 @@ describe('CLI', function () {
                 '--minify', 'minify',
                 '--extract', 'extract',
                 '--pathPrefix', 'pathPrefix',
+                '--domainPrefix', 'domainPrefix',
                 '--inline',
                 '--inlineImages',
                 '--maxFileSize', '1024',
@@ -202,6 +205,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.strictEqual(this.mockOpts.domainPrefix, 'domainPrefix');
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore, 'ignore');
             assert.isArray(this.mockOpts.include);
