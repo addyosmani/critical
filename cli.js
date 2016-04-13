@@ -7,8 +7,9 @@ var objectAssign = require('object-assign');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
-var critical = require('./');
+
 var file = require('./lib/fileHelper');
+var critical = require('./');
 var ok;
 
 var help = [

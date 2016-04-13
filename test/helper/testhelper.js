@@ -1,9 +1,9 @@
 // Some test helper
 'use strict';
-var assert = require('chai').assert;
-var CleanCSS = require('clean-css');
 var fs = require('fs');
 var path = require('path');
+var assert = require('chai').assert;
+var CleanCSS = require('clean-css');
 var nn = require('normalize-newline');
 
 function readAndRemove(file, minify) {

@@ -1,16 +1,17 @@
 'use strict';
-var fs = require('fs-extra');
 var path = require('path');
+var fs = require('fs-extra');
 var _ = require('lodash');
 var sourceInliner = require('inline-critical');
 /* jshint -W079 */
 var Promise = require('bluebird');
-var inliner = require('./lib/inline-styles');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
+
 var core = require('./lib/core');
 var file = require('./lib/fileHelper');
+var inliner = require('./lib/inline-styles');
 
 Promise.promisifyAll(fs);
 

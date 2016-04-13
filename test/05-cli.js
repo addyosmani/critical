@@ -1,20 +1,19 @@
 /* eslint-env node, mocha */
 'use strict';
-var assert = require('chai').assert;
+var fs = require('fs');
+var path = require('path');
+var http = require('http');
 var exec = require('child_process').exec;
 var execFile = require('child_process').execFile;
-var fs = require('fs');
+var assert = require('chai').assert;
 var mockery = require('mockery');
-var path = require('path');
 var readJson = require('read-package-json');
 var nn = require('normalize-newline');
+var finalhandler = require('finalhandler');
+var serveStatic = require('serve-static');
 var skipWin = process.platform === 'win32' ? it.skip : it;
 var gc = require('../lib/gc');
 gc.skipExceptions();
-
-var finalhandler = require('finalhandler');
-var http = require('http');
-var serveStatic = require('serve-static');
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
