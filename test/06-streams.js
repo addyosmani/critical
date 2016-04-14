@@ -9,12 +9,12 @@ var assert = require('chai').assert;
 var vinylStream = require('vinyl-source-stream');
 var streamAssert = require('stream-assert');
 var gutil = require('gulp-util');
-var critical = require('../');
 var array = require('stream-array');
-var read = require('./helper/testhelper').read;
-
 var nn = require('normalize-newline');
+
 var gc = require('../lib/gc');
+var critical = require('../');
+var read = require('./helper/testhelper').read;
 gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));

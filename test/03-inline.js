@@ -1,10 +1,10 @@
 /* eslint-env node, mocha */
 'use strict';
-var critical = require('../');
 var path = require('path');
+var gc = require('../lib/gc');
+var critical = require('../');
 var read = require('./helper/testhelper').read;
 var assertCritical = require('./helper/testhelper').assertCritical;
-var gc = require('../lib/gc');
 gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));

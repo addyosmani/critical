@@ -1,18 +1,17 @@
 /* eslint-env node, mocha */
 'use strict';
-var critical = require('../');
 var path = require('path');
-var read = require('./helper/testhelper').read;
-var assertCritical = require('./helper/testhelper').assertCritical;
+var http = require('http');
 var nn = require('normalize-newline');
 var assert = require('chai').assert;
 var async = require('async');
-var gc = require('../lib/gc');
-gc.skipExceptions();
-
 var finalhandler = require('finalhandler');
-var http = require('http');
 var serveStatic = require('serve-static');
+var gc = require('../lib/gc');
+var critical = require('../');
+var read = require('./helper/testhelper').read;
+var assertCritical = require('./helper/testhelper').assertCritical;
+gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 
@@ -20,6 +19,7 @@ describe('Module - generate', function () {
     after(function () {
         process.emit('cleanup');
     });
+
     it('should generate critical-path CSS', function (done) {
         var expected = read('expected/generate-default.css');
         var target = '.critical.css';
@@ -458,6 +458,20 @@ describe('Module - generate', function () {
             height: 900
         }, assertCritical(target, expected, done));
     });
+
+    it('should keep styles defined by the `include` option', function (done) {
+        var expected = read('fixtures/styles/include.css');
+        var target = '.include.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'include.html',
+            include: [/someRule/],
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
 });
 
 describe('Module - generate (remote)', function () {
@@ -858,6 +872,20 @@ describe('Module - generate (remote)', function () {
             dest: target,
             ignore: ['@font-face'],
             minify: true,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should keep styles defined by the `include` option', function (done) {
+        var expected = read('fixtures/styles/include.css');
+        var target = '.include.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'http://localhost:3000/include.html',
+            include: [/someRule/],
+            dest: target,
             width: 1300,
             height: 900
         }, assertCritical(target, expected, done));

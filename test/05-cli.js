@@ -1,20 +1,19 @@
 /* eslint-env node, mocha */
 'use strict';
-var assert = require('chai').assert;
+var fs = require('fs');
+var path = require('path');
+var http = require('http');
 var exec = require('child_process').exec;
 var execFile = require('child_process').execFile;
-var fs = require('fs');
+var assert = require('chai').assert;
 var mockery = require('mockery');
-var path = require('path');
 var readJson = require('read-package-json');
 var nn = require('normalize-newline');
+var finalhandler = require('finalhandler');
+var serveStatic = require('serve-static');
 var skipWin = process.platform === 'win32' ? it.skip : it;
 var gc = require('../lib/gc');
 gc.skipExceptions();
-
-var finalhandler = require('finalhandler');
-var http = require('http');
-var serveStatic = require('serve-static');
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -194,7 +193,6 @@ describe('CLI', function () {
                 '-e', 'extract',
                 '-f', 'folder',
                 '-p', 'pathPrefix',
-                '-I', '/ignore/',
                 '-i'
             ];
 
@@ -209,8 +207,6 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.strictEqual(this.mockOpts.folder, 'folder');
-            assert.isArray(this.mockOpts.ignore);
-            assert.instanceOf(this.mockOpts.ignore[0], RegExp);
             assert.strictEqual(this.mockOpts.inline, true);
         });
 
@@ -223,6 +219,7 @@ describe('CLI', function () {
                 '--width', '300',
                 '--height', '400',
                 '--ignore', 'ignore',
+                '--include', '/include/',
                 '--htmlTarget', 'htmlTarget',
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
@@ -249,6 +246,8 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore, 'ignore');
+            assert.isArray(this.mockOpts.include);
+            assert.instanceOf(this.mockOpts.include[0], RegExp);
             assert.strictEqual(this.mockOpts.inline, true);
             assert.strictEqual(this.mockOpts.inlineImages, true);
             assert.isArray(this.mockOpts.assetPaths);
