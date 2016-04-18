@@ -142,7 +142,7 @@ function run(data) {
             if (err) {
                 error(err);
             } else {
-                process.stdout.write(val);
+                process.stdout.write(val, process.exit);
             }
         });
     } catch (err) {
