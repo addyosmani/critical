@@ -12,8 +12,6 @@ var nn = require('normalize-newline');
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
 var skipWin = process.platform === 'win32' ? it.skip : it;
-var gc = require('../lib/gc');
-gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);

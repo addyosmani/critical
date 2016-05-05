@@ -4,12 +4,10 @@ var path = require('path');
 var assert = require('chai').assert;
 var async = require('async');
 var nn = require('normalize-newline');
-var gc = require('../lib/gc');
 var critical = require('../');
 var read = require('./helper/testhelper').read;
 var readAndRemove = require('./helper/testhelper').readAndRemove;
 var assertCritical = require('./helper/testhelper').assertCritical;
-gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
