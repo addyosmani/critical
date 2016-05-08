@@ -47,7 +47,7 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it.only('should ignore stylesheets blocked due to 403', function (done) {
+    it('should ignore stylesheets blocked due to 403', function (done) {
         var expected = '\n';
         var target = '.403.css';
 
