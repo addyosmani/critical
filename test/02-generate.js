@@ -60,6 +60,19 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should ignore stylesheets blocked due to 404', function (done) {
+        var expected = '\n';
+        var target = '.404.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: '404-css.html',
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
     it('should generate multi-dimension critical-path CSS', function (done) {
         var expected = read('expected/generate-adaptive.css', 'utf8');
         var target = '.adaptive.css';
