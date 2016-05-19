@@ -12,10 +12,8 @@ var gutil = require('gulp-util');
 var array = require('stream-array');
 var nn = require('normalize-newline');
 
-var gc = require('../lib/gc');
 var critical = require('../');
 var read = require('./helper/testhelper').read;
-gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
