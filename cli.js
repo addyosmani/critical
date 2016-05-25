@@ -29,6 +29,7 @@ var help = [
     '   --include               RegExp, @type or selector to include',
     '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
     '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
+    '   --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).',
     '   ----------------------------------------------------------------------.',
     '   Deprecated - use "--inline" to retrieve the modified HTML',
     '   critical source.html --inline > dest.html',
@@ -80,6 +81,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'maxfilesize':
             res.maxFileSize = val;
+            break;
+        case 'timeout':
+            res.timeout = val;
             break;
         case 'assetpaths':
         case 'assetPaths':
