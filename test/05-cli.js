@@ -51,6 +51,9 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
+                if (data instanceof Buffer) {
+                    data = data.toString('utf8');
+                }
                 assert.strictEqual(nn(data), nn(expected));
                 done();
             });
@@ -62,6 +65,9 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
+                if (data instanceof Buffer) {
+                    data = data.toString('utf8');
+                }
                 assert.strictEqual(nn(data), nn(expected));
                 done();
             });
