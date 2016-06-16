@@ -49,7 +49,7 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(nn(data.toString()), nn(expected));
                 done();
             });
         });
@@ -60,7 +60,7 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(nn(data.toString()), nn(expected));
                 done();
             });
         });
@@ -103,7 +103,7 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(nn(data.toString()), nn(expected));
                 done();
             });
         });
