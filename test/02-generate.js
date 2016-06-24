@@ -32,6 +32,22 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should throw an error on timeout', function (done) {
+        var target = '.include.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default.html',
+            timeout: 1,
+            dest: target,
+            width: 1300,
+            height: 900
+        }, function (err) {
+            assert.instanceOf(err, Error);
+            done();
+        });
+    });
+
     it('should generate critical-path CSS with query string in file name', function (done) {
         var expected = read('expected/generate-default.css');
         var target = '.critical.css';
