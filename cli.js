@@ -85,6 +85,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
         case 'timeout':
             res.timeout = val;
             break;
+        case 'strict':
+            res.strict = val;
+            break;
         case 'assetpaths':
         case 'assetPaths':
             if (_.isString(val)) {
