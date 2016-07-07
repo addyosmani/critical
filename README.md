@@ -73,7 +73,7 @@ critical.generate({
     timeout: 30000,
 
     // Set to true to throw on css errors (will run faster if no errors)
-    timeout: 30000,
+    strict: false,
 
     // Prefix for asset directory
     pathPrefix: '/MySubfolderDocrot',
