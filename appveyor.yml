@@ -1,4 +1,4 @@
-# http://www.appveyor.com/docs/appveyor-yml
+# https://www.appveyor.com/docs/appveyor-yml
 
 version: "{build}"
 
@@ -8,11 +8,10 @@ environment:
   matrix:
     - nodejs_version: "0.12"
     - nodejs_version: "4"
+    - nodejs_version: "6"
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - npm -g install npm@2
-  - set PATH=%APPDATA%\npm;%PATH%
   - npm install
 
 build: off
@@ -25,7 +24,4 @@ matrix:
   fast_finish: true
 
 cache:
-  - '%LOCALAPPDATA%\Temp\phantomjs -> package.json' # phantomjs download location
-  - '%APPDATA%\npm\node_modules -> package.json'    # global npm modules
-  - '%APPDATA%\npm-cache -> package.json'           # npm cache
-  - 'node_modules -> package.json'                  # local npm modules
+  - node_modules -> package.json
