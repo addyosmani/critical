@@ -3,7 +3,6 @@
 var os = require('os');
 var path = require('path');
 var meow = require('meow');
-var objectAssign = require('object-assign');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
@@ -124,7 +123,7 @@ function error(err) {
 }
 
 function run(data) {
-    var opts = objectAssign({base: process.cwd()}, cli.flags);
+    var opts = _.assign({base: process.cwd()}, cli.flags);
     var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {
