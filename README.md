@@ -1,7 +1,8 @@
-# critical [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Build status][appveyor-image]][appveyor-url] [![Dependency Status][depstat-image]][depstat-url]
-> Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
+# critical [![NPM version][npm-image]][npm-url] [![Linux Build Status][travis-image]][travis-url] [![Windows Build status][appveyor-image]][appveyor-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status Status][deVdepstat-image]][deVdepstat-url]
 
-![](http://i.imgur.com/lAzmBD2.png)
+Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
+
+![](https://i.imgur.com/lAzmBD2.png)
 
 
 ## Install
@@ -9,7 +10,6 @@
 ```
 $ npm install --save critical
 ```
-
 
 ## Build plugins
 
@@ -328,14 +328,17 @@ free to open up an issue and we can discuss it.
 Apache-2.0 © Addy Osmani
 
 
-[npm-url]: https://npmjs.org/package/critical
-[npm-image]: https://badge.fury.io/js/critical.svg
+[npm-url]: https://www.npmjs.com/package/critical
+[npm-image]: https://img.shields.io/npm/v/critical.svg
 
 [travis-url]: https://travis-ci.org/addyosmani/critical
-[travis-image]: https://travis-ci.org/addyosmani/critical.svg?branch=master
+[travis-image]: https://img.shields.io/travis/addyosmani/critical/master.svg?label=Linux%20build
 
-[appveyor-url]: https://ci.appveyor.com/project/bezoerb/critical/branch/master
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/cn6jw7r3ur0gmyg6/branch/master?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/addyosmani/critical/branch/master
+[appveyor-image]: https://img.shields.io/appveyor/ci/addyosmani/critical/master.svg?label=Windows%20build
 
 [depstat-url]: https://david-dm.org/addyosmani/critical
-[depstat-image]: https://david-dm.org/addyosmani/critical.svg
+[depstat-image]: https://img.shields.io/david/addyosmani/critical.svg
+
+[deVdepstat-url]: https://david-dm.org/addyosmani/critical?type=dev
+[deVdepstat-image]: https://img.shields.io/david/dev/addyosmani/critical.svg
