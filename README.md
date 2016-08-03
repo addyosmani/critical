@@ -226,7 +226,7 @@ critical.generate({
 | assetPaths       | `array`       | `[]` | List of directories/urls where the inliner should start looking for assets
 | maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
 | timeout          | `integer`     | `30000`| Sets a maximum timeout for the operation
-| strict           | `boolean`      | `false`| Set to true to throw on css errors (will run faster if no errors)
+| strict           | `boolean`     | `false`| Set to true to throw on css errors (will run faster if no errors)
 | pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
 | include          | `array`       | `[]` | Force include css rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
 | ignore           | `array`       | `[]` | Ignore css rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
