@@ -11,7 +11,6 @@ var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
-var skipWin = process.platform === 'win32' ? it.skip : it;
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -30,8 +29,7 @@ describe('CLI', function () {
     });
 
     describe('acceptance', function () {
-        // empty stdout on appveyor? runs correct on manual test with Windows 7
-        skipWin('should return the version', function (done) {
+        it('should return the version', function (done) {
             execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], function (error, stdout) {
                 assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), this.pkg.version);
                 done();
@@ -57,9 +55,18 @@ describe('CLI', function () {
             });
         });
 
-        // pipes don't work on windows
-        skipWin('should work well with the critical CSS file piped to critical', function (done) {
-            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
+        it('should work well with the critical CSS file piped to critical', function (done) {
+            var cmd;
+
+            if (process.platform === 'win32') {
+                cmd = 'type';
+            } else {
+                cmd = 'cat';
+            }
+
+            cmd += ' ' + path.normalize('fixtures/generate-default.html') + ' | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+
+            var cp = exec(cmd);
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {

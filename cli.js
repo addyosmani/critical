@@ -3,13 +3,13 @@
 var os = require('os');
 var path = require('path');
 var meow = require('meow');
-var objectAssign = require('object-assign');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
 
-var file = require('./lib/fileHelper');
+var file = require('./lib/file-helper');
 var critical = require('./');
+
 var ok;
 
 var help = [
@@ -74,7 +74,7 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             res.pathPrefix = val;
             break;
         case 'inline':
-            res.inline = val && val !== 'false' || typeof val === 'undefined';
+            res.inline = (val && val !== 'false') || typeof val === 'undefined';
             break;
         case 'inlineimages':
             res.inlineImages = val;
@@ -116,14 +116,14 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
 }, {});
 
 function error(err) {
-    process.stderr.write(indentString(err.message || err, '   Error: '));
+    process.stderr.write(indentString(err.message || err, 1, '   Error: '));
     process.stderr.write(os.EOL);
-    process.stderr.write(indentString(help.join(os.EOL), '   '));
+    process.stderr.write(indentString(help.join(os.EOL), 1, '   '));
     process.exit(1);
 }
 
 function run(data) {
-    var opts = objectAssign({base: process.cwd()}, cli.flags);
+    var opts = _.assign({base: process.cwd()}, cli.flags);
     var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {
