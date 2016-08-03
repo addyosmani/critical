@@ -63,7 +63,6 @@
     "mockery": "^1.4.0",
     "normalize-newline": "^2.0.0",
     "read-package-json": "^2.0.0",
-    "serve-static": "^1.10.0",
     "stream-array": "^1.0.1",
     "stream-assert": "^2.0.2",
     "vinyl-source-stream": "^1.0.0",
