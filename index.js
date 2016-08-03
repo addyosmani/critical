@@ -9,7 +9,7 @@ var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
 
 var core = require('./lib/core');
-var file = require('./lib/fileHelper');
+var file = require('./lib/file-helper');
 var inliner = require('./lib/inline-styles');
 
 Promise.promisifyAll(fs);

@@ -11,6 +11,7 @@ var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
+
 var skipWin = process.platform === 'win32' ? it.skip : it;
 
 process.chdir(path.resolve(__dirname));

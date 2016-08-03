@@ -8,8 +8,9 @@ var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
 
-var file = require('./lib/fileHelper');
+var file = require('./lib/file-helper');
 var critical = require('./');
+
 var ok;
 
 var help = [
@@ -74,7 +75,7 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             res.pathPrefix = val;
             break;
         case 'inline':
-            res.inline = val && val !== 'false' || typeof val === 'undefined';
+            res.inline = (val && val !== 'false') || typeof val === 'undefined';
             break;
         case 'inlineimages':
             res.inlineImages = val;
