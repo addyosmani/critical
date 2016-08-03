@@ -62,7 +62,7 @@ describe('Module - generate', function () {
     });
 
     it('should ignore stylesheets blocked due to 403', function (done) {
-        var expected = '\n';
+        var expected = '';
         var target = '.403.css';
 
         critical.generate({
@@ -75,7 +75,7 @@ describe('Module - generate', function () {
     });
 
     it('should ignore stylesheets blocked due to 404', function (done) {
-        var expected = '\n';
+        var expected = '';
         var target = '.404.css';
 
         critical.generate({
