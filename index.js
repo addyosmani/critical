@@ -3,7 +3,6 @@ var path = require('path');
 var fs = require('fs-extra');
 var _ = require('lodash');
 var sourceInliner = require('inline-critical');
-/* jshint -W079 */
 var Promise = require('bluebird');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
