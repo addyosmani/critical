@@ -17,6 +17,37 @@ var inliner = require('./lib/inline-styles');
 Promise.promisifyAll(fs);
 
 /**
+ * Normalize options
+ *
+ * @param opts
+ */
+function prepareOptions(opts) {
+    if (!opts) {
+        opts = {};
+    }
+
+    var options = _.defaults(opts, {
+        base: FileHelper.guessBasePath(opts),
+        dimensions: [{
+            height: opts.height || 900,
+            width: opts.width || 1300
+        }]
+    });
+
+    // set dest relative to base if isn't specivied absolute
+    if (options.dest && !path.isAbsolute(options.dest)) {
+        options.dest = path.join(options.base, options.dest);
+    }
+
+    // set dest relative to base if isn't specivied absolute
+    if (options.destFolder && !path.isAbsolute(options.destFolder)) {
+        options.destFolder = path.join(options.base, options.destFolder);
+    }
+
+    return options;
+}
+
+/**
  * Critical path CSS generation
  * @param  {object} opts Options
  * @param  {function} cb Callback
@@ -24,13 +55,7 @@ Promise.promisifyAll(fs);
  * @return {Promise}|undefined
  */
 exports.generate = function (opts, cb) {
-    opts = _.defaults(opts || {}, {
-        base: FileHelper.guessBasePath(opts || {}),
-        dimensions: [{
-            height: opts.height || 900,
-            width: opts.width || 1300
-        }]
-    });
+    opts = prepareOptions(opts);
 
     // generate critical css
     var corePromise = core.generate(opts);
