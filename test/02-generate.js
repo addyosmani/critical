@@ -7,11 +7,9 @@ var assert = require('chai').assert;
 var async = require('async');
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
-var gc = require('../lib/gc');
 var critical = require('../');
 var read = require('./helper/testhelper').read;
 var assertCritical = require('./helper/testhelper').assertCritical;
-gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 
@@ -33,6 +31,22 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should throw an error on timeout', function (done) {
+        var target = '.include.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default.html',
+            timeout: 1,
+            dest: target,
+            width: 1300,
+            height: 900
+        }, function (err) {
+            assert.instanceOf(err, Error);
+            done();
+        });
+    });
+
     it('should generate critical-path CSS with query string in file name', function (done) {
         var expected = read('expected/generate-default.css');
         var target = path.resolve('.critical.css');
@@ -40,6 +54,32 @@ describe('Module - generate', function () {
         critical.generate({
             base: 'fixtures/',
             src: 'generate-default-querystring.html',
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should ignore stylesheets blocked due to 403', function (done) {
+        var expected = '';
+        var target = '.403.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: '403-css.html',
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should ignore stylesheets blocked due to 404', function (done) {
+        var expected = '';
+        var target = '.404.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: '404-css.html',
             dest: target,
             width: 1300,
             height: 900
@@ -300,7 +340,7 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it.only('should generate and inline, if "inline" option is set', function (done) {
+    it('should generate and inline, if "inline" option is set', function (done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';
 

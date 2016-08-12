@@ -8,11 +8,11 @@ var nn = require('normalize-newline');
 
 function readAndRemove(file, minify) {
     var content = read(file, minify);
-    // if (path.isAbsolute(file)) {
-    //     fs.unlinkSync(file);
-    // } else {
-    //     fs.unlinkSync(path.join(__dirname, '..', file));
-    // }
+    if (path.isAbsolute(file)) {
+        fs.unlinkSync(file);
+    } else {
+        fs.unlinkSync(path.join(__dirname, '..', file));
+    }
 
     return content;
 }

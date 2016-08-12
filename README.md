@@ -1,7 +1,8 @@
-# critical [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Build status][appveyor-image]][appveyor-url] [![Dependency Status][depstat-image]][depstat-url]
-> Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
+# critical [![NPM version][npm-image]][npm-url] [![Linux Build Status][travis-image]][travis-url] [![Windows Build status][appveyor-image]][appveyor-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status Status][deVdepstat-image]][deVdepstat-url]
 
-![](http://i.imgur.com/lAzmBD2.png)
+Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
+
+![](https://i.imgur.com/lAzmBD2.png)
 
 
 ## Install
@@ -9,7 +10,6 @@
 ```
 $ npm install --save critical
 ```
-
 
 ## Build plugins
 
@@ -68,6 +68,9 @@ critical.generate({
 
     // Extract inlined styles from referenced stylesheets
     extract: true,
+
+    // Complete Timeout for Operation
+    timeout: 30000,
 
     // Prefix for asset directory
     pathPrefix: '/MySubfolderDocrot',
@@ -220,6 +223,7 @@ critical.generate({
 | assetPaths       | `array`       | `[]` | List of directories/urls where the inliner should start looking for assets
 | maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
 | folder           | `string`      | `''` | Subfolder, relative to base directory. Only relevant without src if raw html is provided |
+| timeout          | `integer`     | `30000`| Sets a maximum timeout for the operation
 | pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
 | include          | `array`       | `[]` | Force include css rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
 | ignore           | `array`       | `[]` | Ignore css rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
@@ -325,14 +329,17 @@ free to open up an issue and we can discuss it.
 Apache-2.0 © Addy Osmani
 
 
-[npm-url]: https://npmjs.org/package/critical
-[npm-image]: https://badge.fury.io/js/critical.svg
+[npm-url]: https://www.npmjs.com/package/critical
+[npm-image]: https://img.shields.io/npm/v/critical.svg
 
 [travis-url]: https://travis-ci.org/addyosmani/critical
-[travis-image]: https://travis-ci.org/addyosmani/critical.svg?branch=master
+[travis-image]: https://img.shields.io/travis/addyosmani/critical/master.svg?label=Linux%20build
 
-[appveyor-url]: https://ci.appveyor.com/project/bezoerb/critical/branch/master
-[appveyor-image]: https://ci.appveyor.com/api/projects/status/cn6jw7r3ur0gmyg6/branch/master?svg=true
+[appveyor-url]: https://ci.appveyor.com/project/addyosmani/critical/branch/master
+[appveyor-image]: https://img.shields.io/appveyor/ci/addyosmani/critical/master.svg?label=Windows%20build
 
 [depstat-url]: https://david-dm.org/addyosmani/critical
-[depstat-image]: https://david-dm.org/addyosmani/critical.svg
+[depstat-image]: https://img.shields.io/david/addyosmani/critical.svg
+
+[deVdepstat-url]: https://david-dm.org/addyosmani/critical?type=dev
+[deVdepstat-image]: https://img.shields.io/david/dev/addyosmani/critical.svg

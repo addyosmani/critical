@@ -11,9 +11,6 @@ var readJson = require('read-package-json');
 var nn = require('normalize-newline');
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
-var skipWin = process.platform === 'win32' ? it.skip : it;
-var gc = require('../lib/gc');
-gc.skipExceptions();
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
@@ -32,8 +29,7 @@ describe('CLI', function () {
     });
 
     describe('acceptance', function () {
-        // empty stdout on appveyor? runs correct on manual test with Windows 7
-        skipWin('should return the version', function (done) {
+        it('should return the version', function (done) {
             execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], function (error, stdout) {
                 assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), this.pkg.version);
                 done();
@@ -51,39 +47,38 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
+                if (data instanceof Buffer) {
+                    data = data.toString('utf8');
+                }
                 assert.strictEqual(nn(data), nn(expected));
                 done();
             });
         });
 
-        it('should work well with the html file inside a folder passed as an option', function (done) {
-            var cp = execFile('node', [
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/folder/generate-default.html',
-                '--base', 'fixtures',
-                '--width', '1300',
-                '--height', '900'
-            ]);
+        it('should work well with the critical CSS file piped to critical', function (done) {
+            var cmd;
+
+            if (process.platform === 'win32') {
+                cmd = 'type';
+            } else {
+                cmd = 'cat';
+            }
+
+            cmd += ' ' + path.normalize('fixtures/generate-default.html') + ' | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+
+            var cp = exec(cmd);
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
+                if (data instanceof Buffer) {
+                    data = data.toString('utf8');
+                }
                 assert.strictEqual(nn(data), nn(expected));
                 done();
             });
         });
 
-        // pipes don't work on windows
-        skipWin('should work well with the html file piped to critical', function (done) {
-            var cp = exec('cat fixtures/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900');
-
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-            cp.stdout.on('data', function (data) {
-                assert.strictEqual(nn(data), nn(expected));
-                done();
-            });
-        });
-
-        skipWin('should work well with the html file inside a folder piped to critical', function (done) {
+        it('should work well with the html file inside a folder piped to critical', function (done) {
             var cmd = 'cat fixtures/folder/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
 
@@ -94,7 +89,7 @@ describe('CLI', function () {
             });
         });
 
-        skipWin('should show warning on piped file without relative links and use "/"', function (done) {
+        it('should show warning on piped file without relative links and use "/"', function (done) {
             var cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
 
@@ -144,6 +139,9 @@ describe('CLI', function () {
 
             var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
             cp.stdout.on('data', function (data) {
+                if (data instanceof Buffer) {
+                    data = data.toString('utf8');
+                }
                 assert.strictEqual(nn(data), nn(expected));
                 done();
             });

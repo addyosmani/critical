@@ -3,15 +3,13 @@ var path = require('path');
 var fs = require('fs-extra');
 var _ = require('lodash');
 var sourceInliner = require('inline-critical');
-/* jshint -W079 */
 var Promise = require('bluebird');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
 
 var core = require('./lib/core');
-
-var FileHelper = require('./lib/fileHelper');
+var file = require('./lib/file-helper');
 var inliner = require('./lib/inline-styles');
 
 Promise.promisifyAll(fs);
@@ -27,7 +25,7 @@ function prepareOptions(opts) {
     }
 
     var options = _.defaults(opts, {
-        base: FileHelper.guessBasePath(opts),
+        base: file.guessBasePath(opts),
         dimensions: [{
             height: opts.height || 900,
             width: opts.width || 1300
@@ -75,7 +73,7 @@ exports.generate = function (opts, cb) {
     // inline
     if (opts.inline) {
         corePromise = Promise.props({
-            file: FileHelper.getVinylPromise(opts),
+            file: file.getVinylPromise(opts),
             css: corePromise
         }).then(function (result) {
             return sourceInliner(result.file.contents.toString(), result.css, {

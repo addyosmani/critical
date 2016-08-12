@@ -3,25 +3,25 @@
 var path = require('path');
 var assert = require('chai').assert;
 var File = require('vinyl');
-var FileHelper = require('../lib/fileHelper');
+var file = require('../lib/file-helper');
 
 // unittests
 describe('Lib', function () {
-    describe('FileHelper.guessBasePath', function () {
+    describe('file.guessBasePath', function () {
         it('should return process.cwd() without base', function (done) {
-            var res = FileHelper.guessBasePath({});
+            var res = file.guessBasePath({});
             assert.strictEqual(res, process.cwd());
             done();
         });
 
         it('should return base if base option is set', function (done) {
-            var res = FileHelper.guessBasePath({src: 'fixtures/folder/generate-default.html'});
+            var res = file.guessBasePath({src: 'fixtures/folder/generate-default.html'});
             assert.strictEqual(res, 'fixtures/folder');
             done();
         });
     });
 
-    describe('FileHelper.resolveAssetPaths', function () {
+    describe('file.resolveAssetPaths', function () {
         function html(base, filepath) {
             return new File({
                 base: base || 'fixtures',
@@ -30,7 +30,7 @@ describe('Lib', function () {
         }
 
         it('should compute path based on file', function (done) {
-            var f = FileHelper.replaceAssetPaths(html(), {
+            var f = file.replaceAssetPaths(html(), {
                 base: 'fixtures'
             });
 
@@ -50,7 +50,7 @@ describe('Lib', function () {
         });
 
         it('should compute path based on dest', function (done) {
-            var f = FileHelper.replaceAssetPaths(html(), {
+            var f = file.replaceAssetPaths(html(), {
                 base: 'fixtures',
                 dest: 'fixtures/1/2/3.html'
             });
@@ -71,7 +71,7 @@ describe('Lib', function () {
         });
 
         it('should compute path based on destFolder', function (done) {
-            var f = FileHelper.replaceAssetPaths(html(), {
+            var f = file.replaceAssetPaths(html(), {
                 base: 'fixtures',
                 dest: '1/2/3.html',
                 destFolder: 'fixtures'
@@ -93,7 +93,7 @@ describe('Lib', function () {
         });
 
         it('should compute path based on dest with src outside base', function (done) {
-            var f = FileHelper.replaceAssetPaths(html('fixtures', path.resolve('expexted/generate-default.html')), {
+            var f = file.replaceAssetPaths(html('fixtures', path.resolve('expexted/generate-default.html')), {
                 base: 'fixtures',
                 dest: 'fixtures/1/2.html'
             });

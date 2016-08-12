@@ -4,13 +4,13 @@ var os = require('os');
 var path = require('path');
 var chalk = require('chalk');
 var meow = require('meow');
-var objectAssign = require('object-assign');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
 
-var file = require('./lib/fileHelper');
+var file = require('./lib/file-helper');
 var critical = require('./');
+
 var ok;
 
 var help = [
@@ -31,6 +31,7 @@ var help = [
     '   --include               RegExp, @type or selector to include',
     '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
     '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
+    '   --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).',
     '   ----------------------------------------------------------------------.',
     '   Deprecated - use "--inline" to retrieve the modified HTML',
     '   critical source.html --inline > dest.html',
@@ -76,13 +77,16 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             res.pathPrefix = val;
             break;
         case 'inline':
-            res.inline = val && val !== 'false' || typeof val === 'undefined';
+            res.inline = (val && val !== 'false') || typeof val === 'undefined';
             break;
         case 'inlineimages':
             res.inlineImages = val;
             break;
         case 'maxfilesize':
             res.maxFileSize = val;
+            break;
+        case 'timeout':
+            res.timeout = val;
             break;
         case 'assetpaths':
         case 'assetPaths':
@@ -117,12 +121,12 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
 function error(err) {
     process.stderr.write(indentString(err.message || err, chalk.red('   Error: ')));
     process.stderr.write(os.EOL);
-    process.stderr.write(indentString(help.join(os.EOL), '   '));
+    process.stderr.write(indentString(help.join(os.EOL), 1, '   '));
     process.exit(1);
 }
 
 function run(data) {
-    var opts = objectAssign({base: process.cwd()}, cli.flags);
+    var opts = _.assign({base: process.cwd()}, cli.flags);
     var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {
@@ -145,7 +149,7 @@ function run(data) {
             if (err) {
                 error(err);
             } else {
-                process.stdout.write(val);
+                process.stdout.write(val, process.exit);
             }
         });
     } catch (err) {
