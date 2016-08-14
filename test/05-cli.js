@@ -101,7 +101,7 @@ describe('CLI', function () {
             });
         });
 
-        it.only('should exit with code 1 and show help', function (done) {
+        it('should exit with code 1 and show help', function (done) {
             execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err, stdout, stderr) {
                 assert.typeOf(err, 'Error');
                 assert.strictEqual(err.code, 1);
