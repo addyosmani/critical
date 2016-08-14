@@ -213,7 +213,8 @@ critical.generate({
 | base             | `string`      | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
 | html             | `string`      | | HTML source to be operated against. This option takes precedence over the `src` option |
 | src              | `string`      | | Location of the HTML source to be operated against |
-| dest             | `string`      | | Location of where to save the output of an operation |
+| dest             | `string`      | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
+| destFolder       | `string`      | `''` | Subfolder, relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
 | width            | `integer`     | `900`  | Width of the target viewport |
 | height           | `integer`     | `1300` | Height of the target viewport |
 | dimensions       | `array`       | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
@@ -222,7 +223,6 @@ critical.generate({
 | inlineImages     | `boolean`     | `false` | Inline images
 | assetPaths       | `array`       | `[]` | List of directories/urls where the inliner should start looking for assets
 | maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
-| folder           | `string`      | `''` | Subfolder, relative to base directory. Only relevant without src if raw html is provided |
 | timeout          | `integer`     | `30000`| Sets a maximum timeout for the operation
 | pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
 | include          | `array`       | `[]` | Force include css rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).

@@ -7,12 +7,15 @@ var CleanCSS = require('clean-css');
 var nn = require('normalize-newline');
 
 function readAndRemove(file, minify) {
-    var content = read(file, minify);
-    if (path.isAbsolute(file)) {
-        fs.unlinkSync(file);
-    } else {
-        fs.unlinkSync(path.join(__dirname, '..', file));
+    var testBase = path.join(__dirname, '..');
+    if (!path.isAbsolute(file) && fs.existsSync(path.join(testBase, file))) {
+        file = path.join(testBase, file);
+    } else if (!path.isAbsolute(file) && fs.existsSync(path.join(testBase, 'fixtures', file))) {
+        file = path.join(testBase, 'fixtures', file);
     }
+
+    var content = read(file, minify);
+    fs.unlinkSync(file);
 
     return content;
 }

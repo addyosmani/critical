@@ -119,9 +119,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
 }, {});
 
 function error(err) {
-    process.stderr.write(indentString(err.message || err, chalk.red('   Error: ')));
+    process.stderr.write(indentString((chalk.red('Error: ') + err.message || err), 3));
     process.stderr.write(os.EOL);
-    process.stderr.write(indentString(help.join(os.EOL), 1, '   '));
+    process.stderr.write(indentString(help.join(os.EOL), 3));
     process.exit(1);
 }
 
