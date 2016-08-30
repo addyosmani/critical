@@ -310,11 +310,8 @@ your pages.
 
 ### Is Critical stable and suitable for production use?
 
-Many of the current tools around critical-path CSS are in an experimental stage and are constantly striving
-to improve. The same could be said of Critical. It hasn't been extensively tested on a ton of sites and it's
-very possible something may well break. That said, we welcome you to try it out on your project and report
-bugs if you find them.
-
+Critical has been used on a number of production sites that have found it stable for everyday use.
+That said, we welcome you to try it out on your project and report bugs if you find them.
 
 ## Can I contribute?
 
