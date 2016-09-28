@@ -60,7 +60,7 @@ critical.generate({
     height: 900,
 
     // Target for final HTML output.
-    // use some css file when the inline option is not set
+    // use some CSS file when the inline option is not set
     dest: 'index-critical.html',
 
     // Minify critical-path CSS when inlining
@@ -75,7 +75,7 @@ critical.generate({
     // Prefix for asset directory
     pathPrefix: '/MySubfolderDocrot',
 
-    // ignore css rules
+    // ignore CSS rules
     ignore: ['font-face',/some-regexp/],
 
     // overwrite default options
@@ -225,8 +225,8 @@ critical.generate({
 | maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
 | timeout          | `integer`     | `30000`| Sets a maximum timeout for the operation
 | pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
-| include          | `array`       | `[]` | Force include css rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
-| ignore           | `array`       | `[]` | Ignore css rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
+| include          | `array`       | `[]` | Force include CSS rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
+| ignore           | `array`       | `[]` | Ignore CSS rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
 | ignoreOptions    | `object`       | `{}` | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options).
 
 
@@ -311,11 +311,8 @@ your pages.
 
 ### Is Critical stable and suitable for production use?
 
-Many of the current tools around critical-path CSS are in an experimental stage and are constantly striving
-to improve. The same could be said of Critical. It hasn't been extensively tested on a ton of sites and it's
-very possible something may well break. That said, we welcome you to try it out on your project and report
-bugs if you find them.
-
+Critical has been used on a number of production sites that have found it stable for everyday use.
+That said, we welcome you to try it out on your project and report bugs if you find them.
 
 ## Can I contribute?
 
