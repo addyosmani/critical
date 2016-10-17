@@ -61,13 +61,13 @@
     "chai": "^3.0.0",
     "connect": "^3.4.0",
     "mocha": "^3.0.0",
-    "mockery": "^1.4.0",
-    "normalize-newline": "^2.0.0",
+    "mockery": "^2.0.0",
+    "normalize-newline": "^3.0.0",
     "read-package-json": "^2.0.0",
     "stream-array": "^1.0.1",
     "stream-assert": "^2.0.2",
     "vinyl-source-stream": "^1.0.0",
-    "xo": "^0.16.0"
+    "xo": "^0.17.0"
   },
   "xo": {
     "space": 4

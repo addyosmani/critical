@@ -194,7 +194,7 @@ describe('CLI', function () {
                 '-i'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
@@ -231,7 +231,7 @@ describe('CLI', function () {
                 '--assetPaths', 'assetPath2'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
@@ -262,7 +262,7 @@ describe('CLI', function () {
                 '--no-inline'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.mockOpts.inline, false);
         });
@@ -275,7 +275,7 @@ describe('CLI', function () {
                 '-i', '0'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.mockOpts.inline, false);
         });
@@ -288,7 +288,7 @@ describe('CLI', function () {
                 '--htmlTarget', 'htmlTarget'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.method, 'generateInline');
         });
@@ -300,7 +300,7 @@ describe('CLI', function () {
                 'fixtures/generate-default.html'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.method, 'generate');
         });
@@ -313,7 +313,7 @@ describe('CLI', function () {
                 '--inline', 'htmlTarget'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.method, 'generateInline');
         });
@@ -325,7 +325,7 @@ describe('CLI', function () {
                 'fixtures/generate-default.html'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.method, 'generate');
         });
@@ -338,7 +338,7 @@ describe('CLI', function () {
                 '--inline', false
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.method, 'generate');
         });
@@ -351,7 +351,7 @@ describe('CLI', function () {
                 '--styleTarget', 'styleTarget'
             ];
 
-            require('../cli');
+            require('../cli'); // eslint-disable-line import/no-unassigned-import
 
             assert.strictEqual(this.method, 'generate');
             assert.strictEqual(this.mockOpts.dest, 'styleTarget');
