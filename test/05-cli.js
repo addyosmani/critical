@@ -36,7 +36,7 @@ describe('CLI', function () {
             }.bind(this));
         });
 
-        it('should work well with the critical CSS file passed as an option', function (done) {
+        it('should work well with the html file passed as an option', function (done) {
             var cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
@@ -74,6 +74,29 @@ describe('CLI', function () {
                     data = data.toString('utf8');
                 }
                 assert.strictEqual(nn(data), nn(expected));
+                done();
+            });
+        });
+
+        it('should work well with the html file inside a folder piped to critical', function (done) {
+            var cmd = 'cat fixtures/folder/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+
+            exec(cmd, function (error, stdout) {
+                assert.isNull(error);
+                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                done();
+            });
+        });
+
+        it('should show warning on piped file without relative links and use "/"', function (done) {
+            var cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
+
+            exec(cmd, function (error, stdout, stderr) {
+                assert.isNull(error);
+                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'folder\' option.');
                 done();
             });
         });
@@ -166,6 +189,7 @@ describe('CLI', function () {
                 '-S', 'styleTarget',
                 '-m', 'minify',
                 '-e', 'extract',
+                '-f', 'folder',
                 '-p', 'pathPrefix',
                 '-i'
             ];
@@ -180,6 +204,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
+            assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.strictEqual(this.mockOpts.inline, true);
         });
 
@@ -197,6 +222,7 @@ describe('CLI', function () {
                 '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
                 '--extract', 'extract',
+                '--folder', 'folder',
                 '--pathPrefix', 'pathPrefix',
                 '--inline',
                 '--inlineImages',
@@ -214,6 +240,7 @@ describe('CLI', function () {
             assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
+            assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore, 'ignore');

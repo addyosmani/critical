@@ -2,6 +2,7 @@
 'use strict';
 var os = require('os');
 var path = require('path');
+var chalk = require('chalk');
 var meow = require('meow');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
@@ -24,6 +25,7 @@ var help = [
     '   -i, --inline            Generate the HTML with inlined critical-path CSS',
     '   -e, --extract           Extract inlined styles from referenced stylesheets',
     '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
+    '   -f, --folder            HTML Subfolder (default: \'\')',
     '   --ii, --inlineImages    Inline images',
     '   --ignore                RegExp, @type or selector to ignore',
     '   --include               RegExp, @type or selector to include',
@@ -46,6 +48,7 @@ var cli = meow({
         c: 'css',
         w: 'width',
         h: 'height',
+        f: 'folder',
         H: 'htmlTarget',
         i: 'inline',
         I: 'ignore',
@@ -116,9 +119,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
 }, {});
 
 function error(err) {
-    process.stderr.write(indentString(err.message || err, 1, '   Error: '));
+    process.stderr.write(indentString((chalk.red('Error: ') + err.message || err), 3));
     process.stderr.write(os.EOL);
-    process.stderr.write(indentString(help.join(os.EOL), 1, '   '));
+    process.stderr.write(indentString(help.join(os.EOL), 3));
     process.exit(1);
 }
 

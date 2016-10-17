@@ -12,7 +12,6 @@ var read = require('./helper/testhelper').read;
 var assertCritical = require('./helper/testhelper').assertCritical;
 
 process.chdir(path.resolve(__dirname));
-process.setMaxListeners(0);
 
 describe('Module - generate', function () {
     after(function () {
@@ -21,7 +20,7 @@ describe('Module - generate', function () {
 
     it('should generate critical-path CSS', function (done) {
         var expected = read('expected/generate-default.css');
-        var target = '.critical.css';
+        var target = path.resolve('.critical.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -50,7 +49,7 @@ describe('Module - generate', function () {
 
     it('should generate critical-path CSS with query string in file name', function (done) {
         var expected = read('expected/generate-default.css');
-        var target = '.critical.css';
+        var target = path.resolve('.critical.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -63,7 +62,7 @@ describe('Module - generate', function () {
 
     it('should ignore stylesheets blocked due to 403', function (done) {
         var expected = '';
-        var target = '.403.css';
+        var target = path.resolve('.403.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -76,7 +75,7 @@ describe('Module - generate', function () {
 
     it('should ignore stylesheets blocked due to 404', function (done) {
         var expected = '';
-        var target = '.404.css';
+        var target = path.resolve('.404.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -89,7 +88,7 @@ describe('Module - generate', function () {
 
     it('should generate multi-dimension critical-path CSS', function (done) {
         var expected = read('expected/generate-adaptive.css', 'utf8');
-        var target = '.adaptive.css';
+        var target = path.resolve('.adaptive.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -107,7 +106,7 @@ describe('Module - generate', function () {
 
     it('should generate minified critical-path CSS', function (done) {
         var expected = read('expected/generate-default.css', true);
-        var target = '.critical.min.css';
+        var target = path.resolve('.critical.min.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -121,7 +120,7 @@ describe('Module - generate', function () {
 
     it('should generate minified critical-path CSS successfully with external css file configured', function (done) {
         var expected = read('expected/generate-default.css', true);
-        var target = '.nostyle.css';
+        var target = path.resolve('.nostyle.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -139,7 +138,7 @@ describe('Module - generate', function () {
 
     it('should inline relative images', function (done) {
         var expected = read('expected/generate-image.css');
-        var target = '.image-relative.css';
+        var target = path.resolve('.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -154,47 +153,31 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline absolute images', function (done) {
+    it('should inline relative images from folder', function (done) {
         var expected = read('expected/generate-image.css');
-        var target = '.image-absolute.css';
+        var target = path.resolve('.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
-            src: 'generate-image.html',
+            src: 'folder/generate-image.html',
             css: [
-                'fixtures/styles/image-absolute.css'
+                'fixtures/styles/image-relative.css'
             ],
             dest: target,
+            destFolder: 'folder/',
             width: 1300,
             height: 900,
             inlineImages: true
         }, assertCritical(target, expected, done));
     });
 
-    it('should skip to big images', function (done) {
-        var expected = read('expected/generate-image-big.css');
-        var target = '.image-big.css';
+    it('should rewrite relative images for html outside root', function (done) {
+        var expected = read('expected/generate-image-relative.css');
+        var target = path.resolve('fixtures/folder/.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
-            src: 'generate-image.html',
-            css: [
-                'fixtures/styles/image-big.css'
-            ],
-            dest: target,
-            width: 1300,
-            height: 900,
-            inlineImages: true
-        }, assertCritical(target, expected, done));
-    });
-
-    it('considers "inlineImages" option', function (done) {
-        var expected = read('expected/generate-image-skip.css');
-        var target = '.image-skip.css';
-
-        critical.generate({
-            base: 'fixtures/',
-            src: 'generate-image.html',
+            src: 'folder/generate-image.html',
             css: [
                 'fixtures/styles/image-relative.css'
             ],
@@ -205,9 +188,110 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should rewrite relative images for html outside root with css file', function (done) {
+        var expected = read('expected/generate-image-relative-subfolder.css');
+        var target = path.resolve('fixtures/folder/subfolder/.image-relative-subfolder.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'folder/subfolder/generate-image-absolute.html',
+            dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: false
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should rewrite relative images for html outside root destFolder option', function (done) {
+        var expected = read('expected/generate-image-relative-subfolder.css');
+        var target = path.resolve('.image-relative-subfolder.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'folder/subfolder/generate-image-absolute.html',
+            destFolder: 'folder/subfolder',
+           // dest: target,
+            width: 1300,
+            height: 900,
+            inlineImages: false
+        }, assertCritical(target, expected, done, true));
+    });
+
+    it('should rewrite relative images for html inside root', function (done) {
+        var expected = read('expected/generate-image-skip.css');
+        var target = path.resolve('.image-relative.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-image.html',
+            css: [
+                'fixtures/styles/image-relative.css'
+            ],
+            dest: target,
+            destFolder: '.',
+            width: 1300,
+            height: 900,
+            inlineImages: false
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should inline absolute images', function (done) {
+        var expected = read('expected/generate-image.css');
+        var target = path.resolve('.image-absolute.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-image.html',
+            css: [
+                'fixtures/styles/image-absolute.css'
+            ],
+            dest: target,
+            destFolder: '.',
+            width: 1300,
+            height: 900,
+            inlineImages: true
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should skip to big images', function (done) {
+        var expected = read('expected/generate-image-big.css');
+        var target = path.resolve('.image-big.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-image.html',
+            css: [
+                'fixtures/styles/image-big.css'
+            ],
+            dest: target,
+            destFolder: '.',
+            width: 1300,
+            height: 900,
+            inlineImages: true
+        }, assertCritical(target, expected, done));
+    });
+
+    it('considers "inlineImages" option', function (done) {
+        var expected = read('expected/generate-image-skip.css');
+        var target = path.resolve('.image-skip.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-image.html',
+            css: [
+                'fixtures/styles/image-relative.css'
+            ],
+            dest: target,
+            destFolder: '.',
+            width: 1300,
+            height: 900,
+            inlineImages: false
+        }, assertCritical(target, expected, done));
+    });
+
     it('should not screw up win32 paths', function (done) {
         var expected = read('expected/generate-image.css');
-        var target = '.image.css';
+        var target = path.resolve('.image.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -224,7 +308,7 @@ describe('Module - generate', function () {
 
     it('should respect pathPrefix', function (done) {
         var expected = read('expected/path-prefix.css');
-        var target = '.path-prefix.css';
+        var target = path.resolve('.path-prefix.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -239,6 +323,23 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should detect pathPrefix', function (done) {
+        var expected = read('expected/path-prefix.css');
+        var target = path.resolve('.path-prefix.css');
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            destFolder: '.',
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
     it('should generate and inline, if "inline" option is set', function (done) {
         var expected = read('expected/generateInline.html');
         var target = '.generateInline.html';
@@ -246,9 +347,10 @@ describe('Module - generate', function () {
         critical.generate({
             base: 'fixtures/',
             src: 'generateInline.html',
+            destFolder: '.',
             dest: target,
             inline: true
-        }, assertCritical(target, expected, done));
+        }, assertCritical(path.join('fixtures', target), expected, done));
     });
 
     it('should generate and inline critical-path CSS', function (done) {
@@ -258,9 +360,10 @@ describe('Module - generate', function () {
         critical.generate({
             base: 'fixtures/',
             src: 'generateInline.html',
+            destFolder: '.',
             dest: target,
             inline: true
-        }, assertCritical(target, expected, done));
+        }, assertCritical(path.join('fixtures', target), expected, done));
     });
 
     it('should generate and inline minified critical-path CSS', function (done) {
@@ -270,10 +373,11 @@ describe('Module - generate', function () {
         critical.generate({
             base: 'fixtures/',
             src: 'generateInline.html',
+            destFolder: '.',
             minify: true,
             dest: target,
             inline: true
-        }, assertCritical(target, expected, done));
+        }, assertCritical(path.join('fixtures', target), expected, done));
     });
 
     it('should handle multiple calls', function (done) {
@@ -306,7 +410,7 @@ describe('Module - generate', function () {
 
     it('should inline critical-path CSS ignoring remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-minified.html');
-        var target = '.generateInline-external.html';
+        var target = path.resolve('.generateInline-external.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -320,7 +424,7 @@ describe('Module - generate', function () {
 
     it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
         var expected = read('expected/generateInline-external-extract.html');
-        var target = '.generateInline-external-extract.html';
+        var target = path.resolve('.generateInline-external-extract.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -335,7 +439,7 @@ describe('Module - generate', function () {
 
     it('should inline critical-path CSS without screwing svg images ', function (done) {
         var expected = read('expected/generateInline-svg.html');
-        var target = '.generateInline-svg.html';
+        var target = path.resolve('.generateInline-svg.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -348,7 +452,7 @@ describe('Module - generate', function () {
 
     it('should inline and extract critical-path CSS', function (done) {
         var expected = read('expected/generateInline-extract.html');
-        var target = '.generateInline-extract.html';
+        var target = path.resolve('.generateInline-extract.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -362,7 +466,7 @@ describe('Module - generate', function () {
 
     it('should inline and extract critical-path CSS from html source', function (done) {
         var expected = read('expected/generateInline-extract.html');
-        var target = '.generateInline-extract-src.html';
+        var target = path.resolve('.generateInline-extract-src.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -376,7 +480,7 @@ describe('Module - generate', function () {
 
     it('should consider "ignore" option', function (done) {
         var expected = read('expected/generate-ignore.css');
-        var target = '.ignore.css';
+        var target = path.resolve('.ignore.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -652,6 +756,22 @@ describe('Module - generate (remote)', function () {
             height: 900,
             // empty string most likely to candidate for failure if change in code results in checking option lazily,
             pathPrefix: ''
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should detect pathPrefix', function (done) {
+        var expected = read('expected/path-prefix.css');
+        var target = '.path-prefix.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'http://localhost:3000/path-prefix.html',
+            css: [
+                'fixtures/styles/path-prefix.css'
+            ],
+            dest: target,
+            width: 1300,
+            height: 900
         }, assertCritical(target, expected, done));
     });
 

@@ -15,6 +15,37 @@ var inliner = require('./lib/inline-styles');
 Promise.promisifyAll(fs);
 
 /**
+ * Normalize options
+ *
+ * @param opts
+ */
+function prepareOptions(opts) {
+    if (!opts) {
+        opts = {};
+    }
+
+    var options = _.defaults(opts, {
+        base: file.guessBasePath(opts),
+        dimensions: [{
+            height: opts.height || 900,
+            width: opts.width || 1300
+        }]
+    });
+
+    // set dest relative to base if isn't specivied absolute
+    if (options.dest && !path.isAbsolute(options.dest)) {
+        options.dest = path.join(options.base, options.dest);
+    }
+
+    // set dest relative to base if isn't specivied absolute
+    if (options.destFolder && !path.isAbsolute(options.destFolder)) {
+        options.destFolder = path.join(options.base, options.destFolder);
+    }
+
+    return options;
+}
+
+/**
  * Critical path CSS generation
  * @param  {object} opts Options
  * @param  {function} cb Callback
@@ -22,13 +53,7 @@ Promise.promisifyAll(fs);
  * @return {Promise}|undefined
  */
 exports.generate = function (opts, cb) {
-    opts = _.defaults(opts || {}, {
-        base: file.guessBasePath(opts || {}),
-        dimensions: [{
-            height: opts.height || 900,
-            width: opts.width || 1300
-        }]
-    });
+    opts = prepareOptions(opts);
 
     // generate critical css
     var corePromise = core.generate(opts);
@@ -48,10 +73,10 @@ exports.generate = function (opts, cb) {
     // inline
     if (opts.inline) {
         corePromise = Promise.props({
-            html: file.getContentPromise(opts),
+            file: file.getVinylPromise(opts),
             css: corePromise
         }).then(function (result) {
-            return sourceInliner(result.html, result.css, {
+            return sourceInliner(result.file.contents.toString(), result.css, {
                 minify: opts.minify || false,
                 extract: opts.extract || false,
                 basePath: opts.base || process.cwd()
@@ -161,7 +186,7 @@ exports.stream = function (opts) {
         }
 
         var options = _.assign(opts || {}, {
-            html: file.contents.toString()
+            src: file
         });
 
         exports.generate(options, function (err, data) {

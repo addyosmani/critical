@@ -16,7 +16,6 @@ var critical = require('../');
 var read = require('./helper/testhelper').read;
 
 process.chdir(path.resolve(__dirname));
-process.setMaxListeners(0);
 
 /**
  * Get vinyl file object
@@ -74,6 +73,26 @@ describe('Streams', function () {
                 assert.fail(null, err, 'Should not emit an error');
                 done();
             });
+    });
+
+    it('should work inside folders', function (done) {
+        var stream = critical.stream({
+            base: path.join(__dirname, 'fixtures'),
+            inline: false,
+            minify: true,
+            inlineImages: true
+        });
+
+        var expected1 = read('expected/generate-default.css', true);
+
+        getVinyl('folder/generate-default.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
+            }))
+            .pipe(streamAssert.end(done));
     });
 
     it('should use "generateInline" if inline option is set', function (done) {
