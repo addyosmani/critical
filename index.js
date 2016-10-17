@@ -3,7 +3,7 @@ var path = require('path');
 var fs = require('fs-extra');
 var _ = require('lodash');
 var sourceInliner = require('inline-critical');
-var Promise = require('bluebird');
+var Bluebird = require('bluebird');
 var through2 = require('through2');
 var PluginError = require('gulp-util').PluginError;
 var replaceExtension = require('gulp-util').replaceExtension;
@@ -12,7 +12,7 @@ var core = require('./lib/core');
 var file = require('./lib/file-helper');
 var inliner = require('./lib/inline-styles');
 
-Promise.promisifyAll(fs);
+Bluebird.promisifyAll(fs);
 
 /**
  * Normalize options
@@ -72,7 +72,7 @@ exports.generate = function (opts, cb) {
 
     // inline
     if (opts.inline) {
-        corePromise = Promise.props({
+        corePromise = Bluebird.props({
             file: file.getVinylPromise(opts),
             css: corePromise
         }).then(function (result) {
@@ -101,10 +101,10 @@ exports.generate = function (opts, cb) {
     if (_.isFunction(cb)) {
         corePromise.catch(function (err) {
             cb(err);
-            throw new Promise.CancellationError();
+            throw new Bluebird.CancellationError();
         }).then(function (output) {
             cb(null, output.toString());
-        }).catch(Promise.CancellationError, function () {
+        }).catch(Bluebird.CancellationError, function () {
         }).done();
     } else {
         return corePromise;
