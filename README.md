@@ -39,7 +39,7 @@ critical.generate({
     // Inline the generated critical-path CSS
     // - true generates HTML
     // - false generates CSS
-    inline: true
+    inline: true,
 
     // Your base directory
     base: 'dist/',
