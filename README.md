@@ -252,12 +252,15 @@ $ critical test/fixture/index.html --base test/fixture > critical.css
 ## Gulp
 
 ```js
+var gulp = require('gulp');
+var gutil = require('gulp-util');
 var critical = require('critical').stream;
 
 // Generate & Inline Critical-path CSS
 gulp.task('critical', function () {
     return gulp.src('dist/*.html')
         .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css','dist/styles/main.css']}))
+        .on('error', function(err) { gutil.log(gutil.colors.red(err.message)); })
         .pipe(gulp.dest('dist'));
 });
 ```
