@@ -4,6 +4,7 @@ var os = require('os');
 var path = require('path');
 var chalk = require('chalk');
 var meow = require('meow');
+var groupArgs = require('group-args');
 var indentString = require('indent-string');
 var stdin = require('get-stdin');
 var _ = require('lodash');
@@ -40,9 +41,7 @@ var help = [
     '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)'
 ];
 
-var cli = meow({
-    help: help
-}, {
+var minimistOpts = {
     alias: {
         b: 'base',
         c: 'css',
@@ -58,7 +57,16 @@ var cli = meow({
         p: 'pathPrefix',
         ii: 'inlineImages'
     }
-});
+};
+
+var cli = meow({
+    help: help
+}, minimistOpts);
+
+// group args for inline-critical and penthouse
+cli.flags = groupArgs(['inline', 'penthouse'], {
+    delimiter: '-'
+}, minimistOpts);
 
 // cleanup cli flags and assert cammelcase keeps camelcase
 cli.flags = _.reduce(cli.flags, function (res, val, key) {
@@ -75,9 +83,6 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             break;
         case 'pathprefix':
             res.pathPrefix = val;
-            break;
-        case 'inline':
-            res.inline = (val && val !== 'false') || typeof val === 'undefined';
             break;
         case 'inlineimages':
             res.inlineImages = val;
