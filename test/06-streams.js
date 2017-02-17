@@ -216,4 +216,68 @@ describe('Streams', function () {
             }))
             .pipe(streamAssert.end(done));
     });
+
+    it('#192 - include option - stream', function (done) {
+        var stream = critical.stream({
+            base: path.join(__dirname, 'fixtures'),
+            css: ['fixtures/styles/issue-192.css'],
+            minify: true,
+            extract: false,
+            ignore: ['@font-face', /url\(/],
+            dimensions: [{
+                width: 320,
+                height: 480
+            }, {
+                width: 768,
+                height: 1024
+            }, {
+                width: 1280,
+                height: 960
+            }, {
+                width: 1920,
+                height: 1080
+            }],
+            include: [/^\.main-navigation.*$/,
+                /^\.hero-deck.*$/,
+                /^\.deck.*$/,
+                /^\.search-box.*$/],
+            width: 1300,
+            height: 900
+        });
+
+        var expected = read('expected/issue-192.css');
+
+        getVinyl('issue-192.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), nn(expected));
+            }))
+            .pipe(streamAssert.end(done));
+    });
+
+    it('should generate multi-dimension critical-path CSS in stream mode', function (done) {
+        var expected = read('expected/generate-adaptive.css', 'utf8');
+
+        var stream = critical.stream({
+            base: 'fixtures/',
+            dimensions: [{
+                width: 100,
+                height: 70
+            }, {
+                width: 1000,
+                height: 70
+            }]
+        });
+
+        getVinyl('generate-adaptive.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0, function (d) {
+                assert.strictEqual(path.extname(d.path), '.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), nn(expected));
+            }))
+            .pipe(streamAssert.end(done));
+    });
 });

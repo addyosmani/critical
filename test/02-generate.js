@@ -210,7 +210,7 @@ describe('Module - generate', function () {
             base: 'fixtures/',
             src: 'folder/subfolder/generate-image-absolute.html',
             destFolder: 'folder/subfolder',
-           // dest: target,
+            // dest: target,
             width: 1300,
             height: 900,
             inlineImages: false
@@ -531,6 +531,40 @@ describe('Module - generate', function () {
             base: 'fixtures/',
             src: 'include.html',
             include: [/someRule/],
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('#192 - include option - generate', function (done) {
+        var expected = read('expected/issue-192.css');
+        var target = '.issue-192.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'issue-192.html',
+            css: ['fixtures/styles/issue-192.css'],
+            dimensions: [{
+                width: 320,
+                height: 480
+            }, {
+                width: 768,
+                height: 1024
+            }, {
+                width: 1280,
+                height: 960
+            }, {
+                width: 1920,
+                height: 1080
+            }],
+            minify: true,
+            extract: false,
+            ignore: ['@font-face', /url\(/],
+            include: [/^\.main-navigation.*$/,
+                /^\.hero-deck.*$/,
+                /^\.deck.*$/,
+                /^\.search-box.*$/],
             dest: target,
             width: 1300,
             height: 900
