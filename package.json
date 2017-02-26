@@ -39,7 +39,7 @@
     "gulp-util": "^3.0.8",
     "imageinliner": "^0.2.4",
     "indent-string": "^3.1.0",
-    "inline-critical": "^2.3.0",
+    "inline-critical": "^2.4.0",
     "lodash": "^4.17.4",
     "meow": "^3.7.0",
     "mime-types": "^2.1.14",
