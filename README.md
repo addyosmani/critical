@@ -212,7 +212,7 @@ critical.generate({
 | inline           | `boolean`     | `false` | Inline critical-path CSS using filamentgroup's loadCSS  |
 | base             | `string`      | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
 | html             | `string`      | | HTML source to be operated against. This option takes precedence over the `src` option |
-| src              | `string`      | | Location of the HTML source to be operated against. If it is remote and no base is provided, it is assumed that stylesheets are remote as well. |
+| src              | `string`      | | Location of the HTML source to be operated against. If it is remote and base is remote, it is assumed that stylesheets are remote as well. |
 | dest             | `string`      | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
 | destFolder       | `string`      | `''` | Subfolder relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
 | width            | `integer`     | `900`  | Width of the target viewport |
