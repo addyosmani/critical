@@ -54,6 +54,7 @@
     "tempfile": "^1.1.1",
     "through2": "^2.0.3",
     "tmp": "^0.0.31",
+    "url": "^0.11.0",
     "vinyl": "^2.0.1"
   },
   "devDependencies": {
