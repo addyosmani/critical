@@ -595,7 +595,6 @@ describe('Module - generate (remote)', function () {
         var target = '.critical.css';
 
         critical.generate({
-            base: 'fixtures/',
             src: 'http://localhost:3000/generate-default.html',
             dest: target,
             width: 1300,
@@ -658,11 +657,7 @@ describe('Module - generate (remote)', function () {
         var target = '.image-relative.css';
 
         critical.generate({
-            base: 'fixtures/',
             src: 'http://localhost:3000/generate-image.html',
-            css: [
-                'fixtures/styles/image-relative.css'
-            ],
             dest: target,
             width: 1300,
             height: 900,
@@ -675,8 +670,6 @@ describe('Module - generate (remote)', function () {
         var target = '.image-relative.css';
 
         critical.generate({
-            // image could not be fetched locally
-            base: './',
             src: 'http://localhost:3000/generate-image.html',
             css: [
                 'fixtures/styles/image-relative.css'
