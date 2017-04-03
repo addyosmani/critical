@@ -2,11 +2,13 @@
 'use strict';
 var path = require('path');
 var http = require('http');
+var fs = require('fs');
 var nn = require('normalize-newline');
 var assert = require('chai').assert;
 var async = require('async');
 var finalhandler = require('finalhandler');
 var serveStatic = require('serve-static');
+var Vinyl = require('vinyl');
 var critical = require('../');
 var read = require('./helper/testhelper').read;
 var assertCritical = require('./helper/testhelper').assertCritical;
@@ -26,6 +28,29 @@ describe('Module - generate', function () {
             base: 'fixtures/',
             src: 'generate-default.html',
             dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should generate critical-path CSS from CSS files passed as Vinyl objects', function (done) {
+        var expected = read('expected/generate-default.css');
+        var target = path.resolve('.critical.css');
+        var stylesheets = ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css']
+            .map(function (filePath) {
+                return new Vinyl({
+                    cwd: '/',
+                    base: '/fixtures/',
+                    path: filePath,
+                    contents: Buffer.from(fs.readFileSync(path.join(__dirname, filePath), 'utf8'), 'utf8')
+                });
+            });
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default-nostyle.html',
+            dest: target,
+            css: stylesheets,
             width: 1300,
             height: 900
         }, assertCritical(target, expected, done));

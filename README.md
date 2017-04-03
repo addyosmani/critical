@@ -215,6 +215,7 @@ critical.generate({
 | src              | `string`      | | Location of the HTML source to be operated against |
 | dest             | `string`      | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
 | destFolder       | `string`      | `''` | Subfolder relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
+| css              | `array`       | | An array of paths to css files, or an array of [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
 | width            | `integer`     | `900`  | Width of the target viewport |
 | height           | `integer`     | `1300` | Height of the target viewport |
 | dimensions       | `array`       | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
