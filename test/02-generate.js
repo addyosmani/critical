@@ -33,12 +33,11 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate critical-path CSS for multiple files in loop', function (done) {
+    it('should generate critical-path CSS for multiple calls', function (done) {
         var source = ['generate-default.html', 'generate-default2.html'];
         var expected = read('expected/generate-default.css');
         var target = path.resolve('.critical.css');
 
-        // assuming openFiles is an array of file names
         async.each(source, function (file, callback) {
             critical.generate({
                 base: 'fixtures/',
