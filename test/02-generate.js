@@ -33,6 +33,27 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
+    it('should generate critical-path CSS for multiple files in loop', function (done) {
+        var source = ['generate-default.html', 'generate-default2.html'];
+        var expected = read('expected/generate-default.css');
+        var target = path.resolve('.critical.css');
+
+        // assuming openFiles is an array of file names
+        async.each(source, function (file, callback) {
+            critical.generate({
+                base: 'fixtures/',
+                src: file,
+                dest: target,
+                width: 1300,
+                height: 900
+            }, assertCritical(target, expected, callback));
+        }, function (err) {
+            if (!err) {
+                done();
+            }
+        });
+    });
+
     it('should generate critical-path CSS from CSS files passed as Vinyl objects', function (done) {
         var expected = read('expected/generate-default.css');
         var target = path.resolve('.critical.css');
