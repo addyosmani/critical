@@ -36,9 +36,9 @@ describe('Module - generate', function () {
     it('should generate critical-path CSS for multiple calls', function (done) {
         var source = ['generate-default.html', 'generate-default2.html'];
         var expected = read('expected/generate-default.css');
-        var target = path.resolve('.critical.css');
 
-        async.each(source, function (file, callback) {
+        async.forEachOf(source, function (file, val, callback) {
+            var target = path.resolve('.critical' + val + '.css');
             critical.generate({
                 base: 'fixtures/',
                 src: file,
