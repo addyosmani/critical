@@ -1,43 +1,43 @@
 /* eslint-env node, mocha */
 'use strict';
-var fs = require('fs');
-var path = require('path');
-var http = require('http');
-var exec = require('child_process').exec;
-var execFile = require('child_process').execFile;
-var assert = require('chai').assert;
-var mockery = require('mockery');
-var readJson = require('read-package-json');
-var nn = require('normalize-newline');
-var finalhandler = require('finalhandler');
-var serveStatic = require('serve-static');
+const fs = require('fs');
+const path = require('path');
+const http = require('http');
+const exec = require('child_process').exec;
+const execFile = require('child_process').execFile;
+const assert = require('chai').assert;
+const mockery = require('mockery');
+const readJson = require('read-package-json');
+const nn = require('normalize-newline');
+const finalhandler = require('finalhandler');
+const serveStatic = require('serve-static');
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
-describe('CLI', function () {
+describe('CLI', () => {
     beforeEach(function (done) {
-        readJson('../package.json', function (err, data) {
+        readJson('../package.json', (err, data) => {
             assert.isNull(err, Boolean(err) && err);
             this.pkg = data;
             done();
-        }.bind(this));
+        });
     });
 
-    after(function () {
+    after(() => {
         process.emit('cleanup');
     });
 
-    describe('acceptance', function () {
+    describe('acceptance', () => {
         it('should return the version', function (done) {
-            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], function (error, stdout) {
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), '--version', '--no-update-notifier'], (error, stdout) => {
                 assert.strictEqual(stdout.replace(/\r\n|\n/g, ''), this.pkg.version);
                 done();
-            }.bind(this));
+            });
         });
 
         it('should work well with the html file passed as an option', function (done) {
-            var cp = execFile('node', [
+            const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--base', 'fixtures',
@@ -45,8 +45,8 @@ describe('CLI', function () {
                 '--height', '900'
             ]);
 
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-            cp.stdout.on('data', function (data) {
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', data => {
                 if (data instanceof Buffer) {
                     data = data.toString('utf8');
                 }
@@ -56,7 +56,7 @@ describe('CLI', function () {
         });
 
         it('should work well with the critical CSS file piped to critical', function (done) {
-            var cmd;
+            let cmd;
 
             if (process.platform === 'win32') {
                 cmd = 'type';
@@ -66,10 +66,10 @@ describe('CLI', function () {
 
             cmd += ' ' + path.normalize('fixtures/generate-default.html') + ' | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
 
-            var cp = exec(cmd);
+            const cp = exec(cmd);
 
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-            cp.stdout.on('data', function (data) {
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', data => {
                 if (data instanceof Buffer) {
                     data = data.toString('utf8');
                 }
@@ -79,10 +79,10 @@ describe('CLI', function () {
         });
 
         it('should work well with the html file inside a folder piped to critical', function (done) {
-            var cmd = 'cat fixtures/folder/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            const cmd = 'cat fixtures/folder/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
 
-            exec(cmd, function (error, stdout) {
+            exec(cmd, (error, stdout) => {
                 assert.isNull(error);
                 assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
                 done();
@@ -90,10 +90,10 @@ describe('CLI', function () {
         });
 
         it('should show warning on piped file without relative links and use "/"', function (done) {
-            var cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
+            const cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
 
-            exec(cmd, function (error, stdout, stderr) {
+            exec(cmd, (error, stdout, stderr) => {
                 assert.isNull(error);
                 assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
                 assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'folder\' option.');
@@ -102,7 +102,7 @@ describe('CLI', function () {
         });
 
         it('should exit with code 1 and show help', function (done) {
-            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], function (err, stdout, stderr) {
+            execFile('node', [path.join(__dirname, '../', this.pkg.bin.critical), 'fixtures/not-exists.html'], (err, stdout, stderr) => {
                 assert.typeOf(err, 'Error');
                 assert.strictEqual(err.code, 1);
                 assert.include(stderr, 'Usage:');
@@ -111,25 +111,25 @@ describe('CLI', function () {
         });
     });
 
-    describe('acceptance (remote)', function () {
-        var server;
+    describe('acceptance (remote)', () => {
+        let server;
 
-        before(function () {
-            var serve = serveStatic('fixtures', {index: ['generate-default.html']});
+        before(() => {
+            const serve = serveStatic('fixtures', {index: ['generate-default.html']});
 
-            server = http.createServer(function (req, res) {
-                var done = finalhandler(req, res);
+            server = http.createServer((req, res) => {
+                const done = finalhandler(req, res);
                 serve(req, res, done);
             });
             server.listen(3000);
         });
 
-        after(function () {
+        after(() => {
             server.close();
         });
 
         it('should generate critical path css from external resource', function (done) {
-            var cp = execFile('node', [
+            const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'http://localhost:3000',
                 '--base', 'fixtures',
@@ -137,8 +137,8 @@ describe('CLI', function () {
                 '--height', '900'
             ]);
 
-            var expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-            cp.stdout.on('data', function (data) {
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', data => {
                 if (data instanceof Buffer) {
                     data = data.toString('utf8');
                 }
@@ -148,7 +148,7 @@ describe('CLI', function () {
         });
     });
 
-    describe('mocked', function () {
+    describe('mocked', () => {
         beforeEach(function () {
             this.origArgv = process.argv;
             this.origExit = process.exit;

@@ -1,27 +1,27 @@
 /* eslint-env node, mocha */
 'use strict';
-var path = require('path');
-var assert = require('chai').assert;
-var File = require('vinyl');
-var file = require('../lib/file-helper');
+const path = require('path');
+const assert = require('chai').assert;
+const File = require('vinyl');
+const file = require('../lib/file-helper');
 
-// unittests
-describe('Lib', function () {
-    describe('file.guessBasePath', function () {
-        it('should return process.cwd() without base', function (done) {
-            var res = file.guessBasePath({});
+// Unittests
+describe('Lib', () => {
+    describe('file.guessBasePath', () => {
+        it('should return process.cwd() without base', done => {
+            const res = file.guessBasePath({});
             assert.strictEqual(res, process.cwd());
             done();
         });
 
-        it('should return base if base option is set', function (done) {
-            var res = file.guessBasePath({src: 'fixtures/folder/generate-default.html'});
+        it('should return base if base option is set', done => {
+            const res = file.guessBasePath({src: 'fixtures/folder/generate-default.html'});
             assert.strictEqual(res, 'fixtures/folder');
             done();
         });
     });
 
-    describe('file.resolveAssetPaths', function () {
+    describe('file.resolveAssetPaths', () => {
         function html(base, filepath) {
             return new File({
                 base: base || 'fixtures',
@@ -29,15 +29,15 @@ describe('Lib', function () {
             });
         }
 
-        it('should compute path based on file', function (done) {
-            var f = file.replaceAssetPaths(html(), {
+        it('should compute path based on file', done => {
+            const f = file.replaceAssetPaths(html(), {
                 base: 'fixtures'
             });
 
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/b/file.css',
-                    contents: new Buffer('url(' + p + ')')
+                    contents: Buffer.from('url(' + p + ')')
                 });
             }
 
@@ -49,8 +49,8 @@ describe('Lib', function () {
             done();
         });
 
-        it('should compute path based on dest', function (done) {
-            var f = file.replaceAssetPaths(html(), {
+        it('should compute path based on dest', done => {
+            const f = file.replaceAssetPaths(html(), {
                 base: 'fixtures',
                 dest: 'fixtures/1/2/3.html'
             });
@@ -58,7 +58,7 @@ describe('Lib', function () {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/b/file.css',
-                    contents: new Buffer('url(' + p + ')')
+                    contents: Buffer.from('url(' + p + ')')
                 });
             }
 
@@ -70,8 +70,8 @@ describe('Lib', function () {
             done();
         });
 
-        it('should compute path based on destFolder', function (done) {
-            var f = file.replaceAssetPaths(html(), {
+        it('should compute path based on destFolder', done => {
+            const f = file.replaceAssetPaths(html(), {
                 base: 'fixtures',
                 dest: '1/2/3.html',
                 destFolder: 'fixtures'
@@ -80,7 +80,7 @@ describe('Lib', function () {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/b/file.css',
-                    contents: new Buffer('url(' + p + ')')
+                    contents: Buffer.from('url(' + p + ')')
                 });
             }
 
@@ -92,8 +92,8 @@ describe('Lib', function () {
             done();
         });
 
-        it('should compute path based on dest with src outside base', function (done) {
-            var f = file.replaceAssetPaths(html('fixtures', path.resolve('expexted/generate-default.html')), {
+        it('should compute path based on dest with src outside base', done => {
+            const f = file.replaceAssetPaths(html('fixtures', path.resolve('expexted/generate-default.html')), {
                 base: 'fixtures',
                 dest: 'fixtures/1/2.html'
             });
@@ -101,7 +101,7 @@ describe('Lib', function () {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/file.css',
-                    contents: new Buffer('url(' + p + ')')
+                    contents: Buffer.from('url(' + p + ')')
                 });
             }
 
