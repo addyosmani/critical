@@ -3,17 +3,17 @@
  */
 /* eslint-env node, mocha */
 'use strict';
-var path = require('path');
-var fs = require('fs');
-var assert = require('chai').assert;
-var vinylStream = require('vinyl-source-stream');
-var streamAssert = require('stream-assert');
-var gutil = require('gulp-util');
-var array = require('stream-array');
-var nn = require('normalize-newline');
+const path = require('path');
+const fs = require('fs');
+const assert = require('chai').assert;
+const vinylStream = require('vinyl-source-stream');
+const streamAssert = require('stream-assert');
+const gutil = require('gulp-util');
+const array = require('stream-array');
+const nn = require('normalize-newline');
 
-var critical = require('../');
-var read = require('./helper/testhelper').read;
+const critical = require('../');
+const read = require('./helper/testhelper').read;
 
 process.chdir(path.resolve(__dirname));
 
@@ -23,119 +23,119 @@ process.chdir(path.resolve(__dirname));
  * @returns {*|StreamArray|exports}
  */
 function getVinyl() {
-    var args = Array.prototype.slice.call(arguments);
+    const args = Array.prototype.slice.call(arguments);
 
     function create(filepath) {
-        var file = path.join(__dirname, 'fixtures', filepath);
+        const file = path.join(__dirname, 'fixtures', filepath);
         return new gutil.File({
             cwd: __dirname,
             base: path.dirname(file),
             path: file,
-            contents: new Buffer(fs.readFileSync(file))
+            contents: Buffer.from(fs.readFileSync(file))
         });
     }
 
     return array(args.map(create));
 }
 
-// binary
-describe('Streams', function () {
-    after(function () {
+// Binary
+describe('Streams', () => {
+    after(() => {
         process.emit('cleanup');
     });
 
-    it('should emit error on streamed file', function (done) {
-        var stream = critical.stream({base: path.join(__dirname, 'fixtures')});
-        var fakeFilePath = path.join(__dirname, 'fixtures', 'generate-default.html');
+    it('should emit error on streamed file', done => {
+        const stream = critical.stream({base: path.join(__dirname, 'fixtures')});
+        const fakeFilePath = path.join(__dirname, 'fixtures', 'generate-default.html');
 
         fs.createReadStream(fakeFilePath)
             .pipe(vinylStream())
             .pipe(stream)
-            .on('data', function (data) {
+            .on('data', data => {
                 assert.fail(null, data, 'Should not emit data');
             })
-            .on('error', function (err) {
+            .on('error', err => {
                 assert.strictEqual(err.message, 'Streaming not supported');
                 done();
             });
     });
 
-    it('should support vinyl buffer streams', function (done) {
-        var stream = critical.stream({base: path.join(__dirname, 'fixtures')});
+    it('should support vinyl buffer streams', done => {
+        const stream = critical.stream({base: path.join(__dirname, 'fixtures')});
 
         getVinyl('generate-default.html')
             .pipe(stream)
-            .on('data', function (data) {
+            .on('data', data => {
                 assert.ok(data);
                 done();
             })
-            .on('error', function (err) {
+            .on('error', err => {
                 assert.fail(null, err, 'Should not emit an error');
                 done();
             });
     });
 
-    it('should work inside folders', function (done) {
-        var stream = critical.stream({
+    it('should work inside folders', done => {
+        const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             inline: false,
             minify: true,
             inlineImages: true
         });
 
-        var expected1 = read('expected/generate-default.css', true);
+        const expected1 = read('expected/generate-default.css', true);
 
         getVinyl('folder/generate-default.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0, function (d) {
+            .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should use "generateInline" if inline option is set', function (done) {
-        var stream = critical.stream({base: path.join(__dirname, 'fixtures'), inline: true});
-        var expected = read('expected/generateInline.html');
+    it('should use "generateInline" if inline option is set', done => {
+        const stream = critical.stream({base: path.join(__dirname, 'fixtures'), inline: true});
+        const expected = read('expected/generateInline.html');
 
         getVinyl('generateInline.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.first(function (d) {
+            .pipe(streamAssert.first(d => {
                 assert.strictEqual(path.extname(d.path), '.html');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should use "generate" if inline option is false', function (done) {
-        var stream = critical.stream({
+    it('should use "generate" if inline option is false', done => {
+        const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             inline: false,
             minify: true,
             inlineImages: true
         });
 
-        var expected1 = read('expected/generate-default.css', true);
-        var expected2 = read('expected/generate-image.css', true);
+        const expected1 = read('expected/generate-default.css', true);
+        const expected2 = read('expected/generate-image.css', true);
 
         getVinyl('generate-default.html', 'generate-image.html')
             .pipe(stream)
             .pipe(streamAssert.length(2))
-            .pipe(streamAssert.nth(0, function (d) {
+            .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
             }))
-            .pipe(streamAssert.nth(1, function (d) {
+            .pipe(streamAssert.nth(1, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected2);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should ignore css files not specified when using css option', function (done) {
-        var stream = critical.stream({
+    it('should ignore css files not specified when using css option', done => {
+        const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             inline: false,
             minify: true,
@@ -144,20 +144,20 @@ describe('Streams', function () {
             css: ['fixtures/styles/main.css']
         });
 
-        var expected = read('fixtures/styles/main.css', true);
+        const expected = read('fixtures/styles/main.css', true);
 
         getVinyl('generate-default.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0, function (d) {
+            .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should ignore css files not specified when using css option (inline)', function (done) {
-        var stream = critical.stream({
+    it('should ignore css files not specified when using css option (inline)', done => {
+        const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             width: 1920,
             height: 3840,
@@ -165,54 +165,118 @@ describe('Streams', function () {
             inline: true
         });
 
-        var expected = read('expected/streams-default.html');
+        const expected = read('expected/streams-default.html');
 
         getVinyl('streams-default.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0, function (d) {
+            .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.html');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should respect ignore option (inline)', function (done) {
-        var stream = critical.stream({
+    it('should respect ignore option (inline)', done => {
+        const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             css: ['fixtures/styles/font.css'],
             inline: false,
             ignore: [/font-face/]
         });
 
-        var expected = read('expected/generate-ignorefont.css');
+        const expected = read('expected/generate-ignorefont.css');
 
         getVinyl('generate-ignorefont.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0, function (d) {
+            .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
             }))
             .pipe(streamAssert.end(done));
     });
 
-    it('should respect ignore option (inline)', function (done) {
-        var stream = critical.stream({
+    it('should respect ignore option (inline)', done => {
+        const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             css: ['fixtures/styles/font.css'],
             inline: true,
             ignore: ['@font-face']
         });
 
-        var expected = read('expected/generate-ignorefont.html');
+        const expected = read('expected/generate-ignorefont.html');
 
         getVinyl('generate-ignorefont.html')
             .pipe(stream)
             .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0, function (d) {
+            .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.html');
                 assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+            }))
+            .pipe(streamAssert.end(done));
+    });
+
+    it('#192 - include option - stream', done => {
+        const stream = critical.stream({
+            base: path.join(__dirname, 'fixtures'),
+            css: ['fixtures/styles/issue-192.css'],
+            minify: true,
+            extract: false,
+            ignore: ['@font-face', /url\(/],
+            dimensions: [{
+                width: 320,
+                height: 480
+            }, {
+                width: 768,
+                height: 1024
+            }, {
+                width: 1280,
+                height: 960
+            }, {
+                width: 1920,
+                height: 1080
+            }],
+            include: [/^\.main-navigation.*$/,
+                /^\.hero-deck.*$/,
+                /^\.deck.*$/,
+                /^\.search-box.*$/],
+            width: 1300,
+            height: 900
+        });
+
+        const expected = read('expected/issue-192.css');
+
+        getVinyl('issue-192.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0, d => {
+                assert.strictEqual(path.extname(d.path), '.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), nn(expected));
+            }))
+            .pipe(streamAssert.end(done));
+    });
+
+    it('should generate multi-dimension critical-path CSS in stream mode', done => {
+        const expected = read('expected/generate-adaptive.css', 'utf8');
+
+        const stream = critical.stream({
+            base: 'fixtures/',
+            dimensions: [{
+                width: 100,
+                height: 70
+            }, {
+                width: 1000,
+                height: 70
+            }]
+        });
+
+        getVinyl('generate-adaptive.html')
+            .pipe(stream)
+            .pipe(streamAssert.length(1))
+            .pipe(streamAssert.nth(0, d => {
+                assert.strictEqual(path.extname(d.path), '.css');
+                assert.strictEqual(nn(d.contents.toString('utf8')), nn(expected));
             }))
             .pipe(streamAssert.end(done));
     });

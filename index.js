@@ -1,4 +1,5 @@
 'use strict';
+
 var path = require('path');
 var fs = require('fs-extra');
 var _ = require('lodash');
@@ -25,7 +26,7 @@ function prepareOptions(opts) {
         opts = {};
     }
 
-    var options = _.defaults(opts, {
+    const options = _.defaults(opts, {
         base: file.guessBasePath(opts),
         dimensions: [{
             height: opts.height || 900,
@@ -33,12 +34,12 @@ function prepareOptions(opts) {
         }]
     });
 
-    // set dest relative to base if isn't specivied absolute
+    // Set dest relative to base if isn't specivied absolute
     if (options.dest && !path.isAbsolute(options.dest)) {
         options.dest = path.join(options.base, options.dest);
     }
 
-    // set dest relative to base if isn't specivied absolute
+    // Set dest relative to base if isn't specivied absolute
     if (options.destFolder && !path.isAbsolute(options.destFolder)) {
         options.destFolder = path.join(options.base, options.destFolder);
     }
@@ -77,22 +78,22 @@ function prepareOptions(opts) {
 exports.generate = function (opts, cb) {
     opts = prepareOptions(opts);
 
-    // generate critical css
-    var corePromise = core.generate(opts);
+    // Generate critical css
+    let corePromise = core.generate(opts);
 
     // @deprecated
     // should be removed in next major release
     if (opts.styleTarget) {
-        corePromise.then(function (output) {
-            var file = path.resolve(opts.styleTarget);
-            var dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(function () {
+        corePromise.then(output => {
+            const file = path.resolve(opts.styleTarget);
+            const dir = path.dirname(file);
+            return fs.ensureDirAsync(dir).then(() => {
                 return fs.writeFileAsync(path.resolve(opts.styleTarget), output);
             });
         });
     }
 
-    // inline
+    // Inline
     if (opts.inline) {
         corePromise = Bluebird.props({
             file: file.getVinylPromise(opts),
@@ -102,27 +103,27 @@ exports.generate = function (opts, cb) {
         });
     }
 
-    // save to file
+    // Save to file
     if (opts.dest) {
-        corePromise = corePromise.then(function (output) {
-            var file = path.resolve(opts.dest);
-            var dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(function () {
+        corePromise = corePromise.then(output => {
+            const file = path.resolve(opts.dest);
+            const dir = path.dirname(file);
+            return fs.ensureDirAsync(dir).then(() => {
                 return fs.writeFileAsync(path.resolve(opts.dest), output);
-            }).then(function () {
+            }).then(() => {
                 return output;
             });
         });
     }
 
-    // return promise if callback is not defined
+    // Return promise if callback is not defined
     if (_.isFunction(cb)) {
-        corePromise.catch(function (err) {
+        corePromise.catch(err => {
             cb(err);
             throw new Bluebird.CancellationError();
-        }).then(function (output) {
+        }).then(output => {
             cb(null, output.toString());
-        }).catch(Bluebird.CancellationError, function () {
+        }).catch(Bluebird.CancellationError, () => {
         }).done();
     } else {
         return corePromise;
@@ -130,7 +131,7 @@ exports.generate = function (opts, cb) {
 };
 
 /**
- * deprecated will be removed in the next version
+ * Deprecated will be removed in the next version
  * @param opts
  * @param cb
  * @returns {Promise}|undefined
@@ -142,7 +143,7 @@ exports.generateInline = function (opts, cb) {
     if (opts.htmlTarget) {
         opts.dest = opts.htmlTarget;
     } else if (opts.styleTarget) {
-        // return error
+        // Return error
     }
 
     return exports.generate(opts, cb);
@@ -164,17 +165,17 @@ exports.inline = function (opts, cb) {
     }
 
     // Inline the critical path CSS
-    fs.readFile(path.join(opts.base, opts.src), function (err, data) {
+    fs.readFile(path.join(opts.base, opts.src), (err, data) => {
         if (err) {
             cb(err);
             return;
         }
 
-        var out = inliner(data, opts);
+        const out = inliner(data, opts);
 
         if (opts.dest) {
             // Write HTML with inlined CSS to dest
-            fs.writeFile(path.resolve(opts.dest), out, function (err) {
+            fs.writeFile(path.resolve(opts.dest), out, err => {
                 if (err) {
                     cb(err);
                     return;
@@ -195,7 +196,7 @@ exports.inline = function (opts, cb) {
  * @returns {*}
  */
 exports.stream = function (opts) {
-    // return stream
+    // Return stream
     return through2.obj(function (file, enc, cb) {
         if (file.isNull()) {
             return cb(null, file);
@@ -205,21 +206,21 @@ exports.stream = function (opts) {
             return this.emit('error', new PluginError('critical', 'Streaming not supported'));
         }
 
-        var options = _.assign(opts || {}, {
+        const options = _.assign(opts || {}, {
             src: file
         });
 
-        exports.generate(options, function (err, data) {
+        exports.generate(options, (err, data) => {
             if (err) {
                 return cb(new PluginError('critical', err.message));
             }
 
-            // rename file if not inlined
+            // Rename file if not inlined
             if (!opts.inline) {
                 file.path = replaceExtension(file.path, '.css');
             }
 
-            file.contents = new Buffer(data);
+            file.contents = Buffer.from(data);
             cb(err, file);
         });
     });

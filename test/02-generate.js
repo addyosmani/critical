@@ -1,26 +1,28 @@
 /* eslint-env node, mocha */
 'use strict';
-var path = require('path');
-var http = require('http');
-var nn = require('normalize-newline');
-var assert = require('chai').assert;
-var async = require('async');
-var finalhandler = require('finalhandler');
-var serveStatic = require('serve-static');
-var critical = require('../');
-var read = require('./helper/testhelper').read;
-var assertCritical = require('./helper/testhelper').assertCritical;
+const path = require('path');
+const http = require('http');
+const fs = require('fs');
+const nn = require('normalize-newline');
+const assert = require('chai').assert;
+const async = require('async');
+const finalhandler = require('finalhandler');
+const serveStatic = require('serve-static');
+const Vinyl = require('vinyl');
+const critical = require('../');
+const read = require('./helper/testhelper').read;
+const assertCritical = require('./helper/testhelper').assertCritical;
 
 process.chdir(path.resolve(__dirname));
 
-describe('Module - generate', function () {
-    after(function () {
+describe('Module - generate', () => {
+    after(() => {
         process.emit('cleanup');
     });
 
-    it('should generate critical-path CSS', function (done) {
-        var expected = read('expected/generate-default.css');
-        var target = path.resolve('.critical.css');
+    it('should generate critical-path CSS', done => {
+        const expected = read('expected/generate-default.css');
+        const target = path.resolve('.critical.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -31,8 +33,31 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should throw an error on timeout', function (done) {
-        var target = '.include.css';
+    it('should generate critical-path CSS from CSS files passed as Vinyl objects', done => {
+        const expected = read('expected/generate-default.css');
+        const target = path.resolve('.critical.css');
+        const stylesheets = ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css']
+            .map(filePath => {
+                return new Vinyl({
+                    cwd: '/',
+                    base: '/fixtures/',
+                    path: filePath,
+                    contents: Buffer.from(fs.readFileSync(path.join(__dirname, filePath), 'utf8'), 'utf8')
+                });
+            });
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default-nostyle.html',
+            dest: target,
+            css: stylesheets,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should throw an error on timeout', done => {
+        const target = '.include.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -41,15 +66,15 @@ describe('Module - generate', function () {
             dest: target,
             width: 1300,
             height: 900
-        }, function (err) {
+        }, err => {
             assert.instanceOf(err, Error);
             done();
         });
     });
 
-    it('should generate critical-path CSS with query string in file name', function (done) {
-        var expected = read('expected/generate-default.css');
-        var target = path.resolve('.critical.css');
+    it('should generate critical-path CSS with query string in file name', done => {
+        const expected = read('expected/generate-default.css');
+        const target = path.resolve('.critical.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -60,9 +85,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should ignore stylesheets blocked due to 403', function (done) {
-        var expected = '';
-        var target = path.resolve('.403.css');
+    it('should ignore stylesheets blocked due to 403', done => {
+        const expected = '';
+        const target = path.resolve('.403.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -73,9 +98,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should ignore stylesheets blocked due to 404', function (done) {
-        var expected = '';
-        var target = path.resolve('.404.css');
+    it('should ignore stylesheets blocked due to 404', done => {
+        const expected = '';
+        const target = path.resolve('.404.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -86,9 +111,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate multi-dimension critical-path CSS', function (done) {
-        var expected = read('expected/generate-adaptive.css', 'utf8');
-        var target = path.resolve('.adaptive.css');
+    it('should generate multi-dimension critical-path CSS', done => {
+        const expected = read('expected/generate-adaptive.css', 'utf8');
+        const target = path.resolve('.adaptive.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -104,9 +129,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate minified critical-path CSS', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = path.resolve('.critical.min.css');
+    it('should generate minified critical-path CSS', done => {
+        const expected = read('expected/generate-default.css', true);
+        const target = path.resolve('.critical.min.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -118,9 +143,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate minified critical-path CSS successfully with external css file configured', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = path.resolve('.nostyle.css');
+    it('should generate minified critical-path CSS successfully with external css file configured', done => {
+        const expected = read('expected/generate-default.css', true);
+        const target = path.resolve('.nostyle.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -136,9 +161,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline relative images', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = path.resolve('.image-relative.css');
+    it('should inline relative images', done => {
+        const expected = read('expected/generate-image.css');
+        const target = path.resolve('.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -153,9 +178,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline relative images from folder', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = path.resolve('.image-relative.css');
+    it('should inline relative images from folder', done => {
+        const expected = read('expected/generate-image.css');
+        const target = path.resolve('.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -171,9 +196,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should rewrite relative images for html outside root', function (done) {
-        var expected = read('expected/generate-image-relative.css');
-        var target = path.resolve('fixtures/folder/.image-relative.css');
+    it('should rewrite relative images for html outside root', done => {
+        const expected = read('expected/generate-image-relative.css');
+        const target = path.resolve('fixtures/folder/.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -188,9 +213,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should rewrite relative images for html outside root with css file', function (done) {
-        var expected = read('expected/generate-image-relative-subfolder.css');
-        var target = path.resolve('fixtures/folder/subfolder/.image-relative-subfolder.css');
+    it('should rewrite relative images for html outside root with css file', done => {
+        const expected = read('expected/generate-image-relative-subfolder.css');
+        const target = path.resolve('fixtures/folder/subfolder/.image-relative-subfolder.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -202,24 +227,24 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should rewrite relative images for html outside root destFolder option', function (done) {
-        var expected = read('expected/generate-image-relative-subfolder.css');
-        var target = path.resolve('.image-relative-subfolder.css');
+    it('should rewrite relative images for html outside root destFolder option', done => {
+        const expected = read('expected/generate-image-relative-subfolder.css');
+        const target = path.resolve('.image-relative-subfolder.css');
 
         critical.generate({
             base: 'fixtures/',
             src: 'folder/subfolder/generate-image-absolute.html',
             destFolder: 'folder/subfolder',
-           // dest: target,
+            // Dest: target,
             width: 1300,
             height: 900,
             inlineImages: false
         }, assertCritical(target, expected, done, true));
     });
 
-    it('should rewrite relative images for html inside root', function (done) {
-        var expected = read('expected/generate-image-skip.css');
-        var target = path.resolve('.image-relative.css');
+    it('should rewrite relative images for html inside root', done => {
+        const expected = read('expected/generate-image-skip.css');
+        const target = path.resolve('.image-relative.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -235,9 +260,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline absolute images', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = path.resolve('.image-absolute.css');
+    it('should inline absolute images', done => {
+        const expected = read('expected/generate-image.css');
+        const target = path.resolve('.image-absolute.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -253,9 +278,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should skip to big images', function (done) {
-        var expected = read('expected/generate-image-big.css');
-        var target = path.resolve('.image-big.css');
+    it('should skip to big images', done => {
+        const expected = read('expected/generate-image-big.css');
+        const target = path.resolve('.image-big.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -271,9 +296,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('considers "inlineImages" option', function (done) {
-        var expected = read('expected/generate-image-skip.css');
-        var target = path.resolve('.image-skip.css');
+    it('considers "inlineImages" option', done => {
+        const expected = read('expected/generate-image-skip.css');
+        const target = path.resolve('.image-skip.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -289,9 +314,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should not screw up win32 paths', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = path.resolve('.image.css');
+    it('should not screw up win32 paths', done => {
+        const expected = read('expected/generate-image.css');
+        const target = path.resolve('.image.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -306,9 +331,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should respect pathPrefix', function (done) {
-        var expected = read('expected/path-prefix.css');
-        var target = path.resolve('.path-prefix.css');
+    it('should respect pathPrefix', done => {
+        const expected = read('expected/path-prefix.css');
+        const target = path.resolve('.path-prefix.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -323,9 +348,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should detect pathPrefix', function (done) {
-        var expected = read('expected/path-prefix.css');
-        var target = path.resolve('.path-prefix.css');
+    it('should detect pathPrefix', done => {
+        const expected = read('expected/path-prefix.css');
+        const target = path.resolve('.path-prefix.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -340,9 +365,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate and inline, if "inline" option is set', function (done) {
-        var expected = read('expected/generateInline.html');
-        var target = '.generateInline.html';
+    it('should generate and inline, if "inline" option is set', done => {
+        const expected = read('expected/generateInline.html');
+        const target = '.generateInline.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -353,9 +378,9 @@ describe('Module - generate', function () {
         }, assertCritical(path.join('fixtures', target), expected, done));
     });
 
-    it('should generate and inline critical-path CSS', function (done) {
-        var expected = read('expected/generateInline.html');
-        var target = '.generateInline.html';
+    it('should generate and inline critical-path CSS', done => {
+        const expected = read('expected/generateInline.html');
+        const target = '.generateInline.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -366,9 +391,9 @@ describe('Module - generate', function () {
         }, assertCritical(path.join('fixtures', target), expected, done));
     });
 
-    it('should generate and inline minified critical-path CSS', function (done) {
-        var expected = read('expected/generateInline-minified.html');
-        var target = '.generateInline-minified.html';
+    it('should generate and inline minified critical-path CSS', done => {
+        const expected = read('expected/generateInline-minified.html');
+        const target = '.generateInline-minified.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -380,19 +405,19 @@ describe('Module - generate', function () {
         }, assertCritical(path.join('fixtures', target), expected, done));
     });
 
-    it('should handle multiple calls', function (done) {
-        var expected1 = read('expected/generateInline.html');
-        var expected2 = read('expected/generateInline-minified.html');
+    it('should handle multiple calls', done => {
+        const expected1 = read('expected/generateInline.html');
+        const expected2 = read('expected/generateInline-minified.html');
 
         async.series({
-            first: function (cb) {
+            first(cb) {
                 critical.generate({
                     base: 'fixtures/',
                     src: 'generateInline.html',
                     inline: true
                 }, cb);
             },
-            second: function (cb) {
+            second(cb) {
                 critical.generate({
                     base: 'fixtures/',
                     minify: true,
@@ -400,7 +425,7 @@ describe('Module - generate', function () {
                     inline: true
                 }, cb);
             }
-        }, function (err, results) {
+        }, (err, results) => {
             assert.isNull(err, Boolean(err) && err);
             assert.strictEqual(nn(results.first), nn(expected1));
             assert.strictEqual(nn(results.second), nn(expected2));
@@ -408,9 +433,9 @@ describe('Module - generate', function () {
         });
     });
 
-    it('should inline critical-path CSS ignoring remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external-minified.html');
-        var target = path.resolve('.generateInline-external.html');
+    it('should inline critical-path CSS ignoring remote stylesheets', done => {
+        const expected = read('expected/generateInline-external-minified.html');
+        const target = path.resolve('.generateInline-external.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -422,9 +447,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline critical-path CSS with extract option ignoring remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external-extract.html');
-        var target = path.resolve('.generateInline-external-extract.html');
+    it('should inline critical-path CSS with extract option ignoring remote stylesheets', done => {
+        const expected = read('expected/generateInline-external-extract.html');
+        const target = path.resolve('.generateInline-external-extract.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -437,9 +462,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline critical-path CSS without screwing svg images ', function (done) {
-        var expected = read('expected/generateInline-svg.html');
-        var target = path.resolve('.generateInline-svg.html');
+    it('should inline critical-path CSS without screwing svg images ', done => {
+        const expected = read('expected/generateInline-svg.html');
+        const target = path.resolve('.generateInline-svg.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -450,9 +475,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline and extract critical-path CSS', function (done) {
-        var expected = read('expected/generateInline-extract.html');
-        var target = path.resolve('.generateInline-extract.html');
+    it('should inline and extract critical-path CSS', done => {
+        const expected = read('expected/generateInline-extract.html');
+        const target = path.resolve('.generateInline-extract.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -464,9 +489,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline and extract critical-path CSS from html source', function (done) {
-        var expected = read('expected/generateInline-extract.html');
-        var target = path.resolve('.generateInline-extract-src.html');
+    it('should inline and extract critical-path CSS from html source', done => {
+        const expected = read('expected/generateInline-extract.html');
+        const target = path.resolve('.generateInline-extract-src.html');
 
         critical.generate({
             base: 'fixtures/',
@@ -478,9 +503,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should consider "ignore" option', function (done) {
-        var expected = read('expected/generate-ignore.css');
-        var target = path.resolve('.ignore.css');
+    it('should consider "ignore" option', done => {
+        const expected = read('expected/generate-ignore.css');
+        const target = path.resolve('.ignore.css');
 
         critical.generate({
             base: 'fixtures/',
@@ -493,9 +518,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle empty "ignore" array', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = '.ignore.min.css';
+    it('should handle empty "ignore" array', done => {
+        const expected = read('expected/generate-default.css', true);
+        const target = '.ignore.min.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -508,9 +533,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle ignore "@font-face"', function (done) {
-        var expected = read('expected/generate-ignorefont.css', true);
-        var target = '.ignorefont.css';
+    it('should handle ignore "@font-face"', done => {
+        const expected = read('expected/generate-ignorefont.css', true);
+        const target = '.ignorefont.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -523,9 +548,9 @@ describe('Module - generate', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should keep styles defined by the `include` option', function (done) {
-        var expected = read('fixtures/styles/include.css');
-        var target = '.include.css';
+    it('should keep styles defined by the `include` option', done => {
+        const expected = read('fixtures/styles/include.css');
+        const target = '.include.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -536,32 +561,65 @@ describe('Module - generate', function () {
             height: 900
         }, assertCritical(target, expected, done));
     });
+
+    it('#192 - include option - generate', done => {
+        const expected = read('expected/issue-192.css');
+        const target = '.issue-192.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'issue-192.html',
+            css: ['fixtures/styles/issue-192.css'],
+            dimensions: [{
+                width: 320,
+                height: 480
+            }, {
+                width: 768,
+                height: 1024
+            }, {
+                width: 1280,
+                height: 960
+            }, {
+                width: 1920,
+                height: 1080
+            }],
+            minify: true,
+            extract: false,
+            ignore: ['@font-face', /url\(/],
+            include: [/^\.main-navigation.*$/,
+                /^\.hero-deck.*$/,
+                /^\.deck.*$/,
+                /^\.search-box.*$/],
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
 });
 
-describe('Module - generate (remote)', function () {
-    var server;
+describe('Module - generate (remote)', () => {
+    let server;
 
-    before(function () {
-        var serve = serveStatic('fixtures', {index: ['index.html', 'index.htm']});
+    before(() => {
+        const serve = serveStatic('fixtures', {index: ['index.html', 'index.htm']});
 
-        server = http.createServer(function (req, res) {
-            var done = finalhandler(req, res);
+        server = http.createServer((req, res) => {
+            const done = finalhandler(req, res);
             serve(req, res, done);
         });
         server.listen(3000);
     });
 
-    after(function () {
+    after(() => {
         server.close();
         process.emit('cleanup');
     });
 
-    it('should generate critical-path CSS', function (done) {
-        var expected = read('expected/generate-default.css');
-        var target = '.critical.css';
+    it('should generate critical-path CSS', done => {
+        const expected = read('expected/generate-default.css');
+        const target = '.critical.css';
 
         critical.generate({
-            base: 'fixtures/',
             src: 'http://localhost:3000/generate-default.html',
             dest: target,
             width: 1300,
@@ -569,9 +627,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate multi-dimension critical-path CSS', function (done) {
-        var expected = read('expected/generate-adaptive.css', 'utf8');
-        var target = '.adaptive.css';
+    it('should generate multi-dimension critical-path CSS', done => {
+        const expected = read('expected/generate-adaptive.css', 'utf8');
+        const target = '.adaptive.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -587,9 +645,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate minified critical-path CSS', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = '.critical.min.css';
+    it('should generate minified critical-path CSS', done => {
+        const expected = read('expected/generate-default.css', true);
+        const target = '.critical.min.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -601,9 +659,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate minified critical-path CSS successfully with external css file configured', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = '.nostyle.css';
+    it('should generate minified critical-path CSS successfully with external css file configured', done => {
+        const expected = read('expected/generate-default.css', true);
+        const target = '.nostyle.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -619,16 +677,12 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline relative images', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image-relative.css';
+    it('should inline relative images', done => {
+        const expected = read('expected/generate-image.css');
+        const target = '.image-relative.css';
 
         critical.generate({
-            base: 'fixtures/',
             src: 'http://localhost:3000/generate-image.html',
-            css: [
-                'fixtures/styles/image-relative.css'
-            ],
             dest: target,
             width: 1300,
             height: 900,
@@ -636,13 +690,11 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline relative images fetched over http', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image-relative.css';
+    it('should inline relative images fetched over http', done => {
+        const expected = read('expected/generate-image.css');
+        const target = '.image-relative.css';
 
         critical.generate({
-            // image could not be fetched locally
-            base: './',
             src: 'http://localhost:3000/generate-image.html',
             css: [
                 'fixtures/styles/image-relative.css'
@@ -655,9 +707,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline absolute images', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image-absolute.css';
+    it('should inline absolute images', done => {
+        const expected = read('expected/generate-image.css');
+        const target = '.image-absolute.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -672,9 +724,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline absolute images fetched over http', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image-absolute.css';
+    it('should inline absolute images fetched over http', done => {
+        const expected = read('expected/generate-image.css');
+        const target = '.image-absolute.css';
 
         critical.generate({
             base: './',
@@ -690,9 +742,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should skip to big images', function (done) {
-        var expected = read('expected/generate-image-big.css');
-        var target = '.image-big.css';
+    it('should skip to big images', done => {
+        const expected = read('expected/generate-image-big.css');
+        const target = '.image-big.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -707,9 +759,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('considers "inlineImages" option', function (done) {
-        var expected = read('expected/generate-image-skip.css');
-        var target = '.image-skip.css';
+    it('considers "inlineImages" option', done => {
+        const expected = read('expected/generate-image-skip.css');
+        const target = '.image-skip.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -724,9 +776,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should not screw up win32 paths', function (done) {
-        var expected = read('expected/generate-image.css');
-        var target = '.image.css';
+    it('should not screw up win32 paths', done => {
+        const expected = read('expected/generate-image.css');
+        const target = '.image.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -741,9 +793,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should respect pathPrefix', function (done) {
-        var expected = read('expected/path-prefix.css');
-        var target = '.path-prefix.css';
+    it('should respect pathPrefix', done => {
+        const expected = read('expected/path-prefix.css');
+        const target = '.path-prefix.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -754,14 +806,14 @@ describe('Module - generate (remote)', function () {
             dest: target,
             width: 1300,
             height: 900,
-            // empty string most likely to candidate for failure if change in code results in checking option lazily,
+            // Empty string most likely to candidate for failure if change in code results in checking option lazily,
             pathPrefix: ''
         }, assertCritical(target, expected, done));
     });
 
-    it('should detect pathPrefix', function (done) {
-        var expected = read('expected/path-prefix.css');
-        var target = '.path-prefix.css';
+    it('should detect pathPrefix', done => {
+        const expected = read('expected/path-prefix.css');
+        const target = '.path-prefix.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -775,9 +827,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate and inline, if "inline" option is set', function (done) {
-        var expected = read('expected/generateInline.html');
-        var target = '.generateInline.html';
+    it('should generate and inline, if "inline" option is set', done => {
+        const expected = read('expected/generateInline.html');
+        const target = '.generateInline.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -787,9 +839,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate and inline critical-path CSS', function (done) {
-        var expected = read('expected/generateInline.html');
-        var target = '.generateInline.html';
+    it('should generate and inline critical-path CSS', done => {
+        const expected = read('expected/generateInline.html');
+        const target = '.generateInline.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -799,9 +851,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should generate and inline minified critical-path CSS', function (done) {
-        var expected = read('expected/generateInline-minified.html');
-        var target = '.generateInline-minified.html';
+    it('should generate and inline minified critical-path CSS', done => {
+        const expected = read('expected/generateInline-minified.html');
+        const target = '.generateInline-minified.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -812,19 +864,19 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle multiple calls', function (done) {
-        var expected1 = read('expected/generateInline.html');
-        var expected2 = read('expected/generateInline-minified.html');
+    it('should handle multiple calls', done => {
+        const expected1 = read('expected/generateInline.html');
+        const expected2 = read('expected/generateInline-minified.html');
 
         async.series({
-            first: function (cb) {
+            first(cb) {
                 critical.generate({
                     base: 'fixtures/',
                     src: 'http://localhost:3000/generateInline.html',
                     inline: true
                 }, cb);
             },
-            second: function (cb) {
+            second(cb) {
                 critical.generate({
                     base: 'fixtures/',
                     minify: true,
@@ -832,7 +884,7 @@ describe('Module - generate (remote)', function () {
                     inline: true
                 }, cb);
             }
-        }, function (err, results) {
+        }, (err, results) => {
             assert.isNull(err, Boolean(err) && err);
             assert.strictEqual(nn(results.first), nn(expected1));
             assert.strictEqual(nn(results.second), nn(expected2));
@@ -840,9 +892,9 @@ describe('Module - generate (remote)', function () {
         });
     });
 
-    it('should inline critical-path CSS handling remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external-minified2.html');
-        var target = '.generateInline-external2.html';
+    it('should inline critical-path CSS handling remote stylesheets', done => {
+        const expected = read('expected/generateInline-external-minified2.html');
+        const target = '.generateInline-external2.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -854,9 +906,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline critical-path CSS with extract option handling remote stylesheets', function (done) {
-        var expected = read('expected/generateInline-external-extract2.html');
-        var target = '.generateInline-external-extract.html';
+    it('should inline critical-path CSS with extract option handling remote stylesheets', done => {
+        const expected = read('expected/generateInline-external-extract2.html');
+        const target = '.generateInline-external-extract.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -869,9 +921,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline critical-path CSS without screwing svg images ', function (done) {
-        var expected = read('expected/generateInline-svg.html');
-        var target = '.generateInline-svg.html';
+    it('should inline critical-path CSS without screwing svg images ', done => {
+        const expected = read('expected/generateInline-svg.html');
+        const target = '.generateInline-svg.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -882,9 +934,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should inline and extract critical-path CSS', function (done) {
-        var expected = read('expected/generateInline-extract.html');
-        var target = '.generateInline-extract.html';
+    it('should inline and extract critical-path CSS', done => {
+        const expected = read('expected/generateInline-extract.html');
+        const target = '.generateInline-extract.html';
 
         critical.generate({
             base: 'fixtures/',
@@ -896,9 +948,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should consider "ignore" option', function (done) {
-        var expected = read('expected/generate-ignore.css');
-        var target = '.ignore.css';
+    it('should consider "ignore" option', done => {
+        const expected = read('expected/generate-ignore.css');
+        const target = '.ignore.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -911,9 +963,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle empty "ignore" array', function (done) {
-        var expected = read('expected/generate-default.css', true);
-        var target = '.ignore.min.css';
+    it('should handle empty "ignore" array', done => {
+        const expected = read('expected/generate-default.css', true);
+        const target = '.ignore.min.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -926,9 +978,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle ignore "@font-face"', function (done) {
-        var expected = read('expected/generate-ignorefont.css', true);
-        var target = '.ignorefont.css';
+    it('should handle ignore "@font-face"', done => {
+        const expected = read('expected/generate-ignorefont.css', true);
+        const target = '.ignorefont.css';
 
         critical.generate({
             base: 'fixtures/',
@@ -941,9 +993,9 @@ describe('Module - generate (remote)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('should keep styles defined by the `include` option', function (done) {
-        var expected = read('fixtures/styles/include.css');
-        var target = '.include.css';
+    it('should keep styles defined by the `include` option', done => {
+        const expected = read('fixtures/styles/include.css');
+        const target = '.include.css';
 
         critical.generate({
             base: 'fixtures/',

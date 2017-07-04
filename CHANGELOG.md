@@ -1,4 +1,65 @@
 
+v0.8.4 / 2017-03-01
+==================
+
+  * Better remote handling (#198)
+  * Bump inline-critical
+
+v0.8.3 / 2017-02-17
+===================
+
+  * Fixed multi-dimension critical-path CSS
+
+v0.8.2 / 2017-02-11
+===================
+
+  * Bump dependencies
+  * Update README.md
+
+v0.8.1 / 2016-11-24
+==================
+
+  * Added missing comma
+  * Add tmpfile to garbage collector
+  * Bump dependencies
+  * Vinyl (#120)
+
+v0.8.0 / 2016-08-30
+===================
+
+  * Revise production-use messaging.
+  * Consistent CSS capitalization in README.
+  * Remove object.assign; require node.js 4.
+  * Fix all tests to run on Windows.
+  * Enforce LF.
+  * Fix xo errors.
+  * Update dependencies.
+  * Fix test failures. (#155)
+  * Travis: add explicitly node.js 4 and 6. (#154)
+  * Update .gitignore.
+  * package.json: remove duplicate dep. (#153)
+  * Remove JSHint leftovers. (#152)
+  * Update README.md (#151)
+  * Update appveyor.yml (#150)
+  * added penthouse timeout option (#140)
+  * CSS Rel Preload support (#129)
+
+v0.7.3 / 2016-05-30
+===================
+
+  * Bump package.json version
+  * Add test for 404 case
+  * Remove trailing whitespace
+  * Fix silly typo
+  * Ignore 404 requests, reject promise with Error not String
+  * Fixed #130
+  * Better error message for unresolved css files
+  * cli: exit after stdout.write
+  * Remove uncaughtException listener log error instead
+  * Fixed import-order
+  * Bump dependencies
+  * Added changelog (#123)
+
 v0.7.2 / 2016-03-17
 ===================
 

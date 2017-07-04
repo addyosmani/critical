@@ -8,6 +8,7 @@ environment:
   matrix:
     - nodejs_version: "4"
     - nodejs_version: "6"
+    - nodejs_version: "8"
 
 install:
   - ps: Install-Product node $env:nodejs_version
@@ -21,3 +22,5 @@ test_script:
 
 cache:
   - node_modules -> package.json
+  - node_modules -> yarn.lock
+  - node_modules -> package-lock.json
