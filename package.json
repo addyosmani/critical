@@ -57,10 +57,11 @@
     "vinyl": "^2.0.1"
   },
   "devDependencies": {
-    "async": "^2.1.4",
-    "chai": "^4.0.2",
-    "connect": "^3.5.0",
-    "mocha": "^3.2.0",
+    "async": "^2.0.1",
+    "chai": "^3.0.0",
+    "connect": "^3.4.0",
+    "group-args": "^0.1.0",
+    "mocha": "^3.0.0",
     "mockery": "^2.0.0",
     "normalize-newline": "^3.0.0",
     "read-package-json": "^2.0.4",

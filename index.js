@@ -1,16 +1,18 @@
 'use strict';
-const path = require('path');
-const fs = require('fs-extra');
-const _ = require('lodash');
-const sourceInliner = require('inline-critical');
-const Bluebird = require('bluebird');
-const through2 = require('through2');
-const PluginError = require('gulp-util').PluginError;
-const replaceExtension = require('gulp-util').replaceExtension;
 
-const core = require('./lib/core');
-const file = require('./lib/file-helper');
-const inliner = require('./lib/inline-styles');
+var path = require('path');
+var fs = require('fs-extra');
+var _ = require('lodash');
+var chalk = require('chalk');
+var sourceInliner = require('inline-critical');
+var Bluebird = require('bluebird');
+var through2 = require('through2');
+var PluginError = require('gulp-util').PluginError;
+var replaceExtension = require('gulp-util').replaceExtension;
+
+var core = require('./lib/core');
+var file = require('./lib/file-helper');
+var inliner = require('./lib/inline-styles');
 
 Bluebird.promisifyAll(fs);
 
@@ -40,6 +42,27 @@ function prepareOptions(opts) {
     // Set dest relative to base if isn't specivied absolute
     if (options.destFolder && !path.isAbsolute(options.destFolder)) {
         options.destFolder = path.join(options.base, options.destFolder);
+    }
+
+    // set options for inline-critical
+    options.inline = Boolean(options.inline) && _.assign({
+        minify: opts.minify || false,
+        extract: opts.extract || false,
+        basePath: opts.base || process.cwd()
+    }, (_.isObject(options.inline) && options.inline) || {});
+
+    // set penthouse options
+    options.penthouse = _.assign({}, {
+        forceInclude: opts.include || [],
+        timeout: opts.timeout || 30000,
+        maxEmbeddedBase64Length: opts.maxImageFileSize || 10240
+    }, options.penthouse || {});
+
+    // show overwrite warning if penthouse params url, css, witdh or height are present
+    var checkOpts = _.intersection(_.keys(options.penthouse), ['url', 'css', 'width', 'height']);
+    if (checkOpts.length > 0) {
+        console.warn(chalk.yellow('Detected presence of penthouse options:'), checkOpts.join(', '));
+        console.warn(chalk.yellow('These options will be overwritten by critical during the process.'));
     }
 
     return options;
@@ -75,12 +98,8 @@ exports.generate = function (opts, cb) {
         corePromise = Bluebird.props({
             file: file.getVinylPromise(opts),
             css: corePromise
-        }).then(result => {
-            return sourceInliner(result.file.contents.toString(), result.css, {
-                minify: opts.minify || false,
-                extract: opts.extract || false,
-                basePath: opts.base || process.cwd()
-            });
+        }).then(function (result) {
+            return sourceInliner(result.file.contents.toString(), result.css, opts.inline);
         });
     }
 
@@ -118,7 +137,9 @@ exports.generate = function (opts, cb) {
  * @returns {Promise}|undefined
  */
 exports.generateInline = function (opts, cb) {
-    opts.inline = true;
+    if (!opts.inline) {
+        opts.inline = true;
+    }
     if (opts.htmlTarget) {
         opts.dest = opts.htmlTarget;
     } else if (opts.styleTarget) {
