@@ -1,16 +1,16 @@
 /* eslint-env node, mocha */
 'use strict';
-var path = require('path');
-var critical = require('../');
-var read = require('./helper/testhelper').read;
-var assertCritical = require('./helper/testhelper').assertCritical;
+const path = require('path');
+const critical = require('../');
+const read = require('./helper/testhelper').read;
+const assertCritical = require('./helper/testhelper').assertCritical;
 
 process.chdir(path.resolve(__dirname));
 
-describe('Module - inline (deprecated)', function () {
-    it('inlines critical-path CSS successfully', function (done) {
-        var expected = read('expected/inline.html');
-        var target = '.inline.html';
+describe('Module - inline (deprecated)', () => {
+    it('inlines critical-path CSS successfully', done => {
+        const expected = read('expected/inline.html');
+        const target = '.inline.html';
 
         critical.inline({
             base: 'fixtures/',
@@ -19,9 +19,9 @@ describe('Module - inline (deprecated)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('inlines and minified critical-path CSS', function (done) {
-        var expected = read('expected/inline-minified.html');
-        var target = '.inline-minified.html';
+    it('inlines and minified critical-path CSS', done => {
+        const expected = read('expected/inline-minified.html');
+        const target = '.inline-minified.html';
 
         critical.inline({
             base: 'fixtures/',
@@ -31,9 +31,9 @@ describe('Module - inline (deprecated)', function () {
         }, assertCritical(target, expected, done));
     });
 
-    it('inlines and minified critical-path CSS and consider "inlineImages" option', function (done) {
-        var expected = read('expected/inline-image.html');
-        var target = '.inline-image.html';
+    it('inlines and minified critical-path CSS and consider "inlineImages" option', done => {
+        const expected = read('expected/inline-image.html');
+        const target = '.inline-image.html';
 
         critical.inline({
             base: 'fixtures/',

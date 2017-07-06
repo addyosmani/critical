@@ -1,11 +1,11 @@
 /* eslint-env node, mocha */
 'use strict';
-var assert = require('chai').assert;
-var critical = require('../');
+const assert = require('chai').assert;
+const critical = require('../');
 
-describe('Module', function () {
-    it('should call callback method with an error on generating if src and base not specified', function (done) {
-        var tmp = critical.generate({}, function (err, data) {
+describe('Module', () => {
+    it('should call callback method with an error on generating if src and base not specified', done => {
+        const tmp = critical.generate({}, (err, data) => {
             assert.notOk(data);
             assert.instanceOf(err, Error);
             done();
@@ -14,10 +14,10 @@ describe('Module', function () {
         assert.isUndefined(tmp);
     });
 
-    it('should return rejected Promise for generating without callback if src and dest not specified', function (done) {
-        var tmp = critical.generate({}).then(function (data) {
+    it('should return rejected Promise for generating without callback if src and dest not specified', done => {
+        const tmp = critical.generate({}).then(data => {
             assert.fail(data, undefined, 'Should not be called');
-        }).catch(function (err) {
+        }).catch(err => {
             assert.instanceOf(err, Error);
             done();
         });
@@ -25,8 +25,8 @@ describe('Module', function () {
         assert.isDefined(tmp);
     });
 
-    it('should call callback method with an error on generateInline if src and base not specified', function (done) {
-        var tmp = critical.generateInline({}, function (err, data) {
+    it('should call callback method with an error on generateInline if src and base not specified', done => {
+        const tmp = critical.generateInline({}, (err, data) => {
             assert.notOk(data);
             assert.instanceOf(err, Error);
             done();
@@ -35,10 +35,10 @@ describe('Module', function () {
         assert.isUndefined(tmp);
     });
 
-    it('should return rejected Promise for generateInline without callback if src and dest not specified', function (done) {
-        var tmp = critical.generateInline({}).then(function (data) {
+    it('should return rejected Promise for generateInline without callback if src and dest not specified', done => {
+        const tmp = critical.generateInline({}).then(data => {
             assert.fail(data, undefined, 'Should not be called');
-        }).catch(function (err) {
+        }).catch(err => {
             assert.instanceOf(err, Error);
             done();
         });
@@ -46,8 +46,8 @@ describe('Module', function () {
         assert.isDefined(tmp);
     });
 
-    it('throws on inlining if src and dest not specified', function () {
-        assert.throws(function () {
+    it('throws on inlining if src and dest not specified', () => {
+        assert.throws(() => {
             critical.inline({});
         });
     });
