@@ -1,27 +1,27 @@
 // Some test helper
 'use strict';
-var fs = require('fs');
-var path = require('path');
-var assert = require('chai').assert;
-var CleanCSS = require('clean-css');
-var nn = require('normalize-newline');
+const fs = require('fs');
+const path = require('path');
+const assert = require('chai').assert;
+const CleanCSS = require('clean-css');
+const nn = require('normalize-newline');
 
 function readAndRemove(file, minify) {
-    var testBase = path.join(__dirname, '..');
+    const testBase = path.join(__dirname, '..');
     if (!path.isAbsolute(file) && fs.existsSync(path.join(testBase, file))) {
         file = path.join(testBase, file);
     } else if (!path.isAbsolute(file) && fs.existsSync(path.join(testBase, 'fixtures', file))) {
         file = path.join(testBase, 'fixtures', file);
     }
 
-    var content = read(file, minify);
+    const content = read(file, minify);
     fs.unlinkSync(file);
 
     return content;
 }
 
 function read(file, minify) {
-    var content = '';
+    let content = '';
     if (path.isAbsolute(file)) {
         content = fs.readFileSync(file, 'utf8');
     } else {
@@ -43,7 +43,7 @@ function assertCritical(target, expected, done, skipTarget) {
         assert.isDefined(output, 'Should produce output');
 
         if (!skipTarget) {
-            var dest = readAndRemove(target);
+            const dest = readAndRemove(target);
             assert.strictEqual(nn(dest), nn(expected));
         }
         assert.strictEqual(nn(output), nn(expected));
@@ -53,7 +53,7 @@ function assertCritical(target, expected, done, skipTarget) {
 }
 
 module.exports = {
-    assertCritical: assertCritical,
-    read: read,
-    readAndRemove: readAndRemove
+    assertCritical,
+    read,
+    readAndRemove
 };
