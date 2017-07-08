@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 'use strict';
-var os = require('os');
-var path = require('path');
-var chalk = require('chalk');
-var meow = require('meow');
-var groupArgs = require('group-args');
-var indentString = require('indent-string');
-var stdin = require('get-stdin');
-var _ = require('lodash');
+const os = require('os');
+const path = require('path');
+const chalk = require('chalk');
+const meow = require('meow');
+const groupArgs = require('group-args');
+const indentString = require('indent-string');
+const stdin = require('get-stdin');
+const _ = require('lodash');
 
-var file = require('./lib/file-helper');
-var critical = require('./');
+const file = require('./lib/file-helper');
+const critical = require('./');
 
-var ok;
+let ok;
 
-var help = [
+const help = [
     'Usage: critical <input> [<option>]',
     '',
     'Options:',
@@ -41,7 +41,7 @@ var help = [
     '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)'
 ];
 
-var minimistOpts = {
+const minimistOpts = {
     alias: {
         b: 'base',
         c: 'css',
@@ -59,17 +59,15 @@ var minimistOpts = {
     }
 };
 
-var cli = meow({
-    help: help
-}, minimistOpts);
+const cli = meow({help}, minimistOpts);
 
-// group args for inline-critical and penthouse
+// Group args for inline-critical and penthouse
 cli.flags = groupArgs(['inline', 'penthouse'], {
     delimiter: '-'
 }, minimistOpts);
 
-// cleanup cli flags and assert cammelcase keeps camelcase
-cli.flags = _.reduce(cli.flags, function (res, val, key) {
+// Cleanup cli flags and assert cammelcase keeps camelcase
+cli.flags = _.reduce(cli.flags, (res, val, key) => {
     if (key.length <= 1) {
         return res;
     }
@@ -105,9 +103,9 @@ cli.flags = _.reduce(cli.flags, function (res, val, key) {
             if (_.isString(val) || _.isRegExp(val)) {
                 val = [val];
             }
-            res[key] = _.map(val || [], function (entry) {
-                // check regex
-                var match = entry.match(/^\/(.*)\/([igmy]+)?$/);
+            res[key] = _.map(val || [], entry => {
+                // Check regex
+                const match = entry.match(/^\/(.*)\/([igmy]+)?$/);
 
                 if (match) {
                     return new RegExp(_.escapeRegExp(match[1]), match[2]);
@@ -131,8 +129,8 @@ function error(err) {
 }
 
 function run(data) {
-    var opts = _.assign({base: process.cwd()}, cli.flags);
-    var command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
+    const opts = _.assign({base: process.cwd()}, cli.flags);
+    const command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {
         opts.dest = opts.styleTarget || '';
@@ -150,7 +148,7 @@ function run(data) {
     }
 
     try {
-        critical[command](opts, function (err, val) {
+        critical[command](opts, (err, val) => {
             if (err) {
                 error(err);
             } else {
@@ -165,9 +163,9 @@ function run(data) {
 if (cli.input[0]) {
     run();
 } else {
-    // get stdin
+    // Get stdin
     stdin().then(run);
-    setTimeout(function () {
+    setTimeout(() => {
         if (ok) {
             return;
         }
