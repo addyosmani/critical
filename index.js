@@ -5,7 +5,7 @@ const assign = require('lodash/assign');
 const defaults = require('lodash/defaults');
 const isFunction = require('lodash/isFunction');
 const isObject = require('lodash/isObject');
-const intersection = require('lodash/intersection'); 
+const intersection = require('lodash/intersection');
 const keys = require('lodash/keys');
 
 const chalk = require('chalk');

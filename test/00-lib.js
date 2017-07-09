@@ -123,7 +123,8 @@ describe('Lib', () => {
                 path: 'fixtures/print.html',
                 contents: Buffer.from(read('fixtures/print.html'))
             });
-            return func(htmlfile).then((htmlfile => {
+
+            return func(htmlfile).then((htmlfile => { // eslint-disable-next-line max-nested-callbacks
                 const stylesheets = htmlfile.stylesheets.map(p => file.normalizePath(p));
                 assert.include(stylesheets, 'fixtures/styles/include.css');
                 assert.notInclude(stylesheets, 'fixtures/styles/print.css');
@@ -136,7 +137,8 @@ describe('Lib', () => {
                 path: 'fixtures/print.html',
                 contents: Buffer.from(read('fixtures/preload.html'))
             });
-            return func(htmlfile).then((htmlfile => {
+
+            return func(htmlfile).then((htmlfile => { // eslint-disable-next-line max-nested-callbacks
                 const stylesheets = htmlfile.stylesheets.map(p => file.normalizePath(p));
                 assert.include(stylesheets, 'fixtures/styles/include.css');
                 assert.notInclude(stylesheets, 'fixtures/styles/print.css');
