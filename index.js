@@ -1,7 +1,14 @@
 'use strict';
 const path = require('path');
 const fs = require('fs-extra');
-const _ = require('lodash');
+const assign = require('lodash/assign');
+const defaults = require('lodash/defaults');
+const isFunction = require('lodash/isFunction');
+const isObject = require('lodash/isObject');
+const intersection = require('lodash/intersection');
+const keys = require('lodash/keys');
+
+const chalk = require('chalk');
 const sourceInliner = require('inline-critical');
 const Bluebird = require('bluebird');
 const through2 = require('through2');
@@ -24,7 +31,7 @@ function prepareOptions(opts) {
         opts = {};
     }
 
-    const options = _.defaults(opts, {
+    const options = defaults(opts, {
         base: file.guessBasePath(opts),
         dimensions: [{
             height: opts.height || 900,
@@ -40,6 +47,27 @@ function prepareOptions(opts) {
     // Set dest relative to base if isn't specivied absolute
     if (options.destFolder && !path.isAbsolute(options.destFolder)) {
         options.destFolder = path.join(options.base, options.destFolder);
+    }
+
+    // Set options for inline-critical
+    options.inline = Boolean(options.inline) && assign({
+        minify: opts.minify || false,
+        extract: opts.extract || false,
+        basePath: opts.base || process.cwd()
+    }, (isObject(options.inline) && options.inline) || {});
+
+    // Set penthouse options
+    options.penthouse = assign({}, {
+        forceInclude: opts.include || [],
+        timeout: opts.timeout || 30000,
+        maxEmbeddedBase64Length: opts.maxImageFileSize || 10240
+    }, options.penthouse || {});
+
+    // Show overwrite warning if penthouse params url, css, witdh or height are present
+    const checkOpts = intersection(keys(options.penthouse), ['url', 'css', 'width', 'height']);
+    if (checkOpts.length > 0) {
+        console.warn(chalk.yellow('Detected presence of penthouse options:'), checkOpts.join(', '));
+        console.warn(chalk.yellow('These options will be overwritten by critical during the process.'));
     }
 
     return options;
@@ -76,11 +104,7 @@ exports.generate = function (opts, cb) {
             file: file.getVinylPromise(opts),
             css: corePromise
         }).then(result => {
-            return sourceInliner(result.file.contents.toString(), result.css, {
-                minify: opts.minify || false,
-                extract: opts.extract || false,
-                basePath: opts.base || process.cwd()
-            });
+            return sourceInliner(result.file.contents.toString(), result.css, opts.inline);
         });
     }
 
@@ -98,7 +122,7 @@ exports.generate = function (opts, cb) {
     }
 
     // Return promise if callback is not defined
-    if (_.isFunction(cb)) {
+    if (isFunction(cb)) {
         corePromise.catch(err => {
             cb(err);
             throw new Bluebird.CancellationError();
@@ -118,7 +142,9 @@ exports.generate = function (opts, cb) {
  * @returns {Promise}|undefined
  */
 exports.generateInline = function (opts, cb) {
-    opts.inline = true;
+    if (!opts.inline) {
+        opts.inline = true;
+    }
     if (opts.htmlTarget) {
         opts.dest = opts.htmlTarget;
     } else if (opts.styleTarget) {
@@ -185,7 +211,7 @@ exports.stream = function (opts) {
             return this.emit('error', new PluginError('critical', 'Streaming not supported'));
         }
 
-        const options = _.assign(opts || {}, {
+        const options = assign(opts || {}, {
             src: file
         });
 

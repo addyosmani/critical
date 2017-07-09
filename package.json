@@ -36,6 +36,7 @@
     "fs-extra": "^3.0.1",
     "get-port": "^3.1.0",
     "get-stdin": "^5.0.1",
+    "group-args": "^0.1.0",
     "gulp-util": "^3.0.8",
     "imageinliner": "^0.2.4",
     "indent-string": "^3.1.0",

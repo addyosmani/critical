@@ -207,28 +207,29 @@ critical.generate({
 
 ### Options
 
-| Name             | Type          | Default | Description   |
-| ---------------- | ------------- | ------------- |------------- |
-| inline           | `boolean`     | `false` | Inline critical-path CSS using filamentgroup's loadCSS  |
-| base             | `string`      | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
-| html             | `string`      | | HTML source to be operated against. This option takes precedence over the `src` option |
-| src              | `string`      | | Location of the HTML source to be operated against |
-| dest             | `string`      | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
-| destFolder       | `string`      | `''` | Subfolder relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
-| css              | `array`       | | An array of paths to css files, or an array of [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
-| width            | `integer`     | `900`  | Width of the target viewport |
-| height           | `integer`     | `1300` | Height of the target viewport |
-| dimensions       | `array`       | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
-| minify           | `boolean`     | `false` | Enable minification of generated critical-path CSS |
-| extract          | `boolean`     | `false` | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
-| inlineImages     | `boolean`     | `false` | Inline images
-| assetPaths       | `array`       | `[]` | List of directories/urls where the inliner should start looking for assets
-| maxImageFileSize | `integer`     | `10240`| Sets a max file size (in bytes) for base64 inlined images
-| timeout          | `integer`     | `30000`| Sets a maximum timeout for the operation
-| pathPrefix       | `string`      | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
-| include          | `array`       | `[]` | Force include CSS rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
-| ignore           | `array`       | `[]` | Ignore CSS rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
-| ignoreOptions    | `object`       | `{}` | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options).
+| Name             | Type               | Default | Description   |
+| ---------------- | ------------------ | ------------- |------------- |
+| inline           | `boolean`|`object` | `false` | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options) |
+| base             | `string`           | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
+| html             | `string`           | | HTML source to be operated against. This option takes precedence over the `src` option |
+| css              | `array`            | `[]` | An array of paths to css files, or an array of [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
+| src              | `string`           | | Location of the HTML source to be operated against |
+| dest             | `string`           | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
+| destFolder       | `string`           | `''` | Subfolder relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
+| width            | `integer`          | `900`  | Width of the target viewport |
+| height           | `integer`          | `1300` | Height of the target viewport |
+| dimensions       | `array`            | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
+| minify           | `boolean`          | `false` | Enable minification of generated critical-path CSS |
+| extract          | `boolean`          | `false` | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
+| inlineImages     | `boolean`          | `false` | Inline images
+| assetPaths       | `array`            | `[]` | List of directories/urls where the inliner should start looking for assets
+| maxImageFileSize | `integer`          | `10240`| Sets a max file size (in bytes) for base64 inlined images
+| timeout          | `integer`          | `30000`| Sets a maximum timeout for the operation
+| pathPrefix       | `string`           | `/` | Path to prepend CSS assets with. You *must* make this path absolute if you are going to be using critical in multiple target files in disparate directory depths. (eg. targeting both `/index.html` and `/admin/index.html` would require this path to start with `/` or it wouldn't work.)
+| include          | `array`            | `[]` | Force include CSS rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
+| ignore           | `array`            | `[]` | Ignore CSS rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
+| ignoreOptions    | `object`           | `{}` | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options).
+| penthouse        | `object`           | `{}` | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).
 
 
 ## CLI

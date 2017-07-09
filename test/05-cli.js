@@ -205,7 +205,7 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.strictEqual(this.mockOpts.folder, 'folder');
-            assert.strictEqual(this.mockOpts.inline, true);
+            assert.strictEqual(Boolean(this.mockOpts.inline), true);
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -246,7 +246,7 @@ describe('CLI', () => {
             assert.include(this.mockOpts.ignore, 'ignore');
             assert.isArray(this.mockOpts.include);
             assert.instanceOf(this.mockOpts.include[0], RegExp);
-            assert.strictEqual(this.mockOpts.inline, true);
+            assert.strictEqual(Boolean(this.mockOpts.inline), true);
             assert.strictEqual(this.mockOpts.inlineImages, true);
             assert.isArray(this.mockOpts.assetPaths);
             assert.include(this.mockOpts.assetPaths, 'assetPath1');
@@ -267,17 +267,21 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.inline, false);
         });
 
-        it('should set inline to false when passing a falsy value', function () {
+        it('should set penthouse options prefixed with --penthouse-', function () {
             process.argv = [
                 'node',
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
-                '-i', '0'
+                '--penthouse-strict',
+                '--penthouse-timeout', '50000',
+                '--penthouse-renderWaitTime', '300'
             ];
 
             require('../cli'); // eslint-disable-line import/no-unassigned-import
 
-            assert.strictEqual(this.mockOpts.inline, false);
+            assert.strictEqual(this.mockOpts.penthouse.strict, true);
+            assert.strictEqual(this.mockOpts.penthouse.timeout, 50000);
+            assert.strictEqual(this.mockOpts.penthouse.renderWaitTime, 300);
         });
 
         it('should use "generateInline" when passing htmltarget', function () {

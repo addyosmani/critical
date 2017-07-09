@@ -4,9 +4,15 @@ const os = require('os');
 const path = require('path');
 const chalk = require('chalk');
 const meow = require('meow');
+const groupArgs = require('group-args');
 const indentString = require('indent-string');
 const stdin = require('get-stdin');
-const _ = require('lodash');
+const assign = require('lodash/assign');
+const reduce = require('lodash/reduce');
+const isString = require('lodash/isString');
+const isRegExp = require('lodash/isRegExp');
+const map = require('lodash/map');
+const escapeRegExp = require('lodash/escapeRegExp');
 
 const file = require('./lib/file-helper');
 const critical = require('./');
@@ -40,9 +46,7 @@ const help = [
     '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)'
 ];
 
-const cli = meow({
-    help
-}, {
+const minimistOpts = {
     alias: {
         b: 'base',
         c: 'css',
@@ -58,10 +62,17 @@ const cli = meow({
         p: 'pathPrefix',
         ii: 'inlineImages'
     }
-});
+};
+
+const cli = meow({help}, minimistOpts);
+
+// Group args for inline-critical and penthouse
+cli.flags = groupArgs(['inline', 'penthouse'], {
+    delimiter: '-'
+}, minimistOpts);
 
 // Cleanup cli flags and assert cammelcase keeps camelcase
-cli.flags = _.reduce(cli.flags, (res, val, key) => {
+cli.flags = reduce(cli.flags, (res, val, key) => {
     if (key.length <= 1) {
         return res;
     }
@@ -76,9 +87,6 @@ cli.flags = _.reduce(cli.flags, (res, val, key) => {
         case 'pathprefix':
             res.pathPrefix = val;
             break;
-        case 'inline':
-            res.inline = (val && val !== 'false') || typeof val === 'undefined';
-            break;
         case 'inlineimages':
             res.inlineImages = val;
             break;
@@ -90,22 +98,22 @@ cli.flags = _.reduce(cli.flags, (res, val, key) => {
             break;
         case 'assetpaths':
         case 'assetPaths':
-            if (_.isString(val)) {
+            if (isString(val)) {
                 val = [val];
             }
             res.assetPaths = val;
             break;
         case 'include':
         case 'ignore':
-            if (_.isString(val) || _.isRegExp(val)) {
+            if (isString(val) || isRegExp(val)) {
                 val = [val];
             }
-            res[key] = _.map(val || [], entry => {
+            res[key] = map(val || [], entry => {
                 // Check regex
                 const match = entry.match(/^\/(.*)\/([igmy]+)?$/);
 
                 if (match) {
-                    return new RegExp(_.escapeRegExp(match[1]), match[2]);
+                    return new RegExp(escapeRegExp(match[1]), match[2]);
                 }
                 return entry;
             });
@@ -126,7 +134,7 @@ function error(err) {
 }
 
 function run(data) {
-    const opts = _.assign({base: process.cwd()}, cli.flags);
+    const opts = assign({base: process.cwd()}, cli.flags);
     const command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {
