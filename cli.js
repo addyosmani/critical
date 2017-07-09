@@ -7,7 +7,12 @@ const meow = require('meow');
 const groupArgs = require('group-args');
 const indentString = require('indent-string');
 const stdin = require('get-stdin');
-const _ = require('lodash');
+const assign = require('lodash/assign');
+const reduce = require('lodash/reduce');
+const isString = require('lodash/isString');
+const isRegExp = require('lodash/isRegExp');
+const map = require('lodash/map');
+const escapeRegExp = require('lodash/escapeRegExp');
 
 const file = require('./lib/file-helper');
 const critical = require('./');
@@ -67,7 +72,7 @@ cli.flags = groupArgs(['inline', 'penthouse'], {
 }, minimistOpts);
 
 // Cleanup cli flags and assert cammelcase keeps camelcase
-cli.flags = _.reduce(cli.flags, (res, val, key) => {
+cli.flags = reduce(cli.flags, (res, val, key) => {
     if (key.length <= 1) {
         return res;
     }
@@ -93,22 +98,22 @@ cli.flags = _.reduce(cli.flags, (res, val, key) => {
             break;
         case 'assetpaths':
         case 'assetPaths':
-            if (_.isString(val)) {
+            if (isString(val)) {
                 val = [val];
             }
             res.assetPaths = val;
             break;
         case 'include':
         case 'ignore':
-            if (_.isString(val) || _.isRegExp(val)) {
+            if (isString(val) || isRegExp(val)) {
                 val = [val];
             }
-            res[key] = _.map(val || [], entry => {
+            res[key] = map(val || [], entry => {
                 // Check regex
                 const match = entry.match(/^\/(.*)\/([igmy]+)?$/);
 
                 if (match) {
-                    return new RegExp(_.escapeRegExp(match[1]), match[2]);
+                    return new RegExp(escapeRegExp(match[1]), match[2]);
                 }
                 return entry;
             });
@@ -129,7 +134,7 @@ function error(err) {
 }
 
 function run(data) {
-    const opts = _.assign({base: process.cwd()}, cli.flags);
+    const opts = assign({base: process.cwd()}, cli.flags);
     const command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
 
     if (command === 'generate') {

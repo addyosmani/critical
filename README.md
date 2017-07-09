@@ -212,6 +212,7 @@ critical.generate({
 | inline           | `boolean`|`object` | `false` | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options) |
 | base             | `string`           | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
 | html             | `string`           | | HTML source to be operated against. This option takes precedence over the `src` option |
+| css              | `array`            | `[]` | An array of paths to css files, or an array of [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
 | src              | `string`           | | Location of the HTML source to be operated against |
 | dest             | `string`           | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
 | destFolder       | `string`           | `''` | Subfolder relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
