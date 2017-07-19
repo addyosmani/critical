@@ -1,4 +1,14 @@
 
+v0.9.0 / 2017-07-19
+===================
+
+  * Bump dependencies
+  * Library options (#178)
+  * Ignore print styles (#113) (#221)
+  * Prefer let & const + arrow functions
+  * Run tests on node.js 8
+  * Support for passing CSS files as Vinyl objects. (#204)
+
 v0.8.4 / 2017-03-01
 ==================
 
