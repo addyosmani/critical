@@ -33,7 +33,7 @@
     "debug": "^2.6.1",
     "filter-css": "^0.1.2",
     "finalhandler": "^1.0.3",
-    "fs-extra": "^3.0.1",
+    "fs-extra": "^4.0.0",
     "get-port": "^3.1.0",
     "get-stdin": "^5.0.1",
     "group-args": "^0.1.0",
