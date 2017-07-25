@@ -325,10 +325,16 @@ Of course. We appreciate all of our [contributors](https://github.com/addyosmani
 welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
 free to open up an issue and we can discuss it.
 
+## Maintainers
+
+This module is brought to you and maintained by the following people:
+
+* Addy Osmani - Creator ([Github](https://github.com/addyosmani) / [Twitter](https://twitter.com/addyosmani))
+* Ben Zörb - Primary maintainer ([Github](https://github.com/bezoerb) / [Twitter](https://twitter.com/bezoerb))
 
 ## License
 
-Apache-2.0 © Addy Osmani
+Apache-2.0 © Addy Osmani, Ben Zörb
 
 
 [npm-url]: https://www.npmjs.com/package/critical
