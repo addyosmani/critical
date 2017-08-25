@@ -569,6 +569,15 @@ crypto-random-string@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/crypto-random-string/-/crypto-random-string-1.0.0.tgz#a230f64f568310e1498009940790ec99545bca7e"
 
+css-fork-pocketjoso@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/css-fork-pocketjoso/-/css-fork-pocketjoso-2.2.1.tgz#a27748efa67351f45e4549a6806452beb4244162"
+  dependencies:
+    inherits "^2.0.1"
+    source-map "^0.1.38"
+    source-map-resolve "^0.3.0"
+    urix "^0.1.0"
+
 css-mediaquery@^0.1.2:
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/css-mediaquery/-/css-mediaquery-0.1.2.tgz#6a2c37344928618631c54bd33cedd301da18bea0"
@@ -609,7 +618,7 @@ css-what@2.1:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/css-what/-/css-what-2.1.0.tgz#9467d032c38cfaefb9f2d79501253062f87fa1bd"
 
-css@2.2.1, css@^2.1.0, css@^2.2.0, "css@https://github.com/pocketjoso/css.git":
+css@2.2.1, css@^2.1.0, css@^2.2.0:
   version "2.2.1"
   resolved "https://github.com/pocketjoso/css.git#8ddea7e3cbc0a183ecf694a7a5fbc84326893893"
   dependencies:
@@ -2517,12 +2526,12 @@ pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
 
-penthouse@^0.11.4:
-  version "0.11.4"
-  resolved "https://registry.yarnpkg.com/penthouse/-/penthouse-0.11.4.tgz#4f742d95c71d2f46bfa931a5c5dbdc509eb4891a"
+penthouse@^0.11.13:
+  version "0.11.13"
+  resolved "https://registry.yarnpkg.com/penthouse/-/penthouse-0.11.13.tgz#4631e6016a6077f39d0bfa3822aeeb6feb75b744"
   dependencies:
     apartment "^1.1.1"
-    css "https://github.com/pocketjoso/css.git"
+    css-fork-pocketjoso "^2.2.1"
     css-mediaquery "^0.1.2"
     jsesc "^1.0.0"
     os-tmpdir "^1.0.1"
