@@ -60,7 +60,9 @@
   "devDependencies": {
     "async": "^2.1.4",
     "chai": "^4.0.2",
+    "co": "^4.6.0",
     "connect": "^3.5.0",
+    "json-stable-stringify": "^1.0.1",
     "mocha": "^3.2.0",
     "mockery": "^2.0.0",
     "normalize-newline": "^3.0.0",
