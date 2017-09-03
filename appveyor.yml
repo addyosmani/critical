@@ -20,3 +20,6 @@ test_script:
   - node --version && npm --version
   - npm test
 
+cache:
+  - node_modules -> package.json
+  - node_modules -> package-lock.json
