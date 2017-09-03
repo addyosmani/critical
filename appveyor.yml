@@ -12,8 +12,6 @@ environment:
 
 install:
   - ps: Install-Product node $env:nodejs_version
-  - choco install yarn
-  - refreshenv
   - yarn install
 
 build: off
@@ -23,6 +21,6 @@ test_script:
   - npm test
 
 cache:
-  - "%LOCALAPPDATA%/Yarn"
+  - "%LOCALAPPDATA%\\Yarn"
   - node_modules -> package.json
   - node_modules -> package-lock.json
