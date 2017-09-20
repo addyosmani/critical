@@ -48,6 +48,7 @@
     "penthouse": "^1.0.0",
     "postcss": "^6.0.4",
     "postcss-image-inliner": "^1.0.4",
+    "puppeteer": "^0.10.2",
     "request": "^2.79.0",
     "slash": "^1.0.0",
     "tempfile": "^2.0.0",
