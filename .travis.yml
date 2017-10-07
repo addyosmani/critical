@@ -6,7 +6,7 @@ node_js:
   - "8"
 
 before_script:
-  - if [ "$NODE6" = "true" ]; then npm build --cwd node_modules/puppeteer
+  - 'if [ "$NODE6" = "true" ]; then npm build --cwd node_modules/puppeteer; fi'
 addons:
   apt:
     packages:
