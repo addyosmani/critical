@@ -209,7 +209,7 @@ critical.generate({
 
 | Name             | Type               | Default | Description   |
 | ---------------- | ------------------ | ------------- |------------- |
-| inline           | `boolean`|`object` | `false` | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options) |
+| inline           | `boolean`&#124;`object` | `false` | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options) |
 | base             | `string`           | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
 | html             | `string`           | | HTML source to be operated against. This option takes precedence over the `src` option. |
 | folder           | `string`           | | HTML source folder. Required to compute relative asset paths in conjunction with the `html` option  |
