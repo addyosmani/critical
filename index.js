@@ -17,7 +17,6 @@ const replaceExtension = require('gulp-util').replaceExtension;
 
 const core = require('./lib/core');
 const file = require('./lib/file-helper');
-const inliner = require('./lib/inline-styles');
 
 Bluebird.promisifyAll(fs);
 
@@ -86,8 +85,7 @@ exports.generate = function (opts, cb) {
     // Generate critical css
     let corePromise = core.generate(opts);
 
-    // @deprecated
-    // should be removed in next major release
+    // Store generated css
     if (opts.styleTarget) {
         corePromise.then(output => {
             const file = path.resolve(opts.styleTarget);
@@ -136,62 +134,17 @@ exports.generate = function (opts, cb) {
 };
 
 /**
- * Deprecated will be removed in the next version
- * @param opts
- * @param cb
- * @returns {Promise}|undefined
+ * Deprecated has been removed
  */
-exports.generateInline = function (opts, cb) {
-    if (!opts.inline) {
-        opts.inline = true;
-    }
-    if (opts.htmlTarget) {
-        opts.dest = opts.htmlTarget;
-    } else if (opts.styleTarget) {
-        // Return error
-    }
-
-    return exports.generate(opts, cb);
+exports.generateInline = function () {
+    throw new Error('"generateInline" has been removed. Use "generate" with the inline option instead. https://goo.gl/7VbE4b');
 };
 
 /**
- * Critical path CSS inlining
- * @param  {object} opts Options
- * @param  {function} cb Callback
- * @accepts src, base, dest
- * @deprecated
+ * Deprecated has been removed
  */
-exports.inline = function (opts, cb) {
-    opts = opts || {};
-    cb = cb || function () {};
-
-    if (!opts.src || !opts.base) {
-        throw new Error('A valid source and base path are required.');
-    }
-
-    // Inline the critical path CSS
-    fs.readFile(path.join(opts.base, opts.src), (err, data) => {
-        if (err) {
-            cb(err);
-            return;
-        }
-
-        const out = inliner(data, opts);
-
-        if (opts.dest) {
-            // Write HTML with inlined CSS to dest
-            fs.writeFile(path.resolve(opts.dest), out, err => {
-                if (err) {
-                    cb(err);
-                    return;
-                }
-
-                cb(null, out.toString());
-            });
-        } else {
-            cb(null, out.toString());
-        }
-    });
+exports.inline = function () {
+    throw new Error('"inline" has been removed. Consider using "inline-critical" instead. https://goo.gl/MmTrUZ');
 };
 
 /**

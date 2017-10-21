@@ -37,13 +37,7 @@ const help = [
     '   --include               RegExp, @type or selector to include',
     '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
     '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
-    '   --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).',
-    '   ----------------------------------------------------------------------.',
-    '   Deprecated - use "--inline" to retrieve the modified HTML',
-    '   critical source.html --inline > dest.html',
-    '   -----------------------------------------------------------------------',
-    '   -H, --htmlTarget        Target for final HTML output',
-    '   -S, --styleTarget       Target for generated critical-path CSS (which we inline)'
+    '   --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).'
 ];
 
 const minimistOpts = {
@@ -53,10 +47,8 @@ const minimistOpts = {
         w: 'width',
         h: 'height',
         f: 'folder',
-        H: 'htmlTarget',
         i: 'inline',
         I: 'ignore',
-        S: 'styleTarget',
         m: 'minify',
         e: 'extract',
         p: 'pathPrefix',
@@ -78,12 +70,6 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
     }
 
     switch (key) {
-        case 'htmltarget':
-            res.htmlTarget = val;
-            break;
-        case 'styletarget':
-            res.styleTarget = val;
-            break;
         case 'pathprefix':
             res.pathPrefix = val;
             break;
@@ -135,12 +121,6 @@ function error(err) {
 
 function run(data) {
     const opts = assign({base: process.cwd()}, cli.flags);
-    const command = opts.htmlTarget || opts.inline ? 'generateInline' : 'generate';
-
-    if (command === 'generate') {
-        opts.dest = opts.styleTarget || '';
-    }
-
     ok = true;
 
     if (data) {
@@ -153,7 +133,7 @@ function run(data) {
     }
 
     try {
-        critical[command](opts, (err, val) => {
+        critical.generate(opts, (err, val) => {
             if (err) {
                 error(err);
             } else {

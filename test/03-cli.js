@@ -162,10 +162,6 @@ describe('CLI', () => {
                 generate: function (opts) {
                     this.mockOpts = opts;
                     this.method = 'generate';
-                }.bind(this),
-                generateInline: function (opts) {
-                    this.mockOpts = opts;
-                    this.method = 'generateInline';
                 }.bind(this)
             });
         });
@@ -185,8 +181,6 @@ describe('CLI', () => {
                 '-c', 'css',
                 '-w', '300',
                 '-h', '400',
-                '-H', 'htmlTarget',
-                '-S', 'styleTarget',
                 '-m', 'minify',
                 '-e', 'extract',
                 '-f', 'folder',
@@ -199,8 +193,6 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.htmlTarget, 'htmlTarget');
-            assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
@@ -218,8 +210,6 @@ describe('CLI', () => {
                 '--height', '400',
                 '--ignore', 'ignore',
                 '--include', '/include/',
-                '--htmlTarget', 'htmlTarget',
-                '--styleTarget', 'styleTarget',
                 '--minify', 'minify',
                 '--extract', 'extract',
                 '--folder', 'folder',
@@ -236,8 +226,6 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.htmlTarget, 'htmlTarget');
-            assert.strictEqual(this.mockOpts.styleTarget, 'styleTarget');
             assert.strictEqual(this.mockOpts.minify, 'minify');
             assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.folder, 'folder');
@@ -282,83 +270,6 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.penthouse.strict, true);
             assert.strictEqual(this.mockOpts.penthouse.timeout, 50000);
             assert.strictEqual(this.mockOpts.penthouse.renderWaitTime, 300);
-        });
-
-        it('should use "generateInline" when passing htmltarget', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html',
-                '--htmlTarget', 'htmlTarget'
-            ];
-
-            require('../cli'); // eslint-disable-line import/no-unassigned-import
-
-            assert.strictEqual(this.method, 'generateInline');
-        });
-
-        it('should use "generate" when not passing htmltarget', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html'
-            ];
-
-            require('../cli'); // eslint-disable-line import/no-unassigned-import
-
-            assert.strictEqual(this.method, 'generate');
-        });
-
-        it('should use "generateInline" when passing --inline', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html',
-                '--inline', 'htmlTarget'
-            ];
-
-            require('../cli'); // eslint-disable-line import/no-unassigned-import
-
-            assert.strictEqual(this.method, 'generateInline');
-        });
-
-        it('should use "generate" when not passing --inline', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html'
-            ];
-
-            require('../cli'); // eslint-disable-line import/no-unassigned-import
-
-            assert.strictEqual(this.method, 'generate');
-        });
-
-        it('should use "generate" when not passing falsy value for --inline', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html',
-                '--inline', false
-            ];
-
-            require('../cli'); // eslint-disable-line import/no-unassigned-import
-
-            assert.strictEqual(this.method, 'generate');
-        });
-
-        it('should rewrite "styleTarget" to "dest" when using "generate"', function () {
-            process.argv = [
-                'node',
-                path.join(__dirname, '../', this.pkg.bin.critical),
-                'fixtures/generate-default.html',
-                '--styleTarget', 'styleTarget'
-            ];
-
-            require('../cli'); // eslint-disable-line import/no-unassigned-import
-
-            assert.strictEqual(this.method, 'generate');
-            assert.strictEqual(this.mockOpts.dest, 'styleTarget');
         });
     });
 });

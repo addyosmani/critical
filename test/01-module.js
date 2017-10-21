@@ -25,25 +25,10 @@ describe('Module', () => {
         assert.isDefined(tmp);
     });
 
-    it('should call callback method with an error on generateInline if src and base not specified', done => {
-        const tmp = critical.generateInline({}, (err, data) => {
-            assert.notOk(data);
-            assert.instanceOf(err, Error);
-            done();
+    it('should call callback method with an error on generateInline if src and base not specified', () => {
+        assert.throws(() => {
+            critical.generateInline({});
         });
-
-        assert.isUndefined(tmp);
-    });
-
-    it('should return rejected Promise for generateInline without callback if src and dest not specified', done => {
-        const tmp = critical.generateInline({}).then(data => {
-            assert.fail(data, undefined, 'Should not be called');
-        }).catch(err => {
-            assert.instanceOf(err, Error);
-            done();
-        });
-
-        assert.isDefined(tmp);
     });
 
     it('throws on inlining if src and dest not specified', () => {
