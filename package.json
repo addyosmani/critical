@@ -62,7 +62,7 @@
     "connect": "^3.5.0",
     "finalhandler": "^1.0.3",
     "json-stable-stringify": "^1.0.1",
-    "mocha": "^3.2.0",
+    "mocha": "^4.0.1",
     "mockery": "^2.0.0",
     "normalize-newline": "^3.0.0",
     "read-package-json": "^2.0.4",
