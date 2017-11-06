@@ -1,3 +1,28 @@
+v1.0.0 / 2017-11-06
+===================
+
+  * 1.0.0
+  * Bump dependencies
+  * Removed deprecated methods
+  * Don't enforce strict SSL for external assets [#171]
+  * Allow http 2xx response codes [#244]
+  * Replace '|' with its HTML character entity reference (#248)
+  * Headless chrome (#246)
+  * Add "folder" option to readme [#245]
+
+v0.9.1 / 2017-09-04
+===================
+
+  * 0.9.1
+  * Appveyor tweaks
+  * Use yarn with appveyor
+  * some appveyor tweaks
+  * Added package missing in appveyor
+  * Remove appveyor cache
+  * Try to reinstall "css" dependencies
+  * Upgrade Penthouse
+  * Update readme according to #220
+  * Version bump
 
 v0.9.0 / 2017-07-19
 ===================
