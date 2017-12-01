@@ -123,13 +123,18 @@ exports.generate = function (opts, cb) {
     if (isFunction(cb)) {
         corePromise.catch(err => {
             cb(err);
+            process.emit('cleanup');
             throw new Bluebird.CancellationError();
         }).then(output => {
+            process.emit('cleanup');
             cb(null, output.toString());
         }).catch(Bluebird.CancellationError, () => {
         }).done();
     } else {
-        return corePromise;
+        return corePromise.then(output => {
+            process.emit('cleanup');
+            return output;
+        });
     }
 };
 
