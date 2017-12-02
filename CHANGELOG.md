@@ -1,3 +1,27 @@
+v1.1.0 / 2017-12-02
+===================
+
+  * 1.1.0
+  * Remove temporary files
+  * Bump inline-critical
+  * Fix corrupted 'File.contents' [#191,#218]
+
+v1.0.0 / 2017-11-06
+===================
+
+  * 1.0.0
+  * Bump dependencies
+  * Removed deprecated methods
+  * Don't enforce strict SSL for external assets [#171]
+  * Allow http 2xx response codes [#244]
+  * Replace '|' with its HTML character entity reference (#248)
+  * Headless chrome (#246)
+  * Add "folder" option to readme [#245]
+
+n.n.n / 2017-12-02
+==================
+
+
 v1.0.0 / 2017-11-06
 ===================
 
