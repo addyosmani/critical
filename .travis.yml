@@ -2,9 +2,7 @@ sudo: false
 language: node_js
 node_js:
   - "6"
-  - "7"
   - "8"
-
 before_script:
   - 'if [ "$NODE6" = "true" ]; then npm build --cwd node_modules/puppeteer; fi'
 addons:
