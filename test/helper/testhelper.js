@@ -35,6 +35,7 @@ function read(file, minify) {
  * @param target
  * @param expected
  * @param done
+ * @param skipTarget
  * @returns {Function}
  */
 function assertCritical(target, expected, done, skipTarget) {
