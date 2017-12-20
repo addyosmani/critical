@@ -144,7 +144,7 @@ describe('Streams', () => {
             css: ['fixtures/styles/main.css']
         });
 
-        const expected = read('fixtures/styles/main.css', true);
+        const expected = read('expected/main.css', true);
 
         getVinyl('generate-default.html')
             .pipe(stream)

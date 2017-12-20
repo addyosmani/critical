@@ -181,10 +181,9 @@ describe('CLI', () => {
                 '-c', 'css',
                 '-w', '300',
                 '-h', '400',
-                '-m', 'minify',
-                '-e', 'extract',
                 '-f', 'folder',
                 '-p', 'pathPrefix',
+                '-e',
                 '-i'
             ];
 
@@ -193,11 +192,10 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.minify, 'minify');
-            assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.strictEqual(this.mockOpts.folder, 'folder');
-            assert.strictEqual(Boolean(this.mockOpts.inline), true);
+            assert.strictEqual(this.mockOpts.inline, true);
+            assert.strictEqual(this.mockOpts.extract, true);
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -210,11 +208,10 @@ describe('CLI', () => {
                 '--height', '400',
                 '--ignore', 'ignore',
                 '--include', '/include/',
-                '--minify', 'minify',
-                '--extract', 'extract',
                 '--folder', 'folder',
                 '--pathPrefix', 'pathPrefix',
                 '--inline',
+                '--extract',
                 '--inlineImages',
                 '--maxFileSize', '1024',
                 '--assetPaths', 'assetPath1',
@@ -226,8 +223,7 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.minify, 'minify');
-            assert.strictEqual(this.mockOpts.extract, 'extract');
+            assert.strictEqual(this.mockOpts.extract, true);
             assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);

@@ -20,7 +20,7 @@ describe('Module - generate', () => {
         process.emit('cleanup');
     });
 
-    it.only('should generate critical-path CSS', done => {
+    it('should generate critical-path CSS', done => {
         const expected = read('expected/generate-default.css');
         const target = path.resolve('.critical.css');
 
