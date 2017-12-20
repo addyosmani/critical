@@ -18,8 +18,6 @@ const replaceExtension = require('gulp-util').replaceExtension;
 const core = require('./lib/core');
 const file = require('./lib/file-helper');
 
-Bluebird.promisifyAll(fs);
-
 /**
  * Normalize options
  *
@@ -87,36 +85,18 @@ exports.generate = function (opts, cb) {
 
     // Store generated css
     if (opts.styleTarget) {
-        corePromise.then(output => {
-            const file = path.resolve(opts.styleTarget);
-            const dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(() => {
-                return fs.writeFileAsync(path.resolve(opts.styleTarget), output);
-            });
-        });
+        corePromise = corePromise.then(output => fs.outputFile(path.resolve(opts.styleTarget), output).then(() => output));
     }
 
     // Inline
     if (opts.inline) {
-        corePromise = Bluebird.props({
-            file: file.getVinylPromise(opts),
-            css: corePromise
-        }).then(result => {
-            return sourceInliner(result.file.contents.toString(), result.css, opts.inline);
-        });
+        corePromise = Promise.all([file.getVinylPromise(opts), corePromise])
+            .then(([file, css]) => sourceInliner(file.contents.toString(), css, opts.inline));
     }
 
     // Save to file
     if (opts.dest) {
-        corePromise = corePromise.then(output => {
-            const file = path.resolve(opts.dest);
-            const dir = path.dirname(file);
-            return fs.ensureDirAsync(dir).then(() => {
-                return fs.writeFileAsync(path.resolve(opts.dest), output);
-            }).then(() => {
-                return output;
-            });
-        });
+        corePromise = corePromise.then(output => fs.outputFile(path.resolve(opts.dest), output).then(() => output));
     }
 
     // Return promise if callback is not defined
@@ -129,7 +109,9 @@ exports.generate = function (opts, cb) {
             process.emit('cleanup');
             cb(null, output.toString());
         }).catch(Bluebird.CancellationError, () => {
-        }).done();
+            console.log('Canceled due to an error');
+            /* Everything already done */
+        });
     } else {
         return corePromise.then(output => {
             process.emit('cleanup');

@@ -19,49 +19,75 @@ const critical = require('./');
 
 let ok;
 
-const help = [
-    'Usage: critical <input> [<option>]',
-    '',
-    'Options:',
-    '   -b, --base              Your base directory',
-    '   -c, --css               Your CSS Files (optional)',
-    '   -w, --width             Viewport width',
-    '   -h, --height            Viewport height',
-    '   -m, --minify            Minify critical-path CSS when inlining',
-    '   -i, --inline            Generate the HTML with inlined critical-path CSS',
-    '   -e, --extract           Extract inlined styles from referenced stylesheets',
-    '   -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) ',
-    '   -f, --folder            HTML Subfolder (default: \'\')',
-    '   --ii, --inlineImages    Inline images',
-    '   --ignore                RegExp, @type or selector to ignore',
-    '   --include               RegExp, @type or selector to include',
-    '   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images',
-    '   --assetPaths            Directories/Urls where the inliner should start looking for assets.',
-    '   --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).'
-];
+const help = `
+Usage: critical <input> [<option>]
+
+Options:
+  -b, --base              Your base directory
+  -c, --css               Your CSS Files (optional)
+  -w, --width             Viewport width
+  -h, --height            Viewport height
+  -i, --inline            Generate the HTML with inlined critical-path CSS
+  -e, --extract           Extract inlined styles from referenced stylesheets
+  -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) 
+  -f, --folder            HTML Subfolder (default: '')
+  --ii, --inlineImages    Inline images
+  --ignore                RegExp, @type or selector to ignore
+  --include               RegExp, @type or selector to include
+  --maxFileSize           Sets a max file size (in bytes) for base64 inlined images
+  --assetPaths            Directories/Urls where the inliner should start looking for assets.
+  --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).'
+`;
 
 const minimistOpts = {
-    alias: {
-        b: 'base',
-        c: 'css',
-        w: 'width',
-        h: 'height',
-        f: 'folder',
-        i: 'inline',
-        I: 'ignore',
-        m: 'minify',
-        e: 'extract',
-        p: 'pathPrefix',
-        ii: 'inlineImages'
+    flags: {
+        base: {
+            type: 'string',
+            alias: 'b'
+        },
+        css: {
+            type: 'string',
+            alias: 'c'
+        },
+        width: {
+            alias: 'w'
+        },
+        height: {
+            alias: 'h'
+        },
+        folder: {
+            type: 'string',
+            alias: 'f'
+        },
+        inline: {
+            type: 'boolean',
+            alias: 'i'
+        },
+        ignore: {
+            type: 'string',
+            alias: 'I'
+        },
+        extract: {
+            type: 'boolean',
+            alias: 'e'
+        },
+        pathPrefix: {
+            type: 'string',
+            alias: 'p'
+        },
+        inlineImages: {
+            type: 'boolean',
+            alias: 'ii'
+        }
     }
 };
 
-const cli = meow({help}, minimistOpts);
+const cli = meow(help, minimistOpts);
 
 // Group args for inline-critical and penthouse
-cli.flags = groupArgs(['inline', 'penthouse'], {
+cli.flags = Object.assign({}, cli.flags, groupArgs(['inline', 'penthouse'], {
     delimiter: '-'
-}, minimistOpts);
+}, minimistOpts));
 
 // Cleanup cli flags and assert cammelcase keeps camelcase
 cli.flags = reduce(cli.flags, (res, val, key) => {
@@ -115,7 +141,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
 function error(err) {
     process.stderr.write(indentString((chalk.red('Error: ') + err.message || err), 3));
     process.stderr.write(os.EOL);
-    process.stderr.write(indentString(help.join(os.EOL), 3));
+    process.stderr.write(indentString(help, 3));
     process.exit(1);
 }
 
