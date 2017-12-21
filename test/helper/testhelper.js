@@ -40,6 +40,9 @@ function read(file) {
  */
 function assertCritical(target, expected, done, skipTarget) {
     return function (err, output) {
+        if (err) {
+            console.log(err);
+        }
         assert.isNull(err, Boolean(err) && err);
         assert.isDefined(output, 'Should produce output');
 

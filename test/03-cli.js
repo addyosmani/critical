@@ -6,6 +6,7 @@ const http = require('http');
 const exec = require('child_process').exec;
 const execFile = require('child_process').execFile;
 const assert = require('chai').assert;
+const getPort = require('get-port');
 const mockery = require('mockery');
 const readJson = require('read-package-json');
 const nn = require('normalize-newline');
@@ -112,26 +113,31 @@ describe('CLI', () => {
     });
 
     describe('acceptance (remote)', () => {
-        let server;
+        let serverport;
 
-        before(() => {
+        beforeEach(() => {
             const serve = serveStatic('fixtures', {index: ['generate-default.html']});
 
-            server = http.createServer((req, res) => {
+            this.server = http.createServer((req, res) => {
                 const done = finalhandler(req, res);
                 serve(req, res, done);
             });
-            server.listen(3000);
+
+            return getPort().then(port => {
+                this.server.listen(port);
+                serverport = port;
+            });
         });
 
-        after(() => {
-            server.close();
+        afterEach(() => {
+            this.server.close();
+            process.emit('cleanup');
         });
 
         it('should generate critical path css from external resource', function (done) {
             const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
-                'http://localhost:3000',
+                `http://localhost:${serverport}`,
                 '--base', 'fixtures',
                 '--width', '1300',
                 '--height', '900'
