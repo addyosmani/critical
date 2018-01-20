@@ -6,6 +6,7 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
+    "prepublish": "nsp check",
     "test": "xo && mocha test/*.js --timeout 100000"
   },
   "files": [
@@ -52,8 +53,7 @@
     "tempfile": "^2.0.0",
     "through2": "^2.0.3",
     "tmp": "0.0.33",
-    "vinyl": "^2.0.1",
-    "ws": "3.3.2"
+    "vinyl": "^2.0.1"
   },
   "devDependencies": {
     "async": "^2.1.4",
@@ -65,6 +65,7 @@
     "mocha": "^4.0.1",
     "mockery": "^2.0.0",
     "normalize-newline": "^3.0.0",
+    "nsp": "^3.1.0",
     "read-package-json": "^2.0.4",
     "serve-static": "^1.11.2",
     "stream-array": "^1.1.2",
