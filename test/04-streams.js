@@ -8,7 +8,7 @@ const fs = require('fs');
 const assert = require('chai').assert;
 const vinylStream = require('vinyl-source-stream');
 const streamAssert = require('stream-assert');
-const gutil = require('gulp-util');
+const Vinyl = require('vinyl');
 const array = require('stream-array');
 const nn = require('normalize-newline');
 
@@ -27,7 +27,7 @@ function getVinyl() {
 
     function create(filepath) {
         const file = path.join(__dirname, 'fixtures', filepath);
-        return new gutil.File({
+        return new Vinyl({
             cwd: __dirname,
             base: path.dirname(file),
             path: file,
