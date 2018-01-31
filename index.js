@@ -12,8 +12,8 @@ const chalk = require('chalk');
 const sourceInliner = require('inline-critical');
 const Bluebird = require('bluebird');
 const through2 = require('through2');
-const PluginError = require('gulp-util').PluginError;
-const replaceExtension = require('gulp-util').replaceExtension;
+const PluginError = require('plugin-error');
+const replaceExtension = require('replace-ext');
 
 const core = require('./lib/core');
 const file = require('./lib/file-helper');
