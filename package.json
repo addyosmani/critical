@@ -53,7 +53,8 @@
     "tempfile": "^2.0.0",
     "through2": "^2.0.3",
     "tmp": "0.0.33",
-    "vinyl": "^2.1.0"
+    "vinyl": "^2.1.0",
+    "ws": "3.3.2"
   },
   "devDependencies": {
     "async": "^2.6.0",

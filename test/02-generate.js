@@ -599,12 +599,11 @@ describe('Module - generate', () => {
 });
 
 describe('Module - generate (remote)', () => {
-    beforeEach(() => {
+    before(() => {
         const serve = serveStatic('fixtures', {index: ['index.html', 'index.htm']});
 
         this.server = http.createServer((req, res) => {
-            const done = finalhandler(req, res);
-            serve(req, res, done);
+            serve(req, res, finalhandler(req, res));
         });
 
         return getPort().then(port => {
@@ -613,9 +612,8 @@ describe('Module - generate (remote)', () => {
         });
     });
 
-    afterEach(() => {
+    after(() => {
         this.server.close();
-        process.emit('cleanup');
     });
 
     it('should generate critical-path CSS', done => {
