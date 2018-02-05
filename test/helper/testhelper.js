@@ -42,16 +42,20 @@ function assertCritical(target, expected, done, skipTarget) {
     return function (err, output) {
         if (err) {
             console.log(err);
+            done(err);
         }
-        assert.isNull(err, Boolean(err) && err);
-        assert.isDefined(output, 'Should produce output');
-
-        if (!skipTarget) {
-            const dest = readAndRemove(target, true);
-            assert.strictEqual(nn(dest), nn(expected));
+        try {
+            assert.isNull(err, Boolean(err) && err);
+            assert.isDefined(output, 'Should produce output');
+            if (!skipTarget) {
+                const dest = readAndRemove(target, true);
+                assert.strictEqual(nn(dest), nn(expected));
+            }
+            assert.strictEqual(nn(output), nn(expected));
+        } catch (err) {
+            done(err);
+            return;
         }
-        assert.strictEqual(nn(output), nn(expected));
-
         done();
     };
 }
