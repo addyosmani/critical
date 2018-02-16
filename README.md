@@ -8,7 +8,7 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 ## Install
 
 ```
-$ npm install --save critical
+$ npm install --save-dev critical
 ```
 
 ## Build plugins
