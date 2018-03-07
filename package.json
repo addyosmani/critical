@@ -6,7 +6,7 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
-    "prepublish": "nsp check",
+   
     "test": "xo && mocha test/*.js --timeout 100000"
   },
   "files": [
