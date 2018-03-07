@@ -7,7 +7,7 @@ node_js:
 
 before_script:
   - 'if [ "$NODE6" = "true" ]; then npm build --cwd node_modules/puppeteer; fi'
-  - 'npm i ws@3.3.2'
+  - 'npm i --cwd node_modules/penthouse'
 
 addons:
   apt:
