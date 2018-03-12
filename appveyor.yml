@@ -18,7 +18,7 @@ build: off
 
 test_script:
   - node --version && npm --version
-  - npm test
+  - ps: npm test
 
 cache:
   - "%LOCALAPPDATA%\\Yarn"
