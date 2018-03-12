@@ -15,7 +15,7 @@ install:
   - ps: Install-Product node $env:nodejs_version $env:platform
   - npm install --global npm@latest
   - set CI=true  
-  - set DEBUG=*  
+  - set DEBUG=critical,asset-resolver  
   - set PATH=%APPDATA%\npm;%PATH%
   - npm install
 
