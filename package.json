@@ -6,7 +6,6 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
-   
     "test": "xo && mocha test/*.js --timeout 100000"
   },
   "files": [
@@ -45,7 +44,7 @@
     "mime-types": "^2.1.17",
     "oust": "^0.4.0",
     "parseurl": "^1.3.2",
-    "penthouse": "git+https://github.com/pocketjoso/penthouse.git",
+    "penthouse": "^1.4.1",
     "postcss": "^6.0.17",
     "postcss-image-inliner": "^2.0.0",
     "request": "^2.83.0",
