@@ -4,15 +4,14 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 const nn = require('normalize-newline');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const async = require('async');
 const getPort = require('get-port');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 const Vinyl = require('vinyl');
-const critical = require('../');
-const read = require('./helper/testhelper').read;
-const assertCritical = require('./helper/testhelper').assertCritical;
+const critical = require('..');
+const {read, assertCritical} = require('./helper/testhelper');
 
 process.chdir(path.resolve(__dirname));
 
@@ -868,7 +867,7 @@ describe('Module - generate (remote)', () => {
     it('should handle multiple calls', done => {
         const expected1 = read('expected/generateInline.html');
         const expected2 = read('expected/generateInline-minified.html');
-        const port = this.port;
+        const {port} = this;
         async.series({
             first(cb) {
                 critical.generate({

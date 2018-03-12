@@ -1,11 +1,11 @@
 /* eslint-env node, mocha */
 'use strict';
 const path = require('path');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const File = require('vinyl');
 const file = require('../lib/file-helper');
 const core = require('../lib/core');
-const read = require('./helper/testhelper').read;
+const {read} = require('./helper/testhelper');
 
 // Unittests
 describe('Lib', () => {

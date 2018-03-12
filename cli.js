@@ -15,7 +15,7 @@ const map = require('lodash/map');
 const escapeRegExp = require('lodash/escapeRegExp');
 
 const file = require('./lib/file-helper');
-const critical = require('./');
+const critical = require('.');
 
 let ok;
 
@@ -152,7 +152,7 @@ function run(data) {
     if (data) {
         opts.html = data;
     } else {
-        opts.src = cli.input[0];
+        opts.src = cli.input[0]; // eslint-disable-line prefer-destructuring
         if (opts.src && !file.isExternal(opts.src)) {
             opts.src = path.resolve(cli.input[0]);
         }

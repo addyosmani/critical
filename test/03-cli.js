@@ -3,9 +3,8 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const exec = require('child_process').exec;
-const execFile = require('child_process').execFile;
-const assert = require('chai').assert;
+const {exec, execFile} = require('child_process');
+const {assert} = require('chai');
 const getPort = require('get-port');
 const mockery = require('mockery');
 const readJson = require('read-package-json');
@@ -164,7 +163,7 @@ describe('CLI', () => {
                 useCleanCache: true
             });
 
-            mockery.registerMock('./', {
+            mockery.registerMock('.', {
                 generate: function (opts) {
                     this.mockOpts = opts;
                     this.method = 'generate';

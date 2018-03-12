@@ -1,7 +1,7 @@
 /* eslint-env node, mocha */
 'use strict';
-const assert = require('chai').assert;
-const critical = require('../');
+const {assert} = require('chai');
+const critical = require('..');
 
 describe('Module', () => {
     it('should call callback method with an error on generating if src and base not specified', done => {

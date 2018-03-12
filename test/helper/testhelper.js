@@ -2,7 +2,7 @@
 'use strict';
 const fs = require('fs');
 const path = require('path');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const nn = require('normalize-newline');
 
 function readAndRemove(file) {
