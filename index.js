@@ -15,6 +15,7 @@ const through2 = require('through2');
 const PluginError = require('plugin-error');
 const replaceExtension = require('replace-ext');
 
+const {cleanup} = require('./lib/gc');
 const core = require('./lib/core');
 const file = require('./lib/file-helper');
 
@@ -102,11 +103,11 @@ exports.generate = function (opts, cb) {
     // Return promise if callback is not defined
     if (isFunction(cb)) {
         corePromise.catch(err => {
+            cleanup();
             cb(err);
-            process.emit('cleanup');
             throw new Bluebird.CancellationError();
         }).then(output => {
-            process.emit('cleanup');
+            cleanup();
             cb(null, output.toString());
         }).catch(Bluebird.CancellationError, () => {
             console.log('Canceled due to an error');
@@ -114,7 +115,7 @@ exports.generate = function (opts, cb) {
         });
     } else {
         return corePromise.then(output => {
-            process.emit('cleanup');
+            cleanup();
             return output;
         });
     }
