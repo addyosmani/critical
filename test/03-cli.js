@@ -89,6 +89,28 @@ describe('CLI', () => {
             });
         });
 
+        it('should inline the images with the html file inside a folder piped to critical', function (done) {
+            const cmd = 'cat fixtures/generate-image.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' -c fixtures/styles/image-relative.css --inlineImages --base fixtures --width 1300 --height 900';
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image.css'), 'utf8');
+
+            exec(cmd, (error, stdout) => {
+                assert.isNull(error);
+                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                done();
+            });
+        });
+
+        it('should add the correct image path to critical css', function (done) {
+            const cmd = 'cat fixtures/folder/generate-image.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' -c fixtures/styles/image-relative.css --base fixtures --width 1300 --height 900';
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-relative.css'), 'utf8');
+
+            exec(cmd, (error, stdout) => {
+                assert.isNull(error);
+                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                done();
+            });
+        });
+
         it('should show warning on piped file without relative links and use "/"', function (done) {
             const cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
