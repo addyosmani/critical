@@ -3,9 +3,9 @@
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
-const exec = require('child_process').exec;
-const execFile = require('child_process').execFile;
-const assert = require('chai').assert;
+const {exec, execFile} = require('child_process');
+const {assert} = require('chai');
+const getPort = require('get-port');
 const mockery = require('mockery');
 const readJson = require('read-package-json');
 const nn = require('normalize-newline');
@@ -89,6 +89,28 @@ describe('CLI', () => {
             });
         });
 
+        it('should inline the images with the html file inside a folder piped to critical', function (done) {
+            const cmd = 'cat fixtures/generate-image.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' -c fixtures/styles/image-relative.css --inlineImages --base fixtures --width 1300 --height 900';
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image.css'), 'utf8');
+
+            exec(cmd, (error, stdout) => {
+                assert.isNull(error);
+                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                done();
+            });
+        });
+
+        it('should add the correct image path to critical css', function (done) {
+            const cmd = 'cat fixtures/folder/generate-image.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' -c fixtures/styles/image-relative.css --base fixtures --width 1300 --height 900';
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-relative.css'), 'utf8');
+
+            exec(cmd, (error, stdout) => {
+                assert.isNull(error);
+                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                done();
+            });
+        });
+
         it('should show warning on piped file without relative links and use "/"', function (done) {
             const cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
@@ -112,26 +134,31 @@ describe('CLI', () => {
     });
 
     describe('acceptance (remote)', () => {
-        let server;
+        let serverport;
 
-        before(() => {
+        beforeEach(() => {
             const serve = serveStatic('fixtures', {index: ['generate-default.html']});
 
-            server = http.createServer((req, res) => {
+            this.server = http.createServer((req, res) => {
                 const done = finalhandler(req, res);
                 serve(req, res, done);
             });
-            server.listen(3000);
+
+            return getPort().then(port => {
+                this.server.listen(port);
+                serverport = port;
+            });
         });
 
-        after(() => {
-            server.close();
+        afterEach(() => {
+            this.server.close();
+            process.emit('cleanup');
         });
 
         it('should generate critical path css from external resource', function (done) {
             const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
-                'http://localhost:3000',
+                `http://localhost:${serverport}`,
                 '--base', 'fixtures',
                 '--width', '1300',
                 '--height', '900'
@@ -158,7 +185,7 @@ describe('CLI', () => {
                 useCleanCache: true
             });
 
-            mockery.registerMock('./', {
+            mockery.registerMock('.', {
                 generate: function (opts) {
                     this.mockOpts = opts;
                     this.method = 'generate';
@@ -181,10 +208,9 @@ describe('CLI', () => {
                 '-c', 'css',
                 '-w', '300',
                 '-h', '400',
-                '-m', 'minify',
-                '-e', 'extract',
                 '-f', 'folder',
                 '-p', 'pathPrefix',
+                '-e',
                 '-i'
             ];
 
@@ -193,11 +219,10 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.minify, 'minify');
-            assert.strictEqual(this.mockOpts.extract, 'extract');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.strictEqual(this.mockOpts.folder, 'folder');
-            assert.strictEqual(Boolean(this.mockOpts.inline), true);
+            assert.strictEqual(this.mockOpts.inline, true);
+            assert.strictEqual(this.mockOpts.extract, true);
         });
 
         it('should pass the correct opts when using long opts', function () {
@@ -210,11 +235,10 @@ describe('CLI', () => {
                 '--height', '400',
                 '--ignore', 'ignore',
                 '--include', '/include/',
-                '--minify', 'minify',
-                '--extract', 'extract',
                 '--folder', 'folder',
                 '--pathPrefix', 'pathPrefix',
                 '--inline',
+                '--extract',
                 '--inlineImages',
                 '--maxFileSize', '1024',
                 '--assetPaths', 'assetPath1',
@@ -226,8 +250,7 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.minify, 'minify');
-            assert.strictEqual(this.mockOpts.extract, 'extract');
+            assert.strictEqual(this.mockOpts.extract, true);
             assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);

@@ -4,14 +4,14 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 const nn = require('normalize-newline');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const async = require('async');
+const getPort = require('get-port');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 const Vinyl = require('vinyl');
-const critical = require('../');
-const read = require('./helper/testhelper').read;
-const assertCritical = require('./helper/testhelper').assertCritical;
+const critical = require('..');
+const {read, assertCritical} = require('./helper/testhelper');
 
 process.chdir(path.resolve(__dirname));
 
@@ -598,21 +598,21 @@ describe('Module - generate', () => {
 });
 
 describe('Module - generate (remote)', () => {
-    let server;
-
     before(() => {
         const serve = serveStatic('fixtures', {index: ['index.html', 'index.htm']});
 
-        server = http.createServer((req, res) => {
-            const done = finalhandler(req, res);
-            serve(req, res, done);
+        this.server = http.createServer((req, res) => {
+            serve(req, res, finalhandler(req, res));
         });
-        server.listen(3000);
+
+        return getPort().then(port => {
+            this.server.listen(port);
+            this.port = port;
+        });
     });
 
     after(() => {
-        server.close();
-        process.emit('cleanup');
+        this.server.close();
     });
 
     it('should generate critical-path CSS', done => {
@@ -620,7 +620,7 @@ describe('Module - generate (remote)', () => {
         const target = '.critical.css';
 
         critical.generate({
-            src: 'http://localhost:3000/generate-default.html',
+            src: `http://localhost:${this.port}/generate-default.html`,
             dest: target,
             width: 1300,
             height: 900
@@ -633,7 +633,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-adaptive.html',
+            src: `http://localhost:${this.port}/generate-adaptive.html`,
             dest: target,
             dimensions: [{
                 width: 100,
@@ -651,7 +651,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-default.html',
+            src: `http://localhost:${this.port}/generate-default.html`,
             minify: true,
             dest: target,
             width: 1300,
@@ -665,7 +665,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-default-nostyle.html',
+            src: `http://localhost:${this.port}/generate-default-nostyle.html`,
             css: [
                 'fixtures/styles/main.css',
                 'fixtures/styles/bootstrap.css'
@@ -682,7 +682,7 @@ describe('Module - generate (remote)', () => {
         const target = '.image-relative.css';
 
         critical.generate({
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             dest: target,
             width: 1300,
             height: 900,
@@ -695,7 +695,7 @@ describe('Module - generate (remote)', () => {
         const target = '.image-relative.css';
 
         critical.generate({
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             css: [
                 'fixtures/styles/image-relative.css'
             ],
@@ -703,7 +703,7 @@ describe('Module - generate (remote)', () => {
             width: 1300,
             height: 900,
             inlineImages: true,
-            assetPaths: ['http://localhost:3000/', 'http://localhost:3000/styles']
+            assetPaths: [`http://localhost:${this.port}/`, `http://localhost:${this.port}/styles`]
         }, assertCritical(target, expected, done));
     });
 
@@ -713,7 +713,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             css: [
                 'fixtures/styles/image-absolute.css'
             ],
@@ -730,7 +730,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: './',
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             css: [
                 'fixtures/styles/image-absolute.css'
             ],
@@ -738,7 +738,7 @@ describe('Module - generate (remote)', () => {
             width: 1300,
             height: 900,
             inlineImages: true,
-            assetPaths: ['http://localhost:3000/', 'http://localhost:3000/styles']
+            assetPaths: [`http://localhost:${this.port}/`, `http://localhost:${this.port}/styles`]
         }, assertCritical(target, expected, done));
     });
 
@@ -748,7 +748,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             css: [
                 'fixtures/styles/image-big.css'
             ],
@@ -765,7 +765,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             css: [
                 'fixtures/styles/image-relative.css'
             ],
@@ -782,7 +782,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-image.html',
+            src: `http://localhost:${this.port}/generate-image.html`,
             css: [
                 'fixtures/styles/some/path/image.css'
             ],
@@ -799,7 +799,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/path-prefix.html',
+            src: `http://localhost:${this.port}/path-prefix.html`,
             css: [
                 'fixtures/styles/path-prefix.css'
             ],
@@ -817,7 +817,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/path-prefix.html',
+            src: `http://localhost:${this.port}/path-prefix.html`,
             css: [
                 'fixtures/styles/path-prefix.css'
             ],
@@ -833,7 +833,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline.html',
+            src: `http://localhost:${this.port}/generateInline.html`,
             dest: target,
             inline: true
         }, assertCritical(target, expected, done));
@@ -845,7 +845,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline.html',
+            src: `http://localhost:${this.port}/generateInline.html`,
             dest: target,
             inline: true
         }, assertCritical(target, expected, done));
@@ -857,7 +857,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline.html',
+            src: `http://localhost:${this.port}/generateInline.html`,
             minify: true,
             dest: target,
             inline: true
@@ -867,12 +867,12 @@ describe('Module - generate (remote)', () => {
     it('should handle multiple calls', done => {
         const expected1 = read('expected/generateInline.html');
         const expected2 = read('expected/generateInline-minified.html');
-
+        const {port} = this;
         async.series({
             first(cb) {
                 critical.generate({
                     base: 'fixtures/',
-                    src: 'http://localhost:3000/generateInline.html',
+                    src: `http://localhost:${port}/generateInline.html`,
                     inline: true
                 }, cb);
             },
@@ -880,7 +880,7 @@ describe('Module - generate (remote)', () => {
                 critical.generate({
                     base: 'fixtures/',
                     minify: true,
-                    src: 'http://localhost:3000/generateInline.html',
+                    src: `http://localhost:${port}/generateInline.html`,
                     inline: true
                 }, cb);
             }
@@ -898,7 +898,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline-external2.html',
+            src: `http://localhost:${this.port}/generateInline-external2.html`,
             inlineImages: false,
             minify: true,
             dest: target,
@@ -912,7 +912,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generateInline-external2.html',
+            src: `http://localhost:${this.port}/generateInline-external2.html`,
             inlineImages: false,
             minify: true,
             extract: true,
@@ -928,7 +928,7 @@ describe('Module - generate (remote)', () => {
         critical.generate({
             base: 'fixtures/',
             minify: true,
-            src: 'http://localhost:3000/generateInline-svg.html',
+            src: `http://localhost:${this.port}/generateInline-svg.html`,
             dest: target,
             inline: true
         }, assertCritical(target, expected, done));
@@ -942,7 +942,7 @@ describe('Module - generate (remote)', () => {
             base: 'fixtures/',
             minify: true,
             extract: true,
-            src: 'http://localhost:3000/generateInline.html',
+            src: `http://localhost:${this.port}/generateInline.html`,
             dest: target,
             inline: true
         }, assertCritical(target, expected, done));
@@ -954,7 +954,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-default.html',
+            src: `http://localhost:${this.port}/generate-default.html`,
             dest: target,
             ignore: ['@media', '.header', /jumbotron/],
 
@@ -969,7 +969,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-default.html',
+            src: `http://localhost:${this.port}/generate-default.html`,
             dest: target,
             ignore: [],
             minify: true,
@@ -984,7 +984,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/generate-ignorefont.html',
+            src: `http://localhost:${this.port}/generate-ignorefont.html`,
             dest: target,
             ignore: ['@font-face'],
             minify: true,
@@ -999,7 +999,7 @@ describe('Module - generate (remote)', () => {
 
         critical.generate({
             base: 'fixtures/',
-            src: 'http://localhost:3000/include.html',
+            src: `http://localhost:${this.port}/include.html`,
             include: [/someRule/],
             dest: target,
             width: 1300,

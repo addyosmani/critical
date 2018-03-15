@@ -5,15 +5,15 @@
 'use strict';
 const path = require('path');
 const fs = require('fs');
-const assert = require('chai').assert;
+const {assert} = require('chai');
 const vinylStream = require('vinyl-source-stream');
 const streamAssert = require('stream-assert');
-const gutil = require('gulp-util');
+const Vinyl = require('vinyl');
 const array = require('stream-array');
 const nn = require('normalize-newline');
 
-const critical = require('../');
-const read = require('./helper/testhelper').read;
+const critical = require('..');
+const {read} = require('./helper/testhelper');
 
 process.chdir(path.resolve(__dirname));
 
@@ -22,12 +22,10 @@ process.chdir(path.resolve(__dirname));
  *
  * @returns {*|StreamArray|exports}
  */
-function getVinyl() {
-    const args = Array.prototype.slice.call(arguments);
-
+function getVinyl(...args) {
     function create(filepath) {
         const file = path.join(__dirname, 'fixtures', filepath);
-        return new gutil.File({
+        return new Vinyl({
             cwd: __dirname,
             base: path.dirname(file),
             path: file,
@@ -144,7 +142,7 @@ describe('Streams', () => {
             css: ['fixtures/styles/main.css']
         });
 
-        const expected = read('fixtures/styles/main.css', true);
+        const expected = read('expected/main.css', true);
 
         getVinyl('generate-default.html')
             .pipe(stream)

@@ -7,18 +7,27 @@ clone_depth: 10
 environment:
   matrix:
     - nodejs_version: "6"
-    - nodejs_version: "7"
+      platform: x86
     - nodejs_version: "8"
+      platform: x86
 
 install:
-  - ps: Install-Product node $env:nodejs_version
-  - yarn install
+  - ps: Install-Product node $env:nodejs_version $env:platform
+  - npm install --global npm@latest
+  - set CI=true 
+  - set PATH=%APPDATA%\npm;%PATH%
+  - npm install
 
 build: off
+shallow_clone: true
 
 test_script:
-  - node --version && npm --version
+  - node --version
+  - npm --version
   - npm test
+
+matrix:
+  fast_finish: true
 
 cache:
   - "%LOCALAPPDATA%\\Yarn"
