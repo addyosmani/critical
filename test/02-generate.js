@@ -595,6 +595,35 @@ describe('Module - generate', () => {
             height: 900
         }, assertCritical(target, expected, done));
     });
+
+    it('should not complain about missing css if the css is passed via options', done => {
+        const expected = read('expected/generate-default-nostyle.css');
+        const target = '.generate-default-nostyle.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default-nostyle.html',
+            css: ['fixtures/styles/bootstrap.css'],
+            dest: target,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should not complain about missing css if the css is passed via options (inline)', done => {
+        const expected = read('expected/generate-default-nostyle.html');
+        const target = '.generate-default-nostyle.html';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'generate-default-nostyle.html',
+            css: ['fixtures/styles/bootstrap.css'],
+            dest: target,
+            inline: true,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
 });
 
 describe('Module - generate (remote)', () => {
