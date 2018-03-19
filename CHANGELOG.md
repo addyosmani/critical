@@ -1,4 +1,10 @@
 
+v1.2.0 / 2018-03-19
+===================
+
+  * Allow external stylesheets passed as css option [#290]
+  * Add Tests for #277
+
 v1.1.1 / 2018-03-15
 ==================
 
