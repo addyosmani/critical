@@ -173,6 +173,27 @@ describe('CLI', () => {
                 done();
             });
         });
+
+        it('should generate critical path css with external stylesheets passed as option', function (done) {
+            const cp = execFile('node', [
+                path.join(__dirname, '../', this.pkg.bin.critical),
+                `http://localhost:${serverport}`,
+                '--css', `http://localhost:${serverport}/styles/main.css`,
+                '--css', `http://localhost:${serverport}/styles/bootstrap.css`,
+                '--base', 'fixtures',
+                '--width', '1300',
+                '--height', '900'
+            ]);
+
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
+            cp.stdout.on('data', data => {
+                if (data instanceof Buffer) {
+                    data = data.toString('utf8');
+                }
+                assert.strictEqual(nn(data), nn(expected));
+                done();
+            });
+        });
     });
 
     describe('mocked', () => {
