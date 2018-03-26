@@ -14,7 +14,6 @@
     "lib"
   ],
   "bin": "cli.js",
-  "preferGlobal": true,
   "keywords": [
     "critical",
     "path",
