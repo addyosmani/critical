@@ -193,7 +193,7 @@ critical.generate({
 
 ### Generate critical-path CSS and ignore specific selectors
 
-This is a usefull option when you e.g. want to defer loading of webfonts or background images.
+This is a useful option when you e.g. want to defer loading of webfonts or background images.
 
 ```js
 critical.generate({
