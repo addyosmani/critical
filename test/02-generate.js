@@ -72,6 +72,22 @@ describe('Module - generate', () => {
         });
     });
 
+    it('should throw an usable error when no stylesheets are found', done => {
+        const target = '.error.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'error.html',
+            timeout: 1,
+            dest: target,
+            width: 1300,
+            height: 900
+        }, err => {
+            assert.instanceOf(err, Error);
+            done();
+        });
+    });
+
     it('should generate critical-path CSS with query string in file name', done => {
         const expected = read('expected/generate-default.css');
         const target = path.resolve('.critical.css');
