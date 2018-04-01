@@ -257,14 +257,14 @@ $ critical test/fixture/index.html --base test/fixture > critical.css
 
 ```js
 var gulp = require('gulp');
-var gutil = require('gulp-util');
+var log = require('fancy-log');
 var critical = require('critical').stream;
 
 // Generate & Inline Critical-path CSS
 gulp.task('critical', function () {
     return gulp.src('dist/*.html')
         .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css','dist/styles/main.css']}))
-        .on('error', function(err) { gutil.log(gutil.colors.red(err.message)); })
+        .on('error', function(err) { log.error(err.message); })
         .pipe(gulp.dest('dist'));
 });
 ```
