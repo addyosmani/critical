@@ -1,4 +1,18 @@
 
+v1.2.2 / 2018-04-02
+===================
+
+  * Improved handling of protocol-relative asset urls [#288]
+  * Adjust test files according to [#293]
+  * Improve error reporting [#258]
+  * Replace gutil by fancy-log [#297]
+  * Update README.md [#296]
+
+v1.2.1 / 2018-03-26
+===================
+
+  * Add license file
+
 v1.2.0 / 2018-03-19
 ===================
 
