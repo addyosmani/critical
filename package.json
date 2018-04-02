@@ -49,7 +49,7 @@
     "postcss-image-inliner": "^2.0.0",
     "replace-ext": "^1.0.0",
     "request": "^2.83.0",
-    "slash": "^1.0.0",
+    "slash": "^2.0.0",
     "tempy": "^0.2.1",
     "through2": "^2.0.3",
     "vinyl": "^2.1.0",
