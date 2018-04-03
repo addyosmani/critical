@@ -252,6 +252,26 @@ You can also pass in the critical CSS file as an option.
 $ critical test/fixture/index.html --base test/fixture > critical.css
 ```
 
+## Webpack
+
+[Critical plugin for webpack](https://github.com/wizardnet972/critical-plugin) base on this critical library.
+
+```js
+// webpack.config.js example
+
+var CriticalPlugin = require('critical-plugin');
+
+module.exports = {
+  // ...
+
+  plugins: [
+    // ... other plugins
+    
+    new CritialPlugin()
+  ]
+  // ...
+}
+```
 
 ## Gulp
 
