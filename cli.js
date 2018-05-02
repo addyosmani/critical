@@ -37,6 +37,8 @@ Options:
   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images
   --assetPaths            Directories/Urls where the inliner should start looking for assets.
   --timeout               Sets the maximum timeout (in milliseconds) for the operation (defaults to 30000 ms).'
+  --user                  RFC2617 basic authorization user
+  --pass                  RFC2617 basic authorization password
 `;
 
 const minimistOpts = {
@@ -78,6 +80,12 @@ const minimistOpts = {
         inlineImages: {
             type: 'boolean',
             alias: 'ii'
+        },
+        user: {
+            type: 'string'
+        },
+        pass: {
+            type: 'string'
         }
     }
 };
