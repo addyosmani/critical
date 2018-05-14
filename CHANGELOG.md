@@ -1,4 +1,11 @@
 
+v1.3.1 / 2018-05-14
+==================
+
+  * Bump dependencies
+  * Removed process.exit on cleanup
+  * Adding html-webpack-critical-plugin to README (#306)
+
 v1.3.0 / 2018-05-02
 ===================
 
