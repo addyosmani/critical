@@ -15,7 +15,7 @@ $ npm install --save critical
 
 - [grunt-critical](https://github.com/bezoerb/grunt-critical)
 - Gulp users should use Critical directly
-
+- For Webpack use [html-critical-webpack-plugin](https://github.com/anthonygore/html-critical-webpack-plugin)
 
 ## Demo projects
 
