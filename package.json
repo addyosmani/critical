@@ -30,6 +30,7 @@
     "clean-css": "^4.1.9",
     "cli": "^1.0.1",
     "debug": "3.1.0",
+    "exit-hook": "^2.0.0",
     "filter-css": "^0.1.2",
     "fs-extra": "^5.0.0",
     "get-port": "^3.2.0",
