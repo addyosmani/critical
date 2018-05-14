@@ -24,13 +24,13 @@
     "node": ">=6.4.0"
   },
   "dependencies": {
+    "async-exit-hook": "^2.0.1",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.0",
     "cheerio": "^0.22.0",
     "clean-css": "^4.1.9",
     "cli": "^1.0.1",
     "debug": "3.1.0",
-    "exit-hook": "^2.0.0",
     "filter-css": "^0.1.2",
     "fs-extra": "^6.0.1",
     "get-port": "^3.2.0",
