@@ -43,7 +43,7 @@
     "mime-types": "^2.1.17",
     "oust": "^0.4.0",
     "parseurl": "^1.3.2",
-    "penthouse": "^1.4.1",
+    "penthouse": "^1.4.3",
     "plugin-error": "^1.0.1",
     "postcss": "^6.0.17",
     "postcss-image-inliner": "^2.0.0",
