@@ -32,7 +32,7 @@
     "debug": "3.1.0",
     "exit-hook": "^2.0.0",
     "filter-css": "^0.1.2",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^6.0.1",
     "get-port": "^3.2.0",
     "get-stdin": "^6.0.0",
     "got": "^8.3.0",
@@ -40,11 +40,11 @@
     "indent-string": "^3.2.0",
     "inline-critical": "^4.0.0",
     "lodash": "^4.17.5",
-    "meow": "4.0.0",
+    "meow": "^5.0.0",
     "mime-types": "^2.1.17",
     "oust": "^0.4.0",
     "parseurl": "^1.3.2",
-    "penthouse": "^1.4.1",
+    "penthouse": "^1.4.5",
     "plugin-error": "^1.0.1",
     "postcss": "^6.0.17",
     "postcss-image-inliner": "^2.0.0",
@@ -60,7 +60,6 @@
     "async": "^2.6.0",
     "chai": "^4.1.2",
     "co": "^4.6.0",
-    "connect": "^3.6.5",
     "finalhandler": "^1.1.0",
     "json-stable-stringify": "^1.0.1",
     "mocha": "^5.0.0",
@@ -72,9 +71,12 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.20.3"
+    "xo": "^0.21.0"
   },
   "xo": {
-    "space": 4
+    "space": 4,
+    "rules": {
+      "valid-jsdoc": "off"
+    }
   }
 }
