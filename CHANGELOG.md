@@ -233,7 +233,7 @@ v0.6.0 / 2015-07-07
   * minor package.json tweaks
   * Bump devDependencies
   * Correct expectation for adaptive
-  * Updatet tests for new clean-css 3.2.7
+  * Updated tests for new clean-css 3.2.7
   * some cleanup
   * Bump dependencies
   * Update README.md
