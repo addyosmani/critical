@@ -1,4 +1,11 @@
 
+v1.3.3 / 2018-06-06
+===================
+
+  * Bump dependencies
+  * Docs: fix typo (#310)
+  * Reduced vulnerabilities [#308]
+
 v1.3.2 / 2018-05-15
 ==================
 
