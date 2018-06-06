@@ -27,9 +27,7 @@
     "async-exit-hook": "^2.0.1",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.0",
-    "cheerio": "^0.22.0",
     "clean-css": "^4.1.9",
-    "cli": "^1.0.1",
     "debug": "3.1.0",
     "filter-css": "^0.1.2",
     "fs-extra": "^6.0.1",
@@ -43,26 +41,21 @@
     "meow": "^5.0.0",
     "mime-types": "^2.1.17",
     "oust": "^0.4.0",
-    "parseurl": "^1.3.2",
-    "penthouse": "^1.4.5",
+    "penthouse": "1.5.0",
     "plugin-error": "^1.0.1",
     "postcss": "^6.0.17",
     "postcss-image-inliner": "^2.0.0",
     "replace-ext": "^1.0.0",
-    "request": "^2.83.0",
     "slash": "^2.0.0",
     "tempy": "^0.2.1",
     "through2": "^2.0.3",
-    "vinyl": "^2.1.0",
-    "ws": "^5.0.0"
+    "vinyl": "^2.1.0"
   },
   "devDependencies": {
     "async": "^2.6.0",
     "chai": "^4.1.2",
-    "co": "^4.6.0",
     "finalhandler": "^1.1.0",
-    "json-stable-stringify": "^1.0.1",
-    "mocha": "^5.0.0",
+    "mocha": "5.2.0",
     "mockery": "^2.1.0",
     "normalize-newline": "^3.0.0",
     "nsp": "^3.1.0",
@@ -71,7 +64,7 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.21.0"
+    "xo": "0.21.1"
   },
   "xo": {
     "space": 4,
