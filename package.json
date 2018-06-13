@@ -41,7 +41,7 @@
     "meow": "^5.0.0",
     "mime-types": "^2.1.17",
     "oust": "^0.4.0",
-    "penthouse": "1.5.0",
+    "penthouse": "^1.6.0",
     "plugin-error": "^1.0.1",
     "postcss": "^6.0.17",
     "postcss-image-inliner": "^2.0.0",
@@ -52,7 +52,7 @@
     "vinyl": "^2.1.0"
   },
   "devDependencies": {
-    "async": "^2.6.0",
+    "async": "^2.6.1",
     "chai": "^4.1.2",
     "finalhandler": "^1.1.0",
     "mocha": "5.2.0",
