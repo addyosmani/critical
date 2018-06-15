@@ -645,8 +645,14 @@ describe('Module - generate', () => {
 describe('Module - generate (remote)', () => {
     before(() => {
         const serve = serveStatic('fixtures', {index: ['index.html', 'index.htm']});
+        const serveUserAgent = serveStatic('fixtures/useragent', {
+            index: ['index.html', 'index.htm']
+        });
 
         this.server = http.createServer((req, res) => {
+            if (req.headers['user-agent'] === 'custom agent') {
+                return serveUserAgent(req, res, finalhandler(req, res));
+            }
             serve(req, res, finalhandler(req, res));
         });
 
@@ -1049,6 +1055,21 @@ describe('Module - generate (remote)', () => {
             dest: target,
             width: 1300,
             height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should use the provided user agent to get the remote src', done => {
+        const expected = read('expected/generate-default.css');
+        const target = '.critical.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: `http://localhost:${this.port}/generate-default-useragent.html`,
+            include: [/someRule/],
+            dest: target,
+            width: 1300,
+            height: 900,
+            userAgent: 'custom agent'
         }, assertCritical(target, expected, done));
     });
 });
