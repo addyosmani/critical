@@ -231,6 +231,7 @@ critical.generate({
 | include          | `array`            | `[]` | Force include CSS rules. See [`penthouse#usage`](https://github.com/pocketjoso/penthouse#usage-1).
 | ignore           | `array`            | `[]` | Ignore CSS rules. See [`filter-css`](https://github.com/bezoerb/filter-css) for usage examples.
 | ignoreOptions    | `object`           | `{}` | Ignore options. See [`filter-css#options`](https://github.com/bezoerb/filter-css#options).
+| userAgent        | `string`           | `''` | User agent to use when fetching a remote src
 | penthouse        | `object`           | `{}` | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).
 | user             | `string`           | `undefined` | RFC2617 basic authorization: user
 | pass             | `string`           | `undefined` | RFC2617 basic authorization: pass

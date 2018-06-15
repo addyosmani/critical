@@ -29,9 +29,10 @@ Options:
   -h, --height            Viewport height
   -i, --inline            Generate the HTML with inlined critical-path CSS
   -e, --extract           Extract inlined styles from referenced stylesheets
-  -p, --pathPrefix        Path to prepend CSS assets with (defaults to /) 
+  -p, --pathPrefix        Path to prepend CSS assets with (defaults to /)
   -f, --folder            HTML Subfolder (default: '')
   --ii, --inlineImages    Inline images
+  --ua, --userAgent       User agent to use when fetching remote src
   --ignore                RegExp, @type or selector to ignore
   --include               RegExp, @type or selector to include
   --maxFileSize           Sets a max file size (in bytes) for base64 inlined images
@@ -86,6 +87,10 @@ const minimistOpts = {
         },
         pass: {
             type: 'string'
+        },
+        userAgent: {
+            type: 'string',
+            alias: 'ua'
         }
     }
 };
@@ -109,6 +114,9 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
             break;
         case 'inlineimages':
             res.inlineImages = val;
+            break;
+        case 'userAgent':
+            res.userAgent = val;
             break;
         case 'maxfilesize':
             res.maxFileSize = val;
