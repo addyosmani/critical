@@ -47,6 +47,10 @@ function prepareOptions(opts) {
         options.destFolder = path.join(options.base, options.destFolder);
     }
 
+    if (!options.inline && options.extract) {
+        console.error(chalk.red('The extract option requires inline:true'));
+    }
+
     // Set options for inline-critical
     options.inline = Boolean(options.inline) && assign({
         minify: opts.minify || false,
