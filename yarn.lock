@@ -3087,9 +3087,9 @@ pend@~1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
 
-penthouse@^1.6.0:
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/penthouse/-/penthouse-1.6.0.tgz#19704a59fcef18cb8d8142e52cf4503c6bf365a4"
+penthouse@1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/penthouse/-/penthouse-1.6.1.tgz#47873adde87b086b7aed8ff45465443bf6888a23"
   dependencies:
     css-mediaquery "^0.1.2"
     css-tree "1.0.0-alpha.28"

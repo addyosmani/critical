@@ -640,6 +640,36 @@ describe('Module - generate', () => {
             height: 900
         }, assertCritical(target, expected, done));
     });
+
+    it('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', done => {
+        const expected = read('fixtures/issue-314.html');
+        const target = '.issue-314.html';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'issue-314.html',
+            css: ['fixtures/styles/bootstrap.css'],
+            dest: target,
+            inline: true,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
+
+    it('should handle PAGE_UNLOADED_DURING_EXECUTION error', done => {
+        const expected = '';
+        const target = '.issue-314.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'issue-314.html',
+            css: ['fixtures/styles/bootstrap.css'],
+            dest: target,
+            inline: false,
+            width: 1300,
+            height: 900
+        }, assertCritical(target, expected, done));
+    });
 });
 
 describe('Module - generate (remote)', () => {
