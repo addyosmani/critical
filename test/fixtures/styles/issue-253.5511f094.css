@@ -1,0 +1,21 @@
+body,
+html {
+  height: 100%;
+  font-family: PingFang SC, Helvetica Neue, Helvetica, STHeitiSC-Light, Arial, sans-serif;
+  line-height: 1.5;
+  font-size: .37333rem;
+  -webkit-font-smoothing: antialiased;
+}
+
+.Home-page--home__PLzhO {
+  margin-top: 1.06667rem;
+}
+
+.Home-page--home__PLzhO a {
+  display: block;
+  padding: .26667rem 0;
+  text-align: center;
+  font-size: .42667rem;
+  font-weight: 700;
+  color: #66ab93;
+}
