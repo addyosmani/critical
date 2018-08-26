@@ -40,9 +40,12 @@ describe('CLI', () => {
             const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
-                '--base', 'fixtures',
-                '--width', '1300',
-                '--height', '900'
+                '--base',
+                'fixtures',
+                '--width',
+                '1300',
+                '--height',
+                '900'
             ]);
 
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
@@ -159,9 +162,12 @@ describe('CLI', () => {
             const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 `http://localhost:${serverport}`,
-                '--base', 'fixtures',
-                '--width', '1300',
-                '--height', '900'
+                '--base',
+                'fixtures',
+                '--width',
+                '1300',
+                '--height',
+                '900'
             ]);
 
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
@@ -178,11 +184,16 @@ describe('CLI', () => {
             const cp = execFile('node', [
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 `http://localhost:${serverport}`,
-                '--css', `http://localhost:${serverport}/styles/main.css`,
-                '--css', `http://localhost:${serverport}/styles/bootstrap.css`,
-                '--base', 'fixtures',
-                '--width', '1300',
-                '--height', '900'
+                '--css',
+                `http://localhost:${serverport}/styles/main.css`,
+                '--css',
+                `http://localhost:${serverport}/styles/bootstrap.css`,
+                '--base',
+                'fixtures',
+                '--width',
+                '1300',
+                '--height',
+                '900'
             ]);
 
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
@@ -226,11 +237,16 @@ describe('CLI', () => {
                 'node',
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
-                '-c', 'css',
-                '-w', '300',
-                '-h', '400',
-                '-f', 'folder',
-                '-p', 'pathPrefix',
+                '-c',
+                'css',
+                '-w',
+                '300',
+                '-h',
+                '400',
+                '-f',
+                'folder',
+                '-p',
+                'pathPrefix',
                 '-e',
                 '-i'
             ];
@@ -251,19 +267,29 @@ describe('CLI', () => {
                 'node',
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
-                '--css', 'css',
-                '--width', '300',
-                '--height', '400',
-                '--ignore', 'ignore',
-                '--include', '/include/',
-                '--folder', 'folder',
-                '--pathPrefix', 'pathPrefix',
+                '--css',
+                'css',
+                '--width',
+                '300',
+                '--height',
+                '400',
+                '--ignore',
+                'ignore',
+                '--include',
+                '/include/',
+                '--folder',
+                'folder',
+                '--pathPrefix',
+                'pathPrefix',
                 '--inline',
                 '--extract',
                 '--inlineImages',
-                '--maxFileSize', '1024',
-                '--assetPaths', 'assetPath1',
-                '--assetPaths', 'assetPath2'
+                '--maxFileSize',
+                '1024',
+                '--assetPaths',
+                'assetPath1',
+                '--assetPaths',
+                'assetPath2'
             ];
 
             require('../cli'); // eslint-disable-line import/no-unassigned-import
@@ -305,8 +331,10 @@ describe('CLI', () => {
                 path.join(__dirname, '../', this.pkg.bin.critical),
                 'fixtures/generate-default.html',
                 '--penthouse-strict',
-                '--penthouse-timeout', '50000',
-                '--penthouse-renderWaitTime', '300'
+                '--penthouse-timeout',
+                '50000',
+                '--penthouse-renderWaitTime',
+                '300'
             ];
 
             require('../cli'); // eslint-disable-line import/no-unassigned-import
