@@ -33,7 +33,7 @@
     "fs-extra": "^7.0.0",
     "get-port": "^4.0.0",
     "get-stdin": "^6.0.0",
-    "got": "^9.1.0",
+    "got": "^8.3.2",
     "group-args": "^0.1.0",
     "indent-string": "^3.2.0",
     "inline-critical": "^4.0.4",
