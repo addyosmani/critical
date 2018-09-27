@@ -1,8 +1,8 @@
 sudo: false
 language: node_js
 node_js:
+  - '10'
   - '8'
-  - '6'
 
 before_script:
   - 'if [ "$NODE6" = "true" ]; then npm build --cwd node_modules/puppeteer; fi'
@@ -12,3 +12,5 @@ addons:
     packages:
       # This is required to run puppeteer (chrome) on linux/trusty
       - libnss3
+
+after_success: npm run coveralls

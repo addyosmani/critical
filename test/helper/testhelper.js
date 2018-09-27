@@ -39,7 +39,9 @@ function read(file) {
  * @returns {Function}
  */
 function assertCritical(target, expected, done, skipTarget) {
-    return function (err, output) {
+    return function (err, {css, html} = {}) {
+        const output = /\.css$/.test(target) ? css : html;
+
         if (err) {
             console.log(err);
             done(err);

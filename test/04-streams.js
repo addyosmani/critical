@@ -179,26 +179,6 @@ describe('Streams', () => {
         const stream = critical.stream({
             base: path.join(__dirname, 'fixtures'),
             css: ['fixtures/styles/font.css'],
-            inline: false,
-            ignore: [/font-face/]
-        });
-
-        const expected = read('expected/generate-ignorefont.css');
-
-        getVinyl('generate-ignorefont.html')
-            .pipe(stream)
-            .pipe(streamAssert.length(1))
-            .pipe(streamAssert.nth(0, d => {
-                assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
-            }))
-            .pipe(streamAssert.end(done));
-    });
-
-    it('should respect ignore option (inline)', done => {
-        const stream = critical.stream({
-            base: path.join(__dirname, 'fixtures'),
-            css: ['fixtures/styles/font.css'],
             inline: true,
             ignore: ['@font-face']
         });
@@ -255,7 +235,7 @@ describe('Streams', () => {
             .pipe(streamAssert.end(done));
     });
 
-    it('should generate multi-dimension critical-path CSS in stream mode', done => {
+    it.skip('should generate multi-dimension critical-path CSS in stream mode', done => {
         const expected = read('expected/generate-adaptive.css', 'utf8');
 
         const stream = critical.stream({
