@@ -115,7 +115,6 @@ describe('CLI', () => {
             exec(cmd, (error, stdout, stderr) => {
                 assert.isNull(error);
                 assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
-                assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'folder\' option.');
                 done();
             });
         });
@@ -237,10 +236,6 @@ describe('CLI', () => {
                 '300',
                 '-h',
                 '400',
-                '-f',
-                'folder',
-                '-p',
-                'pathPrefix',
                 '-e',
                 '-i'
             ];
@@ -250,8 +245,6 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.width, 300);
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
-            assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
-            assert.strictEqual(this.mockOpts.folder, 'folder');
             assert.strictEqual(this.mockOpts.inline, true);
             assert.strictEqual(this.mockOpts.extract, true);
         });
@@ -271,10 +264,6 @@ describe('CLI', () => {
                 'ignore',
                 '--include',
                 '/include/',
-                '--folder',
-                'folder',
-                '--pathPrefix',
-                'pathPrefix',
                 '--inline',
                 '--extract',
                 '--inlineImages',
@@ -292,8 +281,6 @@ describe('CLI', () => {
             assert.strictEqual(this.mockOpts.height, 400);
             assert.strictEqual(this.mockOpts.css, 'css');
             assert.strictEqual(this.mockOpts.extract, true);
-            assert.strictEqual(this.mockOpts.folder, 'folder');
-            assert.strictEqual(this.mockOpts.pathPrefix, 'pathPrefix');
             assert.isArray(this.mockOpts.ignore);
             assert.include(this.mockOpts.ignore, 'ignore');
             assert.isArray(this.mockOpts.include);
