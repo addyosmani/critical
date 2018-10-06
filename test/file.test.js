@@ -58,6 +58,8 @@ test('Normalize paths', () => {
   const plattform = process.platform;
   Object.defineProperty(process, 'platform', {value: 'win32'});
   expect(normalizePath('foo\\bar')).toBe('foo/bar');
+  expect(normalizePath('C:\\images\\critical.png')).toBe('/images/critical.png');
+  expect(normalizePath('http://localhost:${port}/styles/main.css')).toBe('http://localhost:${port}/styles/main.css');
   Object.defineProperty(process, 'platform', {value: plattform});
 });
 
@@ -105,7 +107,7 @@ test('joinPath', () => {
   expect.assertions(tests.length);
   for (const {base, part, expected} of tests) {
     const result = joinPath(base, part);
-    expect(result).toBe(expected);
+    expect(normalizePath(result)).toBe(expected);
   }
 });
 
@@ -308,7 +310,7 @@ test('Get document', async () => {
   for (const testdata of tests) {
     const {filepath, expected, options} = testdata;
     const file = await getDocument(filepath, options);
-    expect(file.path).toBe(expected);
+    expect(file.virtualPath).toBe(expected);
     if (testdata.noBase) {
        expect(stderr).toHaveBeenCalledWith(BASE_WARNING);
     }
@@ -328,10 +330,10 @@ test('Get document from source with rebase option', async () => {
  // expect.assertions(tests.length + 1);
   for (const testdata of tests) {
     const {filepath, expected} = testdata;
-    const rebase = {to: '/' + path.relative(base, filepath)};
+    const rebase = {to: '/' + normalizePath(path.relative(base, filepath))};
     const source = await fs.readFile(filepath);
     const file = await getDocumentFromSource(source, {rebase, base});
-    expect(file.path).toBe(expected);
+    expect(file.virtualPath).toBe(expected);
   }
 
   expect(stderr).not.toHaveBeenCalled();
@@ -359,7 +361,7 @@ test('Compute base for stylesheets', async () => {
   ], async filepath => {
     const document = await vinylize({filepath});
     document.stylesheets = await getStylesheetHrefs(document);
-    document.path = await getDocumentPath(document);
+    document.virtualPath = await getDocumentPath(document);
     return document;
   });
 
