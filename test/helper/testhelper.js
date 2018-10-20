@@ -52,8 +52,8 @@ function assertCritical(target, expected, done, skipTarget) {
                 assert.strictEqual(nn(dest), nn(expected));
             }
             assert.strictEqual(nn(output), nn(expected));
-        } catch (err) {
-            done(err);
+        } catch (error) {
+            done(error);
             return;
         }
         done();
