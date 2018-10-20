@@ -1,5 +1,5 @@
-/* eslint-env node, mocha */
-'use strict';
+/* eslint-env mocha */
+
 const {assert} = require('chai');
 const critical = require('..');
 
