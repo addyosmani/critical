@@ -2,12 +2,12 @@
 
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
-![](https://i.imgur.com/lAzmBD2.png)
+![Preview](https://i.imgur.com/lAzmBD2.png)
 
 
 ## Install
 
-```
+```sh
 $ npm install --save critical
 ```
 
@@ -215,7 +215,7 @@ critical.generate({
 | folder           | `string`           | | HTML source folder. Required to compute relative asset paths in conjunction with the `html` option  |
 | css              | `array`            | `[]` | An array of paths to css files, or an array of [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
 | src              | `string`           | | Location of the HTML source to be operated against |
-| dest             | `string`           | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |  
+| dest             | `string`           | | Location of where to save the output of an operation (will be relative to base if no absolute path is set) |
 | destFolder       | `string`           | `''` | Subfolder relative to base directory. Only relevant without src (if raw html is provided) or if the destination is outside base |
 | styleTarget      | `string`           | | Target file to store the generated critical-path styles |
 | width            | `integer`          | `900`  | Width of the target viewport |
@@ -239,19 +239,19 @@ critical.generate({
 
 ## CLI
 
-```
+```sh
 $ npm install -g critical
 ```
 
 critical works well with standard input.
 
-```
+```sh
 $ cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
 ```
 
 You can also pass in the critical CSS file as an option.
 
-```
+```sh
 $ critical test/fixture/index.html --base test/fixture > critical.css
 ```
 
