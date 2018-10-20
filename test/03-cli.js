@@ -15,6 +15,8 @@ const serveStatic = require('serve-static');
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
+const CAT = process.platform === 'win32' ? 'type' : 'cat';
+
 describe('CLI', () => {
     beforeEach(function (done) {
         readJson('../package.json', (err, data) => {
@@ -60,15 +62,7 @@ describe('CLI', () => {
         });
 
         it('should work well with the critical CSS file piped to critical', function (done) {
-            let cmd;
-
-            if (process.platform === 'win32') {
-                cmd = 'type';
-            } else {
-                cmd = 'cat';
-            }
-
-            cmd += ' ' + path.normalize('fixtures/generate-default.html') + ' | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            const cmd = `${CAT} ${path.normalize('fixtures/generate-default.html')} | node ${path.join(__dirname, '../', this.pkg.bin.critical)} --base fixtures --width 1300 --height 900`;
 
             const cp = exec(cmd);
 
@@ -84,7 +78,7 @@ describe('CLI', () => {
         });
 
         it('should work well with the html file inside a folder piped to critical', function (done) {
-            const cmd = 'cat fixtures/folder/generate-default.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            const cmd = `${CAT} ${path.normalize('fixtures/folder/generate-default.html')} | node ${path.join(__dirname, '../', this.pkg.bin.critical)} --base fixtures --width 1300 --height 900`;
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
 
             exec(cmd, (error, stdout) => {
@@ -95,7 +89,7 @@ describe('CLI', () => {
         });
 
         it('should inline the images with the html file inside a folder piped to critical', function (done) {
-            const cmd = 'cat fixtures/generate-image.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' -c fixtures/styles/image-relative.css --inlineImages --base fixtures --width 1300 --height 900';
+            const cmd = `${CAT} ${path.normalize('fixtures/generate-image.html')} | node ${path.join(__dirname, '../', this.pkg.bin.critical)} -c fixtures/styles/image-relative.css --inlineImages --base fixtures --width 1300 --height 900`;
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image.css'), 'utf8');
 
             exec(cmd, (error, stdout) => {
@@ -106,7 +100,7 @@ describe('CLI', () => {
         });
 
         it('should add the correct image path to critical css', function (done) {
-            const cmd = 'cat fixtures/folder/generate-image.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' -c fixtures/styles/image-relative.css --base fixtures --width 1300 --height 900';
+            const cmd = `${CAT} ${path.normalize('fixtures/folder/generate-image.html')} | node ${path.join(__dirname, '../', this.pkg.bin.critical)} -c fixtures/styles/image-relative.css --base fixtures --width 1300 --height 900`;
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-relative.css'), 'utf8');
 
             exec(cmd, (error, stdout) => {
@@ -117,7 +111,7 @@ describe('CLI', () => {
         });
 
         it('should show warning on piped file without relative links and use "/"', function (done) {
-            const cmd = 'cat fixtures/folder/subfolder/generate-image-absolute.html | node ' + path.join(__dirname, '../', this.pkg.bin.critical) + ' --base fixtures --width 1300 --height 900';
+            const cmd = `${CAT} ${path.normalize('fixtures/folder/subfolder/generate-image-absolute.html')} | node ${path.join(__dirname, '../', this.pkg.bin.critical)} --base fixtures --width 1300 --height 900`;
             const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
 
             exec(cmd, (error, stdout, stderr) => {
