@@ -6,7 +6,9 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
-    "test": "xo && mocha test/*.js --timeout 100000"
+    "mocha": "mocha test/*.js --timeout 100000",
+    "test": "npm run xo && npm run mocha",
+    "xo": "xo"
   },
   "files": [
     "cli.js",
