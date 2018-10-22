@@ -11,7 +11,7 @@ const nn = require('normalize-newline');
 const {generate} = require('../index');
 const {read, readAndRemove} = require('./helper');
 
-jest.setTimeout(20000);
+jest.setTimeout(50000);
 
 process.chdir(path.resolve(__dirname));
 
