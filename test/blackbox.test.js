@@ -11,7 +11,7 @@ const nn = require('normalize-newline');
 const {generate} = require('../index');
 const {read, readAndRemove} = require('./helper');
 
-jest.setTimeout(50000);
+jest.setTimeout(60000);
 
 process.chdir(path.resolve(__dirname));
 
@@ -754,6 +754,7 @@ describe('generate (remote)', () => {
       base:  path.join(__dirname, '/fixtures/'),
       src: `http://localhost:${port}/generate-adaptive.html`,
       target: target,
+      timeout: 10000,
       dimensions: [{
         width: 100,
         height: 70
