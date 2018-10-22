@@ -60,7 +60,6 @@
     "mocha": "5.2.0",
     "mockery": "^2.1.0",
     "normalize-newline": "^3.0.0",
-    "nsp": "^3.2.1",
     "read-package-json": "^2.0.13",
     "serve-static": "^1.13.2",
     "stream-array": "^1.1.2",
