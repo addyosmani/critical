@@ -754,7 +754,9 @@ describe('generate (remote)', () => {
       base:  path.join(__dirname, '/fixtures/'),
       src: `http://localhost:${port}/generate-adaptive.html`,
       target: target,
-      timeout: 10000,
+      penthouse: {
+        timeout: 10000
+      },
       dimensions: [{
         width: 100,
         height: 70
