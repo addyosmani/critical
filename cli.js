@@ -182,8 +182,8 @@ function run(data) {
                 process.stdout.write(val, process.exit);
             }
         });
-    } catch (err) {
-        error(err);
+    } catch (error) {
+        error(error);
     }
 }
 
