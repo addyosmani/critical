@@ -1,5 +1,5 @@
-/* eslint-env node, mocha */
-'use strict';
+/* eslint-env mocha */
+
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -212,10 +212,10 @@ describe('CLI', () => {
             });
 
             mockery.registerMock('.', {
-                generate: function (opts) {
+                generate: opts => {
                     this.mockOpts = opts;
                     this.method = 'generate';
-                }.bind(this)
+                }
             });
         });
 
