@@ -147,7 +147,7 @@ cli.flags = reduce(
   {}
 );
 
-function error(err) {
+function showError(err) {
   process.stderr.write(indentString(chalk.red('Error: ') + err.message || err, 3));
   process.stderr.write(os.EOL);
   process.stderr.write(indentString(help, 3));
@@ -165,15 +165,15 @@ function run(data) {
   }
 
   try {
-    critical.generate(opts, (err, val) => {
-      if (err) {
-        error(err);
+    critical.generate(opts, (error, val) => {
+      if (error) {
+        showError(error);
       } else {
         process.stdout.write(val.css, process.exit);
       }
     });
-  } catch (err) {
-    error(err);
+  } catch (error) {
+    showError(error);
   }
 }
 

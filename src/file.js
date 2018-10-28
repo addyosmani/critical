@@ -134,7 +134,7 @@ async function resolve(href, search = [], options = {}) {
  * @param {string} base Critical base option
  * @returns {Promise<[string]>} Found files
  */
-async function glob(pattern, {base} = {}) {
+function glob(pattern, {base} = {}) {
   // Evaluate globs based on base path
   const patterns = Array.isArray(pattern) ? pattern : [pattern];
   // Prepend base if it's not empty & not remote
@@ -400,7 +400,7 @@ function getRemoteStylesheetPath(fileObj, documentObj, filename) {
  * @param {object} options Critical options object
  * @returns {Promise<string>} Computed path
  */
-async function getStylesheetPath(document, file, options = {}) {
+function getStylesheetPath(document, file, options = {}) {
   let {base} = options;
 
   // Check remote
@@ -509,7 +509,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   ];
 
   // Filter non existant paths
-  const filtered = await filterAsync(paths, async f => {
+  const filtered = await filterAsync(paths, f => {
     if (!f) {
       return false;
     }
@@ -678,9 +678,9 @@ async function getCss(document, options = {}) {
 
   if (css) {
     const files = await glob(css, options);
-    stylesheets = await mapAsync(files, async file => getStylesheet(document, file, options));
+    stylesheets = await mapAsync(files, file => getStylesheet(document, file, options));
   } else {
-    stylesheets = await mapAsync(document.stylesheets, async file => getStylesheet(document, file, options));
+    stylesheets = await mapAsync(document.stylesheets, file => getStylesheet(document, file, options));
   }
 
   return stylesheets
