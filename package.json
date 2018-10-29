@@ -46,7 +46,7 @@
     "meow": "^5.0.0",
     "oust": "^0.4.0",
     "p-all": "^1.0.0",
-    "penthouse": "^1.10.0",
+    "penthouse": "^1.10.1-rc",
     "plugin-error": "^1.0.1",
     "postcss": "^7.0.5",
     "postcss-discard": "^0.1.1",

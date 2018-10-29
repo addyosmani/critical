@@ -1,7 +1,6 @@
 const {EOL} = require('os');
 const path = require('path');
 const chalk = require('chalk');
-const delay = require('delay');
 const CleanCSS = require('clean-css');
 const invokeMap = require('lodash/invokeMap');
 const pAll = require('p-all');
@@ -67,12 +66,7 @@ function callPenthouse(document, options) {
 
   return sizes.map(({width, height}) => {
     debug('Call penthouse with:', {...config, width, height});
-    return async () => {
-      // Resolves some weird bug in penthouse when multiple dimensions.
-      // Needs further investigation
-      await delay(10);
-      return penthouse({...config, width, height});
-    };
+    return () => penthouse({...config, width, height});
   });
 }
 

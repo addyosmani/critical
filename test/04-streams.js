@@ -235,7 +235,7 @@ describe('Streams', () => {
             .pipe(streamAssert.end(done));
     });
 
-    it.skip('should generate multi-dimension critical-path CSS in stream mode', done => {
+    it('should generate multi-dimension critical-path CSS in stream mode', done => {
         const expected = read('expected/generate-adaptive.css', 'utf8');
 
         const stream = critical.stream({
