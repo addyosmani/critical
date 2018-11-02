@@ -4903,10 +4903,10 @@ pend@~1.2.0:
   resolved "https://registry.yarnpkg.com/pend/-/pend-1.2.0.tgz#7a57eb550a6783f9115331fcf4663d5c8e007a50"
   integrity sha1-elfrVQpng/kRUzH89GY9XI4AelA=
 
-penthouse@^1.10.0:
-  version "1.10.0"
-  resolved "https://registry.yarnpkg.com/penthouse/-/penthouse-1.10.0.tgz#d9a47eeaa6a057830e2e542ec6c7d7862a2f5b1e"
-  integrity sha512-Co3EuW4+s9R4WEwoSdIBsBc00W8sOQ4zAG9R6DqLJXF1LThcddGS+LrFdAy1PrqZ+7qrnAjpXQjrnbRBIwr/xA==
+penthouse@^1.10.1:
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/penthouse/-/penthouse-1.10.1.tgz#f382b248124300ff71b994d942c55f0fa44b7472"
+  integrity sha512-D0fUazt6EvtoJvbKJ4u6yVIwfrWoSW1+2clr5JZaKag5pzgwLJKYcN8NgmAoBmWOwsMk+3ZAkV5Cv09LzQtqAw==
   dependencies:
     css-mediaquery "^0.1.2"
     css-tree "1.0.0-alpha.28"
@@ -5274,6 +5274,14 @@ read-pkg-up@^3.0.0:
   integrity sha1-PtSWaF26D4/hGNBpHcUfSh/5bwc=
   dependencies:
     find-up "^2.0.0"
+    read-pkg "^3.0.0"
+
+read-pkg-up@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/read-pkg-up/-/read-pkg-up-4.0.0.tgz#1b221c6088ba7799601c808f91161c66e58f8978"
+  integrity sha512-6etQSH7nJGsK0RbG/2TeDzZFa8shjQ1um+SwQQ5cwKy0dhSXdOncEhb1CPpvQG4h7FyOV6EB6YlV0yJvZQNAkA==
+  dependencies:
+    find-up "^3.0.0"
     read-pkg "^3.0.0"
 
 read-pkg@^1.0.0:

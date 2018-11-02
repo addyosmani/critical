@@ -717,7 +717,7 @@ describe('generate (local)', () => {
     }, assertCritical(target, expected, done));
   });
 
-  test('should handle PAGE_UNLOADED_DURING_EXECUTION error', done => {
+  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error', done => {
     const expected = '';
     const target = path.join(__dirname, '.issue-314.css');
 

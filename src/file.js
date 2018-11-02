@@ -544,6 +544,8 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
     filtered
   );
 
+  debug('Search file in:,', [...new Set(all)]);
+
   // Return uniquq result
   return [...new Set(all)];
 }
@@ -626,7 +628,7 @@ async function getStylesheet(document, filepath, options = {}) {
 
   // Get stylesheet path. Keeps stylesheet url if it differs from document url
   const stylepath = await getStylesheetPath(document, file, options);
-
+  debug('Virtual Stylesheet Path:', stylepath);
   // We can safely rebase assets if we have:
   // - an url to the stylesheet
   // - if rebase.from and rebase.to is specified
@@ -735,6 +737,7 @@ async function getDocumentFromSource(html, options = {}) {
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
 
+  debug('Virtual Document Path:', document.virtualPath);
   document.css = await getCss(document, options);
 
   // Store document as we need a file or url for penthouse

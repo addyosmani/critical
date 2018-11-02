@@ -97,9 +97,9 @@ describe('CLI', () => {
             });
         });
 
-        it('should add the correct image path to critical css', function (done) {
+        it('should add an absolute image path to critical css if we can\'t determine document location', function (done) {
             const cmd = `${CAT} ${path.normalize('fixtures/folder/generate-image.html')} | node ${path.join(__dirname, '../', this.pkg.bin.critical)} -c fixtures/styles/image-relative.css --base fixtures --width 1300 --height 900`;
-            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-relative.css'), 'utf8');
+            const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-image-absolute.css'), 'utf8');
 
             exec(cmd, (error, stdout) => {
                 assert.isNull(error);
