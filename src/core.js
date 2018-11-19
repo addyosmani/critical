@@ -15,7 +15,7 @@ const inlineCritical = require('inline-critical');
 const parseCssUrls = require('css-url-parser');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
-const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote} = require('./file');
+const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, removeTempFiles} = require('./file');
 
 /**
  * Returns a string of combined and deduped css rules.
@@ -64,9 +64,11 @@ function callPenthouse(document, options) {
     config.customPageHeaders = {...customPageHeaders, Authorization: 'Basic ' + token(user, pass)};
   }
 
-  return sizes.map(({width, height}) => {
+  return sizes.map(({width, height}) => () => {
+    const result = penthouse({...config, width, height});
     debug('Call penthouse with:', {...config, width, height});
-    return () => penthouse({...config, width, height});
+
+    return result;
   });
 }
 
@@ -174,6 +176,9 @@ async function create(options = {}) {
     const inlined = inlineCritical(document.contents.toString(), criticalCSS, inline);
     document.contents = Buffer.from(inlined);
   }
+
+  // Clean tempfiles
+  await removeTempFiles();
 
   // Cleanup output
   return {

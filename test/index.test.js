@@ -195,7 +195,7 @@ test('#192 - include option - stream', done => {
       .pipe(streamAssert.end(done));
 });
 
-test.skip('should generate multi-dimension critical-path CSS in stream mode', done => {
+test('should generate multi-dimension critical-path CSS in stream mode', done => {
   const expected = read('expected/generate-adaptive.css', 'utf8');
 
   const critical = stream({

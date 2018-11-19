@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const debug = require('debug')('critical:config');
 const {ConfigError} = require('./errors');
 
 const DEFAULT = {
@@ -111,6 +112,8 @@ function getOptions(options = {}) {
       decl: ignore,
     };
   }
+
+  debug(value);
 
   return value;
 }

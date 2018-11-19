@@ -15,12 +15,14 @@ const parseCssUrls = require('css-url-parser');
 const tempy = require('tempy');
 const slash = require('slash');
 const debug = require('debug')('critical:file');
-const {mapAsync, filterAsync, reduceAsync} = require('./array');
+const {mapAsync, filterAsync, reduceAsync, forEachAsync} = require('./array');
 const {FileNotFoundError} = require('./errors');
 
 const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
 
 const warn = text => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
+
+const tempfiles = [];
 
 /**
  * Fixup slashes in file paths for windows and remove volume definition in front
@@ -544,7 +546,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
     filtered
   );
 
-  debug('Search file in:,', [...new Set(all)]);
+  debug(`(getAssetPaths) Search file "${file}" in:`, [...new Set(all)]);
 
   // Return uniquq result
   return [...new Set(all)];
@@ -628,7 +630,7 @@ async function getStylesheet(document, filepath, options = {}) {
 
   // Get stylesheet path. Keeps stylesheet url if it differs from document url
   const stylepath = await getStylesheetPath(document, file, options);
-  debug('Virtual Stylesheet Path:', stylepath);
+  debug('(getStylesheet) Virtual Stylesheet Path:', stylepath);
   // We can safely rebase assets if we have:
   // - an url to the stylesheet
   // - if rebase.from and rebase.to is specified
@@ -665,6 +667,8 @@ async function getStylesheet(document, filepath, options = {}) {
     warn(`Not rebasing assets for ${originalPath}. Use "rebase" option`);
   }
 
+  debug('(getStylesheet) Result:', file);
+
   return file;
 }
 
@@ -681,14 +685,49 @@ async function getCss(document, options = {}) {
   if (css) {
     const files = await glob(css, options);
     stylesheets = await mapAsync(files, file => getStylesheet(document, file, options));
+    debug('(getCss) css option set', files, stylesheets);
   } else {
     stylesheets = await mapAsync(document.stylesheets, file => getStylesheet(document, file, options));
+    debug('(getCss) extract from document', document.stylesheets, stylesheets);
   }
 
   return stylesheets
     .filter(stylesheet => !stylesheet.isNull())
     .map(stylesheet => stylesheet.contents.toString())
     .join(os.EOL);
+}
+
+/**
+ * We need to make sure the html file is available alongside the relative css files
+ * as they are required by penthouse/puppeteer to render the html correctly
+ * @see https://github.com/pocketjoso/penthouse/issues/280
+ *
+ * @param {Vinyl} document Vinyl representation of HTML document
+ * @returns {Promise<string>} File url to html file for use in penthouse
+ */
+async function preparePenthouseData(document) {
+  const dir = tempy.directory();
+  const file = path.join(dir, 'temp-index.html');
+  const [stylesheet, ...canBeEmpty] = document.stylesheets;
+
+  // Write html to temp file
+  await fs.outputFile(file, document.contents);
+  tempfiles.push(file);
+
+  // Write styles to first stylesheet
+  if (stylesheet) {
+    const filename = path.join(dir, stylesheet);
+    tempfiles.push(filename);
+    await fs.outputFile(filename, document.css);
+  }
+  // Write empty string to rest of the linked stylesheets
+  await forEachAsync(canBeEmpty, dummy => {
+    const filename = path.join(dir, dummy);
+    tempfiles.push(file);
+    fs.outputFile(filename, '');
+  });
+
+  return `file://${file}`;
 }
 
 /**
@@ -710,17 +749,26 @@ async function getDocument(filepath, options = {}) {
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
   document.css = await getCss(document, options);
 
-  if (!document.remote && fs.existsSync(filepath)) {
-    document.url = `file://${path.resolve(filepath)}`;
+  document.url = await preparePenthouseData(document);
 
-    // Store document as we need a file or url for penthouse
-  } else if (!document.remote) {
-    const file = tempy.file({extension: 'html'});
-    await fs.writeFile(file, document.contents);
+  // If (!document.remote && fs.existsSync(filepath)) {
+  //   document.url = `file://${path.resolve(filepath)}`;
+  //
+  //   // Store document as we need a file or url for penthouse
+  // } else if (!document.remote) {
+  //   const file = tempy.file({extension: 'html'});
+  //   await fs.writeFile(file, document.contents);
+  //
+  //   document.url = `file://${file}`;
+  // }
 
-    document.url = `file://${file}`;
-  }
-
+  debug('(getDocument) Result: ', {
+    path: document.path,
+    url: document.url,
+    remote: Boolean(document.remote),
+    virtualPath: document.virtualPath,
+    stylesheets: document.stylesheets,
+  });
   return document;
 }
 
@@ -737,18 +785,39 @@ async function getDocumentFromSource(html, options = {}) {
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
 
-  debug('Virtual Document Path:', document.virtualPath);
   document.css = await getCss(document, options);
 
+  document.url = await preparePenthouseData(document);
+
   // Store document as we need a file or url for penthouse
-  if (!document.url) {
-    const file = tempy.file({extension: 'html'});
-    await fs.writeFile(file, document.contents);
-
-    document.url = `file://${file}`;
-  }
-
+  // if (!document.url) {
+  //   const file = tempy.file({extension: 'html'});
+  //   await fs.writeFile(file, document.contents);
+  //
+  //   document.url = `file://${file}`;
+  // }
+  debug('(getDocumentFromSource) Result: ', {
+    path: document.path,
+    url: document.url,
+    remote: Boolean(document.remote),
+    virtualPath: document.virtualPath,
+    stylesheets: document.stylesheets,
+  });
   return document;
+}
+
+/**
+ * Remove temporary files
+ * @returns {Promise<void>|*} Promise resolves when all files removed
+ */
+function removeTempFiles() {
+  return forEachAsync(tempfiles, file => {
+    try {
+      fs.remove(file);
+    } catch (error) {
+      debug(`${file} was already deleted`);
+    }
+  });
 }
 
 module.exports = {
@@ -760,6 +829,7 @@ module.exports = {
   resolve,
   joinPath,
   vinylize,
+  removeTempFiles,
   getStylesheetHrefs,
   getAssets,
   getAssetPaths,

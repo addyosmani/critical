@@ -21,7 +21,6 @@ async function generate(params, cb) {
   try {
     const options = getOptions(params);
     const {target = {}} = options;
-
     const {css, html} = await create(options);
 
     // Store generated css
