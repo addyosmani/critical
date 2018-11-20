@@ -708,14 +708,15 @@ async function getCss(document, options = {}) {
 async function preparePenthouseData(document) {
   const [stylesheet, ...canBeEmpty] = document.stylesheets;
 
-  // make sure we go as deep inside the temp folder as required by relative stylesheet hrefs
-  const subfolders = [stylesheet, ...canBeEmpty].reduce((res, href) => {
-    const match = /^(\.\.\/)+/.exec(href);
-    return match && match[0].length > res.length ? match[0] : res;
-  }, './').replace(/\.\.\//g,'sub/');
+  // Make sure we go as deep inside the temp folder as required by relative stylesheet hrefs
+  const subfolders = [stylesheet, ...canBeEmpty]
+    .reduce((res, href) => {
+      const match = /^(\.\.\/)+/.exec(href);
+      return match && match[0].length > res.length ? match[0] : res;
+    }, './')
+    .replace(/\.\.\//g, 'sub/');
   const dir = path.join(tempy.directory(), subfolders);
   const file = path.join(dir, 'temp-index.html');
-
 
   // Write html to temp file
   await fs.outputFile(file, document.contents);
