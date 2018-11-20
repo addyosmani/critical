@@ -707,7 +707,9 @@ async function getCss(document, options = {}) {
  */
 async function preparePenthouseData(document) {
   const stylesheets = document.stylesheets || [];
-  const [stylesheet, ...canBeEmpty] = stylesheets.filter(sheet => isRelative(sheet));
+  const [stylesheet, ...canBeEmpty] = stylesheets
+    .filter(file => isRelative(file))
+    .map(file => file.replace(/\?.*$/, ''));
 
   // Make sure we go as deep inside the temp folder as required by relative stylesheet hrefs
   const subfolders = [stylesheet, ...canBeEmpty]
