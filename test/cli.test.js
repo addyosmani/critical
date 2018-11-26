@@ -17,7 +17,23 @@ const getBin = async () => {
 
 const run = async (args = []) => {
   const bin = await getBin();
-  return execa('node', [bin, ...args])
+  return execa('node', [bin, ...args]);
+};
+
+const getArgs = async (params = []) => {
+  const bin = await getBin();
+  const origArgv = process.argv;
+  const critical = require('../index');
+
+  critical.generate = jest.fn();
+  process.argv = ['node', bin, ...params];
+
+  require('../cli'); // eslint-disable-line import/no-unassigned-import
+  process.argv = origArgv;
+  const [args] = critical.generate.mock.calls;
+  const [opts] = args || [{}];
+  expect(critical.generate).toHaveBeenCalledTimes(1);
+  return opts || {};
 };
 
 const pipe = async (filename, args = []) => {
@@ -27,12 +43,8 @@ const pipe = async (filename, args = []) => {
   return execa.shell(cmd);
 };
 
-
-
 describe('CLI', () => {
-
   describe('acceptance', () => {
-
     test('Return version', async () => {
       const {pkg} = await readPkgUp();
       const {stdout, stderr, code} = await run(['--version', '--no-update-notifier']);
@@ -43,7 +55,15 @@ describe('CLI', () => {
     });
 
     test('Take html file passed via parameter', async () => {
-      const {stdout, code} = await run(['fixtures/generate-default.html', '--base', 'fixtures', '--width', '1300', '--height', '900']);
+      const {stdout, code} = await run([
+        'fixtures/generate-default.html',
+        '--base',
+        'fixtures',
+        '--width',
+        '1300',
+        '--height',
+        '900',
+      ]);
       const expected = await read('expected/generate-default.css');
 
       expect(code).toBe(0);
@@ -75,7 +95,17 @@ describe('CLI', () => {
     test('Inline images to piped html file', async () => {
       const {stdout, code} = await pipe(
         path.normalize('fixtures/generate-image.html'),
-        ['-c', 'fixtures/styles/image-relative.css', '--inlineImages', '--base', 'fixtures', '--width', '1300', '--height', '900']
+        [
+          '-c',
+          'fixtures/styles/image-relative.css',
+          '--inlineImages',
+          '--base',
+          'fixtures',
+          '--width',
+          '1300',
+          '--height',
+          '900',
+        ]
       );
       const expected = await read('expected/generate-image.css');
 
@@ -83,7 +113,7 @@ describe('CLI', () => {
       expect(nn(stdout)).toBe(expected);
     });
 
-    test('Add an absolute image path to critical css if we can\'t determine document location', async () => {
+    test("Add an absolute image path to critical css if we can't determine document location", async () => {
       const {stdout, code} = await pipe(
         path.normalize('fixtures/folder/generate-image.html'),
         ['-c', 'fixtures/styles/image-relative.css', '--base', 'fixtures', '--width', '1300', '--height', '900']
@@ -110,201 +140,86 @@ describe('CLI', () => {
     });
   });
 
-  // describe('acceptance (remote)', () => {
-    //   let serverport;
-    //
-    //   beforeEach(() => {
-    //     const serve = serveStatic('fixtures', {index: ['generate-default.html']});
-    //
-    //     this.server = http.createServer((req, res) => {
-    //       const done = finalhandler(req, res);
-    //       serve(req, res, done);
-    //     });
-    //
-    //     return getPort().then(port => {
-    //       this.server.listen(port);
-    //       serverport = port;
-    //     });
-    //   });
-    //
-    //   afterEach(() => {
-    //     this.server.close();
-    //     process.emit('cleanup');
-    //   });
-    //
-    //   it('should generate critical path css from external resource', function (done) {
-    //     const cp = execFile('node', [
-    //       path.join(__dirname, '../', this.pkg.bin.critical),
-    //       `http://localhost:${serverport}`,
-    //       '--base',
-    //       'fixtures',
-    //       '--width',
-    //       '1300',
-    //       '--height',
-    //       '900'
-    //     ]);
-    //
-    //     const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-    //     cp.stdout.on('data', data => {
-    //       if (data instanceof Buffer) {
-    //         data = data.toString('utf8');
-    //       }
-    //       assert.strictEqual(nn(data), nn(expected));
-    //       done();
-    //     });
-    //   });
-    //
-    //   it('should generate critical path css with external stylesheets passed as option', function (done) {
-    //     const cp = execFile('node', [
-    //       path.join(__dirname, '../', this.pkg.bin.critical),
-    //       `http://localhost:${serverport}`,
-    //       '--css',
-    //       `http://localhost:${serverport}/styles/main.css`,
-    //       '--css',
-    //       `http://localhost:${serverport}/styles/bootstrap.css`,
-    //       '--base',
-    //       'fixtures',
-    //       '--width',
-    //       '1300',
-    //       '--height',
-    //       '900'
-    //     ]);
-    //
-    //     const expected = fs.readFileSync(path.join(__dirname, 'expected/generate-default.css'), 'utf8');
-    //     cp.stdout.on('data', data => {
-    //       if (data instanceof Buffer) {
-    //         data = data.toString('utf8');
-    //       }
-    //       assert.strictEqual(nn(data), nn(expected));
-    //       done();
-    //     });
-    //   });
-    // });
-    //
-    // describe('mocked', () => {
-    //   beforeEach(function () {
-    //     this.origArgv = process.argv;
-    //     this.origExit = process.exit;
-    //
-    //     mockery.enable({
-    //       warnOnUnregistered: false,
-    //       useCleanCache: true
-    //     });
-    //
-    //     mockery.registerMock('.', {
-    //       generate: opts => {
-    //         this.mockOpts = opts;
-    //         this.method = 'generate';
-    //       }
-    //     });
-    //   });
-    //
-    //   afterEach(function () {
-    //     mockery.deregisterAll();
-    //     mockery.disable();
-    //     process.argv = this.origArgv;
-    //     process.exit = this.origExit;
-    //   });
-    //
-    //   it('should pass the correct opts when using short opts', function () {
-    //     process.argv = [
-    //       'node',
-    //       path.join(__dirname, '../', this.pkg.bin.critical),
-    //       'fixtures/generate-default.html',
-    //       '-c',
-    //       'css',
-    //       '-w',
-    //       '300',
-    //       '-h',
-    //       '400',
-    //       '-e',
-    //       '-i'
-    //     ];
-    //
-    //     require('../cli'); // eslint-disable-line import/no-unassigned-import
-    //
-    //     assert.strictEqual(this.mockOpts.width, 300);
-    //     assert.strictEqual(this.mockOpts.height, 400);
-    //     assert.strictEqual(this.mockOpts.css, 'css');
-    //     assert.strictEqual(this.mockOpts.inline, true);
-    //     assert.strictEqual(this.mockOpts.extract, true);
-    //   });
-    //
-    //   it('should pass the correct opts when using long opts', function () {
-    //     process.argv = [
-    //       'node',
-    //       path.join(__dirname, '../', this.pkg.bin.critical),
-    //       'fixtures/generate-default.html',
-    //       '--css',
-    //       'css',
-    //       '--width',
-    //       '300',
-    //       '--height',
-    //       '400',
-    //       '--ignore',
-    //       'ignore',
-    //       '--include',
-    //       '/include/',
-    //       '--inline',
-    //       '--extract',
-    //       '--inlineImages',
-    //       '--maxFileSize',
-    //       '1024',
-    //       '--assetPaths',
-    //       'assetPath1',
-    //       '--assetPaths',
-    //       'assetPath2'
-    //     ];
-    //
-    //     require('../cli'); // eslint-disable-line import/no-unassigned-import
-    //
-    //     assert.strictEqual(this.mockOpts.width, 300);
-    //     assert.strictEqual(this.mockOpts.height, 400);
-    //     assert.strictEqual(this.mockOpts.css, 'css');
-    //     assert.strictEqual(this.mockOpts.extract, true);
-    //     assert.isArray(this.mockOpts.ignore);
-    //     assert.include(this.mockOpts.ignore, 'ignore');
-    //     assert.isArray(this.mockOpts.include);
-    //     assert.instanceOf(this.mockOpts.include[0], RegExp);
-    //     assert.strictEqual(Boolean(this.mockOpts.inline), true);
-    //     assert.strictEqual(this.mockOpts.inlineImages, true);
-    //     assert.isArray(this.mockOpts.assetPaths);
-    //     assert.include(this.mockOpts.assetPaths, 'assetPath1');
-    //     assert.include(this.mockOpts.assetPaths, 'assetPath2');
-    //     assert.strictEqual(this.mockOpts.maxFileSize, 1024);
-    //   });
-    //
-    //   it('should set inline to false when prefixed with --no', function () {
-    //     process.argv = [
-    //       'node',
-    //       path.join(__dirname, '../', this.pkg.bin.critical),
-    //       'fixtures/generate-default.html',
-    //       '--no-inline'
-    //     ];
-    //
-    //     require('../cli'); // eslint-disable-line import/no-unassigned-import
-    //
-    //     assert.strictEqual(this.mockOpts.inline, false);
-    //   });
-    //
-    //   it('should set penthouse options prefixed with --penthouse-', function () {
-    //     process.argv = [
-    //       'node',
-    //       path.join(__dirname, '../', this.pkg.bin.critical),
-    //       'fixtures/generate-default.html',
-    //       '--penthouse-strict',
-    //       '--penthouse-timeout',
-    //       '50000',
-    //       '--penthouse-renderWaitTime',
-    //       '300'
-    //     ];
-    //
-    //     require('../cli'); // eslint-disable-line import/no-unassigned-import
-    //
-    //     assert.strictEqual(this.mockOpts.penthouse.strict, true);
-    //     assert.strictEqual(this.mockOpts.penthouse.timeout, 50000);
-    //     assert.strictEqual(this.mockOpts.penthouse.renderWaitTime, 300);
-    //   });
-    // });
-  // });
+  let exit;
+  describe('mocked', () => {
+    beforeEach(function() {
+      jest.resetModules();
+      exit = process.exit;
+    });
+
+    afterEach(function() {
+      process.exit = exit;
+    });
+
+    test('pass the correct opts when using short opts', async () => {
+      const args = await getArgs(['fixtures/generate-default.html', '-c', 'css', '-w', '300', '-h', '400', '-e', '-i']);
+
+      expect(args).toMatchObject({
+        width: 300,
+        height: 400,
+        css: 'css',
+        inline: true,
+        extract: true,
+      });
+    });
+
+    test('pass the correct opts when using long opts', async () => {
+      const args = await getArgs([
+        'fixtures/generate-default.html',
+        '--css',
+        'css',
+        '--width',
+        '300',
+        '--height',
+        '400',
+        '--ignore',
+        'ignore',
+        '--include',
+        '/include/',
+        '--inline',
+        '--extract',
+        '--inlineImages',
+        '1024',
+        '--assetPaths',
+        'assetPath1',
+        '--assetPaths',
+        'assetPath2',
+      ]);
+
+      expect(args).toMatchObject({
+        width: 300,
+        height: 400,
+        css: 'css',
+        inline: true,
+        extract: true,
+      });
+    });
+
+    test('Set inline to false when prefixed with --no', async () => {
+      const args = await getArgs(['fixtures/generate-default.html', '--no-inline']);
+
+      expect(args).toMatchObject({
+        inline: false,
+      });
+    });
+
+    test('Set penthouse options prefixed with --penthouse-', async () => {
+      const args = await getArgs([
+        'fixtures/generate-default.html',
+        '--penthouse-strict',
+        '--penthouse-timeout',
+        '50000',
+        '--penthouse-renderWaitTime',
+        '300',
+      ]);
+
+      expect(args).toMatchObject({
+        penthouse: {
+          strict: true,
+          timeout: 50000,
+          renderWaitTime: 300,
+        },
+      });
+    });
+  });
 });

@@ -26,7 +26,7 @@ const schema = Joi.object()
     extract: Joi.boolean().default(DEFAULT.extract),
     inlineImages: Joi.boolean().default(DEFAULT.inlineImages),
     postcss: Joi.array(),
-    ignore: Joi.array(),
+    ignore: [Joi.array(), Joi.object().unknown(true)],
     width: Joi.number().default(DEFAULT.width),
     height: Joi.number().default(DEFAULT.height),
     minify: Joi.boolean().default(DEFAULT.minify),
