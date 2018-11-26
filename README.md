@@ -7,9 +7,20 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ## Install
 
+#### Install upcomming version 
 ```sh
-$ npm install --save critical
+$ npm i -D critical@next
 ```
+
+#### Install latest stable version
+```sh
+$ npm i -D critical@latest
+```
+The docs for the latest version can be found [here](https://github.com/addyosmani/critical/tree/v1.3.4).
+
+## Breaking Changes 
+
+We’ve introduced some breaking changes in this release so be sure to check out the [changelog](./CHANGELOG.md).
 
 ## Build plugins
 
