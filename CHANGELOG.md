@@ -3,10 +3,13 @@
 - Drop support for node < 8
 - Bump dependencies
 - Use Jest for testing
+- Drop `include` and `timeout` options as they can be specified in the `penthouse` options.
 - Drop options `styleTarget` & `dest` in favour of `target`
   You can specify either a **css** file, a **html** file or an object `{css: dest.css, html: dest.html}` if you want to store both. We may also add an extract target here in a future release.
 - Drop options `destFolder`, `folder` and `pathPrefix`. We tried our best to improve the way critical auto-detects the paths to used assets in the critical css which should suit for most cases. If this doesn't work out you can use the new `rebase` option to either specify the location of the css & the html file like this: `{from: '/styles/main.css', to: '/en/test.html'}`. You can also pass a callback function to dynamically compute the path or specify a cdn for example. We utilize [`postcss-url`](https://github.com/postcss/postcss-url#options-list) for this task.
 - Due to some limitations with modern css features we replaced `filter-css` as the library of choice for handling ignores with [postcss-discard](https://github.com/bezoerb/postcss-discard/). We tried to keep things backwards compatible but you may have to change your `ignore` configuration.
+- Add `concurrency` option to specify how many operations can run in parallel.
+- Add the ability to specify used css files using file globs. See supported `minimatch` [patterns](https://github.com/isaacs/minimatch#usage).
 
 # v1.3.4 / 2018-07-19
 
