@@ -1,3 +1,4 @@
+coverage
 node_modules
 test/fixture/bower_components/bootstrap/dist/css/*
 test/fixtures/styles/main.08e83c51.css

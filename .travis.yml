@@ -14,7 +14,8 @@ language: node_js
 node_js:
   - "10"
   - "8"
-  - "6"
 
 cache:
   yarn: true
+
+after_success: npm run coveralls
