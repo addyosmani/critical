@@ -22,8 +22,6 @@ const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'b
 
 const warn = text => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
 
-const tempfiles = [];
-
 /**
  * Fixup slashes in file paths for windows and remove volume definition in front
  * @param {string} str Path
@@ -88,6 +86,20 @@ async function fileExists(href, options = {}) {
 
   return fs.existsSync(href) || fs.existsSync(href.replace(/\?.*$/, ''));
 }
+
+/**
+ * Remove temporary files
+ * @param {array} files Array of temp files
+ * @returns {Promise<void>|*} Promise resolves when all files removed
+ */
+const getCleanup = files => () =>
+  forEachAsync(files, file => {
+    try {
+      fs.remove(file);
+    } catch (error) {
+      debug(`${file} was already deleted`);
+    }
+  });
 
 /**
  * Path join considering urls
@@ -494,6 +506,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   const paths = [
     ...new Set([
       base,
+      base && isRelative(base) && path.join(process.cwd(), base),
       docurl,
       urlObj && url.format({...urlObj, pathname: path.dirname(urlObj.pathname), path: path.dirname(urlObj.path)}),
       docurl && url.resolve(docurl, file),
@@ -598,7 +611,6 @@ async function vinylize(src, options = {}) {
  */
 async function getStylesheet(document, filepath, options = {}) {
   const {rebase = {}, css, strict} = options;
-  const {from, to} = rebase;
   const originalPath = filepath;
   const exists = await fileExists(filepath, options);
 
@@ -638,18 +650,16 @@ async function getStylesheet(document, filepath, options = {}) {
   // - an absolute positioned stylesheet so we can make the images absolute
 
   // First respect the user input
-  if (from && to) {
+  if (rebase.from && rebase.to) {
     file.contents = rebaseAssets(file.contents, rebase.from, rebase.to);
   } else if (typeof rebase === 'function') {
     file.contents = rebaseAssets(file.contents, stylepath, document.virtualPath, rebase);
     // Next rebase to the stylesheet url
   } else if (isRemote(rebase.to || stylepath)) {
-    file.contents = rebaseAssets(
-      file.contents,
-      rebase.from || stylepath,
-      rebase.to || stylepath,
-      asset => (isRemote(asset.originUrl) ? asset : url.resolve(rebase.to || stylepath, asset.relativePath))
-    );
+    const from = rebase.from || stylepath;
+    const to = rebase.to || stylepath;
+    const method = asset => (isRemote(asset.originUrl) ? asset : url.resolve(to, asset.relativePath));
+    file.contents = rebaseAssets(file.contents, from, to, method);
 
     // Use relative path to document (local)
   } else if (document.virtualPath) {
@@ -706,6 +716,7 @@ async function getCss(document, options = {}) {
  * @returns {Promise<string>} File url to html file for use in penthouse
  */
 async function preparePenthouseData(document) {
+  const tmp = [];
   const stylesheets = document.stylesheets || [];
   const [stylesheet, ...canBeEmpty] = stylesheets
     .filter(file => isRelative(file))
@@ -719,26 +730,27 @@ async function preparePenthouseData(document) {
     }, './')
     .replace(/\.\.\//g, 'sub/');
   const dir = path.join(tempy.directory(), subfolders);
-  const file = path.join(dir, 'temp-index.html');
+  const filename = path.basename(tempy.file({extension: 'html'}));
+  const file = path.join(dir, filename);
 
   // Write html to temp file
   await fs.outputFile(file, document.contents);
-  tempfiles.push(file);
+  tmp.push(file);
 
   // Write styles to first stylesheet
   if (stylesheet) {
     const filename = path.join(dir, stylesheet);
-    tempfiles.push(filename);
+    tmp.push(filename);
     await fs.outputFile(filename, document.css);
   }
   // Write empty string to rest of the linked stylesheets
   await forEachAsync(canBeEmpty, dummy => {
     const filename = path.join(dir, dummy);
-    tempfiles.push(file);
+    tmp.push(filename);
     fs.outputFile(filename, '');
   });
 
-  return `file://${file}`;
+  return [`file://${file}`, getCleanup(tmp)];
 }
 
 /**
@@ -758,20 +770,6 @@ async function getDocument(filepath, options = {}) {
 
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
-  document.css = await getCss(document, options);
-
-  document.url = await preparePenthouseData(document);
-
-  // If (!document.remote && fs.existsSync(filepath)) {
-  //   document.url = `file://${path.resolve(filepath)}`;
-  //
-  //   // Store document as we need a file or url for penthouse
-  // } else if (!document.remote) {
-  //   const file = tempy.file({extension: 'html'});
-  //   await fs.writeFile(file, document.contents);
-  //
-  //   document.url = `file://${file}`;
-  // }
 
   debug('(getDocument) Result: ', {
     path: document.path,
@@ -780,6 +778,13 @@ async function getDocument(filepath, options = {}) {
     virtualPath: document.virtualPath,
     stylesheets: document.stylesheets,
   });
+
+  document.css = await getCss(document, options);
+
+  const [url, cleanup] = await preparePenthouseData(document);
+  document.url = url;
+  document.cleanup = cleanup;
+
   return document;
 }
 
@@ -796,17 +801,6 @@ async function getDocumentFromSource(html, options = {}) {
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
 
-  document.css = await getCss(document, options);
-
-  document.url = await preparePenthouseData(document);
-
-  // Store document as we need a file or url for penthouse
-  // if (!document.url) {
-  //   const file = tempy.file({extension: 'html'});
-  //   await fs.writeFile(file, document.contents);
-  //
-  //   document.url = `file://${file}`;
-  // }
   debug('(getDocumentFromSource) Result: ', {
     path: document.path,
     url: document.url,
@@ -814,21 +808,14 @@ async function getDocumentFromSource(html, options = {}) {
     virtualPath: document.virtualPath,
     stylesheets: document.stylesheets,
   });
-  return document;
-}
 
-/**
- * Remove temporary files
- * @returns {Promise<void>|*} Promise resolves when all files removed
- */
-function removeTempFiles() {
-  return forEachAsync(tempfiles, file => {
-    try {
-      fs.remove(file);
-    } catch (error) {
-      debug(`${file} was already deleted`);
-    }
-  });
+  document.css = await getCss(document, options);
+
+  const [url, cleanup] = await preparePenthouseData(document);
+  document.url = url;
+  document.cleanup = cleanup;
+
+  return document;
 }
 
 module.exports = {
@@ -840,7 +827,6 @@ module.exports = {
   resolve,
   joinPath,
   vinylize,
-  removeTempFiles,
   getStylesheetHrefs,
   getAssets,
   getAssetPaths,

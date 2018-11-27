@@ -230,3 +230,42 @@ test('should generate multi-dimension critical-path CSS in stream mode', done =>
     )
     .pipe(streamAssert.end(done));
 });
+
+test('issue 341', async () => {
+  const expected = [];
+  const sources = [
+    read('fixtures/generate-adaptive.html', 'utf8'),
+    read('fixtures/generate-default.html', 'utf8'),
+    read('fixtures/generate-image.html', 'utf8'),
+  ];
+
+  const options = {
+    base: path.join(__dirname, 'fixtures'),
+    minify: true,
+    extract: false,
+    inline: false,
+    dimensions: [
+      {
+        width: 100,
+        height: 70,
+      },
+      {
+        width: 1000,
+        height: 70,
+      },
+    ],
+  };
+
+  // first await all results regularly
+  expected[0] = await generate({...options, html: sources[0]});
+  expected[1] = await generate({...options, html: sources[1]});
+  expected[2] = await generate({...options, html: sources[2]});
+
+  // limit concurrency and run all processes in parallel
+  const promises = sources.map(html => generate({...options, html, concurrency: 2}));
+  const results = await Promise.all(promises);
+
+  expect(results[0].css).toBe(expected[0].css);
+  expect(results[1].css).toBe(expected[1].css);
+  expect(results[2].css).toBe(expected[2].css);
+});

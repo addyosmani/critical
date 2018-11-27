@@ -5,6 +5,7 @@ class FileNotFoundError extends Error {
   constructor(file = '', paths = [], ...params) {
     const message = chalk.red(stripIndent`
       Error: File not found: ${file}
+             Current working directory: ${process.cwd()}
              Searched in: ${paths.length > 0 ? paths.join(', ') : '-'}
     `);
 

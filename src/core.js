@@ -15,7 +15,7 @@ const inlineCritical = require('inline-critical');
 const parseCssUrls = require('css-url-parser');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
-const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, removeTempFiles} = require('./file');
+const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote} = require('./file');
 
 /**
  * Returns a string of combined and deduped css rules.
@@ -178,7 +178,7 @@ async function create(options = {}) {
   }
 
   // Clean tempfiles
-  await removeTempFiles();
+  await document.cleanup();
 
   // Cleanup output
   return {
