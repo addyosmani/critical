@@ -35,6 +35,8 @@ const schema = Joi.object()
     maxImageFileSize: Joi.number().default(DEFAULT.maxImageFileSize),
     include: Joi.any().default(DEFAULT.include),
     concurrency: Joi.number().default(DEFAULT.concurrency),
+    user: Joi.string(),
+    pass: Joi.string(),
     penthouse: Joi.object()
       .keys({
         url: Joi.any().forbidden(),
