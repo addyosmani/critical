@@ -157,7 +157,7 @@ describe('CLI', () => {
       expect(args).toMatchObject({
         width: 300,
         height: 400,
-        css: 'css',
+        css: ['css'],
         inline: true,
         extract: true,
       });
@@ -189,7 +189,7 @@ describe('CLI', () => {
       expect(args).toMatchObject({
         width: 300,
         height: 400,
-        css: 'css',
+        css: ['css'],
         inline: true,
         extract: true,
       });
