@@ -6,10 +6,6 @@ const PluginError = require('plugin-error');
 const replaceExtension = require('replace-ext');
 const {create} = require('./src/core');
 const {getOptions} = require('./src/config');
-//
-// process.on('unhandledRejection', reason => {
-//   console.log('Unhandled Rejection at:', reason.stack || reason);
-// });
 
 /**
  * Critical path CSS generation
