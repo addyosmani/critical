@@ -45,6 +45,17 @@ const pipe = async (filename, args = []) => {
 
 describe('CLI', () => {
   describe('acceptance', () => {
+    test('Show error alongside help', async () => {
+      expect.assertions(3);
+      try {
+        await run();
+      } catch (error) {
+        expect(error.stderr).toMatch('ConfigError');
+        expect(error.stderr).toMatch('Usage: critical');
+        expect(error.code).not.toBe(0);
+      }
+    });
+
     test('Return version', async () => {
       const {pkg} = await readPkgUp();
       const {stdout, stderr, code} = await run(['--version', '--no-update-notifier']);
