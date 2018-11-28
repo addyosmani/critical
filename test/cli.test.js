@@ -3,6 +3,7 @@ const path = require('path');
 const readPkgUp = require('read-pkg-up');
 const execa = require('execa');
 const nn = require('normalize-newline');
+const globby = require('globby');
 const {read} = require('./helper');
 
 process.chdir(path.resolve(__dirname));
@@ -230,6 +231,29 @@ describe('CLI', () => {
           timeout: 50000,
           renderWaitTime: 300,
         },
+      });
+    });
+
+    test('Handle shell expanded the glob', async () => {
+      // simulate system glob
+      const css = await globby('fixtures/**/*.css');
+      const args = await getArgs(['fixtures/generate-default.html', '-c', ...css, '--target', 'test.css']);
+
+      expect(args).toMatchObject({
+        css,
+        target: 'test.css',
+        src: 'fixtures/generate-default.html',
+      });
+    });
+
+    test('Handle glob', async () => {
+      // simulate system glob
+      const args = await getArgs(['fixtures/generate-default.html', '-c', 'fixtures/**/*.css', '--target', 'test.css']);
+
+      expect(args).toMatchObject({
+        css: ['fixtures/**/*.css'],
+        target: 'test.css',
+        src: 'fixtures/generate-default.html',
       });
     });
   });
