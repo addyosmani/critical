@@ -48,10 +48,13 @@ const schema = Joi.object()
         maxEmbeddedBase64Length: Joi.number(),
       })
       .unknown(true),
-    rebase: Joi.object().keys({
-      from: Joi.string(),
-      to: Joi.string(),
-    }),
+    rebase: [
+      Joi.object().keys({
+        from: Joi.string(),
+        to: Joi.string(),
+      }),
+      Joi.func(),
+    ],
     target: [
       Joi.string(),
       Joi.object().keys({
