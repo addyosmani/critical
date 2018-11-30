@@ -353,7 +353,7 @@ styles upfront, but this may provide a higher level of accuracy if you find Crit
 
 FilamentGroup maintain a [criticalCSS](https://github.com/filamentgroup/criticalCSS) node module, which
 similar to [Penthouse](https://github.com/pocketjoso/penthouse) will find and output the critical-path CSS for
-your pages.
+your pages. The PageSpeed Optimization modules for nginx, apache, IIS, ATS, and Open Lightspeed can do all the heavy lifting automatically when you enable the [prioritize_critical_css](https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery) filter
 
 ### Is Critical stable and suitable for production use?
 
