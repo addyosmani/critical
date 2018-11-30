@@ -12,8 +12,6 @@ const isObject = require('lodash/isObject');
 const escapeRegExp = require('lodash/escapeRegExp');
 const critical = require('.');
 
-let ok;
-
 const help = `
 Usage: critical <input> [<option>]
 
@@ -189,8 +187,6 @@ function run(data) {
     opts.css = [css, ...additionalCss].filter(file => file);
   }
 
-  ok = true;
-
   if (data) {
     opts.html = data;
   } else {
@@ -215,10 +211,4 @@ if (cli.input[0]) {
 } else {
   // Get stdin
   stdin().then(run); /* eslint-disable-line promise/prefer-await-to-then */
-  setTimeout(() => {
-    if (ok) {
-      return;
-    }
-    run();
-  }, 100);
 }

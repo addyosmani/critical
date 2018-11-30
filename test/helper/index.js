@@ -6,12 +6,8 @@ const nn = require('normalize-newline');
 
 function getFile(file) {
   const testBase = path.join(__dirname, '..');
-  if (fs.existsSync(file)) {
-    return file;
-  } else if (fs.existsSync(path.join(testBase, file))) {
+  if (fs.existsSync(path.join(testBase, file))) {
     return path.join(testBase, file);
-  } else if (fs.existsSync(path.join(testBase, 'fixtures', file))) {
-    return path.join(testBase, 'fixtures', file);
   }
 
   return file;

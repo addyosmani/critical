@@ -49,7 +49,7 @@ describe('CLI', () => {
     test('Show error alongside help', async () => {
       expect.assertions(3);
       try {
-        await run();
+        await run(['not available']);
       } catch (error) {
         expect(error.stderr).toMatch('ConfigError');
         expect(error.stderr).toMatch('Usage: critical');
