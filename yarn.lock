@@ -4619,9 +4619,10 @@ osenv@^0.1.4:
     os-homedir "^1.0.0"
     os-tmpdir "^1.0.0"
 
-"oust@git+https://github.com/addyosmani/oust.git#v0.5.1":
+oust@^0.5.1:
   version "0.5.1"
-  resolved "git+https://github.com/addyosmani/oust.git#457bed969d25923ea957b59f4a538d8b2c9008cd"
+  resolved "https://registry.yarnpkg.com/oust/-/oust-0.5.1.tgz#e8cb7194c3e3686ecdef9f6211ac19a0c712b92e"
+  integrity sha512-u3bsrJaYkUPnFdkTxkq3zoBMoaRpjK7M06ZEIRGhMAH6cxi5hO00vXD5ODH8Ppb3IL/AuZ9phAZMo5/a6HP36g==
   dependencies:
     cheerio "^0.22.0"
     minimist "^1.2.0"
