@@ -44,7 +44,7 @@
     "joi": "^14.3.0",
     "lodash": "^4.17.11",
     "meow": "^5.0.0",
-    "oust": "^0.4.0",
+    "oust": "github:addyosmani/oust#v0.5.1",
     "p-all": "^1.0.0",
     "penthouse": "^1.10.2",
     "plugin-error": "^1.0.1",
