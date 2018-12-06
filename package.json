@@ -83,11 +83,17 @@
   "xo": {
     "space": 2,
     "prettier": true,
-    "ignores": [
-      "test",
-      "lib"
-    ],
-    "rules": {}
+    "rules": {
+      "capitalized-comments": "off"
+    },
+    "overrides": [
+      {
+        "files": "test/*.js",
+        "envs": [
+          "jest"
+        ]
+      }
+    ]
   },
   "prettier": {
     "trailingComma": "es5",
