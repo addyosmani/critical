@@ -1,5 +1,3 @@
-sudo: required
-
 git:
   depth: 5
 
@@ -18,4 +16,5 @@ node_js:
 cache:
   yarn: true
 
-after_success: npm run coveralls
+after_success:
+  - if [[ "$TRAVIS_NODE_VERSION" = "10" ]]; then npm run coveralls; fi
