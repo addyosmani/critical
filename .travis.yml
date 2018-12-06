@@ -1,6 +1,12 @@
+sudo: required
+
 git:
   depth: 5
 
+os:
+  - linux
+  - windows
+  
 addons:
   apt:
     packages:
@@ -17,4 +23,4 @@ cache:
   yarn: true
 
 after_success:
-  - if [[ "$TRAVIS_NODE_VERSION" = "10" ]]; then npm run coveralls; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" && "$TRAVIS_NODE_VERSION" = "10" ]]; then npm run coveralls; fi
