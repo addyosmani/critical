@@ -1,4 +1,5 @@
-/* eslint promise/prefer-await-to-then:0 */
+/* eslint-disable promise/prefer-await-to-then */
+
 const path = require('path');
 const fs = require('fs-extra');
 const through2 = require('through2');

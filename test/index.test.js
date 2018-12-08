@@ -7,7 +7,7 @@ const nn = require('normalize-newline');
 const streamAssert = require('stream-assert');
 const {ConfigError, FileNotFoundError, NoCssError} = require('../src/errors');
 const {getVinyl, readAndRemove, read} = require('./helper');
-const {generate, stream} = require('../index');
+const {generate, stream} = require('..');
 
 jest.setTimeout(20000);
 

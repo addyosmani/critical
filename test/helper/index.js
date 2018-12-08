@@ -23,7 +23,7 @@ function readAndRemove(file) {
 }
 
 function read(file) {
-  let content = fs.readFileSync(getFile(file), 'utf8');
+  const content = fs.readFileSync(getFile(file), 'utf8');
 
   return nn(content);
 }
@@ -36,11 +36,10 @@ function getVinyl(...args) {
         cwd: __dirname,
         base: path.dirname(file),
         path: file,
-        contents: Buffer.from(read(file))
+        contents: Buffer.from(read(file)),
       });
-    } else {
-      return new Vinyl();
     }
+    return new Vinyl();
   }
 
   return array(args.map(create));
@@ -49,5 +48,5 @@ function getVinyl(...args) {
 module.exports = {
   getVinyl,
   read,
-  readAndRemove
+  readAndRemove,
 };
