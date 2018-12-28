@@ -1,6 +1,6 @@
 [![NPM version][npm-image]][npm-url] [![Linux Build Status][travis-image]][travis-url] [![Windows Build status][appveyor-image]][appveyor-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url]
 
-# critical 
+# critical
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ![Preview](https://i.imgur.com/lAzmBD2.png)
@@ -8,7 +8,7 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ## Install
 
-#### Install upcomming version 
+#### Install upcomming version
 ```sh
 $ npm i -D critical@next
 ```
@@ -19,7 +19,7 @@ $ npm i -D critical@latest
 ```
 The docs for the latest version can be found [here](https://github.com/addyosmani/critical/tree/v1.3.4).
 
-## Breaking Changes 
+## Breaking Changes
 
 We’ve introduced some breaking changes in this release so be sure to check out the [changelog](./CHANGELOG.md).
 
@@ -71,7 +71,7 @@ critical.generate({
     // Viewport height
     height: 900,
 
-    // Output results to file 
+    // Output results to file
     target: {css: 'critical.css', html: 'index-critical.html'},
 
     // Minify critical-path CSS when inlining
@@ -226,7 +226,7 @@ critical.generate({
 });
 ```
 
-### Generate critical-path CSS and specify asset rebase behaviour  
+### Generate critical-path CSS and specify asset rebase behaviour
 
 ```js
 critical.generate({
@@ -256,11 +256,12 @@ critical.generate({
 | html             | `string`           | | HTML source to be operated against. This option takes precedence over the `src` option. |
 | css              | `array`            | `[]` | An array of paths to css files, file globs or [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
 | src              | `string`           | | Location of the HTML source to be operated against |
-| target           | `string`|`object`  | | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both |  
+| target           | `string`|`object`  | | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both |
 | width            | `integer`          | `1300`  | Width of the target viewport |
 | height           | `integer`          | `900` | Height of the target viewport |
 | dimensions       | `array`            | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
 | minify           | `boolean`          | `true` | Enable minification of generated critical-path CSS |
+| cleancss         | `object`           | | Options for CleanCss used for minification |
 | extract          | `boolean`          | `false` | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
 | inlineImages     | `boolean`          | `false` | Inline images
 | assetPaths       | `array`            | `[]` | List of directories/urls where the inliner should start looking for assets
