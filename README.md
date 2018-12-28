@@ -1,7 +1,6 @@
 [![NPM version][npm-image]][npm-url] [![Linux Build Status][travis-image]][travis-url] [![Windows Build status][appveyor-image]][appveyor-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url]
 
 # critical
-
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ![Preview](https://i.imgur.com/lAzmBD2.png)
@@ -9,7 +8,6 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 ## Install
 
 #### Install upcomming version
-
 ```sh
 $ npm i -D critical@next
 ```
@@ -265,6 +263,7 @@ critical.generate({
 | height           | `integer`               | `900`                                  | Height of the target viewport                                                                                                                                                                                                                                                                                                                                                   |
 | dimensions       | `array`                 | `[]`                                   | An array of objects containing height and width. Takes precedence over `width` and `height` if set                                                                                                                                                                                                                                                                              |
 | minify           | `boolean`               | `true`                                 | Enable minification of generated critical-path CSS                                                                                                                                                                                                                                                                                                                              |
+| cleancss         | `object`                |                                        | Options for CleanCss used for minification                                                                                                                                                                                                                                                                                                                                      |
 | extract          | `boolean`               | `false`                                | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
 | inlineImages     | `boolean`               | `false`                                | Inline images                                                                                                                                                                                                                                                                                                                                                                   |
 | assetPaths       | `array`                 | `[]`                                   | List of directories/urls where the inliner should start looking for assets                                                                                                                                                                                                                                                                                                      |
