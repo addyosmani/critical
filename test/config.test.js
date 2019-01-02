@@ -1,4 +1,3 @@
-/* eslint-env jest node */
 const {ConfigError} = require('../src/errors');
 const {getOptions, DEFAULT} = require('../src/config');
 
@@ -27,7 +26,7 @@ test('Throws ConfigError on empty required value', () => {
 });
 
 test('Returns config object', () => {
-  const config = getOptions({src:'...'});
+  const config = getOptions({src: '...'});
   expect(config).toMatchObject({
     src: '...',
     width: DEFAULT.width,
@@ -50,12 +49,12 @@ test('Returns config object', () => {
 });
 
 test('Target config on passed string', () => {
-  expect(getOptions({src:'...', target: 'test.css'})).toHaveProperty('target', {css: 'test.css'});
-  expect(getOptions({src:'...', target: 'test.html'})).toHaveProperty('target', {html: 'test.html'});
+  expect(getOptions({src: '...', target: 'test.css'})).toHaveProperty('target', {css: 'test.css'});
+  expect(getOptions({src: '...', target: 'test.html'})).toHaveProperty('target', {html: 'test.html'});
 });
 
 test('Inline config on passed boolean', () => {
-  expect(getOptions({src:'...', inline: true, base: 'BASE'})).toHaveProperty('inline', {
+  expect(getOptions({src: '...', inline: true, base: 'BASE'})).toHaveProperty('inline', {
     minify: DEFAULT.minify,
     extract: DEFAULT.extract,
     basePath: 'BASE',
@@ -63,7 +62,7 @@ test('Inline config on passed boolean', () => {
 });
 
 test('Inline config on passed object', () => {
-  expect(getOptions({src:'...', inline: {check: true}, base: 'BASE'})).toHaveProperty('inline', {
+  expect(getOptions({src: '...', inline: {check: true}, base: 'BASE'})).toHaveProperty('inline', {
     minify: DEFAULT.minify,
     extract: DEFAULT.extract,
     basePath: 'BASE',
@@ -72,7 +71,7 @@ test('Inline config on passed object', () => {
 });
 
 test('Penthouse config on passed object', () => {
-  expect(getOptions({src:'...', penthouse: {check: true}})).toHaveProperty('penthouse', {
+  expect(getOptions({src: '...', penthouse: {check: true}})).toHaveProperty('penthouse', {
     forceInclude: DEFAULT.include,
     timeout: DEFAULT.timeout,
     maxEmbeddedBase64Length: DEFAULT.maxImageFileSize,
@@ -81,9 +80,9 @@ test('Penthouse config on passed object', () => {
 });
 
 test('Ignore config on passed array', () => {
-  expect(getOptions({src:'...', ignore: ['@font-face']})).toHaveProperty('ignore', {
+  expect(getOptions({src: '...', ignore: ['@font-face']})).toHaveProperty('ignore', {
     atrule: ['@font-face'],
     rule: ['@font-face'],
-    decl: ["@font-face"],
+    decl: ['@font-face'],
   });
 });

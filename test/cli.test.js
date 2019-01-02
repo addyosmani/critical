@@ -1,4 +1,3 @@
-/* eslint-env jest node */
 const path = require('path');
 const readPkgUp = require('read-pkg-up');
 const execa = require('execa');
@@ -24,7 +23,7 @@ const run = async (args = []) => {
 const getArgs = async (params = []) => {
   const bin = await getBin();
   const origArgv = process.argv;
-  const critical = require('../index');
+  const critical = require('..');
 
   critical.generate = jest.fn();
   process.argv = ['node', bin, ...params];
@@ -154,12 +153,12 @@ describe('CLI', () => {
 
   let exit;
   describe('mocked', () => {
-    beforeEach(function() {
+    beforeEach(() => {
       jest.resetModules();
       exit = process.exit;
     });
 
-    afterEach(function() {
+    afterEach(() => {
       process.exit = exit;
     });
 

@@ -6,7 +6,9 @@
   "license": "Apache-2.0",
   "repository": "addyosmani/critical",
   "scripts": {
-    "test": "xo && jest --coverage",
+    "jest": "jest --coverage",
+    "xo": "xo",
+    "test": "npm run xo && npm run jest",
     "coveralls": "cat ./coverage/lcov.info | coveralls"
   },
   "files": [
@@ -81,11 +83,17 @@
   "xo": {
     "space": 2,
     "prettier": true,
-    "ignores": [
-      "test",
-      "lib"
-    ],
-    "rules": {}
+    "rules": {
+      "capitalized-comments": "off"
+    },
+    "overrides": [
+      {
+        "files": "test/*.js",
+        "envs": [
+          "jest"
+        ]
+      }
+    ]
   },
   "prettier": {
     "trailingComma": "es5",
