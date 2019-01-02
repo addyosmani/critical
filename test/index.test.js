@@ -11,6 +11,14 @@ const {generate, stream} = require('..');
 
 jest.setTimeout(20000);
 
+let stderr;
+beforeEach(() => {
+  stderr = jest.spyOn(process.stderr, 'write').mockImplementation(() => true);
+});
+
+afterEach(() => {
+  stderr.mockRestore();
+});
 test('Handle errors with passed callback method', done => {
   const tmp = generate({}, (error, data) => {
     expect(data).toBeFalsy();
