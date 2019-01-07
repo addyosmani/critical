@@ -16,7 +16,7 @@ const {extractCss} = require('inline-critical/src/css');
 const parseCssUrls = require('css-url-parser');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
-const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote} = require('./file');
+const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, normalizePath} = require('./file');
 
 /**
  * Returns a string of combined and deduped css rules.
@@ -179,7 +179,7 @@ async function create(options = {}) {
   // Inline
   if (inline) {
     if (target.extract) {
-      const extractHref = '/' + path.relative(document.cwd, target.extract);
+      const extractHref = '/' + normalizePath(path.relative(document.cwd, target.extract));
       inline.replaceStylesheets = [extractHref];
     } else {
       inline.extract = extract;
