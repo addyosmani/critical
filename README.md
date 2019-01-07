@@ -256,7 +256,7 @@ critical.generate({
 | html             | `string`           | | HTML source to be operated against. This option takes precedence over the `src` option. |
 | css              | `array`            | `[]` | An array of paths to css files, file globs or [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
 | src              | `string`           | | Location of the HTML source to be operated against |
-| target           | `string`|`object`  | | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both |  
+| target           | `string` or `object`  | | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both |  
 | width            | `integer`          | `1300`  | Width of the target viewport |
 | height           | `integer`          | `900` | Height of the target viewport |
 | dimensions       | `array`            | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
@@ -265,7 +265,7 @@ critical.generate({
 | inlineImages     | `boolean`          | `false` | Inline images
 | assetPaths       | `array`            | `[]` | List of directories/urls where the inliner should start looking for assets
 | maxImageFileSize | `integer`          | `10240`| Sets a max file size (in bytes) for base64 inlined images
-| rebase           | `object`|`function`| `undefined` | Critical tries it's best to rebase the asset paths relative to the document. If this doesn't work as expected you can always use this option to control the rebase paths. See [`postcss-url`](https://github.com/postcss/postcss-url) for details. (https://github.com/pocketjoso/penthouse#usage-1).
+| rebase           | `object` or `function`| `undefined` | Critical tries it's best to rebase the asset paths relative to the document. If this doesn't work as expected you can always use this option to control the rebase paths. See [`postcss-url`](https://github.com/postcss/postcss-url) for details. (https://github.com/pocketjoso/penthouse#usage-1).
 | ignore           | `array`|`object`   | `undefined` | Ignore CSS rules. See [`postcss-discard`](https://github.com/bezoerb/postcss-discard) for usage examples. If you pass an array all rules will be applied to atrules, rules and declarations;
 | userAgent        | `string`           | `''` | User agent to use when fetching a remote src
 | penthouse        | `object`           | `{}` | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).
