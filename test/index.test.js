@@ -283,7 +283,7 @@ test('issue 341', async () => {
 
 test('Replace stylesheet on extract-target', async () => {
   const result = await generate({
-    html: read('test/fixtures/generate-adaptive.html'),
+    html: read('fixtures/generate-adaptive.html'),
     base: path.join(__dirname, 'fixtures'),
     target: {extract: 'test/fixtures/styles/extract.css'},
     minify: true,
