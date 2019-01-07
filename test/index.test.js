@@ -282,16 +282,17 @@ test('issue 341', async () => {
 });
 
 test('Replace stylesheet on extract-target', async () => {
+  const target = path.join(__dirname, 'fixtures/styles/extract.css');
   const result = await generate({
     html: read('fixtures/generate-adaptive.html'),
     base: path.join(__dirname, 'fixtures'),
-    target: {extract: path.join(__dirname, 'fixtures/styles/extract.css')},
+    target: {extract: target},
     minify: true,
     extract: true,
     inline: true,
   });
 
-  const extracted = readAndRemove('test/fixtures/styles/extract.css');
+  const extracted = readAndRemove(target);
 
   expect(result.html).toMatch('"/styles/extract.css"');
   expect(extracted).toBe(result.extracted);
