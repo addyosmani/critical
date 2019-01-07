@@ -12,6 +12,7 @@ const imageInliner = require('postcss-image-inliner');
 const penthouse = require('penthouse');
 const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/core');
 const inlineCritical = require('inline-critical');
+const {extractCss} = require('inline-critical/src/css');
 const parseCssUrls = require('css-url-parser');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
@@ -87,6 +88,8 @@ async function create(options = {}) {
     inline,
     ignore,
     minify,
+    extract,
+    target = {},
     inlineImages,
     maxImageFileSize,
     postcss: postProcess = [],
@@ -171,9 +174,18 @@ async function create(options = {}) {
     criticalCSS = prettier.format(criticalCSS, {parser: 'css'});
   }
 
+  const extracted = extractCss(document.css, criticalCSS);
+
   // Inline
   if (inline) {
-    const inlined = inlineCritical(document.contents.toString(), criticalCSS, inline);
+    if (target.extract) {
+      const extractHref = '/' + path.relative(document.cwd, target.extract);
+      inline.replaceStylesheets = [extractHref];
+    } else {
+      inline.extract = extract;
+    }
+
+    const inlined = inlineCritical(document.contents.toString(), criticalCSS, {...inline, basePath: document.cwd});
     document.contents = Buffer.from(inlined);
   }
 
@@ -184,6 +196,7 @@ async function create(options = {}) {
   return {
     css: criticalCSS,
     html: document.contents.toString(),
+    extracted,
   };
 }
 

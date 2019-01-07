@@ -770,6 +770,10 @@ async function getDocument(filepath, options = {}) {
 
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
+  document.cwd = base || process.cwd();
+  if (!base && document.path) {
+    document.cwd = document.path.replace(document.virtualPath, '');
+  }
 
   debug('(getDocument) Result: ', {
     path: document.path,
@@ -777,6 +781,7 @@ async function getDocument(filepath, options = {}) {
     remote: Boolean(document.remote),
     virtualPath: document.virtualPath,
     stylesheets: document.stylesheets,
+    cwd: document.cwd,
   });
 
   document.css = await getCss(document, options);
@@ -795,11 +800,12 @@ async function getDocument(filepath, options = {}) {
  * @returns {Promise<*>} Vinyl representation of HTML document
  */
 async function getDocumentFromSource(html, options = {}) {
-  const {rebase = {}} = options;
+  const {rebase = {}, base} = options;
   const document = await vinylize({html}, options);
 
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
+  document.cwd = base || process.cwd();
 
   debug('(getDocumentFromSource) Result: ', {
     path: document.path,
@@ -807,6 +813,7 @@ async function getDocumentFromSource(html, options = {}) {
     remote: Boolean(document.remote),
     virtualPath: document.virtualPath,
     stylesheets: document.stylesheets,
+    cwd: document.cwd,
   });
 
   document.css = await getCss(document, options);

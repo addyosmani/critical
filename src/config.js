@@ -60,6 +60,7 @@ const schema = Joi.object()
       Joi.object().keys({
         css: Joi.string(),
         html: Joi.string(),
+        extract: Joi.string(),
       }),
     ],
     assetPaths: Joi.array().items(Joi.string()),
@@ -97,7 +98,6 @@ function getOptions(options = {}) {
   // Set inline options
   value.inline = Boolean(inline) && {
     minify: value.minify,
-    extract: value.extract || false,
     basePath: value.base || process.cwd(),
     ...(inline === true ? {} : inline),
   };
@@ -118,12 +118,26 @@ function getOptions(options = {}) {
     };
   }
 
+  if (target && target.extract) {
+    value.extract = true;
+  }
+
   debug(value);
 
   return value;
 }
 
+const validate = (key, val) => {
+  const {error} = Joi.validate({[key]: val, html: '<html/>'}, schema);
+  if (error) {
+    return false;
+  }
+
+  return true;
+};
+
 module.exports = {
   DEFAULT,
+  validate,
   getOptions,
 };

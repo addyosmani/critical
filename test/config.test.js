@@ -56,7 +56,6 @@ test('Target config on passed string', () => {
 test('Inline config on passed boolean', () => {
   expect(getOptions({src: '...', inline: true, base: 'BASE'})).toHaveProperty('inline', {
     minify: DEFAULT.minify,
-    extract: DEFAULT.extract,
     basePath: 'BASE',
   });
 });
@@ -64,7 +63,6 @@ test('Inline config on passed boolean', () => {
 test('Inline config on passed object', () => {
   expect(getOptions({src: '...', inline: {check: true}, base: 'BASE'})).toHaveProperty('inline', {
     minify: DEFAULT.minify,
-    extract: DEFAULT.extract,
     basePath: 'BASE',
     check: true,
   });

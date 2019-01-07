@@ -50,7 +50,7 @@ describe('CLI', () => {
       try {
         await run(['not available']);
       } catch (error) {
-        expect(error.stderr).toMatch('ConfigError');
+        expect(error.stderr).toMatch('Error:');
         expect(error.stderr).toMatch('Usage: critical');
         expect(error.code).not.toBe(0);
       }

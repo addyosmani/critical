@@ -10,6 +10,7 @@ const reduce = require('lodash/reduce');
 const isString = require('lodash/isString');
 const isObject = require('lodash/isObject');
 const escapeRegExp = require('lodash/escapeRegExp');
+const {validate} = require('./src/config');
 const critical = require('.');
 
 const help = `
@@ -58,6 +59,7 @@ const minimistOpts = {
     extract: {
       type: 'boolean',
       alias: 'e',
+      default: false,
     },
     inlineImages: {
       type: 'boolean',
@@ -155,6 +157,11 @@ const normalizedFlags = reduce(
       }
     }
 
+    // Cleanup camelized group keys
+    if (groupKeys.find(k => key.includes(k)) && !validate(key, val)) {
+      return res;
+    }
+
     if (!isAlias(key)) {
       res[key] = mapRegExpStr(val);
     }
@@ -176,7 +183,7 @@ function run(data) {
   // Detect css globbing
   const cssBegin = process.argv.findIndex(el => ['--css', '-c'].includes(el));
   const cssEnd = process.argv.findIndex((el, index) => index > cssBegin && el.startsWith('-'));
-  const cssCheck = cssBegin !== -1 ? process.argv.slice(cssBegin, cssEnd > 0 ? cssEnd : undefined) : [];
+  const cssCheck = cssBegin >= 0 ? process.argv.slice(cssBegin, cssEnd > 0 ? cssEnd : undefined) : [];
   const additionalCss = inputs.filter(file => cssCheck.includes(file));
   // Just take the first html input as we don't support multiple html sources for
   const [input] = inputs.filter(file => !additionalCss.includes(file));
@@ -193,13 +200,14 @@ function run(data) {
     opts.src = input;
   }
 
-  console.log(opts);
   try {
     critical.generate(opts, (error, val) => {
       if (error) {
         showError(error);
       } else if (opts.inline) {
         process.stdout.write(val.html, process.exit);
+      } else if (opts.extract) {
+        process.stdout.write(val.extracted, process.exit);
       } else {
         process.stdout.write(val.css, process.exit);
       }
