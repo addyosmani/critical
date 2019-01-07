@@ -175,6 +175,11 @@ async function create(options = {}) {
   }
 
   const uncritical = extractCss(document.css, criticalCSS);
+  debug({
+    css: document.css,
+    critical: criticalCSS,
+    uncritical,
+  });
 
   // Inline
   if (inline) {

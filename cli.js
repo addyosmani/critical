@@ -207,7 +207,7 @@ function run(data) {
       } else if (opts.inline) {
         process.stdout.write(val.html, process.exit);
       } else if (opts.extract) {
-        process.stdout.write(val.extracted, process.exit);
+        process.stdout.write(val.uncritical, process.exit);
       } else {
         process.stdout.write(val.css, process.exit);
       }

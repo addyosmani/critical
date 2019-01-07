@@ -19,7 +19,6 @@ async function generate(params, cb) {
     const options = getOptions(params);
     const {target = {}} = options;
     const {css, html, uncritical} = await create(options);
-
     // Store generated css
     if (target.css) {
       await fs.outputFile(path.resolve(target.css), css);
