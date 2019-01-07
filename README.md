@@ -72,7 +72,7 @@ critical.generate({
     height: 900,
 
     // Output results to file 
-    target: {css: 'critical.css', html: 'index-critical.html'},
+    target: {css: 'critical.css', html: 'index-critical.html', extract: 'main.extracted.css'},
 
     // Minify critical-path CSS when inlining
     minify: true,
@@ -155,7 +155,7 @@ critical.generate({
     width: 1300,
     height: 900,
     inline: true
-}, function (err, ({css, html})) {
+}, function (err, ({css, html, extracted})) {
     // You now have critical-path CSS as well as the modified html
     // Works with and without target specified
     ...
@@ -170,7 +170,7 @@ critical.generate({
     src: 'index.html',
     width: 1300,
     height: 900
-}).then(function (({css, html})) {
+}).then(function (({css, html, extracted})) {
     // You now have critical-path CSS as well as the modified html
     // Works with and without dest specified
     ...
@@ -182,7 +182,7 @@ critical.generate({
 Generate and return output via async function:
 
 ```js
-const {css} = await critical.generate({
+const {css, html, extracted} = await critical.generate({
     base: 'test/',
     src: 'index.html',
     width: 1300,
