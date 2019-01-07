@@ -1,25 +1,28 @@
 [![NPM version][npm-image]][npm-url] [![Linux Build Status][travis-image]][travis-url] [![Windows Build status][appveyor-image]][appveyor-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url]
 
-# critical 
+# critical
+
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ![Preview](https://i.imgur.com/lAzmBD2.png)
 
-
 ## Install
 
-#### Install upcomming version 
+#### Install upcomming version
+
 ```sh
 $ npm i -D critical@next
 ```
 
 #### Install latest stable version
+
 ```sh
 $ npm i -D critical@latest
 ```
+
 The docs for the latest version can be found [here](https://github.com/addyosmani/critical/tree/v1.3.4).
 
-## Breaking Changes 
+## Breaking Changes
 
 We’ve introduced some breaking changes in this release so be sure to check out the [changelog](./CHANGELOG.md).
 
@@ -35,7 +38,6 @@ We’ve introduced some breaking changes in this release so be sure to check out
 - [Optimize an Angular boilerplate with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
 - [Optimize a Weather app with Gulp](https://github.com/addyosmani/critical-css-weather-app)
 
-
 ## Usage
 
 Include:
@@ -48,47 +50,47 @@ Full blown example with available options:
 
 ```js
 critical.generate({
-    // Inline the generated critical-path CSS
-    // - true generates HTML
-    // - false generates CSS
-    inline: true,
+  // Inline the generated critical-path CSS
+  // - true generates HTML
+  // - false generates CSS
+  inline: true,
 
-    // Your base directory
-    base: 'dist/',
+  // Your base directory
+  base: 'dist/',
 
-    // HTML source
-    html: '<html>...</html>',
+  // HTML source
+  html: '<html>...</html>',
 
-    // HTML source file
-    src: 'index.html',
+  // HTML source file
+  src: 'index.html',
 
-    // Your CSS Files (optional)
-    css: ['dist/styles/main.css'],
+  // Your CSS Files (optional)
+  css: ['dist/styles/main.css'],
 
-    // Viewport width
-    width: 1300,
+  // Viewport width
+  width: 1300,
 
-    // Viewport height
-    height: 900,
+  // Viewport height
+  height: 900,
 
-    // Output results to file 
-    target: {css: 'critical.css', html: 'index-critical.html', extract: 'main.extracted.css'},
+  // Output results to file
+  target: {css: 'critical.css', html: 'index-critical.html', uncritical: 'uncritical.css'},
 
-    // Minify critical-path CSS when inlining
-    minify: true,
+  // Minify critical-path CSS when inlining
+  minify: true,
 
-    // Extract inlined styles from referenced stylesheets
-    extract: true,
+  // Extract inlined styles from referenced stylesheets
+  extract: true,
 
-    // Complete Timeout for Operation
-    timeout: 30000,
+  // Complete Timeout for Operation
+  timeout: 30000,
 
-    // ignore CSS rules
-    ignore: {
-        atrule: ['@font-face'],
-        rule: [/some-regexp/],
-        decl: (node, value) => /big-image\.png/.test(value)
-    }
+  // ignore CSS rules
+  ignore: {
+    atrule: ['@font-face'],
+    rule: [/some-regexp/],
+    decl: (node, value) => /big-image\.png/.test(value),
+  },
 });
 ```
 
@@ -98,12 +100,12 @@ Basic usage:
 
 ```js
 critical.generate({
-    inline: true,
-    base: 'test/',
-    src: 'index.html',
-    target: 'index-critical.html',
-    width: 1300,
-    height: 900
+  inline: true,
+  base: 'test/',
+  src: 'index.html',
+  target: 'index-critical.html',
+  width: 1300,
+  height: 900,
 });
 ```
 
@@ -113,11 +115,11 @@ Basic usage:
 
 ```js
 critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    target: 'styles/main.css',
-    width: 1300,
-    height: 900
+  base: 'test/',
+  src: 'index.html',
+  target: 'styles/main.css',
+  width: 1300,
+  height: 900,
 });
 ```
 
@@ -125,11 +127,11 @@ Generate and minify critical-path CSS:
 
 ```js
 critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    target: 'styles/styles.min.css',
-    width: 1300,
-    height: 900
+  base: 'test/',
+  src: 'index.html',
+  target: 'styles/styles.min.css',
+  width: 1300,
+  height: 900,
 });
 ```
 
@@ -155,7 +157,7 @@ critical.generate({
     width: 1300,
     height: 900,
     inline: true
-}, function (err, ({css, html, extracted})) {
+}, function (err, ({css, html, uncritical})) {
     // You now have critical-path CSS as well as the modified html
     // Works with and without target specified
     ...
@@ -170,7 +172,7 @@ critical.generate({
     src: 'index.html',
     width: 1300,
     height: 900
-}).then(function (({css, html, extracted})) {
+}).then(function (({css, html, uncritical})) {
     // You now have critical-path CSS as well as the modified html
     // Works with and without dest specified
     ...
@@ -182,31 +184,34 @@ critical.generate({
 Generate and return output via async function:
 
 ```js
-const {css, html, extracted} = await critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    width: 1300,
-    height: 900
+const {css, html, uncritical} = await critical.generate({
+  base: 'test/',
+  src: 'index.html',
+  width: 1300,
+  height: 900,
 });
 ```
 
 ### Generate critical-path CSS with multiple resolutions
 
 When your site is adaptive and you want to deliver critical CSS for multiple screen resolutions this is a useful option.
-*note:* (your final output will be minified as to eliminate duplicate rule inclusion)
+_note:_ (your final output will be minified as to eliminate duplicate rule inclusion)
 
 ```js
 critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    dest: 'styles/main.css',
-    dimensions: [{
-        height: 200,
-        width: 500
-    }, {
-        height: 900,
-        width: 1200
-    }]
+  base: 'test/',
+  src: 'index.html',
+  dest: 'styles/main.css',
+  dimensions: [
+    {
+      height: 200,
+      width: 500,
+    },
+    {
+      height: 900,
+      width: 1200,
+    },
+  ],
 });
 ```
 
@@ -216,62 +221,60 @@ This is a useful option when you e.g. want to defer loading of webfonts or backg
 
 ```js
 critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    dest: 'styles/main.css',
-    ignore: {
-        atrule: ['@font-face'],
-        decl: (node, value) => /url\(/.test(value)
-    }
+  base: 'test/',
+  src: 'index.html',
+  dest: 'styles/main.css',
+  ignore: {
+    atrule: ['@font-face'],
+    decl: (node, value) => /url\(/.test(value),
+  },
 });
 ```
 
-### Generate critical-path CSS and specify asset rebase behaviour  
+### Generate critical-path CSS and specify asset rebase behaviour
 
 ```js
 critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    dest: 'styles/main.css',
-    rebase: {from: '/styles/main.css', to: '/folder/subfolder/index.html'}
+  base: 'test/',
+  src: 'index.html',
+  dest: 'styles/main.css',
+  rebase: {from: '/styles/main.css', to: '/folder/subfolder/index.html'},
 });
 ```
 
 ```js
 critical.generate({
-    base: 'test/',
-    src: 'index.html',
-    dest: 'styles/main.css',
-    rebase: asset => `https://my-cdn.com${asset.absolutePath}`
+  base: 'test/',
+  src: 'index.html',
+  dest: 'styles/main.css',
+  rebase: asset => `https://my-cdn.com${asset.absolutePath}`,
 });
 ```
-
 
 ### Options
 
-| Name             | Type               | Default | Description   |
-| ---------------- | ------------------ | ------------- |------------- |
-| inline           | `boolean`&#124;`object` | `false` | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options) |
-| base             | `string`           | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written |
-| html             | `string`           | | HTML source to be operated against. This option takes precedence over the `src` option. |
-| css              | `array`            | `[]` | An array of paths to css files, file globs or [Vinyl](https://www.npmjs.com/package/vinyl) file objects.
-| src              | `string`           | | Location of the HTML source to be operated against |
-| target           | `string` or `object`  | | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both |  
-| width            | `integer`          | `1300`  | Width of the target viewport |
-| height           | `integer`          | `900` | Height of the target viewport |
-| dimensions       | `array`            | `[]` | An array of objects containing height and width. Takes precedence over `width` and `height` if set
-| minify           | `boolean`          | `true` | Enable minification of generated critical-path CSS |
-| extract          | `boolean`          | `false` | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
-| inlineImages     | `boolean`          | `false` | Inline images
-| assetPaths       | `array`            | `[]` | List of directories/urls where the inliner should start looking for assets
-| maxImageFileSize | `integer`          | `10240`| Sets a max file size (in bytes) for base64 inlined images
-| rebase           | `object` or `function`| `undefined` | Critical tries it's best to rebase the asset paths relative to the document. If this doesn't work as expected you can always use this option to control the rebase paths. See [`postcss-url`](https://github.com/postcss/postcss-url) for details. (https://github.com/pocketjoso/penthouse#usage-1).
-| ignore           | `array`|`object`   | `undefined` | Ignore CSS rules. See [`postcss-discard`](https://github.com/bezoerb/postcss-discard) for usage examples. If you pass an array all rules will be applied to atrules, rules and declarations;
-| userAgent        | `string`           | `''` | User agent to use when fetching a remote src
-| penthouse        | `object`           | `{}` | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).
-| user             | `string`           | `undefined` | RFC2617 basic authorization: user
-| pass             | `string`           | `undefined` | RFC2617 basic authorization: pass
-
+| Name             | Type                    | Default                                | Description                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------- | ----------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| inline           | `boolean`&#124;`object` | `false`                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
+| base             | `string`                | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written                                                                                                                                                                                                                                                                                                            |
+| html             | `string`                |                                        | HTML source to be operated against. This option takes precedence over the `src` option.                                                                                                                                                                                                                                                                                         |
+| css              | `array`                 | `[]`                                   | An array of paths to css files, file globs or [Vinyl](https://www.npmjs.com/package/vinyl) file objects.                                                                                                                                                                                                                                                                        |
+| src              | `string`                |                                        | Location of the HTML source to be operated against                                                                                                                                                                                                                                                                                                                              |
+| target           | `string` or `object`    |                                        | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both                                                                                                                                                                                                                                                       |
+| width            | `integer`               | `1300`                                 | Width of the target viewport                                                                                                                                                                                                                                                                                                                                                    |
+| height           | `integer`               | `900`                                  | Height of the target viewport                                                                                                                                                                                                                                                                                                                                                   |
+| dimensions       | `array`                 | `[]`                                   | An array of objects containing height and width. Takes precedence over `width` and `height` if set                                                                                                                                                                                                                                                                              |
+| minify           | `boolean`               | `true`                                 | Enable minification of generated critical-path CSS                                                                                                                                                                                                                                                                                                                              |
+| extract          | `boolean`               | `false`                                | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
+| inlineImages     | `boolean`               | `false`                                | Inline images                                                                                                                                                                                                                                                                                                                                                                   |
+| assetPaths       | `array`                 | `[]`                                   | List of directories/urls where the inliner should start looking for assets                                                                                                                                                                                                                                                                                                      |
+| maxImageFileSize | `integer`               | `10240`                                | Sets a max file size (in bytes) for base64 inlined images                                                                                                                                                                                                                                                                                                                       |
+| rebase           | `object` or `function`  | `undefined`                            | Critical tries it's best to rebase the asset paths relative to the document. If this doesn't work as expected you can always use this option to control the rebase paths. See [`postcss-url`](https://github.com/postcss/postcss-url) for details. (https://github.com/pocketjoso/penthouse#usage-1).                                                                           |
+| ignore           | `array`                 | `object`                               | `undefined`                                                                                                                                                                                                                                                                                                                                                                     | Ignore CSS rules. See [`postcss-discard`](https://github.com/bezoerb/postcss-discard) for usage examples. If you pass an array all rules will be applied to atrules, rules and declarations; |
+| userAgent        | `string`                | `''`                                   | User agent to use when fetching a remote src                                                                                                                                                                                                                                                                                                                                    |
+| penthouse        | `object`                | `{}`                                   | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).                                                                                                                                                                                                                                                                                               |
+| user             | `string`                | `undefined`                            | RFC2617 basic authorization: user                                                                                                                                                                                                                                                                                                                                               |
+| pass             | `string`                | `undefined`                            | RFC2617 basic authorization: pass                                                                                                                                                                                                                                                                                                                                               |
 
 ## CLI
 
@@ -291,7 +294,6 @@ You can also pass in the critical CSS file as an option.
 $ critical test/fixture/index.html --base test/fixture > critical.css
 ```
 
-
 ## Gulp
 
 ```js
@@ -300,11 +302,14 @@ var log = require('fancy-log');
 var critical = require('critical').stream;
 
 // Generate & Inline Critical-path CSS
-gulp.task('critical', function () {
-    return gulp.src('dist/*.html')
-        .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css','dist/styles/main.css']}))
-        .on('error', function(err) { log.error(err.message); })
-        .pipe(gulp.dest('dist'));
+gulp.task('critical', function() {
+  return gulp
+    .src('dist/*.html')
+    .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css', 'dist/styles/main.css']}))
+    .on('error', function(err) {
+      log.error(err.message);
+    })
+    .pipe(gulp.dest('dist'));
 });
 ```
 
@@ -313,18 +318,17 @@ gulp.task('critical', function () {
 ### Why is critical-path CSS important?
 
 > CSS is required to construct the render tree for your pages and JavaScript
-will often block on CSS during initial construction of the page.
-You should ensure that any non-essential CSS is marked as non-critical
-(e.g. print and other media queries), and that the amount of critical CSS
-and the time to deliver it is as small as possible.
+> will often block on CSS during initial construction of the page.
+> You should ensure that any non-essential CSS is marked as non-critical
+> (e.g. print and other media queries), and that the amount of critical CSS
+> and the time to deliver it is as small as possible.
 
 ### Why should critical-path CSS be inlined?
 
 > For best performance, you may want to consider inlining the critical CSS
-directly into the HTML document. This eliminates additional roundtrips
-in the critical path and if done correctly can be used to deliver a
-“one roundtrip” critical path length where only the HTML is a blocking resource.
-
+> directly into the HTML document. This eliminates additional roundtrips
+> in the critical path and if done correctly can be used to deliver a
+> “one roundtrip” critical path length where only the HTML is a blocking resource.
 
 ## FAQ
 
@@ -339,11 +343,11 @@ that walks through how to use it in a simple webapp.
 The main differences between Critical and [Penthouse](https://github.com/pocketjoso/penthouse), a module we
 use, are:
 
-* Critical will automatically extract stylesheets from your HTML from which to generate critical-path CSS from,
-whilst other modules generally require you to specify this upfront.
-* Critical provides methods for inlining critical-path CSS (a common logical next-step once your CSS is generated)
-* Since we tackle both generation and inlining, we're able to abstract away some of the ugly boilerplate otherwise
-involved in tackling these problems separately.
+- Critical will automatically extract stylesheets from your HTML from which to generate critical-path CSS from,
+  whilst other modules generally require you to specify this upfront.
+- Critical provides methods for inlining critical-path CSS (a common logical next-step once your CSS is generated)
+- Since we tackle both generation and inlining, we're able to abstract away some of the ugly boilerplate otherwise
+  involved in tackling these problems separately.
 
 That said, if your site or app has a large number of styles or styles which are being dynamically injected into
 the DOM (sometimes common in Angular apps) I recommend using Penthouse directly. It will require you to supply
@@ -370,28 +374,22 @@ free to open up an issue and we can discuss it.
 
 This module is brought to you and maintained by the following people:
 
-* Addy Osmani - Creator ([Github](https://github.com/addyosmani) / [Twitter](https://twitter.com/addyosmani))
-* Ben Zörb - Primary maintainer ([Github](https://github.com/bezoerb) / [Twitter](https://twitter.com/bezoerb))
+- Addy Osmani - Creator ([Github](https://github.com/addyosmani) / [Twitter](https://twitter.com/addyosmani))
+- Ben Zörb - Primary maintainer ([Github](https://github.com/bezoerb) / [Twitter](https://twitter.com/bezoerb))
 
 ## License
 
 Apache-2.0 © Addy Osmani, Ben Zörb
 
-
 [npm-url]: https://www.npmjs.com/package/critical
 [npm-image]: https://img.shields.io/npm/v/critical.svg
-
 [travis-url]: https://travis-ci.org/addyosmani/critical
 [travis-image]: https://img.shields.io/travis/addyosmani/critical/master.svg?label=Linux%20build
-
 [appveyor-url]: https://ci.appveyor.com/project/addyosmani/critical/branch/master
 [appveyor-image]: https://img.shields.io/appveyor/ci/addyosmani/critical/master.svg?label=Windows%20build
-
 [depstat-url]: https://david-dm.org/addyosmani/critical
 [depstat-image]: https://david-dm.org/addyosmani/critical/status.svg
-
 [devdepstat-url]: https://david-dm.org/addyosmani/critical?type=dev
 [devdepstat-image]: https://david-dm.org/addyosmani/critical/dev-status.svg
-
 [coveralls-url]: https://coveralls.io/github/addyosmani/critical?branch=master
 [coveralls-image]: https://coveralls.io/repos/github/addyosmani/critical/badge.svg?branch=master

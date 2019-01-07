@@ -174,13 +174,13 @@ async function create(options = {}) {
     criticalCSS = prettier.format(criticalCSS, {parser: 'css'});
   }
 
-  const extracted = extractCss(document.css, criticalCSS);
+  const uncritical = extractCss(document.css, criticalCSS);
 
   // Inline
   if (inline) {
-    if (target.extract) {
-      const extractHref = '/' + normalizePath(path.relative(document.cwd, target.extract));
-      inline.replaceStylesheets = [extractHref];
+    if (target.uncritical) {
+      const uncriticalHref = '/' + normalizePath(path.relative(document.cwd, target.uncritical));
+      inline.replaceStylesheets = [uncriticalHref];
     } else {
       inline.extract = extract;
     }
@@ -196,7 +196,7 @@ async function create(options = {}) {
   return {
     css: criticalCSS,
     html: document.contents.toString(),
-    extracted,
+    uncritical,
   };
 }
 

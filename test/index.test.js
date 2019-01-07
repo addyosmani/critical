@@ -29,12 +29,12 @@ test('Handle errors with passed callback method', done => {
   expect(tmp).resolves.toBeUndefined();
 });
 
-test('Call callback function with object containing html, css and extracted props', done => {
+test('Call callback function with object containing html, css and uncritical props', done => {
   generate({src: path.join(__dirname, 'fixtures/generate-default.html')}, (error, data) => {
     expect(error).toBeFalsy();
     expect(data).toHaveProperty('css');
     expect(data).toHaveProperty('html');
-    expect(data).toHaveProperty('extracted');
+    expect(data).toHaveProperty('uncritical');
     done();
   });
 });
@@ -62,17 +62,17 @@ test('Write html target', async () => {
 test('Write all targets', async () => {
   const data = await generate({
     src: path.join(__dirname, 'fixtures/generate-default.html'),
-    target: {html: '.test.html', css: '.test.css', extract: '.extract.css'},
+    target: {html: '.test.html', css: '.test.css', uncritical: '.uncritical.css'},
   });
   expect(data).toHaveProperty('css');
   expect(data).toHaveProperty('html');
   expect(fs.existsSync('.test.css')).toBeTruthy();
-  expect(fs.existsSync('.extract.css')).toBeTruthy();
+  expect(fs.existsSync('.uncritical.css')).toBeTruthy();
   expect(fs.existsSync('.test.html')).toBeTruthy();
 
   const html = readAndRemove('.test.html');
   const css = readAndRemove('.test.css');
-  readAndRemove('.extract.css');
+  readAndRemove('.uncritical.css');
   expect(html).toBe(data.html);
   expect(css).toBe(data.css);
 });
@@ -282,18 +282,18 @@ test('issue 341', async () => {
 });
 
 test('Replace stylesheet on extract-target', async () => {
-  const target = path.join(__dirname, 'fixtures/styles/extract.css');
+  const target = path.join(__dirname, 'fixtures/styles/uncritical.css');
   const result = await generate({
     html: read('fixtures/generate-adaptive.html'),
     base: path.join(__dirname, 'fixtures'),
-    target: {extract: target},
+    target: {uncritical: target},
     minify: true,
     extract: true,
     inline: true,
   });
 
-  const extracted = readAndRemove(target);
+  const uncritical = readAndRemove(target);
 
-  expect(result.html).toMatch('"/styles/extract.css"');
-  expect(extracted).toBe(result.extracted);
+  expect(result.html).toMatch('"/styles/uncritical.css"');
+  expect(uncritical).toBe(result.uncritical);
 });

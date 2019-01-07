@@ -18,7 +18,7 @@ async function generate(params, cb) {
   try {
     const options = getOptions(params);
     const {target = {}} = options;
-    const {css, html, extracted} = await create(options);
+    const {css, html, uncritical} = await create(options);
 
     // Store generated css
     if (target.css) {
@@ -31,16 +31,16 @@ async function generate(params, cb) {
     }
 
     // Store extracted css
-    if (target.extract) {
-      await fs.outputFile(path.resolve(target.extract), extracted);
+    if (target.uncritical) {
+      await fs.outputFile(path.resolve(target.uncritical), uncritical);
     }
 
     if (typeof cb === 'function') {
-      cb(null, {css, html, extracted});
+      cb(null, {css, html, uncritical});
       return;
     }
 
-    return {css, html, extracted};
+    return {css, html, uncritical};
   } catch (error) {
     if (typeof cb === 'function') {
       cb(error);

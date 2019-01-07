@@ -60,7 +60,7 @@ const schema = Joi.object()
       Joi.object().keys({
         css: Joi.string(),
         html: Joi.string(),
-        extract: Joi.string(),
+        uncritical: Joi.string(),
       }),
     ],
     assetPaths: Joi.array().items(Joi.string()),
@@ -118,7 +118,7 @@ function getOptions(options = {}) {
     };
   }
 
-  if (target && target.extract) {
+  if (target && target.uncritical) {
     value.extract = true;
   }
 
