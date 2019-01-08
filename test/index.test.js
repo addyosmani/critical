@@ -297,3 +297,32 @@ test('Replace stylesheet on extract-target', async () => {
   expect(result.html).toMatch('"/styles/uncritical.css"');
   expect(uncritical).toBe(result.uncritical);
 });
+
+test('Remove stylesheet on empty uncritical css', async () => {
+  const result = await generate({
+    html: read('fixtures/issue-304.html'),
+    base: path.join(__dirname, 'fixtures'),
+    minify: true,
+    extract: true,
+    inline: true,
+  });
+
+  expect(result.html).not.toMatch('<link');
+  expect(result.uncritical).toBe(result.uncritical);
+});
+
+test('Use async cb result for inline.replaceStylesheets', async () => {
+  const cb = () => Promise.resolve(['ab.css']);
+  const result = await generate({
+    html: read('fixtures/issue-304.html'),
+    base: path.join(__dirname, 'fixtures'),
+    minify: true,
+    extract: true,
+    inline: {
+      replaceStylesheets: cb,
+    },
+  });
+
+  expect(result.html).toMatch('"ab.css"');
+  expect(result.uncritical).toBe(result.uncritical);
+});

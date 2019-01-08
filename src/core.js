@@ -175,17 +175,27 @@ async function create(options = {}) {
   }
 
   const uncritical = extractCss(document.css, criticalCSS);
-  debug({
-    css: document.css,
-    critical: criticalCSS,
-    uncritical,
-  });
 
   // Inline
   if (inline) {
+    const {replaceStylesheets} = inline;
+
+    if (typeof replaceStylesheets === 'function') {
+      inline.replaceStylesheets = await replaceStylesheets(document, uncritical);
+    }
+
+    // If replaceStylesheets is not set via option and and uncritical is empty
+    if (extract && replaceStylesheets === undefined && uncritical.trim() === '') {
+      inline.replaceStylesheets = [];
+    }
+
     if (target.uncritical) {
-      const uncriticalHref = '/' + normalizePath(path.relative(document.cwd, target.uncritical));
-      inline.replaceStylesheets = [uncriticalHref];
+      const uncriticalHref = normalizePath(path.relative(document.cwd, target.uncritical));
+
+      // Only replace stylesheets if the uncriticalHref is inside document.cwd and replaceStylesheets is not set via options
+      if (!/^\.\.\//.test(uncriticalHref) && replaceStylesheets === undefined) {
+        inline.replaceStylesheets = ['/' + uncriticalHref];
+      }
     } else {
       inline.extract = extract;
     }

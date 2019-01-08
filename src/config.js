@@ -102,6 +102,14 @@ function getOptions(options = {}) {
     ...(inline === true ? {} : inline),
   };
 
+  if (value.inline.replaceStylesheets !== undefined && !Array.isArray(value.inline.replaceStylesheets)) {
+    if (value.inline.replaceStylesheets === 'false') {
+      value.inline.replaceStylesheets = false;
+    } else if (typeof value.inline.replaceStylesheets !== 'function') {
+      value.inline.replaceStylesheets = [value.inline.replaceStylesheets];
+    }
+  }
+
   // Set penthouse options
   value.penthouse = {
     forceInclude: value.include,
