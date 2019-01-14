@@ -174,19 +174,37 @@ async function create(options = {}) {
     criticalCSS = prettier.format(criticalCSS, {parser: 'css'});
   }
 
-  const uncritical = extractCss(document.css, criticalCSS);
+  const result = {
+    css: criticalCSS,
+  };
+
+  // Define uncritical as lazy evaluated property
+  const lazyUncritical = (orig, diff) =>
+    function() {
+      if (!this._uncritical) {
+        this._uncritical = extractCss(orig, diff);
+      }
+
+      return this._uncritical;
+    };
+
+  Object.defineProperty(result, 'uncritical', {
+    get: lazyUncritical(document.css, criticalCSS),
+  });
 
   // Inline
   if (inline) {
     const {replaceStylesheets} = inline;
 
     if (typeof replaceStylesheets === 'function') {
-      inline.replaceStylesheets = await replaceStylesheets(document, uncritical);
+      inline.replaceStylesheets = await replaceStylesheets(document, result.uncritical);
     }
 
     // If replaceStylesheets is not set via option and and uncritical is empty
-    if (extract && replaceStylesheets === undefined && uncritical.trim() === '') {
-      inline.replaceStylesheets = [];
+    if (extract && replaceStylesheets === undefined) {
+      if (result.uncritical.trim() === '') {
+        inline.replaceStylesheets = [];
+      }
     }
 
     if (target.uncritical) {
@@ -207,12 +225,10 @@ async function create(options = {}) {
   // Clean tempfiles
   await document.cleanup();
 
+  result.html = document.contents.toString();
+
   // Cleanup output
-  return {
-    css: criticalCSS,
-    html: document.contents.toString(),
-    uncritical,
-  };
+  return result;
 }
 
 module.exports = {

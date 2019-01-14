@@ -18,28 +18,28 @@ async function generate(params, cb) {
   try {
     const options = getOptions(params);
     const {target = {}} = options;
-    const {css, html, uncritical} = await create(options);
+    const result = await create(options);
     // Store generated css
     if (target.css) {
-      await fs.outputFile(path.resolve(target.css), css);
+      await fs.outputFile(path.resolve(target.css), result.css);
     }
 
     // Store generated html
     if (target.html) {
-      await fs.outputFile(path.resolve(target.html), html);
+      await fs.outputFile(path.resolve(target.html), result.html);
     }
 
     // Store extracted css
     if (target.uncritical) {
-      await fs.outputFile(path.resolve(target.uncritical), uncritical);
+      await fs.outputFile(path.resolve(target.uncritical), result.uncritical);
     }
 
     if (typeof cb === 'function') {
-      cb(null, {css, html, uncritical});
+      cb(null, result);
       return;
     }
 
-    return {css, html, uncritical};
+    return result;
   } catch (error) {
     if (typeof cb === 'function') {
       cb(error);
