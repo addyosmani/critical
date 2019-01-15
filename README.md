@@ -251,7 +251,6 @@ critical.generate({
 
 ### Options
 
-| Name             | Type                    | Default                                | Description                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------------- | ----------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | inline           | `boolean`&#124;`object` | `false`                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
 | base             | `string`                | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written                                                                                                                                                                                                                                                                                                            |
@@ -275,32 +274,6 @@ critical.generate({
 | user             | `string`                | `undefined`                            | RFC2617 basic authorization: user                                                                                                                                                                                                                                                                                                                                               |
 | pass             | `string`                | `undefined`                            | RFC2617 basic authorization: pass                                                                                                                                                                                                                                                                                                                                               |
 
-## CLI
-
-```sh
-$ npm install -g critical
-```
-
-critical works well with standard input.
-
-```sh
-$ cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
-```
-
-You can also pass in the critical CSS file as an option.
-
-```sh
-$ critical test/fixture/index.html --base test/fixture > critical.css
-```
-
-## Gulp
-
-```js
-var gulp = require('gulp');
-var log = require('fancy-log');
-var critical = require('critical').stream;
-
-// Generate & Inline Critical-path CSS
 gulp.task('critical', function() {
   return gulp
     .src('dist/*.html')
