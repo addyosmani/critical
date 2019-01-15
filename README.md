@@ -251,6 +251,7 @@ critical.generate({
 
 ### Options
 
+| Name             | Type                    | Default                                | Description                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------------- | ----------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | inline           | `boolean`&#124;`object` | `false`                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
 | base             | `string`                | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written                                                                                                                                                                                                                                                                                                            |
@@ -261,8 +262,7 @@ critical.generate({
 | width            | `integer`               | `1300`                                 | Width of the target viewport                                                                                                                                                                                                                                                                                                                                                    |
 | height           | `integer`               | `900`                                  | Height of the target viewport                                                                                                                                                                                                                                                                                                                                                   |
 | dimensions       | `array`                 | `[]`                                   | An array of objects containing height and width. Takes precedence over `width` and `height` if set                                                                                                                                                                                                                                                                              |
-| minify           | `boolean`               | `true`                                 | Enable minification of generated critical-path CSS                                                                                                                                                                                                                                                                                                                              |
-| cleancss         | `object`                |                                        | Options for CleanCss used for minification                                                                                                                                                                                                                                                                                                                                      |
+| minify           | `boolean` or `object`   | `true`                                 | Enable minification of generated critical-path CSS. If set to object, the object is used as CleanCSS options                                                                                                                                                                                                                                                                    |
 | extract          | `boolean`               | `false`                                | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
 | inlineImages     | `boolean`               | `false`                                | Inline images                                                                                                                                                                                                                                                                                                                                                                   |
 | assetPaths       | `array`                 | `[]`                                   | List of directories/urls where the inliner should start looking for assets                                                                                                                                                                                                                                                                                                      |
@@ -274,6 +274,27 @@ critical.generate({
 | user             | `string`                | `undefined`                            | RFC2617 basic authorization: user                                                                                                                                                                                                                                                                                                                                               |
 | pass             | `string`                | `undefined`                            | RFC2617 basic authorization: pass                                                                                                                                                                                                                                                                                                                                               |
 
+## CLI
+
+```sh
+$ npm install -g critical
+```
+
+critical works well with standard input.
+
+```sh
+$ cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
+```
+
+You can also pass in the critical CSS file as an option.
+
+```sh
+$ critical test/fixture/index.html --base test/fixture > critical.css
+```
+
+## Gulp
+
+```js
 gulp.task('critical', function() {
   return gulp
     .src('dist/*.html')

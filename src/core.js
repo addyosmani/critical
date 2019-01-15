@@ -80,7 +80,6 @@ function callPenthouse(document, options) {
  * @return {Promise<object>} Object with critical css & html
  */
 async function create(options = {}) {
-  const cleanCSS = new CleanCSS(options.cleancss);
   const {
     base,
     src,
@@ -169,6 +168,7 @@ async function create(options = {}) {
 
   // Minify or prettify
   if (minify) {
+    const cleanCSS = new CleanCSS(typeof minify === 'boolean' ? {} : minify);
     criticalCSS = cleanCSS.minify(criticalCSS).styles;
   } else {
     criticalCSS = prettier.format(criticalCSS, {parser: 'css'});

@@ -243,6 +243,25 @@ describe('generate (local)', () => {
     );
   });
 
+  test('should generate minified critical-path CSS with CleanCSS options', done => {
+    const expected = read('expected/generate-cleancss.css', true);
+    const target = path.resolve('.critical.min.css');
+
+    generate(
+      {
+        base: path.join(__dirname, '/fixtures/'),
+        src: 'generate-default.html',
+        minify: {
+          level: 2,
+        },
+        target,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
+
   test('should generate minified critical-path CSS successfully with external css file configured', done => {
     const expected = read('expected/generate-default.css', true);
     const target = path.resolve('.nostyle.css');

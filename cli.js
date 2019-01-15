@@ -23,6 +23,7 @@ Options:
   -h, --height            Viewport height
   -i, --inline            Generate the HTML with inlined critical-path CSS
   -e, --extract           Extract inlined styles from referenced stylesheets
+  -m, --minify            Enable minification of generated critical-path CSS. If set to object, the object is used as CleanCSS options
 
   --inlineImages          Inline images
   --ignore                RegExp, @type or selector to ignore
@@ -60,6 +61,11 @@ const minimistOpts = {
       type: 'boolean',
       alias: 'e',
       default: false,
+    },
+    minify: {
+      type: ['boolean', 'object'],
+      alias: 'm',
+      default: true,
     },
     inlineImages: {
       type: 'boolean',
