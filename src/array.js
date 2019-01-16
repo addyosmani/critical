@@ -4,6 +4,7 @@ async function mapAsync(array = [], callback = a => a) {
     const mapped = await callback(array[index], index, array); /* eslint-disable-line no-await-in-loop */
     result.push(mapped);
   }
+
   return result;
 }
 
@@ -21,6 +22,7 @@ async function filterAsync(array = [], filter = a => a) {
       result.push(array[index]);
     }
   }
+
   return result;
 }
 

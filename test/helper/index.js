@@ -39,6 +39,7 @@ function getVinyl(...args) {
         contents: Buffer.from(read(file)),
       });
     }
+
     return new Vinyl();
   }
 

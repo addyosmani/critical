@@ -22,6 +22,7 @@ function assertCritical(target, expected, done, skipTarget) {
       console.log(err);
       done(err);
     }
+
     try {
       expect(err).toBeFalsy();
       expect(output).toBeDefined();
@@ -29,11 +30,13 @@ function assertCritical(target, expected, done, skipTarget) {
         const dest = readAndRemove(target);
         expect(dest).toBe(expected);
       }
+
       expect(nn(output)).toBe(expected);
     } catch (error) {
       done(error);
       return;
     }
+
     done();
   };
 }
@@ -54,6 +57,7 @@ beforeAll(async () => {
     if (req.headers['user-agent'] === 'custom agent') {
       return serveUserAgent(req, res, finalhandler(req, res));
     }
+
     serve(req, res, finalhandler(req, res));
   }).listen(port);
 });

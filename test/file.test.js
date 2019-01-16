@@ -1,7 +1,6 @@
 /* eslint-disable no-await-in-loop */
 
 const {createServer} = require('http');
-const url = require('url');
 const path = require('path');
 const getPort = require('get-port');
 const fs = require('fs-extra');
@@ -15,6 +14,7 @@ const {
   isRemote,
   fileExists,
   joinPath,
+  urlParse,
   resolve,
   vinylize,
   normalizePath,
@@ -193,9 +193,10 @@ test('Vinylize remote file', async () => {
   for (let i = 0; i < result.length; i++) {
     expect(result[i].remote).toBe(true);
     expect(result[i].url).toBe(urls[i]);
-    expect(result[i].urlObj).toEqual(url.parse(urls[i]));
+    expect(result[i].urlObj).toEqual(urlParse(urls[i]));
     expect(result[i].contents.toString()).toBe(contents[i].toString());
   }
+
   expect.hasAssertions();
 });
 

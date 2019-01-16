@@ -41,6 +41,43 @@ function isRemote(href) {
 }
 
 /**
+ * Parse Url
+ * @param {string} str The URL
+ * @returns {URL|object} return new URL Object
+ */
+function urlParse(str = '') {
+  if (/^\w+:\/\//.test(str)) {
+    return new url.URL(str);
+  }
+
+  if (/^\/\//.test(str)) {
+    return new url.URL(str, 'https://ba.se');
+  }
+
+  return {pathname: str};
+}
+
+/**
+ * Resolve Url
+ * @param {string} from Resolve from
+ * @param {string} to Resolve to
+ * @returns {string} The resolved url
+ */
+function urlResolve(from = '', to = '') {
+  if (isRemote(from)) {
+    const {href: base} = urlParse(from);
+    const {href} = new url.URL(to, base);
+    return href;
+  }
+
+  if (path.isAbsolute(to)) {
+    return to;
+  }
+
+  return path.join(from.replace(/[^/]+$/, ''), to);
+}
+
+/**
  * Check wether a resource is relative or not
  * @param {string} href Path
  * @returns {boolean} True if the path is relative
@@ -72,6 +109,7 @@ async function fileExists(href, options = {}) {
   if (isVinyl(href)) {
     return !href.isNull();
   }
+
   if (isRemote(href)) {
     const {got: fetchOptions = {}} = options;
     fetchOptions.method = 'head';
@@ -111,8 +149,9 @@ function joinPath(base, part) {
   if (!part) {
     return base;
   }
+
   if (isRemote(base)) {
-    return url.resolve(base, part);
+    return urlResolve(base, part);
   }
 
   return path.join(base, part.replace(/\?.*$/, ''));
@@ -191,7 +230,7 @@ function rebaseAssets(css, from, to, method = 'rebase') {
   }
 
   if (isRemote(from)) {
-    const {pathname} = url.parse(from);
+    const {pathname} = urlParse(from);
     from = pathname;
   }
 
@@ -242,13 +281,14 @@ async function fetch(uri, options = {}, secure = true) {
   // Consider protocol-relative urls
   if (/^\/\//.test(uri)) {
     protocolRelative = true;
-    resourceUrl = url.resolve(`http${secure ? 's' : ''}://te.st`, uri);
+    resourceUrl = urlResolve(`http${secure ? 's' : ''}://te.st`, uri);
   }
 
   fetchOptions.rejectUnauthorized = false;
   if (user && pass) {
     headers.Authorization = 'Basic ' + token(user, pass);
   }
+
   if (userAgent) {
     headers['User-Agent'] = userAgent;
   }
@@ -386,8 +426,8 @@ async function getDocumentPath(file, options = {}) {
 
 /**
  * Get path for remote stylesheet. Compares document host with stylesheet host
- * @param {object} fileObj Result of url.parse(style url)
- * @param {object} documentObj Result of url.parse(document url)
+ * @param {object} fileObj Result of urlParse(style url)
+ * @param {object} documentObj Result of urlParse(document url)
  * @param {string} filename Filename
  * @returns {string} Path to css (can be remote or local relative to document base)
  */
@@ -435,7 +475,7 @@ function getStylesheetPath(document, file, options = {}) {
 
   // Try to compute path based on document link tags with same name
   const stylesheet = document.stylesheets.find(href => {
-    const {pathname} = url.parse(href);
+    const {pathname} = urlParse(href);
     const name = path.basename(pathname);
     return name === path.basename(file.path);
   });
@@ -443,9 +483,11 @@ function getStylesheetPath(document, file, options = {}) {
   if (stylesheet && isRelative(stylesheet) && document.virtualPath) {
     return normalizePath(joinPath(path.dirname(document.virtualPath), stylesheet));
   }
+
   if (stylesheet && isRemote(stylesheet)) {
-    return getRemoteStylesheetPath(url.parse(stylesheet), document.urlObj);
+    return getRemoteStylesheetPath(urlParse(stylesheet), document.urlObj);
   }
+
   if (stylesheet) {
     return stylesheet;
   }
@@ -457,9 +499,11 @@ function getStylesheetPath(document, file, options = {}) {
       joinPath(path.dirname(document.virtualPath), joinPath(path.dirname(unsafestylesheet), path.basename(file.path)))
     );
   }
+
   if (unsafestylesheet && isRemote(unsafestylesheet)) {
-    return getRemoteStylesheetPath(url.parse(unsafestylesheet), document.urlObj, path.basename(file.path));
+    return getRemoteStylesheetPath(urlParse(unsafestylesheet), document.urlObj, path.basename(file.path));
   }
+
   if (stylesheet) {
     return stylesheet;
   }
@@ -487,6 +531,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   const {base, rebase = {}, assetPaths = []} = options;
   const {history = [], url: docurl = '', urlObj} = document;
   const {from, to} = rebase;
+  const {pathname: urlPath} = urlObj || {};
   const [docpath] = history;
 
   if (isVinyl(file)) {
@@ -499,7 +544,6 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   const hops = normalized.split(path.sep).reduce((cnt, part) => (part === '..' ? cnt + 1 : cnt), 0);
   // Also findup first real dir path
   const [first] = normalized.split(path.sep).filter(p => p && p !== '..');
-
   const mappedAssetPaths = base ? assetPaths.map(a => joinPath(base, a)) : [];
 
   // Make a list of possible paths
@@ -508,8 +552,9 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
       base,
       base && isRelative(base) && path.join(process.cwd(), base),
       docurl,
-      urlObj && url.format({...urlObj, pathname: path.dirname(urlObj.pathname), path: path.dirname(urlObj.path)}),
-      docurl && url.resolve(docurl, file),
+      urlPath && urlResolve(urlObj.href, path.dirname(urlPath)),
+      urlPath && !/\/$/.test(path.dirname(urlPath)) && urlResolve(urlObj.href, `${path.dirname(urlPath)}/`),
+      docurl && urlResolve(docurl, file),
       docpath && path.dirname(docpath),
       ...assetPaths,
       ...mappedAssetPaths,
@@ -539,6 +584,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
       if (isRemote(cwd)) {
         return [...result, cwd];
       }
+
       const up = await findUp(first, {cwd});
       if (up) {
         const upDir = path.dirname(up);
@@ -551,6 +597,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
             .slice(0, hops);
           return [...result, upDir, path.join(upDir, ...additional)];
         }
+
         return [...result, upDir];
       }
 
@@ -588,7 +635,7 @@ async function vinylize(src, options = {}) {
   } else if (filepath && isRemote(filepath)) {
     file.remote = true;
     file.url = filepath;
-    file.urlObj = url.parse(filepath);
+    file.urlObj = urlParse(filepath);
     file.contents = await fetch(filepath, options);
     file.virtualPath = file.urlObj.pathname;
   } else if (filepath && fs.existsSync(filepath)) {
@@ -658,7 +705,7 @@ async function getStylesheet(document, filepath, options = {}) {
   } else if (isRemote(rebase.to || stylepath)) {
     const from = rebase.from || stylepath;
     const to = rebase.to || stylepath;
-    const method = asset => (isRemote(asset.originUrl) ? asset : url.resolve(to, asset.relativePath));
+    const method = asset => (isRemote(asset.originUrl) ? asset : urlResolve(to, asset.relativePath));
     file.contents = rebaseAssets(file.contents, from, to, method);
 
     // Use relative path to document (local)
@@ -743,6 +790,7 @@ async function preparePenthouseData(document) {
     tmp.push(filename);
     await fs.outputFile(filename, document.css);
   }
+
   // Write empty string to rest of the linked stylesheets
   await forEachAsync(canBeEmpty, dummy => {
     const filename = path.join(dir, dummy);
@@ -832,6 +880,8 @@ module.exports = {
   token,
   fileExists,
   resolve,
+  urlParse,
+  urlResolve,
   joinPath,
   vinylize,
   getStylesheetHrefs,

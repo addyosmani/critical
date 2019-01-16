@@ -8,6 +8,7 @@ test('async map', async () => {
     await waitRandom();
     return value * value;
   };
+
   const func = value => value * value;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = array.map(func);
@@ -36,6 +37,7 @@ test('async reduce', async () => {
     await waitRandom();
     return [...res, value * index];
   };
+
   const func = (res, value, index) => [...res, value * index];
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = array.reduce(func, []);
@@ -64,6 +66,7 @@ test('async filter', async () => {
     await waitRandom();
     return value % 2;
   };
+
   const func = value => value % 2;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = array.filter(func);
