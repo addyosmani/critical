@@ -165,6 +165,7 @@ const normalizedFlags = reduce(
     if (!isAlias(key)) {
       res[key] = mapRegExpStr(val);
     }
+
     return res;
   },
   {}
