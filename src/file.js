@@ -829,6 +829,7 @@ async function getDocument(filepath, options = {}) {
   if (!base && document.path) {
     document.cwd = document.path.replace(document.virtualPath, '');
   }
+
   debug('(getDocument) Result: ', {
     path: document.path,
     url: document.url,
