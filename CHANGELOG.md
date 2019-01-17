@@ -95,11 +95,11 @@
 # v0.9.1 / 2017-09-04
 
 - 0.9.1
-- Appveyor tweaks
-- Use yarn with appveyor
-- some appveyor tweaks
-- Added package missing in appveyor
-- Remove appveyor cache
+- AppVeyor tweaks
+- Use yarn with AppVeyor
+- some AppVeyor tweaks
+- Added package missing in AppVeyor
+- Remove AppVeyor cache
 - Try to reinstall "css" dependencies
 - Upgrade Penthouse
 - Update readme according to #220
@@ -192,7 +192,7 @@
 - ignore generated css
 - tests adjusted for penthouse 0.7.1
 - minor tweaks
-- Fix appveyor tests
+- Fix AppVeyor tests
 - local url for phantomjs (#94)
 - penthouse bump
 - Bump dependencies
@@ -203,12 +203,12 @@
 - fix local files query string ENOENT exception
 - fixed tests for bumped deps
 - Bump dependencies
-- appveyor file tweaks
+- AppVeyor file tweaks
 - Actually Emit Critical Error in Stream
 - cleanup
 - Switched postcss-image-inliner
 - bump inline-critical
-- appveyor tweaks
+- AppVeyor tweaks
 - cleanup
 - added gc to address #82
 - Added cli remote test
@@ -253,9 +253,9 @@
 
 # v0.5.7 / 2015-04-12
 
-- appveyor tweaks
-- Automated windows tests using appveyor
-- Fixed tests on windows
+- AppVeyor tweaks
+- Automated Windows tests using AppVeyor
+- Fixed tests on Windows
 - Added some badges
 - Bump dependencies
 - cleancss syntax change
@@ -320,7 +320,7 @@
 - added cli / changed structure
 - Update README.md
 - Remove inlined CSS rules from source stylesheets #39
-- Fixed backslash in rebased paths on windows
+- Fixed backslash in rebased paths on Windows
 - fixed fa77c44
 - Return critical css even if unlinking of the temporary file fails
 - Ignores external stylesheets

@@ -115,7 +115,7 @@ const isAlias = key => {
 /**
  * Check if value is an empty object
  * @param {mixed} val Value to check
- * @returns {boolean} Wether or not this is an empty object
+ * @returns {boolean} Whether or not this is an empty object
  */
 const isEmptyObj = val => isObject(val) && Object.keys(val).length === 0;
 
