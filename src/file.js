@@ -23,7 +23,7 @@ const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'b
 const warn = text => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
 
 /**
- * Fixup slashes in file paths for windows and remove volume definition in front
+ * Fixup slashes in file paths for Windows and remove volume definition in front
  * @param {string} str Path
  * @returns {string} Normalized path
  */
@@ -32,7 +32,7 @@ function normalizePath(str) {
 }
 
 /**
- * Check wether a resource is external or not
+ * Check whether a resource is external or not
  * @param {string} href Path
  * @returns {boolean} True if the path is remote
  */
@@ -78,7 +78,7 @@ function urlResolve(from = '', to = '') {
 }
 
 /**
- * Check wether a resource is relative or not
+ * Check whether a resource is relative or not
  * @param {string} href Path
  * @returns {boolean} True if the path is relative
  */

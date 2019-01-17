@@ -8,7 +8,7 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ## Install
 
-#### Install upcomming version
+#### Install upcoming version
 
 ```sh
 $ npm i -D critical@next
