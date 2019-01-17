@@ -780,8 +780,14 @@ async function preparePenthouseData(document) {
   const filename = path.basename(tempy.file({extension: 'html'}));
   const file = path.join(dir, filename);
 
+  const htmlContent = document.contents.toString();
+  // Inject all styles to make sure we have everything in place
+  // because puppeteer doesn't seem to fetch protocol relative links
+  // when served from file://
+  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
   // Write html to temp file
-  await fs.outputFile(file, document.contents);
+  await fs.outputFile(file, injected);
+
   tmp.push(file);
 
   // Write styles to first stylesheet
@@ -818,11 +824,11 @@ async function getDocument(filepath, options = {}) {
 
   document.stylesheets = await getStylesheetHrefs(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
+
   document.cwd = base || process.cwd();
   if (!base && document.path) {
     document.cwd = document.path.replace(document.virtualPath, '');
   }
-
   debug('(getDocument) Result: ', {
     path: document.path,
     url: document.url,
