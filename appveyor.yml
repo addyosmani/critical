@@ -10,7 +10,7 @@ environment:
 
 install:
   - ps: Install-Product node $env:NODEJS_VERSION $env:PLATFORM
-  - npm install
+  - npm ci
 
 build: off
 
@@ -23,4 +23,4 @@ matrix:
   fast_finish: true
 
 cache:
-  - 'node_modules -> appveyor.yml,package.json,package-lock.json'
+  - '%APPDATA%\npm-cache\ -> appveyor.yml,package.json,package-lock.json'
