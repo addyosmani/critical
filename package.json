@@ -50,7 +50,7 @@
     "plugin-error": "^1.0.1",
     "postcss": "^7.0.11",
     "postcss-discard": "^0.3.0",
-    "postcss-image-inliner": "^2.0.0",
+    "postcss-image-inliner": "^3.0.0",
     "postcss-url": "^8.0.0",
     "prettier": "^1.15.3",
     "replace-ext": "^1.0.0",
