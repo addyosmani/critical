@@ -5,6 +5,7 @@ const Vinyl = require('vinyl');
 const PluginError = require('plugin-error');
 const nn = require('normalize-newline');
 const streamAssert = require('stream-assert');
+const tempy = require('tempy');
 const {ConfigError, FileNotFoundError, NoCssError} = require('../src/errors');
 const {getVinyl, readAndRemove, read} = require('./helper');
 const {generate, stream} = require('..');
@@ -75,6 +76,58 @@ test('Write all targets', async () => {
   readAndRemove('.uncritical.css');
   expect(html).toBe(data.html);
   expect(css).toBe(data.css);
+});
+
+test('Write all targets relative to base', async () => {
+  const base = tempy.directory();
+  const getFile = f => path.join(base, f);
+  const data = await generate({
+    base,
+    src: path.join(__dirname, 'fixtures/generate-default.html'),
+    target: {html: '.test.html', css: '.test.css', uncritical: '.uncritical.css'},
+  });
+  expect(data).toHaveProperty('css');
+  expect(data).toHaveProperty('html');
+  expect(data).toHaveProperty('uncritical');
+  expect(fs.existsSync(getFile('.test.css'))).toBeTruthy();
+  expect(fs.existsSync(getFile('.uncritical.css'))).toBeTruthy();
+  expect(fs.existsSync(getFile('.test.html'))).toBeTruthy();
+
+  const html = readAndRemove(getFile('.test.html'));
+  const css = readAndRemove(getFile('.test.css'));
+  const uncritical = readAndRemove(getFile('.uncritical.css'));
+  expect(uncritical).toBe(data.uncritical);
+  expect(html).toBe(data.html);
+  expect(css).toBe(data.css);
+
+  await fs.remove(base);
+});
+
+test('Write all targets respecting absolute paths', async () => {
+  const base = tempy.directory();
+  const fileBase = tempy.directory();
+  const getFile = f => path.join(fileBase, f);
+  const data = await generate({
+    base,
+    src: path.join(__dirname, 'fixtures/generate-default.html'),
+    target: {html: getFile('.test.html'), css: getFile('.test.css'), uncritical: getFile('.uncritical.css')},
+  });
+  expect(data).toHaveProperty('css');
+  expect(data).toHaveProperty('html');
+  expect(data).toHaveProperty('uncritical');
+  expect(fs.existsSync(getFile('.test.css'))).toBeTruthy();
+  expect(fs.existsSync(getFile('.uncritical.css'))).toBeTruthy();
+  expect(fs.existsSync(getFile('.test.html'))).toBeTruthy();
+
+  const html = readAndRemove(getFile('.test.html'));
+  const css = readAndRemove(getFile('.test.css'));
+  const uncritical = readAndRemove(getFile('.uncritical.css'));
+  expect(uncritical).toBe(data.uncritical);
+  expect(html).toBe(data.html);
+  expect(css).toBe(data.css);
+
+  await fs.remove(base);
+  await fs.remove(fileBase);
 });
 
 test('Reject with ConfigError on invalid config', () => {

@@ -17,21 +17,21 @@ const {getOptions} = require('./src/config');
 async function generate(params, cb) {
   try {
     const options = getOptions(params);
-    const {target = {}} = options;
+    const {target = {}, base = process.cwd()} = options;
     const result = await create(options);
     // Store generated css
     if (target.css) {
-      await fs.outputFile(path.resolve(target.css), result.css);
+      await fs.outputFile(path.resolve(base, target.css), result.css);
     }
 
     // Store generated html
     if (target.html) {
-      await fs.outputFile(path.resolve(target.html), result.html);
+      await fs.outputFile(path.resolve(base, target.html), result.html);
     }
 
     // Store extracted css
     if (target.uncritical) {
-      await fs.outputFile(path.resolve(target.uncritical), result.uncritical);
+      await fs.outputFile(path.resolve(base, target.uncritical), result.uncritical);
     }
 
     if (typeof cb === 'function') {
