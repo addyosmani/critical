@@ -54,6 +54,7 @@ const schema = Joi.object()
         to: Joi.string(),
       }),
       Joi.func(),
+      Joi.boolean(),
     ],
     target: [
       Joi.string(),

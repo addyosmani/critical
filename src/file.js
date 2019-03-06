@@ -695,8 +695,12 @@ async function getStylesheet(document, filepath, options = {}) {
   // - if rebase.from and rebase.to is specified
   // - a valid document path and a stylesheet path
   // - an absolute positioned stylesheet so we can make the images absolute
-
+  // - and rebase is not disabled (#359)
   // First respect the user input
+  if (rebase === false) {
+    return file;
+  }
+
   if (rebase.from && rebase.to) {
     file.contents = rebaseAssets(file.contents, rebase.from, rebase.to);
   } else if (typeof rebase === 'function') {

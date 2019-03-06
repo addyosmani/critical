@@ -550,3 +550,38 @@ test('Get styles (without path)', async () => {
     }
   }
 });
+
+test('Does not rebase when rebase is disabled via option', async () => {
+  const docs = await mapAsync(
+    [
+      path.join(__dirname, 'fixtures/folder/generate-image.html'),
+      path.join(__dirname, 'fixtures/relative-different.html'),
+      path.join(__dirname, 'fixtures/remote-different.html'),
+    ],
+    file => fs.readFile(file)
+  );
+
+  const tests = [
+    {
+      filepath: `http://localhost:${port}/styles/image-relative.css`,
+      expected: [`'../images/critical.png'`, `'../images/critical.png'`, `'../images/critical.png'`],
+    },
+    {
+      filepath: `http://127.0.0.1:${port}/styles/image-relative.css`,
+      expected: [`'../images/critical.png'`, `'../images/critical.png'`, `'../images/critical.png'`],
+    },
+    {
+      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      expected: [`'../images/critical.png'`, `'../images/critical.png'`, `'../images/critical.png'`],
+    },
+  ];
+
+  for (let index = 0; index < docs.length; index++) {
+    for (const testdata of tests) {
+      const {filepath, expected} = testdata;
+      const document = await getDocumentFromSource(docs[index], {css: filepath});
+      const file = await getStylesheet(document, filepath, {base: path.join(__dirname, 'fixtures'), rebase: false});
+      expect(file.contents.toString()).toMatch(expected[index]);
+    }
+  }
+});
