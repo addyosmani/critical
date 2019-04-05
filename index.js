@@ -62,7 +62,10 @@ function prepareOptions(opts) {
     options.penthouse = assign({}, {
         forceInclude: opts.include || [],
         timeout: opts.timeout || 30000,
-        maxEmbeddedBase64Length: opts.maxImageFileSize || 10240
+        maxEmbeddedBase64Length: opts.maxImageFileSize || 10240,
+        html: opts.html || '',
+        htmlContentURL: opts.htmlContentURL || '',
+        blockRequestURLs: opts.blockRequestURLs || []
     }, options.penthouse || {});
 
     // Show overwrite warning if penthouse params url, css, witdh or height are present
