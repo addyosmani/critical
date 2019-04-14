@@ -112,7 +112,7 @@ async function fileExists(href, options = {}) {
 
   if (isRemote(href)) {
     const {got: fetchOptions = {}} = options;
-    fetchOptions.method = 'head';
+    fetchOptions.method = fetchOptions.method || 'head';
     try {
       const response = await fetch(href, {...options, got: fetchOptions});
       const {statusCode} = response;
@@ -172,7 +172,7 @@ async function resolve(href, search = [], options = {}) {
 
   for (const ref of search) {
     const checkPath = joinPath(ref, href);
-    exists = await fileExists(checkPath); /* eslint-disable-line no-await-in-loop */
+    exists = await fileExists(checkPath, options); /* eslint-disable-line no-await-in-loop */
     if (exists) {
       return checkPath;
     }
@@ -574,7 +574,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
       return false;
     }
 
-    return !strict || fileExists(f);
+    return !strict || fileExists(f, options);
   });
 
   // Findup first directory in search path and add to the list if available

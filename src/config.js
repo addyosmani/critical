@@ -37,6 +37,7 @@ const schema = Joi.object()
     concurrency: Joi.number().default(DEFAULT.concurrency),
     user: Joi.string(),
     pass: Joi.string(),
+    got: Joi.object().unknown(true),
     penthouse: Joi.object()
       .keys({
         url: Joi.any().forbidden(),
