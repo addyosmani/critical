@@ -82,7 +82,7 @@ const minimistOpts = {
 
 const cli = meow(help, minimistOpts);
 
-const groupKeys = ['ignore', 'inline', 'penthouse', 'target', 'got'];
+const groupKeys = ['ignore', 'inline', 'penthouse', 'target', 'request'];
 // Group args for inline-critical and penthouse
 const grouped = {
   ...cli.flags,

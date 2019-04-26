@@ -111,10 +111,10 @@ async function fileExists(href, options = {}) {
   }
 
   if (isRemote(href)) {
-    const {got: fetchOptions = {}} = options;
-    fetchOptions.method = fetchOptions.method || 'head';
+    const {request = {}} = options;
+    request.method = request.method || 'head';
     try {
-      const response = await fetch(href, {...options, got: fetchOptions});
+      const response = await fetch(href, {...options, request});
       const {statusCode} = response;
       return parseInt(statusCode, 10) < 400;
     } catch (error) {
@@ -273,8 +273,8 @@ const token = (user, pass) => Buffer.from([user, pass].join(':')).toString('base
  * @returns {Promise<Buffer|response>} Resolves to fetched content or response object for HEAD request
  */
 async function fetch(uri, options = {}, secure = true) {
-  const {user, pass, userAgent, got: fetchOptions = {}} = options;
-  const {headers = {}, method = 'get'} = fetchOptions;
+  const {user, pass, userAgent, request = {}} = options;
+  const {headers = {}, method = 'get'} = request;
   let resourceUrl = uri;
   let protocolRelative = false;
 
@@ -284,7 +284,7 @@ async function fetch(uri, options = {}, secure = true) {
     resourceUrl = urlResolve(`http${secure ? 's' : ''}://te.st`, uri);
   }
 
-  fetchOptions.rejectUnauthorized = false;
+  request.rejectUnauthorized = false;
   if (user && pass) {
     headers.Authorization = 'Basic ' + token(user, pass);
   }
@@ -293,10 +293,10 @@ async function fetch(uri, options = {}, secure = true) {
     headers['User-Agent'] = userAgent;
   }
 
-  debug(`Fetching resource: ${resourceUrl}`, {...fetchOptions, headers});
+  debug(`Fetching resource: ${resourceUrl}`, {...request, headers});
 
   try {
-    const response = await got(resourceUrl, {...fetchOptions, headers});
+    const response = await got(resourceUrl, {...request, headers});
     if (method === 'head') {
       return response;
     }

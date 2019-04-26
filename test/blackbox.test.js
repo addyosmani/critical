@@ -1324,7 +1324,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should use the provided got method to check for asset existance', async () => {
+  test('should use the provided request method to check for asset existance', async () => {
     const mockGet = jest.fn();
     const mockHead = jest.fn();
     nock(`http://localhost:${port}`, {allowUnmocked: true})
@@ -1338,7 +1338,7 @@ describe('generate (remote)', () => {
       src: `http://localhost:${port}/generate-adaptive.html`,
       width: 1300,
       height: 900,
-      got: {method: 'get'},
+      request: {method: 'get'},
     });
 
     expect(mockGet).toHaveBeenCalled();

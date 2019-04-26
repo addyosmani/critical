@@ -233,11 +233,16 @@ describe('CLI', () => {
       });
     });
 
-    test('Set got options prefixed with --got-', async () => {
-      const args = await getArgs(['fixtures/generate-default.html', '--got-method', 'get', '--no-got-followRedirect']);
+    test('Set request options prefixed with --request-', async () => {
+      const args = await getArgs([
+        'fixtures/generate-default.html',
+        '--request-method',
+        'get',
+        '--no-request-followRedirect',
+      ]);
 
       expect(args).toMatchObject({
-        got: {
+        request: {
           method: 'get',
           followRedirect: false,
         },
