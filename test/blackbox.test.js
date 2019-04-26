@@ -2,6 +2,7 @@ const path = require('path');
 const {createServer} = require('http');
 const getPort = require('get-port');
 const Vinyl = require('vinyl');
+const nock = require('nock');
 const async = require('async');
 const fs = require('fs-extra');
 const finalhandler = require('finalhandler');
@@ -1321,5 +1322,35 @@ describe('generate (remote)', () => {
       },
       assertCritical(target, expected, done)
     );
+  });
+
+  test('should use the provided got method to check for asset existance', async () => {
+    const mockGet = jest.fn();
+    const mockHead = jest.fn();
+    nock(`http://localhost:${port}`, {allowUnmocked: true})
+      .intercept('/styles/adaptive.css', 'GET')
+      .reply(200, mockGet)
+      .intercept('/styles/adaptive.css', 'HEAD')
+      .reply(200, mockHead);
+
+    await generate({
+      base: path.join(__dirname, '/fixtures/'),
+      src: `http://localhost:${port}/generate-adaptive.html`,
+      width: 1300,
+      height: 900,
+      got: {method: 'get'},
+    });
+
+    expect(mockGet).toHaveBeenCalled();
+    expect(mockHead).not.toHaveBeenCalled();
+
+    await generate({
+      base: path.join(__dirname, '/fixtures/'),
+      src: `http://localhost:${port}/generate-adaptive.html`,
+      width: 1300,
+      height: 900,
+    });
+
+    expect(mockHead).toHaveBeenCalled();
   });
 });

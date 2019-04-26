@@ -233,6 +233,17 @@ describe('CLI', () => {
       });
     });
 
+    test('Set got options prefixed with --got-', async () => {
+      const args = await getArgs(['fixtures/generate-default.html', '--got-method', 'get', '--no-got-followRedirect']);
+
+      expect(args).toMatchObject({
+        got: {
+          method: 'get',
+          followRedirect: false,
+        },
+      });
+    });
+
     test('Handle shell expanded the glob', async () => {
       // simulate system glob
       const css = await globby('fixtures/**/*.css');
