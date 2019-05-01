@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const debug = require('debug')('critical:config');
 const {ConfigError} = require('./errors');
 
