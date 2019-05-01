@@ -5,8 +5,9 @@ shallow_clone: true
 environment:
   PLATFORM: x64
   matrix:
-    - NODEJS_VERSION: "10"
     - NODEJS_VERSION: "8"
+    - NODEJS_VERSION: "10"
+    - NODEJS_VERSION: "12"
 
 install:
   - ps: Install-Product node $env:NODEJS_VERSION $env:PLATFORM

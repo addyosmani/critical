@@ -10,8 +10,9 @@ addons:
       - libnss3
 
 node_js:
-  - "10"
   - "8"
+  - "10"
+  - "12"
 
 cache: npm
 
