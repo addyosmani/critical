@@ -3,12 +3,6 @@ language: node_js
 git:
   depth: 5
 
-addons:
-  apt:
-    packages:
-      # This is required to run puppeteer (chrome) on linux/trusty
-      - libnss3
-
 node_js:
   - "10"
   - "8"
