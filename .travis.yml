@@ -1,3 +1,5 @@
+language: node_js
+
 git:
   depth: 5
 
@@ -7,14 +9,11 @@ addons:
       # This is required to run puppeteer (chrome) on linux/trusty
       - libnss3
 
-language: node_js
-
 node_js:
   - "10"
   - "8"
 
-cache:
-  yarn: true
+cache: npm
 
 after_success:
   - if [[ "$TRAVIS_NODE_VERSION" = "10" ]]; then npm run coveralls; fi
