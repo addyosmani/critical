@@ -11,7 +11,7 @@ process.setMaxListeners(0);
 jest.setTimeout(60000);
 
 const getBin = async () => {
-  const {pkg} = await readPkgUp();
+  const {package: pkg} = await readPkgUp();
   return path.join(__dirname, '../', pkg.bin.critical);
 };
 
@@ -57,7 +57,7 @@ describe('CLI', () => {
     });
 
     test('Return version', async () => {
-      const {pkg} = await readPkgUp();
+      const {package: pkg} = await readPkgUp();
       const {stdout, stderr, code} = await run(['--version', '--no-update-notifier']);
 
       expect(stderr).toBeFalsy();

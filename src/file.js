@@ -116,7 +116,12 @@ async function fileExists(href, options = {}) {
     try {
       const response = await fetch(href, {...options, request});
       const {statusCode} = response;
-      return parseInt(statusCode, 10) < 400;
+
+      if (request.method === 'head') {
+        return parseInt(statusCode, 10) < 400;
+      }
+
+      return Boolean(response);
     } catch (error) {
       return false;
     }
@@ -387,7 +392,6 @@ async function getDocumentPath(file, options = {}) {
   if (file.stylesheets) {
     const relativeRefs = file.stylesheets.filter(href => isRelative(href));
     const absoluteRefs = file.stylesheets.filter(href => path.isAbsolute(href));
-
     // If we have no stylesheets inside, fall back to path relative to process cwd
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
@@ -585,7 +589,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
         return [...result, cwd];
       }
 
-      const up = await findUp(first, {cwd});
+      const up = await findUp(first, {cwd, type: 'directory'});
       if (up) {
         const upDir = path.dirname(up);
 
