@@ -58,6 +58,21 @@ function urlParse(str = '') {
 }
 
 /**
+ * Get file uri considering OS
+ * @param {string} file Absolute filepath
+ * @returns {string} file uri
+ */
+function getFileUri(file) {
+  if (!path.isAbsolute) {
+    throw new Error('Path must be absolute to compute file uri');
+  }
+
+  const fileUrl = process.platform === 'win32' ? new url.URL(`file:///${file}`) : new url.URL(`file://${file}`);
+
+  return fileUrl.href;
+}
+
+/**
  * Resolve Url
  * @param {string} from Resolve from
  * @param {string} to Resolve to
@@ -812,7 +827,7 @@ async function preparePenthouseData(document) {
     fs.outputFile(filename, '');
   });
 
-  return [`file://${file}`, getCleanup(tmp)];
+  return [getFileUri(file), getCleanup(tmp)];
 }
 
 /**
