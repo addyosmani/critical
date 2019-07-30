@@ -129,6 +129,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
             if (isString(val)) {
                 val = [val];
             }
+
             res.assetPaths = val;
             break;
         case 'include':
@@ -136,6 +137,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
             if (isString(val) || isRegExp(val)) {
                 val = [val];
             }
+
             res[key] = map(val || [], entry => {
                 // Check regex
                 const match = entry.match(/^\/(.*)\/([igmy]+)?$/);
@@ -143,6 +145,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
                 if (match) {
                     return new RegExp(escapeRegExp(match[1]), match[2]);
                 }
+
                 return entry;
             });
             break;
@@ -168,7 +171,7 @@ function run(data) {
     if (data) {
         opts.html = data;
     } else {
-        opts.src = cli.input[0]; // eslint-disable-line prefer-destructuring
+        opts.src = cli.input[0];
         if (opts.src && !file.isExternal(opts.src)) {
             opts.src = path.resolve(cli.input[0]);
         }
@@ -182,8 +185,8 @@ function run(data) {
                 process.stdout.write(val, process.exit);
             }
         });
-    } catch (err) {
-        error(err);
+    } catch (error) {
+        error(error);
     }
 }
 
@@ -196,6 +199,7 @@ if (cli.input[0]) {
         if (ok) {
             return;
         }
+
         run();
     }, 100);
 }

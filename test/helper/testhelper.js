@@ -44,6 +44,7 @@ function assertCritical(target, expected, done, skipTarget) {
             console.log(err);
             done(err);
         }
+
         try {
             assert.isNull(err, Boolean(err) && err);
             assert.isDefined(output, 'Should produce output');
@@ -51,11 +52,13 @@ function assertCritical(target, expected, done, skipTarget) {
                 const dest = readAndRemove(target, true);
                 assert.strictEqual(nn(dest), nn(expected));
             }
+
             assert.strictEqual(nn(output), nn(expected));
-        } catch (err) {
-            done(err);
+        } catch (error) {
+            done(error);
             return;
         }
+
         done();
     };
 }

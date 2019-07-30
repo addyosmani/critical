@@ -10,8 +10,8 @@ const getPort = require('get-port');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 const Vinyl = require('vinyl');
-const critical = require('..');
 const {read, assertCritical} = require('./helper/testhelper');
+const critical = require('..');
 
 process.chdir(path.resolve(__dirname));
 
@@ -683,6 +683,7 @@ describe('Module - generate (remote)', () => {
             if (req.headers['user-agent'] === 'custom agent') {
                 return serveUserAgent(req, res, finalhandler(req, res));
             }
+
             serve(req, res, finalhandler(req, res));
         });
 

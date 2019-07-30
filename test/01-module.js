@@ -17,8 +17,8 @@ describe('Module', () => {
     it('should return rejected Promise for generating without callback if src and dest not specified', done => {
         const tmp = critical.generate({}).then(data => {
             assert.fail(data, undefined, 'Should not be called');
-        }).catch(err => {
-            assert.instanceOf(err, Error);
+        }).catch(error => {
+            assert.instanceOf(error, Error);
             done();
         });
 

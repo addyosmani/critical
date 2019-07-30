@@ -12,8 +12,8 @@ const Vinyl = require('vinyl');
 const array = require('stream-array');
 const nn = require('normalize-newline');
 
-const critical = require('..');
 const {read} = require('./helper/testhelper');
+const critical = require('..');
 
 process.chdir(path.resolve(__dirname));
 

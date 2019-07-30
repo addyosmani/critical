@@ -112,9 +112,9 @@ exports.generate = function (opts, cb) {
 
     // Return promise if callback is not defined
     if (isFunction(cb)) {
-        corePromise.catch(err => { // eslint-disable-line promise/valid-params
+        corePromise.catch(error => { // eslint-disable-line promise/valid-params
             cleanup();
-            cb(err);
+            cb(error);
             throw new Bluebird.CancellationError();
         }).then(output => {
             cleanup();
