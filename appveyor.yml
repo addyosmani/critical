@@ -1,25 +1,20 @@
-# https://www.appveyor.com/docs/appveyor-yml
-
 version: "{build}"
 
-clone_depth: 10
+shallow_clone: true
 
 environment:
+  PLATFORM: x64
   matrix:
-    - nodejs_version: "6"
-      platform: x86
-    - nodejs_version: "8"
-      platform: x86
+    - NODEJS_VERSION: "6"
+    - NODEJS_VERSION: "8"
+    - NODEJS_VERSION: "10"
+    - NODEJS_VERSION: "12"
 
 install:
-  - ps: Install-Product node $env:nodejs_version $env:platform
-  - npm install --global npm@latest
-  - set CI=true 
-  - set PATH=%APPDATA%\npm;%PATH%
-  - npm install
+  - ps: Install-Product node $env:NODEJS_VERSION $env:PLATFORM
+  - if "%NODEJS_VERSION%" lss "8" (npm install) else (npm ci)
 
 build: off
-shallow_clone: true
 
 test_script:
   - node --version
@@ -30,6 +25,5 @@ matrix:
   fast_finish: true
 
 cache:
-  - "%LOCALAPPDATA%\\Yarn"
-  - node_modules -> package.json
-  - node_modules -> package-lock.json
+  - '%APPDATA%\npm-cache\ -> appveyor.yml,package.json,package-lock.json'
+  - 'node_modules\ -> appveyor.yml,package.json,package-lock.json'
