@@ -1,14 +1,12 @@
-sudo: false
 language: node_js
+
+git:
+  depth: 5
+
 node_js:
-  - '8'
-  - '6'
+  - "6"
+  - "8"
+  - "10"
+  - "12"
 
-before_script:
-  - 'if [ "$NODE6" = "true" ]; then npm build --cwd node_modules/puppeteer; fi'
-
-addons:
-  apt:
-    packages:
-      # This is required to run puppeteer (chrome) on linux/trusty
-      - libnss3
+cache: npm
