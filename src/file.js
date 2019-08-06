@@ -543,7 +543,7 @@ function getStylesheetPath(document, file, options = {}) {
  * @param {Vinyl} document Html document
  * @param {string} file File path
  * @param {object} options Critical options
- * @param {boolean} strict Check for file existance
+ * @param {boolean} strict Check for file existence
  * @returns {Promise<[string]>} List of asset paths
  */
 async function getAssetPaths(document, file, options = {}, strict = true) {
@@ -587,7 +587,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
     ]),
   ];
 
-  // Filter non existant paths
+  // Filter non-existent paths
   const filtered = await filterAsync(paths, f => {
     if (!f) {
       return false;
