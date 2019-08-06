@@ -1,5 +1,7 @@
 /* eslint-disable no-await-in-loop */
 
+'use strict';
+
 const {createServer} = require('http');
 const path = require('path');
 const getPort = require('get-port');

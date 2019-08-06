@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const readPkgUp = require('read-pkg-up');
 const execa = require('execa');

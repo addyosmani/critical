@@ -1,3 +1,5 @@
+'use strict';
+
 const {ConfigError} = require('../src/errors');
 const {getOptions, DEFAULT} = require('../src/config');
 
