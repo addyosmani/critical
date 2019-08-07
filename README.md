@@ -4,7 +4,7 @@
 
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
-![Preview](https://i.imgur.com/lAzmBD2.png)
+![Preview](preview.png)
 
 ## Install
 
