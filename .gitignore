@@ -1,7 +1,6 @@
-node_modules
-test/fixture/bower_components/bootstrap/dist/css/*
-test/fixtures/styles/main.08e83c51.css
-test/fixture/test-*
-test/fixture/tmp-*
-test/fixtures/styles/bootstrap.55598cc1.css
-test/fixtures/styles/bootstrap.cce7f1a3.css
+/node_modules/
+/test/fixture/bower_components/bootstrap/dist/css/*
+/test/fixture/test-*
+/test/fixture/tmp-*
+/test/fixtures/styles/bootstrap.56effa17.css
+/test/fixtures/styles/main.d41d8cd9.css
