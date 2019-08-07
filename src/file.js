@@ -349,7 +349,7 @@ async function fetch(uri, options = {}, secure = true) {
  * @returns {[string]} Stylesheet urls from document source
  */
 function getStylesheetHrefs(file) {
-  if (!Vinyl.isVinyl(file)) {
+  if (!isVinyl(file)) {
     throw new Error('Parameter file needs to be a vinyl object');
   }
 
@@ -367,7 +367,7 @@ function getStylesheetHrefs(file) {
  * @returns {[string]} Asset urls from stykesheet source
  */
 function getAssets(file) {
-  if (!Vinyl.isVinyl(file)) {
+  if (!isVinyl(file)) {
     throw new Error('Parameter file needs to be a vinyl object');
   }
 
