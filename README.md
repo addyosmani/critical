@@ -4,7 +4,7 @@
 
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
-![Preview](preview.png)
+<img src="preview.png" alt="Preview" width="378">
 
 ## Install
 
