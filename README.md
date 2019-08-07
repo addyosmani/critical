@@ -8,23 +8,23 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
 ## Install
 
-#### Install current beta version
+### Install current beta version
 
 ```sh
-$ npm i -D critical@next
+npm i -D critical@next
 ```
 
-#### Install latest stable version
+### Install latest stable version
 
 ```sh
-$ npm i -D critical@latest
+npm i -D critical@latest
 ```
 
-The docs for the latest version can be found [here](https://github.com/addyosmani/critical/tree/v1.3.4).
+The docs for the latest 1.x version can be found [here](https://github.com/addyosmani/critical/tree/1.x).
 
 ## Breaking Changes
 
-We’ve introduced some breaking changes in this release so be sure to check out the [changelog](./CHANGELOG.md).
+We’ve introduced some breaking changes in this release so be sure to check out the [changelog](CHANGELOG.md).
 
 ## Build plugins
 
@@ -43,7 +43,7 @@ We’ve introduced some breaking changes in this release so be sure to check out
 Include:
 
 ```js
-var critical = require('critical');
+const critical = require('critical');
 ```
 
 Full blown example with available options:
@@ -74,7 +74,11 @@ critical.generate({
   height: 900,
 
   // Output results to file
-  target: {css: 'critical.css', html: 'index-critical.html', uncritical: 'uncritical.css'},
+  target: {
+    css: 'critical.css',
+    html: 'index-critical.html',
+    uncritical: 'uncritical.css'
+  },
 
   // Minify critical-path CSS when inlining
   minify: true,
@@ -89,8 +93,8 @@ critical.generate({
   ignore: {
     atrule: ['@font-face'],
     rule: [/some-regexp/],
-    decl: (node, value) => /big-image\.png/.test(value),
-  },
+    decl: (node, value) => /big-image\.png/.test(value)
+  }
 });
 ```
 
@@ -105,7 +109,7 @@ critical.generate({
   src: 'index.html',
   target: 'index-critical.html',
   width: 1300,
-  height: 900,
+  height: 900
 });
 ```
 
@@ -119,7 +123,7 @@ critical.generate({
   src: 'index.html',
   target: 'styles/main.css',
   width: 1300,
-  height: 900,
+  height: 900
 });
 ```
 
@@ -131,7 +135,7 @@ critical.generate({
   src: 'index.html',
   target: 'styles/styles.min.css',
   width: 1300,
-  height: 900,
+  height: 900
 });
 ```
 
@@ -142,7 +146,10 @@ critical.generate({
     inline: true,
     base: 'test/',
     src: 'index.html',
-    target: {html: 'index-critical.html', css: 'critical.css'}
+    target: {
+      html: 'index-critical.html',
+      css: 'critical.css'
+    },
     width: 1300,
     height: 900
 });
@@ -157,9 +164,9 @@ critical.generate({
     width: 1300,
     height: 900,
     inline: true
-}, function (err, ({css, html, uncritical})) {
-    // You now have critical-path CSS as well as the modified html
-    // Works with and without target specified
+}, (err, ({css, html, uncritical})) => {
+    // You now have critical-path CSS as well as the modified HTML.
+    // Works with and without target specified.
     ...
 });
 ```
@@ -172,11 +179,11 @@ critical.generate({
     src: 'index.html',
     width: 1300,
     height: 900
-}).then(function (({css, html, uncritical})) {
-    // You now have critical-path CSS as well as the modified html
-    // Works with and without dest specified
+}).then((({css, html, uncritical})) => {
+    // You now have critical-path CSS as well as the modified HTML.
+    // Works with and without target specified.
     ...
-}).error(function (err) {
+}).error(err => {
     ...
 });
 ```
@@ -188,7 +195,7 @@ const {css, html, uncritical} = await critical.generate({
   base: 'test/',
   src: 'index.html',
   width: 1300,
-  height: 900,
+  height: 900
 });
 ```
 
@@ -202,16 +209,14 @@ critical.generate({
   base: 'test/',
   src: 'index.html',
   dest: 'styles/main.css',
-  dimensions: [
-    {
+  dimensions: [{
       height: 200,
-      width: 500,
+      width: 500
     },
     {
       height: 900,
-      width: 1200,
-    },
-  ],
+      width: 1200
+  }]
 });
 ```
 
@@ -226,8 +231,8 @@ critical.generate({
   dest: 'styles/main.css',
   ignore: {
     atrule: ['@font-face'],
-    decl: (node, value) => /url\(/.test(value),
-  },
+    decl: (node, value) => /url\(/.test(value)
+  }
 });
 ```
 
@@ -238,7 +243,10 @@ critical.generate({
   base: 'test/',
   src: 'index.html',
   dest: 'styles/main.css',
-  rebase: {from: '/styles/main.css', to: '/folder/subfolder/index.html'},
+  rebase: {
+    from: '/styles/main.css',
+    to: '/folder/subfolder/index.html'
+  }
 });
 ```
 
@@ -247,7 +255,7 @@ critical.generate({
   base: 'test/',
   src: 'index.html',
   dest: 'styles/main.css',
-  rebase: asset => `https://my-cdn.com${asset.absolutePath}`,
+  rebase: asset => `https://my-cdn.com${asset.absolutePath}`
 });
 ```
 
@@ -255,7 +263,7 @@ critical.generate({
 
 | Name             | Type                    | Default                                | Description                                                                                                                                                                                                                                                                                                                                                                     |
 | ---------------- | ----------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| inline           | `boolean`&#124;`object` | `false`                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
+| inline           | `boolean`\|`object`     | `false`                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
 | base             | `string`                | `path.dirname(src)` or `process.cwd()` | Base directory in which the source and destination are to be written                                                                                                                                                                                                                                                                                                            |
 | html             | `string`                |                                        | HTML source to be operated against. This option takes precedence over the `src` option.                                                                                                                                                                                                                                                                                         |
 | css              | `array`                 | `[]`                                   | An array of paths to css files, file globs or [Vinyl](https://www.npmjs.com/package/vinyl) file objects.                                                                                                                                                                                                                                                                        |
@@ -275,40 +283,53 @@ critical.generate({
 | penthouse        | `object`                | `{}`                                   | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).                                                                                                                                                                                                                                                                                               |
 | user             | `string`                | `undefined`                            | RFC2617 basic authorization: user                                                                                                                                                                                                                                                                                                                                               |
 | pass             | `string`                | `undefined`                            | RFC2617 basic authorization: pass                                                                                                                                                                                                                                                                                                                                               |
-| strict           | `boolean`               | `false`                            | Throw an error if no css is found |
+| strict           | `boolean`               | `false`                                | Throw an error if no css is found |
 
 
 ## CLI
 
 ```sh
-$ npm install -g critical
+npm install -g critical
 ```
 
 critical works well with standard input.
 
 ```sh
-$ cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
+cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
+```
+
+Or on Windows:
+
+```bat
+type test\fixture\index.html | critical --base test/fixture --inline > index.critical.html
 ```
 
 You can also pass in the critical CSS file as an option.
 
 ```sh
-$ critical test/fixture/index.html --base test/fixture > critical.css
+critical test/fixture/index.html --base test/fixture > critical.css
 ```
 
 ## Gulp
 
 ```js
-var gulp = require('gulp');
-var log = require('fancy-log');
-var critical = require('critical').stream;
+const gulp = require('gulp');
+const log = require('fancy-log');
+const critical = require('critical').stream;
 
 // Generate & Inline Critical-path CSS
-gulp.task('critical', function() {
+gulp.task('critical', () => {
   return gulp
     .src('dist/*.html')
-    .pipe(critical({base: 'dist/', inline: true, css: ['dist/styles/components.css', 'dist/styles/main.css']}))
-    .on('error', function(err) {
+    .pipe(critical({
+      base: 'dist/',
+      inline: true,
+      css: [
+        'dist/styles/components.css',
+        'dist/styles/main.css'
+      ]
+    }))
+    .on('error', err => {
       log.error(err.message);
     })
     .pipe(gulp.dest('dist'));
@@ -359,7 +380,8 @@ styles upfront, but this may provide a higher level of accuracy if you find Crit
 
 FilamentGroup maintain a [criticalCSS](https://github.com/filamentgroup/criticalCSS) node module, which
 similar to [Penthouse](https://github.com/pocketjoso/penthouse) will find and output the critical-path CSS for
-your pages. The PageSpeed Optimization modules for nginx, apache, IIS, ATS, and Open Lightspeed can do all the heavy lifting automatically when you enable the [prioritize_critical_css](https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery) filter
+your pages. The PageSpeed Optimization modules for nginx, apache, IIS, ATS, and Open Lightspeed can do all the heavy
+lifting automatically when you enable the [prioritize_critical_css](https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery) filter
 
 ### Is Critical stable and suitable for production use?
 
@@ -381,7 +403,7 @@ This module is brought to you and maintained by the following people:
 
 ## License
 
-Apache-2.0 © Addy Osmani, Ben Zörb
+[Apache-2.0 © Addy Osmani, Ben Zörb](license)
 
 [npm-url]: https://www.npmjs.com/package/critical
 [npm-image]: https://img.shields.io/npm/v/critical.svg
