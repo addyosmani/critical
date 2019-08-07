@@ -8,8 +8,8 @@ const fs = require('fs-extra');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 const nn = require('normalize-newline');
-const {generate} = require('..');
 const {read, readAndRemove} = require('./helper');
+const {generate} = require('..');
 
 jest.setTimeout(60000);
 
