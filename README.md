@@ -4,7 +4,7 @@
 
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
-![Preview](https://i.imgur.com/lAzmBD2.png)
+<img src="https://raw.githubusercontent.com/addyosmani/critical/master-xmr-readme-img/preview.png" alt="Preview" width="378">
 
 ## Install
 
