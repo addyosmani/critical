@@ -2,7 +2,7 @@
 
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
-![](https://i.imgur.com/lAzmBD2.png)
+<img src="https://raw.githubusercontent.com/addyosmani/critical/1.x/preview.png" alt="Preview" width="378">
 
 
 ## Install
