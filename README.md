@@ -388,8 +388,8 @@ Apache-2.0 © Addy Osmani, Ben Zörb
 [appveyor-url]: https://ci.appveyor.com/project/addyosmani/critical/branch/master
 [appveyor-image]: https://img.shields.io/appveyor/ci/addyosmani/critical/master.svg?label=Windows%20build
 [depstat-url]: https://david-dm.org/addyosmani/critical
-[depstat-image]: https://david-dm.org/addyosmani/critical/status.svg
+[depstat-image]: https://img.shields.io/david/addyosmani/critical.svg
 [devdepstat-url]: https://david-dm.org/addyosmani/critical?type=dev
-[devdepstat-image]: https://david-dm.org/addyosmani/critical/dev-status.svg
+[devdepstat-image]: https://img.shields.io/david/dev/addyosmani/critical.svg
 [coveralls-url]: https://coveralls.io/github/addyosmani/critical?branch=master
-[coveralls-image]: https://coveralls.io/repos/github/addyosmani/critical/badge.svg?branch=master
+[coveralls-image]: https://img.shields.io/coveralls/github/addyosmani/critical/master.svg
