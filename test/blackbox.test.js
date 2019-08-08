@@ -16,7 +16,7 @@ jest.setTimeout(60000);
 process.chdir(path.resolve(__dirname));
 
 function assertCritical(target, expected, done, skipTarget) {
-  return function(err, {css, html} = {}) {
+  return (err, {css, html} = {}) => {
     const output = /\.css$/.test(target) ? css : html;
 
     if (err) {
