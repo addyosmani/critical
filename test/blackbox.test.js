@@ -15,6 +15,8 @@ jest.setTimeout(60000);
 
 process.chdir(path.resolve(__dirname));
 
+const FIXTURES_DIR = path.join(__dirname, '/fixtures/');
+
 function assertCritical(target, expected, done, skipTarget) {
   return function(err, {css, html} = {}) {
     const output = /\.css$/.test(target) ? css : html;
@@ -82,7 +84,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default.html',
         target,
         width: 1300,
@@ -106,7 +108,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default-nostyle.html',
         target,
         css: stylesheets,
@@ -122,7 +124,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default.html',
         penthouse: {
           timeout: 1,
@@ -143,7 +145,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'error.html',
         penthouse: {
           timeout: 1,
@@ -165,7 +167,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default-querystring.html',
         target,
         width: 1300,
@@ -181,7 +183,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: '403-css.html',
         target,
         width: 1300,
@@ -197,7 +199,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: '404-css.html',
         target,
         width: 1300,
@@ -213,7 +215,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-adaptive.html',
         target,
         dimensions: [
@@ -237,7 +239,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default.html',
         minify: true,
         target,
@@ -254,7 +256,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default-nostyle.html',
         css: ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css'],
         minify: true,
@@ -272,7 +274,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-image.html',
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -290,7 +292,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'folder/generate-image.html',
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -308,7 +310,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'folder/generate-image.html',
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -326,7 +328,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'folder/subfolder/generate-image-absolute.html',
         target,
         width: 1300,
@@ -343,7 +345,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'folder/subfolder/generate-image-absolute.html',
         // destFolder: 'folder/subfolder',
         // Dest: target,
@@ -361,7 +363,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-image.html',
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -380,7 +382,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-image.html',
         css: ['fixtures/styles/image-absolute.css'],
         target,
@@ -399,7 +401,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-image.html',
         css: ['fixtures/styles/image-big.css'],
         target,
@@ -418,7 +420,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-image.html',
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -437,7 +439,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-image.html',
         css: ['fixtures/styles/some/path/image.css'],
         target,
@@ -455,7 +457,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'path-prefix.html',
         css: ['fixtures/styles/path-prefix.css'],
         target,
@@ -473,7 +475,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'path-prefix.html',
         css: ['fixtures/styles/path-prefix.css'],
         target,
@@ -491,7 +493,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generateInline.html',
         // destFolder: '.',
         target,
@@ -507,7 +509,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generateInline.html',
         // destFolder: '.',
         target,
@@ -523,7 +525,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generateInline.html',
         // destFolder: '.',
         minify: true,
@@ -543,7 +545,7 @@ describe('generate (local)', () => {
         first(cb) {
           generate(
             {
-              base: path.join(__dirname, '/fixtures/'),
+              base: FIXTURES_DIR,
               minify: false,
               src: 'generateInline.html',
               inline: true,
@@ -554,7 +556,7 @@ describe('generate (local)', () => {
         second(cb) {
           generate(
             {
-              base: path.join(__dirname, '/fixtures/'),
+              base: FIXTURES_DIR,
               minify: true,
               src: 'generateInline.html',
               inline: true,
@@ -582,7 +584,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generateInline-external.html',
         inlineImages: false,
         minify: true,
@@ -599,7 +601,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generateInline-external.html',
         inlineImages: false,
         minify: true,
@@ -617,7 +619,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         minify: true,
         src: 'generateInline-svg.html',
         target,
@@ -633,7 +635,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         minify: true,
         extract: true,
         src: 'generateInline.html',
@@ -650,7 +652,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         minify: true,
         extract: true,
         html: read('fixtures/generateInline.html'),
@@ -667,7 +669,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default.html',
         target,
         ignore: ['@media', '.header', /jumbotron/],
@@ -685,7 +687,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default.html',
         target,
         ignore: [],
@@ -703,7 +705,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-ignorefont.html',
         target,
         ignore: ['@font-face'],
@@ -721,7 +723,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'include.html',
         include: [/someRule/],
         target,
@@ -738,7 +740,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'issue-192.html',
         css: ['fixtures/styles/issue-192.css'],
         dimensions: [
@@ -777,7 +779,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default-nostyle.html',
         css: ['fixtures/styles/bootstrap.css'],
         target,
@@ -794,7 +796,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'generate-default-nostyle.html',
         css: ['fixtures/styles/bootstrap.css'],
         target,
@@ -812,7 +814,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'issue-314.html',
         css: ['fixtures/styles/bootstrap.css'],
         target,
@@ -830,7 +832,7 @@ describe('generate (local)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: 'issue-314.html',
         css: ['fixtures/styles/bootstrap.css'],
         target,
@@ -865,7 +867,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-adaptive.html`,
         target,
         penthouse: {
@@ -892,7 +894,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-default.html`,
         minify: true,
         target,
@@ -909,7 +911,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-default-nostyle.html`,
         css: ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css'],
         minify: true,
@@ -964,7 +966,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-image.html`,
         css: ['fixtures/styles/image-absolute.css'],
         target,
@@ -1001,7 +1003,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-image.html`,
         css: ['fixtures/styles/image-big.css'],
         target,
@@ -1019,7 +1021,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-image.html`,
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -1037,7 +1039,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-image.html`,
         css: ['fixtures/styles/some/path/image.css'],
         target,
@@ -1055,7 +1057,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/path-prefix.html`,
         css: ['fixtures/styles/path-prefix.css'],
         target,
@@ -1074,7 +1076,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/path-prefix.html`,
         css: ['fixtures/styles/path-prefix.css'],
         target,
@@ -1091,7 +1093,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generateInline.html`,
         target,
         inline: true,
@@ -1106,7 +1108,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generateInline.html`,
         target,
         inline: true,
@@ -1121,7 +1123,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generateInline.html`,
         minify: true,
         target,
@@ -1139,7 +1141,7 @@ describe('generate (remote)', () => {
         first(cb) {
           generate(
             {
-              base: path.join(__dirname, '/fixtures/'),
+              base: FIXTURES_DIR,
               src: `http://localhost:${port}/generateInline.html`,
               inline: true,
             },
@@ -1149,7 +1151,7 @@ describe('generate (remote)', () => {
         second(cb) {
           generate(
             {
-              base: path.join(__dirname, '/fixtures/'),
+              base: FIXTURES_DIR,
               minify: true,
               src: `http://localhost:${port}/generateInline.html`,
               inline: true,
@@ -1173,7 +1175,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generateInline-external2.html`,
         inlineImages: false,
         minify: true,
@@ -1190,7 +1192,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generateInline-external2.html`,
         inlineImages: false,
         minify: true,
@@ -1208,7 +1210,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         minify: true,
         src: `http://localhost:${port}/generateInline-svg.html`,
         target,
@@ -1224,7 +1226,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         minify: true,
         extract: true,
         src: `http://localhost:${port}/generateInline.html`,
@@ -1241,7 +1243,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-default.html`,
         target,
         ignore: ['@media', '.header', /jumbotron/],
@@ -1259,7 +1261,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-default.html`,
         target,
         ignore: [],
@@ -1277,7 +1279,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-ignorefont.html`,
         target,
         ignore: ['@font-face'],
@@ -1295,7 +1297,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/include.html`,
         include: [/someRule/],
         target,
@@ -1312,7 +1314,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: path.join(__dirname, '/fixtures/'),
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-default-useragent.html`,
         include: [/someRule/],
         target,
@@ -1334,7 +1336,7 @@ describe('generate (remote)', () => {
       .reply(200, mockHead);
 
     await generate({
-      base: path.join(__dirname, '/fixtures/'),
+      base: FIXTURES_DIR,
       src: `http://localhost:${port}/generate-adaptive.html`,
       width: 1300,
       height: 900,
@@ -1345,7 +1347,7 @@ describe('generate (remote)', () => {
     expect(mockHead).not.toHaveBeenCalled();
 
     await generate({
-      base: path.join(__dirname, '/fixtures/'),
+      base: FIXTURES_DIR,
       src: `http://localhost:${port}/generate-adaptive.html`,
       width: 1300,
       height: 900,
