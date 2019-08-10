@@ -62,7 +62,7 @@ function callPenthouse(document, options) {
   }
 
   if (user && pass) {
-    config.customPageHeaders = {...customPageHeaders, Authorization: 'Basic ' + token(user, pass)};
+    config.customPageHeaders = {...customPageHeaders, Authorization: `Basic ${token(user, pass)}`};
   }
 
   return sizes.map(({width, height}) => () => {
@@ -211,7 +211,7 @@ async function create(options = {}) {
       const uncriticalHref = normalizePath(path.relative(document.cwd, path.resolve(base, target.uncritical)));
       // Only replace stylesheets if the uncriticalHref is inside document.cwd and replaceStylesheets is not set via options
       if (!/^\.\.\//.test(uncriticalHref) && replaceStylesheets === undefined) {
-        inline.replaceStylesheets = ['/' + uncriticalHref];
+        inline.replaceStylesheets = [`/${uncriticalHref}`];
       }
     } else {
       inline.extract = extract;

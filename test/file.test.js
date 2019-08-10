@@ -359,7 +359,7 @@ test('Get document from source with rebase option', async () => {
   // expect.assertions(tests.length + 1);
   for (const testdata of tests) {
     const {filepath, expected} = testdata;
-    const rebase = {to: '/' + normalizePath(path.relative(base, filepath))};
+    const rebase = {to: `/${normalizePath(path.relative(base, filepath))}`};
     const source = await fs.readFile(filepath);
     const file = await getDocumentFromSource(source, {rebase, base});
     expect(file.virtualPath).toBe(expected);

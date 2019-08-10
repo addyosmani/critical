@@ -306,7 +306,7 @@ async function fetch(uri, options = {}, secure = true) {
 
   request.rejectUnauthorized = false;
   if (user && pass) {
-    headers.Authorization = 'Basic ' + token(user, pass);
+    headers.Authorization = `Basic ${token(user, pass)}`;
   }
 
   if (userAgent) {

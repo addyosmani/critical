@@ -18,7 +18,7 @@ process.chdir(path.resolve(__dirname));
 const FIXTURES_DIR = path.join(__dirname, '/fixtures/');
 
 function assertCritical(target, expected, done, skipTarget) {
-  return function(err, {css, html} = {}) {
+  return (err, {css, html} = {}) => {
     const output = /\.css$/.test(target) ? css : html;
 
     if (err) {
