@@ -1,3 +1,5 @@
+'use strict';
+
 async function mapAsync(array = [], callback = a => a) {
   const result = [];
   for (const index of array.keys()) {

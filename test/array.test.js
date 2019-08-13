@@ -1,3 +1,5 @@
+'use strict';
+
 const {mapAsync, reduceAsync, filterAsync, forEachAsync} = require('../src/array');
 
 const waitFor = ms => new Promise(resolve => setTimeout(resolve, ms));

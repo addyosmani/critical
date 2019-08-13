@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const fs = require('fs-extra');
 const array = require('stream-array');

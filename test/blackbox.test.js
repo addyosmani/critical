@@ -1,3 +1,5 @@
+'use strict';
+
 const path = require('path');
 const {createServer} = require('http');
 const getPort = require('get-port');

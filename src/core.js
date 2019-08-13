@@ -1,3 +1,5 @@
+'use strict';
+
 const {EOL} = require('os');
 const path = require('path');
 const chalk = require('chalk');
