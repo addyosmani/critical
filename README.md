@@ -275,6 +275,8 @@ critical.generate({
 | penthouse        | `object`                | `{}`                                   | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).                                                                                                                                                                                                                                                                                               |
 | user             | `string`                | `undefined`                            | RFC2617 basic authorization: user                                                                                                                                                                                                                                                                                                                                               |
 | pass             | `string`                | `undefined`                            | RFC2617 basic authorization: pass                                                                                                                                                                                                                                                                                                                                               |
+| strict           | `boolean`               | `false`                            | Throw an error if no css is found |
+
 
 ## CLI
 
