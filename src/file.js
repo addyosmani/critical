@@ -712,7 +712,7 @@ async function getStylesheet(document, filepath, options = {}) {
   const stylepath = await getStylesheetPath(document, file, options);
   debug('(getStylesheet) Virtual Stylesheet Path:', stylepath);
   // We can safely rebase assets if we have:
-  // - an url to the stylesheet
+  // - a url to the stylesheet
   // - if rebase.from and rebase.to is specified
   // - a valid document path and a stylesheet path
   // - an absolute positioned stylesheet so we can make the images absolute

@@ -142,7 +142,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should throw an usable error when no stylesheets are found', done => {
+  test('should throw a usable error when no stylesheets are found', done => {
     const target = path.join(__dirname, '.error.css');
 
     generate(
