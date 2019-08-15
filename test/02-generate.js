@@ -641,7 +641,7 @@ describe('Module - generate', () => {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', done => {
+    it.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', done => {
         const expected = read('fixtures/issue-314.html');
         const target = '.issue-314.html';
 
@@ -656,7 +656,7 @@ describe('Module - generate', () => {
         }, assertCritical(target, expected, done));
     });
 
-    it('should handle PAGE_UNLOADED_DURING_EXECUTION error', done => {
+    it.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error', done => {
         const expected = '';
         const target = '.issue-314.css';
 
