@@ -38,7 +38,7 @@ Options:
   --ua, --userAgent       User agent to use when fetching remote src
 `;
 
-const minimistOpts = {
+const meowOpts = {
   flags: {
     base: {
       type: 'string',
@@ -82,7 +82,7 @@ const minimistOpts = {
   },
 };
 
-const cli = meow(help, minimistOpts);
+const cli = meow(help, meowOpts);
 
 const groupKeys = ['ignore', 'inline', 'penthouse', 'target', 'request'];
 // Group args for inline-critical and penthouse
@@ -93,7 +93,7 @@ const grouped = {
     {
       delimiter: '-',
     },
-    minimistOpts
+    meowOpts
   ),
 };
 
@@ -107,9 +107,9 @@ const isAlias = key => {
     return false;
   }
 
-  const aliases = Object.keys(minimistOpts.flags)
-    .filter(k => minimistOpts.flags[k].alias)
-    .map(k => minimistOpts.flags[k].alias);
+  const aliases = Object.keys(meowOpts.flags)
+    .filter(k => meowOpts.flags[k].alias)
+    .map(k => meowOpts.flags[k].alias);
 
   return aliases.includes(key);
 };
