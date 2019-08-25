@@ -2,6 +2,8 @@
 
 const Joi = require('@hapi/joi');
 const debug = require('debug')('critical:config');
+const isFunction = require('lodash.isfunction');
+const isString = require('lodash.isstring');
 const {ConfigError} = require('./errors');
 
 const DEFAULT = {
@@ -94,7 +96,7 @@ function getOptions(options = {}) {
     ];
   }
 
-  if (typeof target === 'string') {
+  if (isString(target)) {
     const key = /\.css$/.test(target) ? 'css' : 'html';
     value.target = {[key]: target};
   }
@@ -109,7 +111,7 @@ function getOptions(options = {}) {
   if (value.inline.replaceStylesheets !== undefined && !Array.isArray(value.inline.replaceStylesheets)) {
     if (value.inline.replaceStylesheets === 'false') {
       value.inline.replaceStylesheets = false;
-    } else if (typeof value.inline.replaceStylesheets !== 'function') {
+    } else if (!isFunction(value.inline.replaceStylesheets)) {
       value.inline.replaceStylesheets = [value.inline.replaceStylesheets];
     }
   }

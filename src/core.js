@@ -4,7 +4,6 @@ const {EOL} = require('os');
 const path = require('path');
 const chalk = require('chalk');
 const CleanCSS = require('clean-css');
-const invokeMap = require('lodash/invokeMap');
 const pAll = require('p-all');
 const debug = require('debug')('critical:core');
 const postcss = require('postcss');
@@ -16,6 +15,8 @@ const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/co
 const inlineCritical = require('inline-critical');
 const {extractCss} = require('inline-critical/src/css');
 const parseCssUrls = require('css-url-parser');
+const invokeMap = require('lodash.invokemap');
+const isFunction = require('lodash.isfunction');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
 const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, normalizePath} = require('./file');
@@ -198,7 +199,7 @@ async function create(options = {}) {
   if (inline) {
     const {replaceStylesheets} = inline;
 
-    if (typeof replaceStylesheets === 'function') {
+    if (isFunction(replaceStylesheets)) {
       inline.replaceStylesheets = await replaceStylesheets(document, result.uncritical);
     }
 

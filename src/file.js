@@ -17,6 +17,7 @@ const parseCssUrls = require('css-url-parser');
 const tempy = require('tempy');
 const slash = require('slash');
 const debug = require('debug')('critical:file');
+const isFunction = require('lodash.isfunction');
 const {mapAsync, filterAsync, reduceAsync, forEachAsync} = require('./array');
 const {FileNotFoundError} = require('./errors');
 
@@ -252,7 +253,7 @@ function rebaseAssets(css, from, to, method = 'rebase') {
     from = pathname;
   }
 
-  if (typeof method === 'function') {
+  if (isFunction(method)) {
     const transform = (asset, ...rest) => {
       const assetNormalized = {
         ...asset,
@@ -716,7 +717,7 @@ async function getStylesheet(document, filepath, options = {}) {
 
   if (rebase.from && rebase.to) {
     file.contents = rebaseAssets(file.contents, rebase.from, rebase.to);
-  } else if (typeof rebase === 'function') {
+  } else if (isFunction(rebase)) {
     file.contents = rebaseAssets(file.contents, stylepath, document.virtualPath, rebase);
     // Next rebase to the stylesheet url
   } else if (isRemote(rebase.to || stylepath)) {

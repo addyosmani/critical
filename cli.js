@@ -8,10 +8,9 @@ const meow = require('meow');
 const groupArgs = require('group-args');
 const indentString = require('indent-string');
 const stdin = require('get-stdin');
-const reduce = require('lodash/reduce');
-const isString = require('lodash/isString');
-const isObject = require('lodash/isObject');
-const escapeRegExp = require('lodash/escapeRegExp');
+const escapeRegExp = require('lodash.escaperegexp');
+const isObject = require('lodash.isobject');
+const isString = require('lodash.isstring');
 const {validate} = require('./src/config');
 const critical = require('.');
 
@@ -146,32 +145,28 @@ const mapRegExpStr = val => {
   return val;
 };
 
-const normalizedFlags = reduce(
-  grouped,
-  (res, val, key) => {
-    // Cleanup groupArgs mess ;)
-    if (groupKeys.includes(key)) {
-      // An empty object means param without value, just true
-      if (isEmptyObj(val)) {
-        val = true;
-      } else if (isGroupArgsDefault(val)) {
-        val = val.default;
-      }
+const normalizedFlags = Object.entries(grouped).reduce((res, [key, val]) => {
+  // Cleanup groupArgs mess ;)
+  if (groupKeys.includes(key)) {
+    // An empty object means param without value, just true
+    if (isEmptyObj(val)) {
+      val = true;
+    } else if (isGroupArgsDefault(val)) {
+      val = val.default;
     }
+  }
 
-    // Cleanup camelized group keys
-    if (groupKeys.find(k => key.includes(k)) && !validate(key, val)) {
-      return res;
-    }
-
-    if (!isAlias(key)) {
-      res[key] = mapRegExpStr(val);
-    }
-
+  // Cleanup camelized group keys
+  if (groupKeys.find(k => key.includes(k)) && !validate(key, val)) {
     return res;
-  },
-  {}
-);
+  }
+
+  if (!isAlias(key)) {
+    res[key] = mapRegExpStr(val);
+  }
+
+  return res;
+}, {});
 
 function showError(err) {
   process.stderr.write(indentString(chalk.red('Error: ') + err.message || err, 3));

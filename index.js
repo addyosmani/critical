@@ -7,6 +7,7 @@ const fs = require('fs-extra');
 const through2 = require('through2');
 const PluginError = require('plugin-error');
 const replaceExtension = require('replace-ext');
+const isFunction = require('lodash.isfunction');
 const {create} = require('./src/core');
 const {getOptions} = require('./src/config');
 
@@ -36,14 +37,14 @@ async function generate(params, cb) {
       await fs.outputFile(path.resolve(base, target.uncritical), result.uncritical);
     }
 
-    if (typeof cb === 'function') {
+    if (isFunction(cb)) {
       cb(null, result);
       return;
     }
 
     return result;
   } catch (error) {
-    if (typeof cb === 'function') {
+    if (isFunction(cb)) {
       cb(error);
       return;
     }
