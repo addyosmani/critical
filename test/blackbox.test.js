@@ -845,6 +845,24 @@ describe('generate (local)', () => {
       assertCritical(target, expected, done)
     );
   });
+
+  test('external CSS with absolute url', done => {
+    const expected = read('expected/issue-395.css');
+    const target = path.join(__dirname, '.issue-395.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'issue-395.html',
+        target,
+        minify: false,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
