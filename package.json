@@ -75,7 +75,7 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.24.0"
+    "xo": "^0.25.3"
   },
   "xo": {
     "space": 2,
