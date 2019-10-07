@@ -13,8 +13,8 @@ process.setMaxListeners(0);
 jest.setTimeout(60000);
 
 const getBin = async () => {
-  const {package: pkg} = await readPkgUp();
-  return path.join(__dirname, '../', pkg.bin.critical);
+  const {packageJson} = await readPkgUp();
+  return path.join(__dirname, '../', packageJson.bin.critical);
 };
 
 const run = async (args = []) => {
@@ -59,12 +59,12 @@ describe('CLI', () => {
     });
 
     test('Return version', async () => {
-      const {package: pkg} = await readPkgUp();
+      const {packageJson} = await readPkgUp();
       const {stdout, stderr, code} = await run(['--version', '--no-update-notifier']);
 
       expect(stderr).toBeFalsy();
       expect(code).toBe(0);
-      expect(stdout).toBe(pkg.version);
+      expect(stdout).toBe(packageJson.version);
     });
 
     test('Take html file passed via parameter', async () => {
