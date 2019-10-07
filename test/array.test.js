@@ -44,8 +44,8 @@ test('async reduce', async () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = array.reduce(func, []);
 
-  const result1 = await reduceAsync(array, func, []);
-  const result2 = await reduceAsync(array, afunc, []);
+  const result1 = await reduceAsync([], array, func);
+  const result2 = await reduceAsync([], array, afunc);
 
   expect(result1).toEqual(expected);
   expect(result2).toEqual(expected);
@@ -55,7 +55,7 @@ test('async reduce (default)', async () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
 
   const result = await reduceAsync(array);
-  expect(result).toEqual(undefined);
+  expect(result).toEqual(array);
 });
 
 test('async reduce (empty)', async () => {

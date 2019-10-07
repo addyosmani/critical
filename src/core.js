@@ -141,14 +141,10 @@ async function create(options = {}) {
     const refAssets = [...parseCssUrls(criticalCSS), ...document.stylesheets];
     const refAssetPaths = refAssets.reduce((res, file) => [...res, path.dirname(file)], []);
 
-    const searchpaths = await reduceAsync(
-      [...new Set(refAssetPaths)],
-      async (res, file) => {
-        const paths = await getAssetPaths(document, file, options, false);
-        return [...new Set([...res, ...paths])];
-      },
-      []
-    );
+    const searchpaths = await reduceAsync([], [...new Set(refAssetPaths)], async (res, file) => {
+      const paths = await getAssetPaths(document, file, options, false);
+      return [...new Set([...res, ...paths])];
+    });
 
     const filtered = searchpaths.filter(p => isRemote(p) || p.includes(process.cwd()) || (base && p.includes(base)));
 

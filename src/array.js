@@ -28,7 +28,7 @@ async function filterAsync(array = [], filter = a => a) {
   return result;
 }
 
-async function reduceAsync(array = [], reducer = r => r, initial) {
+async function reduceAsync(initial, array = [], reducer = r => r) {
   for (const index of array.keys()) {
     initial = await reducer(initial, array[index], index); /* eslint-disable-line no-await-in-loop */
   }
