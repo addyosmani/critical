@@ -165,12 +165,12 @@ test('Vinylize local file', async () => {
   expect.hasAssertions();
   expect(result.length).toBe(files.length);
 
-  for (let i = 0; i < result.length; i++) {
-    expect(result[i].path).toBe(files[i]);
-    expect(result[i].remote).toBe(false);
-    expect(result[i].url).toBe(undefined);
-    expect(result[i].urlObj).toBe(undefined);
-    expect(result[i].contents.toString()).toBe(contents[i].toString());
+  for (const [i, element] of result.entries()) {
+    expect(element.path).toBe(files[i]);
+    expect(element.remote).toBe(false);
+    expect(element.url).toBe(undefined);
+    expect(element.urlObj).toBe(undefined);
+    expect(element.contents.toString()).toBe(contents[i].toString());
   }
 
   return true;
@@ -192,11 +192,11 @@ test('Vinylize remote file', async () => {
   // expect.assertions(files.length * 4 + 1);
   expect(result.length).toBe(files.length);
 
-  for (let i = 0; i < result.length; i++) {
-    expect(result[i].remote).toBe(true);
-    expect(result[i].url).toBe(urls[i]);
-    expect(result[i].urlObj).toEqual(urlParse(urls[i]));
-    expect(result[i].contents.toString()).toBe(contents[i].toString());
+  for (const [i, element] of result.entries()) {
+    expect(element.remote).toBe(true);
+    expect(element.url).toBe(urls[i]);
+    expect(element.urlObj).toEqual(urlParse(urls[i]));
+    expect(element.contents.toString()).toBe(contents[i].toString());
   }
 
   expect.hasAssertions();
@@ -434,8 +434,7 @@ test('Compute base for stylesheets', async () => {
 
   expect.assertions(docs.length * tests.length);
 
-  for (let index = 0; index < docs.length; index++) {
-    const document = docs[index];
+  for (const [index, document] of docs.entries()) {
     for (const testdata of tests) {
       const {filepath, expected} = testdata;
       const file = await vinylize({filepath});
@@ -497,8 +496,7 @@ test('Get styles', async () => {
     },
   ];
 
-  for (let index = 0; index < docs.length; index++) {
-    const document = docs[index];
+  for (const [index, document] of docs.entries()) {
     for (const testdata of tests) {
       const {filepath, expected, options = {}} = testdata;
       const file = await getStylesheet(document, filepath, {
@@ -543,10 +541,10 @@ test('Get styles (without path)', async () => {
     },
   ];
 
-  for (let index = 0; index < docs.length; index++) {
+  for (const [index, element] of docs.entries()) {
     for (const testdata of tests) {
       const {filepath, expected} = testdata;
-      const document = await getDocumentFromSource(docs[index], {css: filepath});
+      const document = await getDocumentFromSource(element, {css: filepath});
       const file = await getStylesheet(document, filepath, {base: path.join(__dirname, 'fixtures')});
       expect(file.contents.toString()).toMatch(expected[index]);
     }
@@ -578,10 +576,10 @@ test('Does not rebase when rebase is disabled via option', async () => {
     },
   ];
 
-  for (let index = 0; index < docs.length; index++) {
+  for (const [index, element] of docs.entries()) {
     for (const testdata of tests) {
       const {filepath, expected} = testdata;
-      const document = await getDocumentFromSource(docs[index], {css: filepath});
+      const document = await getDocumentFromSource(element, {css: filepath});
       const file = await getStylesheet(document, filepath, {base: path.join(__dirname, 'fixtures'), rebase: false});
       expect(file.contents.toString()).toMatch(expected[index]);
     }

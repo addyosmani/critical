@@ -139,7 +139,7 @@ async function fileExists(href, options = {}) {
       }
 
       return Boolean(response);
-    } catch (error) {
+    } catch (_) {
       return false;
     }
   }
@@ -156,7 +156,7 @@ const getCleanup = files => () =>
   forEachAsync(files, file => {
     try {
       fs.remove(file);
-    } catch (error) {
+    } catch (_) {
       debug(`${file} was already deleted`);
     }
   });
@@ -215,18 +215,14 @@ function glob(pattern, {base} = {}) {
   // Prepend base if it's not empty & not remote
   const prependBase = pattern => (base && !isRemote(base) ? [path.join(base, pattern)] : []);
 
-  return reduceAsync(
-    patterns,
-    async (files, pattern) => {
-      if (isGlob(pattern)) {
-        const result = await globby([...prependBase(pattern), pattern]);
-        return [...files, ...result];
-      }
+  return reduceAsync([], patterns, async (files, pattern) => {
+    if (isGlob(pattern)) {
+      const result = await globby([...prependBase(pattern), pattern]);
+      return [...files, ...result];
+    }
 
-      return [...files, pattern];
-    },
-    []
-  );
+    return [...files, pattern];
+  });
 }
 
 /**
@@ -423,7 +419,7 @@ async function getDocumentPath(file, options = {}) {
       try {
         const filepath = await resolve(ref, paths, options);
         return normalizePath(`/${path.relative(normalizePath(filepath).replace(ref, ''), file.path)}`);
-      } catch (error) {
+      } catch (_) {
         process.stderr.write(BASE_WARNING);
 
         return normalizePath(`/${path.relative(process.cwd(), file.path)}`);
@@ -599,33 +595,29 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   });
 
   // Findup first directory in search path and add to the list if available
-  const all = await reduceAsync(
-    [...new Set(filtered)],
-    async (result, cwd) => {
-      if (isRemote(cwd)) {
-        return [...result, cwd];
+  const all = await reduceAsync(filtered, [...new Set(filtered)], async (result, cwd) => {
+    if (isRemote(cwd)) {
+      return [...result, cwd];
+    }
+
+    const up = await findUp(first, {cwd, type: 'directory'});
+    if (up) {
+      const upDir = path.dirname(up);
+
+      if (hops) {
+        // Add additional directories based on dirHops
+        const additional = path
+          .relative(upDir, cwd)
+          .split(path.sep)
+          .slice(0, hops);
+        return [...result, upDir, path.join(upDir, ...additional)];
       }
 
-      const up = await findUp(first, {cwd, type: 'directory'});
-      if (up) {
-        const upDir = path.dirname(up);
+      return [...result, upDir];
+    }
 
-        if (hops) {
-          // Add additional directories based on dirHops
-          const additional = path
-            .relative(upDir, cwd)
-            .split(path.sep)
-            .slice(0, hops);
-          return [...result, upDir, path.join(upDir, ...additional)];
-        }
-
-        return [...result, upDir];
-      }
-
-      return result;
-    },
-    filtered
-  );
+    return result;
+  });
 
   debug(`(getAssetPaths) Search file "${file}" in:`, [...new Set(all)]);
 
