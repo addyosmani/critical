@@ -24,11 +24,14 @@
     "node": ">=6.4.0"
   },
   "dependencies": {
+    "assert": "^2.0.0",
     "async-exit-hook": "^2.0.1",
     "bluebird": "^3.5.1",
     "chalk": "^2.3.0",
     "clean-css": "^4.1.9",
+    "csslint": "^1.0.5",
     "debug": "3.1.0",
+    "ez-penthouse": "ezoic/ez-penthouse#v2.0.1",
     "filter-css": "^0.1.2",
     "fs-extra": "^7.0.0",
     "get-port": "^3.2.0",
@@ -41,7 +44,6 @@
     "meow": "^5.0.0",
     "mime-types": "^2.1.19",
     "oust": "^0.4.0",
-    "ez-penthouse": "ezoic/ez-penthouse#v2.0.1",
     "plugin-error": "^1.0.1",
     "postcss": "^7.0.0",
     "postcss-image-inliner": "^2.0.0",
