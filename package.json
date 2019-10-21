@@ -27,7 +27,7 @@
     "node": ">=8"
   },
   "dependencies": {
-    "@hapi/joi": "^15.1.1",
+    "@hapi/joi": "^16.1.7",
     "chalk": "^2.4.2",
     "clean-css": "^4.2.1",
     "common-tags": "^1.8.0",
