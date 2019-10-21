@@ -74,7 +74,7 @@ const schema = Joi.object()
   .xor('html', 'src');
 
 function getOptions(options = {}) {
-  const {error, value} = Joi.validate(options, schema);
+  const {error, value} = schema.validate(options);
   const {inline, dimensions, penthouse = {}, target, ignore} = value || {};
 
   if (error) {
@@ -140,7 +140,7 @@ function getOptions(options = {}) {
 }
 
 const validate = (key, val) => {
-  const {error} = Joi.validate({[key]: val, html: '<html/>'}, schema);
+  const {error} = schema.validate({[key]: val, html: '<html/>'});
   if (error) {
     return false;
   }
