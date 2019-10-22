@@ -8,8 +8,7 @@
   "scripts": {
     "jest": "jest --coverage",
     "xo": "xo",
-    "test": "npm run xo && npm run jest",
-    "coveralls": "cat ./coverage/lcov.info | coveralls"
+    "test": "npm run xo && npm run jest"
   },
   "files": [
     "cli.js",
@@ -61,7 +60,6 @@
   },
   "devDependencies": {
     "async": "^3.1.0",
-    "coveralls": "^3.0.7",
     "eslint-plugin-prettier": "^3.1.1",
     "execa": "^3.2.0",
     "finalhandler": "^1.1.2",
