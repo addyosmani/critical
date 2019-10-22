@@ -1,4 +1,4 @@
-# critical [![NPM version][npm-image]][npm-url] [![Linux Build Status][travis-image]][travis-url] [![Windows Build status][appveyor-image]][appveyor-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status Status][devdepstat-image]][devdepstat-url]
+# critical [![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url]
 
 Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 
@@ -344,13 +344,8 @@ Apache-2.0 © Addy Osmani, Ben Zörb
 
 [npm-url]: https://www.npmjs.com/package/critical
 [npm-image]: https://img.shields.io/npm/v/critical.svg
-
-[travis-url]: https://travis-ci.org/addyosmani/critical
-[travis-image]: https://img.shields.io/travis/addyosmani/critical/master.svg?label=Linux%20build
-
-[appveyor-url]: https://ci.appveyor.com/project/addyosmani/critical/branch/master
-[appveyor-image]: https://img.shields.io/appveyor/ci/addyosmani/critical/master.svg?label=Windows%20build
-
+[ci-url]: https://github.com/addyosmani/critical/actions?workflow=Tests
+[ci-image]: https://github.com/addyosmani/critical/workflows/Tests/badge.svg
 [depstat-url]: https://david-dm.org/addyosmani/critical
 [depstat-image]: https://david-dm.org/addyosmani/critical/status.svg
 
