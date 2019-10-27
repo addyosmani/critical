@@ -23,7 +23,7 @@
     "optimization"
   ],
   "engines": {
-    "node": ">=8"
+    "node": ">=8.10.0"
   },
   "dependencies": {
     "@hapi/joi": "^16.1.7",
