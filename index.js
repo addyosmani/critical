@@ -6,7 +6,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const through2 = require('through2');
 const PluginError = require('plugin-error');
-const replaceExtension = require('replace-ext');
 const {create} = require('./src/core');
 const {getOptions} = require('./src/config');
 
@@ -76,7 +75,7 @@ function stream(params) {
         if (params.inline) {
           file.contents = Buffer.from(html);
         } else {
-          file.path = replaceExtension(file.path, '.css');
+          file.path = file.path.replace(path.extname(file.path), '.css');
           file.contents = Buffer.from(css);
         }
 
