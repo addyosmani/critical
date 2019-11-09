@@ -4,7 +4,6 @@ const path = require('path');
 const fs = require('fs-extra');
 const array = require('stream-array');
 const Vinyl = require('vinyl');
-const nn = require('normalize-newline');
 
 function getFile(file) {
   const testBase = path.join(__dirname, '..');
@@ -25,9 +24,7 @@ function readAndRemove(file) {
 }
 
 function read(file) {
-  const content = fs.readFileSync(getFile(file), 'utf8');
-
-  return nn(content);
+  return fs.readFileSync(getFile(file), 'utf8');
 }
 
 function getVinyl(...args) {

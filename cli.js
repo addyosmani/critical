@@ -2,7 +2,6 @@
 
 'use strict';
 
-const os = require('os');
 const chalk = require('chalk');
 const meow = require('meow');
 const groupArgs = require('group-args');
@@ -175,7 +174,7 @@ const normalizedFlags = reduce(
 
 function showError(err) {
   process.stderr.write(indentString(chalk.red('Error: ') + err.message || err, 3));
-  process.stderr.write(os.EOL);
+  process.stderr.write('\n');
   process.stderr.write(indentString(help, 3));
   process.exit(1);
 }

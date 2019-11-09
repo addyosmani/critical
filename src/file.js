@@ -1,7 +1,6 @@
 'use strict';
 
 const path = require('path');
-const os = require('os');
 const url = require('url');
 const fs = require('fs-extra');
 const findUp = require('find-up');
@@ -22,7 +21,7 @@ const {FileNotFoundError} = require('./errors');
 
 const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
 
-const warn = text => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
+const warn = text => process.stderr.write(chalk.yellow(`${text}\n`));
 
 /**
  * Fixup slashes in file paths for Windows and remove volume definition in front
@@ -768,7 +767,7 @@ async function getCss(document, options = {}) {
   return stylesheets
     .filter(stylesheet => !stylesheet.isNull())
     .map(stylesheet => stylesheet.contents.toString())
-    .join(os.EOL);
+    .join('\n');
 }
 
 /**

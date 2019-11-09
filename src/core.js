@@ -1,6 +1,5 @@
 'use strict';
 
-const {EOL} = require('os');
 const path = require('path');
 const chalk = require('chalk');
 const CleanCSS = require('clean-css');
@@ -122,7 +121,7 @@ async function create(options = {}) {
     criticalCSS = combineCss(criticalStyles);
   } catch (error) {
     if (error.message === PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE) {
-      process.stderr.write(chalk.yellow(PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE) + EOL);
+      process.stderr.write(chalk.yellow(PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE) + '\n');
       return {
         css: '',
         html: document.contents.toString(),

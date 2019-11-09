@@ -3,7 +3,6 @@
 const path = require('path');
 const readPkgUp = require('read-pkg-up');
 const execa = require('execa');
-const nn = require('normalize-newline');
 const globby = require('globby');
 const {read} = require('./helper');
 
@@ -80,7 +79,7 @@ describe('CLI', () => {
       const expected = await read('expected/generate-default.css');
 
       expect(exitCode).toBe(0);
-      expect(nn(stdout)).toBe(expected);
+      expect(stdout).toBe(expected);
     });
 
     test('Take html file piped to critical', async () => {
@@ -91,7 +90,7 @@ describe('CLI', () => {
       const expected = await read('expected/generate-default.css');
 
       expect(exitCode).toBe(0);
-      expect(nn(stdout)).toBe(expected);
+      expect(stdout).toBe(expected);
     });
 
     test('Pipe html file inside a folder to critical', async () => {
@@ -102,7 +101,7 @@ describe('CLI', () => {
       const expected = await read('expected/generate-default.css');
 
       expect(exitCode).toBe(0);
-      expect(nn(stdout)).toBe(expected);
+      expect(stdout).toBe(expected);
     });
 
     test('Inline images to piped html file', async () => {
@@ -123,7 +122,7 @@ describe('CLI', () => {
       const expected = await read('expected/generate-image.css');
 
       expect(exitCode).toBe(0);
-      expect(nn(stdout)).toBe(expected);
+      expect(stdout).toBe(expected);
     });
 
     test("Add an absolute image path to critical css if we can't determine document location", async () => {
@@ -134,7 +133,7 @@ describe('CLI', () => {
       const expected = await read('expected/generate-image-absolute.css');
 
       expect(exitCode).toBe(0);
-      expect(nn(stdout)).toBe(expected);
+      expect(stdout).toBe(expected);
     });
 
     test('Add absolute image paths on piped html without relative links', async () => {
@@ -145,7 +144,7 @@ describe('CLI', () => {
       const expected = await read('expected/generate-image-absolute.css');
 
       expect(exitCode).toBe(0);
-      expect(nn(stdout)).toBe(expected);
+      expect(stdout).toBe(expected);
     });
 
     test('Exit with code 1 and show help', async () => {

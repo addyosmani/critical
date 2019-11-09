@@ -5,7 +5,6 @@ const fs = require('fs-extra');
 const vinylStream = require('vinyl-source-stream');
 const Vinyl = require('vinyl');
 const PluginError = require('plugin-error');
-const nn = require('normalize-newline');
 const streamAssert = require('stream-assert');
 const tempy = require('tempy');
 const {ConfigError, FileNotFoundError, NoCssError} = require('../src/errors');
@@ -262,7 +261,7 @@ test('#192 - include option - stream', done => {
     .pipe(
       streamAssert.nth(0, d => {
         expect(path.extname(d.path)).toBe('.css');
-        expect(nn(d.contents.toString('utf8'))).toBe(expected);
+        expect(d.contents.toString('utf8')).toBe(expected);
       })
     )
     .pipe(streamAssert.end(done));
@@ -291,7 +290,7 @@ test('should generate multi-dimension critical-path CSS in stream mode', done =>
     .pipe(
       streamAssert.nth(0, d => {
         expect(path.extname(d.path)).toBe('.css');
-        expect(nn(d.contents.toString('utf8'))).toBe(expected);
+        expect(d.contents.toString('utf8')).toBe(expected);
       })
     )
     .pipe(streamAssert.end(done));

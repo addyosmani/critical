@@ -9,7 +9,6 @@ const async = require('async');
 const fs = require('fs-extra');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
-const nn = require('normalize-newline');
 const {read, readAndRemove} = require('./helper');
 const {generate} = require('..');
 
@@ -36,7 +35,7 @@ function assertCritical(target, expected, done, skipTarget) {
         expect(dest).toBe(expected);
       }
 
-      expect(nn(output)).toBe(expected);
+      expect(output).toBe(expected);
     } catch (error) {
       done(error);
       return;
@@ -570,8 +569,8 @@ describe('generate (local)', () => {
       (err, results) => {
         try {
           expect(err).toBeFalsy();
-          expect(nn(results.first.html)).toBe(expected1);
-          expect(nn(results.second.html)).toBe(expected2);
+          expect(results.first.html).toBe(expected1);
+          expect(results.second.html).toBe(expected2);
           done();
         } catch (error) {
           done(error);
@@ -1182,8 +1181,8 @@ describe('generate (remote)', () => {
       },
       (err, results) => {
         expect(err).toBeFalsy();
-        expect(nn(results.first.html)).toBe(expected1);
-        expect(nn(results.second.html)).toBe(expected2);
+        expect(results.first.html).toBe(expected1);
+        expect(results.second.html).toBe(expected2);
         done(err);
       }
     );
