@@ -49,7 +49,6 @@
     "lodash.isobject": "^3.0.2",
     "lodash.isregexp": "^4.0.1",
     "lodash.isstring": "^4.0.1",
-    "lodash.keys": "^4.2.0",
     "lodash.reduce": "^4.6.0",
     "meow": "^5.0.0",
     "mime-types": "^2.1.25",
