@@ -2,7 +2,6 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const assign = require('lodash.assign');
 const defaults = require('lodash.defaults');
 const isFunction = require('lodash.isfunction');
 const isObject = require('lodash.isobject');
@@ -51,14 +50,14 @@ function prepareOptions(opts) {
     }
 
     // Set options for inline-critical
-    options.inline = Boolean(options.inline) && assign({
+    options.inline = Boolean(options.inline) && Object.assign({
         minify: opts.minify || false,
         extract: opts.extract || false,
         basePath: opts.base || process.cwd()
     }, (isObject(options.inline) && options.inline) || {});
 
     // Set penthouse options
-    options.penthouse = assign({}, {
+    options.penthouse = Object.assign({}, {
         forceInclude: opts.include || [],
         timeout: opts.timeout || 30000,
         maxEmbeddedBase64Length: opts.maxImageFileSize || 10240
@@ -168,7 +167,7 @@ exports.stream = opts => {
             return this.emit('error', new PluginError('critical', 'Streaming not supported'));
         }
 
-        const options = assign(opts || {}, {
+        const options = Object.assign(opts || {}, {
             src: file
         });
 

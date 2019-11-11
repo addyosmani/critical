@@ -9,7 +9,6 @@ const meow = require('meow');
 const groupArgs = require('group-args');
 const indentString = require('indent-string');
 const stdin = require('get-stdin');
-const assign = require('lodash.assign');
 const reduce = require('lodash.reduce');
 const isString = require('lodash.isstring');
 const isRegExp = require('lodash.isregexp');
@@ -166,7 +165,7 @@ function error(err) {
 }
 
 function run(data) {
-    const opts = assign({base: process.cwd()}, cli.flags);
+    const opts = Object.assign({base: process.cwd()}, cli.flags);
     ok = true;
 
     if (data) {

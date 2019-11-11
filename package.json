@@ -39,7 +39,6 @@
     "indent-string": "^3.2.0",
     "inline-critical": "^4.1.2",
     "lodash": "^4.17.15",
-    "lodash.assign": "^4.2.0",
     "lodash.defaults": "^4.2.0",
     "lodash.escaperegexp": "^4.1.2",
     "lodash.invokemap": "^4.6.0",
