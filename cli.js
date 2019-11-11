@@ -9,7 +9,12 @@ const meow = require('meow');
 const groupArgs = require('group-args');
 const indentString = require('indent-string');
 const stdin = require('get-stdin');
-const {assign, escapeRegExp, isString, isRegExp, map, reduce} = require('lodash');
+const assign = require('lodash.assign');
+const reduce = require('lodash.reduce');
+const isString = require('lodash.isstring');
+const isRegExp = require('lodash.isregexp');
+const map = require('lodash.map');
+const escapeRegExp = require('lodash.escaperegexp');
 
 const file = require('./lib/file-helper');
 const critical = require('.');

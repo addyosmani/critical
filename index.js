@@ -2,7 +2,12 @@
 
 const path = require('path');
 const fs = require('fs-extra');
-const {assign, defaults, isFunction, isObject, intersection, keys} = require('lodash');
+const assign = require('lodash.assign');
+const defaults = require('lodash.defaults');
+const isFunction = require('lodash.isfunction');
+const isObject = require('lodash.isobject');
+const intersection = require('lodash.intersection');
+const keys = require('lodash.keys');
 
 const chalk = require('chalk');
 const sourceInliner = require('inline-critical');
