@@ -44,7 +44,6 @@
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2",
     "lodash.isregexp": "^4.0.1",
-    "lodash.isstring": "^4.0.1",
     "lodash.reduce": "^4.6.0",
     "lodash.sortby": "^4.7.0",
     "meow": "^5.0.0",

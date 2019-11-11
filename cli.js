@@ -9,10 +9,9 @@ const meow = require('meow');
 const groupArgs = require('group-args');
 const indentString = require('indent-string');
 const stdin = require('get-stdin');
-const reduce = require('lodash.reduce');
-const isString = require('lodash.isstring');
 const isRegExp = require('lodash.isregexp');
 const escapeRegExp = require('lodash.escaperegexp');
+const reduce = require('lodash.reduce');
 
 const file = require('./lib/file-helper');
 const critical = require('.');
@@ -126,7 +125,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
             break;
         case 'assetpaths':
         case 'assetPaths':
-            if (isString(val)) {
+            if (!Array.isArray(val)) {
                 val = [val];
             }
 
@@ -134,7 +133,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
             break;
         case 'include':
         case 'ignore':
-            if (isString(val) || isRegExp(val)) {
+            if (!Array.isArray(val) || isRegExp(val)) {
                 val = [val];
             }
 
