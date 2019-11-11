@@ -42,7 +42,6 @@
     "lodash.assign": "^4.2.0",
     "lodash.defaults": "^4.2.0",
     "lodash.escaperegexp": "^4.1.2",
-    "lodash.intersection": "^4.4.0",
     "lodash.invokemap": "^4.6.0",
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2",
