@@ -13,7 +13,6 @@ const assign = require('lodash.assign');
 const reduce = require('lodash.reduce');
 const isString = require('lodash.isstring');
 const isRegExp = require('lodash.isregexp');
-const map = require('lodash.map');
 const escapeRegExp = require('lodash.escaperegexp');
 
 const file = require('./lib/file-helper');
@@ -140,7 +139,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
                 val = [val];
             }
 
-            res[key] = map(val || [], entry => {
+            res[key] = (val || []).map(entry => {
                 // Check regex
                 const match = entry.match(/^\/(.*)\/([igmy]+)?$/);
 
