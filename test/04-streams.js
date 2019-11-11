@@ -10,7 +10,6 @@ const vinylStream = require('vinyl-source-stream');
 const streamAssert = require('stream-assert');
 const Vinyl = require('vinyl');
 const array = require('stream-array');
-const nn = require('normalize-newline');
 
 const {read} = require('./helper/testhelper');
 const critical = require('..');
@@ -88,7 +87,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
+                assert.strictEqual(d.contents.toString('utf8'), expected1);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -102,7 +101,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.first(d => {
                 assert.strictEqual(path.extname(d.path), '.html');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -123,11 +122,11 @@ describe('Streams', () => {
             .pipe(streamAssert.length(2))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected1);
+                assert.strictEqual(d.contents.toString('utf8'), expected1);
             }))
             .pipe(streamAssert.nth(1, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected2);
+                assert.strictEqual(d.contents.toString('utf8'), expected2);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -149,7 +148,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -170,7 +169,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.html');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -190,7 +189,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -210,7 +209,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.html');
-                assert.strictEqual(nn(d.contents.toString('utf8')), expected);
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -250,7 +249,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), nn(expected));
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });
@@ -274,7 +273,7 @@ describe('Streams', () => {
             .pipe(streamAssert.length(1))
             .pipe(streamAssert.nth(0, d => {
                 assert.strictEqual(path.extname(d.path), '.css');
-                assert.strictEqual(nn(d.contents.toString('utf8')), nn(expected));
+                assert.strictEqual(d.contents.toString('utf8'), expected);
             }))
             .pipe(streamAssert.end(done));
     });

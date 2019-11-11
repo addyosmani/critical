@@ -1,6 +1,5 @@
 #!/usr/bin/env node
 'use strict';
-const os = require('os');
 const path = require('path');
 const chalk = require('chalk');
 const meow = require('meow');
@@ -159,7 +158,7 @@ cli.flags = reduce(cli.flags, (res, val, key) => {
 
 function error(err) {
     process.stderr.write(indentString((chalk.red('Error: ') + err.message || err), 3));
-    process.stderr.write(os.EOL);
+    process.stderr.write('\n');
     process.stderr.write(indentString(help, 3));
     process.exit(1);
 }

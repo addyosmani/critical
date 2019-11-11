@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const {assert} = require('chai');
-const nn = require('normalize-newline');
 
 function readAndRemove(file) {
     const testBase = path.join(__dirname, '..');
@@ -27,7 +26,7 @@ function read(file) {
         content = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
     }
 
-    return nn(content);
+    return content;
 }
 
 /**
@@ -50,10 +49,10 @@ function assertCritical(target, expected, done, skipTarget) {
             assert.isDefined(output, 'Should produce output');
             if (!skipTarget) {
                 const dest = readAndRemove(target, true);
-                assert.strictEqual(nn(dest), nn(expected));
+                assert.strictEqual(dest, expected);
             }
 
-            assert.strictEqual(nn(output), nn(expected));
+            assert.strictEqual(output, expected);
         } catch (error) {
             done(error);
             return;

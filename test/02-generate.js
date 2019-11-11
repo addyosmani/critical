@@ -3,7 +3,6 @@
 const path = require('path');
 const http = require('http');
 const fs = require('fs');
-const nn = require('normalize-newline');
 const {assert} = require('chai');
 const async = require('async');
 const getPort = require('get-port');
@@ -443,8 +442,8 @@ describe('Module - generate', () => {
             }
         }, (err, results) => {
             assert.isNull(err, Boolean(err) && err);
-            assert.strictEqual(nn(results.first), nn(expected1));
-            assert.strictEqual(nn(results.second), nn(expected2));
+            assert.strictEqual(results.first, expected1);
+            assert.strictEqual(results.second, expected2);
             done();
         });
     });
@@ -968,8 +967,8 @@ describe('Module - generate (remote)', () => {
             }
         }, (err, results) => {
             assert.isNull(err, Boolean(err) && err);
-            assert.strictEqual(nn(results.first), nn(expected1));
-            assert.strictEqual(nn(results.second), nn(expected2));
+            assert.strictEqual(results.first, expected1);
+            assert.strictEqual(results.second, expected2);
             done();
         });
     });

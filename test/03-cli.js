@@ -8,7 +8,6 @@ const {assert} = require('chai');
 const getPort = require('get-port');
 const mockery = require('mockery');
 const readJson = require('read-package-json');
-const nn = require('normalize-newline');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 
@@ -56,7 +55,7 @@ describe('CLI', () => {
                     data = data.toString('utf8');
                 }
 
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(data, expected);
                 done();
             });
         });
@@ -72,7 +71,7 @@ describe('CLI', () => {
                     data = data.toString('utf8');
                 }
 
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(data, expected);
                 done();
             });
         });
@@ -83,7 +82,7 @@ describe('CLI', () => {
 
             exec(cmd, (error, stdout) => {
                 assert.isNull(error);
-                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                assert.strictEqual(stdout.toString('utf8'), expected);
                 done();
             });
         });
@@ -94,7 +93,7 @@ describe('CLI', () => {
 
             exec(cmd, (error, stdout) => {
                 assert.isNull(error);
-                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                assert.strictEqual(stdout.toString('utf8'), expected);
                 done();
             });
         });
@@ -105,7 +104,7 @@ describe('CLI', () => {
 
             exec(cmd, (error, stdout) => {
                 assert.isNull(error);
-                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                assert.strictEqual(stdout.toString('utf8'), expected);
                 done();
             });
         });
@@ -116,7 +115,7 @@ describe('CLI', () => {
 
             exec(cmd, (error, stdout, stderr) => {
                 assert.isNull(error);
-                assert.strictEqual(nn(stdout.toString('utf8')), nn(expected));
+                assert.strictEqual(stdout.toString('utf8'), expected);
                 assert.include(stderr.toString('utf8'), 'Missing html source path. Consider \'folder\' option.');
                 done();
             });
@@ -172,7 +171,7 @@ describe('CLI', () => {
                     data = data.toString('utf8');
                 }
 
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(data, expected);
                 done();
             });
         });
@@ -199,7 +198,7 @@ describe('CLI', () => {
                     data = data.toString('utf8');
                 }
 
-                assert.strictEqual(nn(data), nn(expected));
+                assert.strictEqual(data, expected);
                 done();
             });
         });
