@@ -52,7 +52,6 @@
     "lodash.keys": "^4.2.0",
     "lodash.map": "^4.6.0",
     "lodash.reduce": "^4.6.0",
-    "lodash.uniq": "^4.5.0",
     "meow": "^5.0.0",
     "mime-types": "^2.1.25",
     "oust": "^0.5.2",
