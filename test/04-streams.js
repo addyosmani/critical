@@ -1,8 +1,9 @@
 /*
  * Unit tests for Critical.
  */
-/* eslint-env node, mocha */
+
 'use strict';
+
 const path = require('path');
 const fs = require('fs');
 const {assert} = require('chai');

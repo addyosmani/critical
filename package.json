@@ -71,6 +71,14 @@
     "space": 4,
     "rules": {
       "valid-jsdoc": "off"
-    }
+    },
+    "overrides": [
+      {
+        "files": "test/*.js",
+        "envs": [
+          "mocha"
+        ]
+      }
+    ]
   }
 }

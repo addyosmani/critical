@@ -1,5 +1,5 @@
-/* eslint-env node, mocha */
 'use strict';
+
 const path = require('path');
 const {assert} = require('chai');
 const File = require('vinyl');
@@ -39,7 +39,7 @@ describe('Lib', () => {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/b/file.css',
-                    contents: Buffer.from('url(' + p + ')')
+                    contents: Buffer.from(`url(${p})`)
                 });
             }
 
@@ -60,7 +60,7 @@ describe('Lib', () => {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/b/file.css',
-                    contents: Buffer.from('url(' + p + ')')
+                    contents: Buffer.from(`url(${p})`)
                 });
             }
 
@@ -82,7 +82,7 @@ describe('Lib', () => {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/b/file.css',
-                    contents: Buffer.from('url(' + p + ')')
+                    contents: Buffer.from(`url(${p})`)
                 });
             }
 
@@ -103,7 +103,7 @@ describe('Lib', () => {
             function mock(p) {
                 return new File({
                     path: 'fixtures/a/file.css',
-                    contents: Buffer.from('url(' + p + ')')
+                    contents: Buffer.from(`url(${p})`)
                 });
             }
 
