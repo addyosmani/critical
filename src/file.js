@@ -342,7 +342,7 @@ async function fetch(uri, options = {}, secure = true) {
 }
 
 /**
- * Extract stykesheet urls from html document
+ * Extract stylesheet urls from html document
  * @param {Vinyl} file Vinyl file object (document)
  * @returns {[string]} Stylesheet urls from document source
  */
@@ -362,7 +362,7 @@ function getStylesheetHrefs(file) {
 /**
  * Extract asset urls from stylesheet
  * @param {Vinyl} file Vinyl file object (stylesheet)
- * @returns {[string]} Asset urls from stykesheet source
+ * @returns {[string]} Asset urls from stylesheet source
  */
 function getAssets(file) {
   if (!isVinyl(file)) {
