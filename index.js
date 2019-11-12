@@ -1,4 +1,5 @@
 'use strict';
+
 const path = require('path');
 const fs = require('fs-extra');
 const assign = require('lodash/assign');
@@ -82,7 +83,7 @@ function prepareOptions(opts) {
  * @accepts src, base, width, height, dimensions, dest
  * @return {Promise}|undefined
  */
-exports.generate = function (opts, cb) {
+exports.generate = (opts, cb) => {
     opts = prepareOptions(opts);
 
     // Generate critical css
@@ -134,14 +135,14 @@ exports.generate = function (opts, cb) {
 /**
  * Deprecated has been removed
  */
-exports.generateInline = function () {
+exports.generateInline = () => {
     throw new Error('"generateInline" has been removed. Use "generate" with the inline option instead. https://goo.gl/7VbE4b');
 };
 
 /**
  * Deprecated has been removed
  */
-exports.inline = function () {
+exports.inline = () => {
     throw new Error('"inline" has been removed. Consider using "inline-critical" instead. https://goo.gl/MmTrUZ');
 };
 
@@ -151,7 +152,7 @@ exports.inline = function () {
  * @param {object} opts
  * @returns {*}
  */
-exports.stream = function (opts) {
+exports.stream = opts => {
     // Return stream
     return through2.obj(function (file, enc, cb) {
         if (file.isNull()) {

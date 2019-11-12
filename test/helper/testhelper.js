@@ -39,7 +39,7 @@ function read(file) {
  * @returns {Function}
  */
 function assertCritical(target, expected, done, skipTarget) {
-    return function (err, output) {
+    return (err, output) => {
         if (err) {
             console.log(err);
             done(err);
