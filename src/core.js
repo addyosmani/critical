@@ -15,7 +15,6 @@ const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/co
 const inlineCritical = require('inline-critical');
 const {extractCss} = require('inline-critical/src/css');
 const parseCssUrls = require('css-url-parser');
-const invokeMap = require('lodash.invokemap');
 const isFunction = require('lodash.isfunction');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
@@ -45,7 +44,7 @@ function combineCss(cssArray) {
         mergeMedia: true,
       },
     },
-  }).minify(invokeMap(cssArray, 'toString').join(' ')).styles;
+  }).minify(cssArray.map(css => css.toString()).join(' ')).styles;
 }
 
 /**

@@ -42,7 +42,6 @@
     "indent-string": "^4.0.0",
     "inline-critical": "^5.3.1",
     "is-glob": "^4.0.1",
-    "lodash.invokemap": "^4.6.0",
     "lodash.isfunction": "^3.0.9",
     "lodash.isobject": "^3.0.2",
     "lodash.isstring": "^4.0.1",
