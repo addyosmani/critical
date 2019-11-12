@@ -95,7 +95,7 @@ function getOptions(options = {}) {
   }
 
   if (typeof target === 'string') {
-    const key = /\.css$/.test(target) ? 'css' : 'html';
+    const key = target.endsWith('.css') ? 'css' : 'html';
     value.target = {[key]: target};
   }
 

@@ -21,7 +21,7 @@ const FIXTURES_DIR = path.join(__dirname, '/fixtures/');
 
 function assertCritical(target, expected, done, skipTarget) {
   return (err, {css, html} = {}) => {
-    const output = /\.css$/.test(target) ? css : html;
+    const output = target.endsWith('.css') ? css : html;
 
     if (err) {
       console.log(err);

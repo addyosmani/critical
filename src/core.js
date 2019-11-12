@@ -212,7 +212,7 @@ async function create(options = {}) {
     if (target.uncritical) {
       const uncriticalHref = normalizePath(path.relative(document.cwd, path.resolve(base, target.uncritical)));
       // Only replace stylesheets if the uncriticalHref is inside document.cwd and replaceStylesheets is not set via options
-      if (!/^\.\.\//.test(uncriticalHref) && replaceStylesheets === undefined) {
+      if (!uncriticalHref.startsWith('../') && replaceStylesheets === undefined) {
         inline.replaceStylesheets = [`/${uncriticalHref}`];
       }
     } else {

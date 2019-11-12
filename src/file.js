@@ -35,11 +35,15 @@ function normalizePath(str) {
 
 /**
  * Check whether a resource is external or not
- * @param {string} href Path
+ * @param {string|Vinyl} href Path
  * @returns {boolean} True if the path is remote
  */
 function isRemote(href) {
-  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
+  if (isVinyl(href)) {
+    return false;
+  }
+
+  return (href.startsWith('//') || href.includes('://')) && !href.startsWith('file:');
 }
 
 /**
@@ -52,7 +56,7 @@ function urlParse(str = '') {
     return new url.URL(str);
   }
 
-  if (/^\/\//.test(str)) {
+  if (str.startsWith('//')) {
     return new url.URL(str, 'https://ba.se');
   }
 
@@ -239,11 +243,11 @@ function rebaseAssets(css, from, to, method = 'rebase') {
 
   debug('Rebase assets', {from, to});
 
-  if (/\/$/.test(to)) {
+  if (to.endsWith('/')) {
     to += 'temp.html';
   }
 
-  if (/\/$/.test(from)) {
+  if (from.endsWith('/')) {
     from += 'temp.css';
   }
 
@@ -297,7 +301,7 @@ async function fetch(uri, options = {}, secure = true) {
   let protocolRelative = false;
 
   // Consider protocol-relative urls
-  if (/^\/\//.test(uri)) {
+  if (uri.startsWith('//')) {
     protocolRelative = true;
     resourceUrl = urlResolve(`http${secure ? 's' : ''}://te.st`, uri);
   }
@@ -384,7 +388,7 @@ async function getDocumentPath(file, options = {}) {
   // Check remote
   if (file.remote) {
     let {pathname} = file.urlObj;
-    if (/\/$/.test(pathname)) {
+    if (pathname.endsWith('/')) {
       pathname += 'index.html';
     }
 
@@ -570,7 +574,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
       base && isRelative(base) && path.join(process.cwd(), base),
       docurl,
       urlPath && urlResolve(urlObj.href, path.dirname(urlPath)),
-      urlPath && !/\/$/.test(path.dirname(urlPath)) && urlResolve(urlObj.href, `${path.dirname(urlPath)}/`),
+      urlPath && !path.dirname(urlPath).endsWith('/') && urlResolve(urlObj.href, `${path.dirname(urlPath)}/`),
       docurl && urlResolve(docurl, file),
       docpath && path.dirname(docpath),
       ...assetPaths,
