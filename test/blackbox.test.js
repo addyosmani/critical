@@ -863,6 +863,28 @@ describe('generate (local)', () => {
       assertCritical(target, expected, done)
     );
   });
+
+  test('Correctly order css on multiple dimensions', done => {
+    const dimensions = [700, 600, 100, 200, 250, 150, 350, 400, 450, 500, 300, 550, 50].map(width => {
+      return {width, height: 1000};
+    });
+
+    const expected = read('fixtures/styles/issue-415.css');
+    const target = path.join(__dirname, '.issue-415.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'issue-415.html',
+        target,
+        minify: false,
+        inline: false,
+        dimensions,
+        concurrency: 10,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
