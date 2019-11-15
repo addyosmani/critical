@@ -670,6 +670,24 @@ describe('Module - generate', () => {
             height: 900
         }, assertCritical(target, expected, done));
     });
+
+    it('Correctly order css on multiple dimensions', done => {
+        const dimensions = [700, 600, 100, 200, 250, 150, 350, 400, 450, 500, 300, 550, 50].map(width => {
+            return {width, height: 1000};
+        });
+
+        const expected = read('expected/issue-415.css');
+        const target = '.issue-415.css';
+
+        critical.generate({
+            base: 'fixtures/',
+            src: 'issue-415.html',
+            css: ['fixtures/styles/issue-415.css'],
+            dest: target,
+            inline: false,
+            dimensions
+        }, assertCritical(target, expected, done));
+    });
 });
 
 describe('Module - generate (remote)', () => {

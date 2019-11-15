@@ -73,6 +73,9 @@ function prepareOptions(opts) {
         console.warn(chalk.yellow('These options will be overwritten by critical during the process.'));
     }
 
+    // Order dimensions
+    options.dimensions = options.dimensions.slice().sort((a, b) => (a.width || 0) - (b.width || 0));
+
     return options;
 }
 
