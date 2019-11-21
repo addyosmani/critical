@@ -84,10 +84,14 @@ describe('CLI', () => {
     });
 
     test('Take html file piped to critical', async () => {
-      const {stdout, exitCode} = await pipe(
-        path.normalize('fixtures/generate-default.html'),
-        ['--base', 'fixtures', '--width', '1300', '--height', '900']
-      );
+      const {stdout, exitCode} = await pipe(path.normalize('fixtures/generate-default.html'), [
+        '--base',
+        'fixtures',
+        '--width',
+        '1300',
+        '--height',
+        '900',
+      ]);
       const expected = await read('expected/generate-default.css');
 
       expect(exitCode).toBe(0);
@@ -95,10 +99,14 @@ describe('CLI', () => {
     });
 
     test('Pipe html file inside a folder to critical', async () => {
-      const {stdout, exitCode} = await pipe(
-        path.normalize('fixtures/folder/generate-default.html'),
-        ['--base', 'fixtures', '--width', '1300', '--height', '900']
-      );
+      const {stdout, exitCode} = await pipe(path.normalize('fixtures/folder/generate-default.html'), [
+        '--base',
+        'fixtures',
+        '--width',
+        '1300',
+        '--height',
+        '900',
+      ]);
       const expected = await read('expected/generate-default.css');
 
       expect(exitCode).toBe(0);
@@ -106,20 +114,17 @@ describe('CLI', () => {
     });
 
     test('Inline images to piped html file', async () => {
-      const {stdout, exitCode} = await pipe(
-        path.normalize('fixtures/generate-image.html'),
-        [
-          '-c',
-          'fixtures/styles/image-relative.css',
-          '--inlineImages',
-          '--base',
-          'fixtures',
-          '--width',
-          '1300',
-          '--height',
-          '900',
-        ]
-      );
+      const {stdout, exitCode} = await pipe(path.normalize('fixtures/generate-image.html'), [
+        '-c',
+        'fixtures/styles/image-relative.css',
+        '--inlineImages',
+        '--base',
+        'fixtures',
+        '--width',
+        '1300',
+        '--height',
+        '900',
+      ]);
       const expected = await read('expected/generate-image.css');
 
       expect(exitCode).toBe(0);
@@ -127,10 +132,16 @@ describe('CLI', () => {
     });
 
     test("Add an absolute image path to critical css if we can't determine document location", async () => {
-      const {stdout, exitCode} = await pipe(
-        path.normalize('fixtures/folder/generate-image.html'),
-        ['-c', 'fixtures/styles/image-relative.css', '--base', 'fixtures', '--width', '1300', '--height', '900']
-      );
+      const {stdout, exitCode} = await pipe(path.normalize('fixtures/folder/generate-image.html'), [
+        '-c',
+        'fixtures/styles/image-relative.css',
+        '--base',
+        'fixtures',
+        '--width',
+        '1300',
+        '--height',
+        '900',
+      ]);
       const expected = await read('expected/generate-image-absolute.css');
 
       expect(exitCode).toBe(0);
@@ -138,10 +149,14 @@ describe('CLI', () => {
     });
 
     test('Add absolute image paths on piped html without relative links', async () => {
-      const {stdout, exitCode} = await pipe(
-        path.normalize('fixtures/folder/subfolder/generate-image-absolute.html'),
-        ['--base', 'fixtures', '--width', '1300', '--height', '900']
-      );
+      const {stdout, exitCode} = await pipe(path.normalize('fixtures/folder/subfolder/generate-image-absolute.html'), [
+        '--base',
+        'fixtures',
+        '--width',
+        '1300',
+        '--height',
+        '900',
+      ]);
       const expected = await read('expected/generate-image-absolute.css');
 
       expect(exitCode).toBe(0);
