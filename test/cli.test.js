@@ -1,34 +1,31 @@
 'use strict';
 
+const {exec, execFile} = require('child_process');
 const path = require('path');
-const readPkgUp = require('read-pkg-up');
-const execa = require('execa');
+const {promisify} = require('util');
 const nn = require('normalize-newline');
 const globby = require('globby');
+const {version, bin} = require('../package.json');
 const {read} = require('./helper');
+
+const criticalBin = path.join(__dirname, '..', bin);
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
 jest.setTimeout(60000);
 
-const getBin = async () => {
-  const {packageJson} = await readPkgUp();
-  return path.join(__dirname, '../', packageJson.bin.critical);
-};
+const pExec = promisify(exec);
+const pExecFile = promisify(execFile);
 
-const run = async (args = []) => {
-  const bin = await getBin();
-  return execa('node', [bin, ...args]);
-};
+const run = async (args = []) => pExecFile('node', [criticalBin, ...args]);
 
 const getArgs = async (params = []) => {
-  const bin = await getBin();
   const origArgv = process.argv;
   const critical = require('..');
 
   critical.generate = jest.fn();
-  process.argv = ['node', bin, ...params];
+  process.argv = ['node', criticalBin, ...params];
 
   require('../cli'); // eslint-disable-line import/no-unassigned-import
   process.argv = origArgv;
@@ -40,9 +37,8 @@ const getArgs = async (params = []) => {
 
 const pipe = async (filename, args = []) => {
   const cat = process.platform === 'win32' ? 'type' : 'cat';
-  const bin = await getBin();
-  const cmd = `${cat} ${filename} | node ${bin} ${args.join(' ')}`;
-  return execa(cmd, {shell: true});
+  const cmd = `${cat} ${filename} | node ${criticalBin} ${args.join(' ')}`;
+  return pExec(cmd, {shell: true});
 };
 
 describe('CLI', () => {
@@ -54,21 +50,19 @@ describe('CLI', () => {
       } catch (error) {
         expect(error.stderr).toMatch('Error:');
         expect(error.stderr).toMatch('Usage: critical');
-        expect(error.exitCode).not.toBe(0);
+        expect(error.code).toBe(1);
       }
     });
 
     test('Return version', async () => {
-      const {packageJson} = await readPkgUp();
-      const {stdout, stderr, exitCode} = await run(['--version', '--no-update-notifier']);
+      const {stdout, stderr} = await run(['--version', '--no-update-notifier']);
 
       expect(stderr).toBeFalsy();
-      expect(exitCode).toBe(0);
-      expect(stdout).toBe(packageJson.version);
+      expect(stdout.trim()).toBe(version);
     });
 
     test('Take html file passed via parameter', async () => {
-      const {stdout, exitCode} = await run([
+      const {stdout, stderr} = await run([
         'fixtures/generate-default.html',
         '--base',
         'fixtures',
@@ -79,12 +73,12 @@ describe('CLI', () => {
       ]);
       const expected = await read('expected/generate-default.css');
 
-      expect(exitCode).toBe(0);
+      expect(stderr).toBeFalsy();
       expect(nn(stdout)).toBe(expected);
     });
 
     test('Take html file piped to critical', async () => {
-      const {stdout, exitCode} = await pipe(path.normalize('fixtures/generate-default.html'), [
+      const {stdout, stderr} = await pipe(path.normalize('fixtures/generate-default.html'), [
         '--base',
         'fixtures',
         '--width',
@@ -94,12 +88,13 @@ describe('CLI', () => {
       ]);
       const expected = await read('expected/generate-default.css');
 
-      expect(exitCode).toBe(0);
+      expect(stderr).toMatch('Not rebasing assets for');
+      expect(stderr.code).toBeUndefined();
       expect(nn(stdout)).toBe(expected);
     });
 
     test('Pipe html file inside a folder to critical', async () => {
-      const {stdout, exitCode} = await pipe(path.normalize('fixtures/folder/generate-default.html'), [
+      const {stdout, stderr} = await pipe(path.normalize('fixtures/folder/generate-default.html'), [
         '--base',
         'fixtures',
         '--width',
@@ -109,12 +104,13 @@ describe('CLI', () => {
       ]);
       const expected = await read('expected/generate-default.css');
 
-      expect(exitCode).toBe(0);
+      expect(stderr).toMatch('Not rebasing assets for');
+      expect(stderr.code).toBeUndefined();
       expect(nn(stdout)).toBe(expected);
     });
 
     test('Inline images to piped html file', async () => {
-      const {stdout, exitCode} = await pipe(path.normalize('fixtures/generate-image.html'), [
+      const {stdout, stderr} = await pipe(path.normalize('fixtures/generate-image.html'), [
         '-c',
         'fixtures/styles/image-relative.css',
         '--inlineImages',
@@ -127,12 +123,12 @@ describe('CLI', () => {
       ]);
       const expected = await read('expected/generate-image.css');
 
-      expect(exitCode).toBe(0);
+      expect(stderr).toBeFalsy();
       expect(nn(stdout)).toBe(expected);
     });
 
     test("Add an absolute image path to critical css if we can't determine document location", async () => {
-      const {stdout, exitCode} = await pipe(path.normalize('fixtures/folder/generate-image.html'), [
+      const {stdout, stderr} = await pipe(path.normalize('fixtures/folder/generate-image.html'), [
         '-c',
         'fixtures/styles/image-relative.css',
         '--base',
@@ -144,12 +140,12 @@ describe('CLI', () => {
       ]);
       const expected = await read('expected/generate-image-absolute.css');
 
-      expect(exitCode).toBe(0);
+      expect(stderr).toBeFalsy();
       expect(nn(stdout)).toBe(expected);
     });
 
     test('Add absolute image paths on piped html without relative links', async () => {
-      const {stdout, exitCode} = await pipe(path.normalize('fixtures/folder/subfolder/generate-image-absolute.html'), [
+      const {stdout, stderr} = await pipe(path.normalize('fixtures/folder/subfolder/generate-image-absolute.html'), [
         '--base',
         'fixtures',
         '--width',
@@ -159,7 +155,7 @@ describe('CLI', () => {
       ]);
       const expected = await read('expected/generate-image-absolute.css');
 
-      expect(exitCode).toBe(0);
+      expect(stderr).toBeFalsy();
       expect(nn(stdout)).toBe(expected);
     });
 
@@ -168,7 +164,7 @@ describe('CLI', () => {
       try {
         await run(['fixtures/not-exists.html']);
       } catch (error) {
-        expect(error.exitCode).toBe(1);
+        expect(error.code).toBe(1);
         expect(error.stderr).toMatch('Usage:');
       }
     });
