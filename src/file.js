@@ -35,14 +35,10 @@ function normalizePath(str) {
 
 /**
  * Check whether a resource is external or not
- * @param {string|Vinyl} href Path
+ * @param {string} href Path
  * @returns {boolean} True if the path is remote
  */
 function isRemote(href) {
-  if (isVinyl(href)) {
-    return false;
-  }
-
   return (href.startsWith('//') || href.includes('://')) && !href.startsWith('file:');
 }
 
