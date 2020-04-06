@@ -22,7 +22,7 @@ const {FileNotFoundError} = require('./errors');
 
 const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
 
-const warn = text => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
+const warn = (text) => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
 
 /**
  * Fixup slashes in file paths for Windows and remove volume definition in front
@@ -39,7 +39,7 @@ function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 function isRemote(href) {
-  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:'); // eslint-disable-line prefer-named-capture-group
+  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
 /**
@@ -152,8 +152,8 @@ async function fileExists(href, options = {}) {
  * @param {array} files Array of temp files
  * @returns {Promise<void>|*} Promise resolves when all files removed
  */
-const getCleanup = files => () =>
-  forEachAsync(files, file => {
+const getCleanup = (files) => () =>
+  forEachAsync(files, (file) => {
     try {
       fs.remove(file);
     } catch (_) {
@@ -213,7 +213,7 @@ function glob(pattern, {base} = {}) {
   // Evaluate globs based on base path
   const patterns = Array.isArray(pattern) ? pattern : [pattern];
   // Prepend base if it's not empty & not remote
-  const prependBase = pattern => (base && !isRemote(base) ? [path.join(base, pattern)] : []);
+  const prependBase = (pattern) => (base && !isRemote(base) ? [path.join(base, pattern)] : []);
 
   return reduceAsync([], patterns, async (files, pattern) => {
     if (isGlob(pattern)) {
@@ -355,8 +355,8 @@ function getStylesheetHrefs(file) {
   const preloads = oust.raw(file.contents.toString(), 'preload');
 
   return [...stylesheets, ...preloads]
-    .filter(link => link.$el.attr('media') !== 'print' && Boolean(link.value))
-    .map(link => link.value);
+    .filter((link) => link.$el.attr('media') !== 'print' && Boolean(link.value))
+    .map((link) => link.value);
 }
 
 /**
@@ -403,8 +403,8 @@ async function getDocumentPath(file, options = {}) {
 
   // Check local and assume base path based on relative stylesheets
   if (file.stylesheets) {
-    const relativeRefs = file.stylesheets.filter(href => isRelative(href));
-    const absoluteRefs = file.stylesheets.filter(href => path.isAbsolute(href));
+    const relativeRefs = file.stylesheets.filter((href) => isRelative(href));
+    const absoluteRefs = file.stylesheets.filter((href) => path.isAbsolute(href));
     // If we have no stylesheets inside, fall back to path relative to process cwd
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
@@ -428,7 +428,7 @@ async function getDocumentPath(file, options = {}) {
 
     // Compute path based on relative stylesheet links
     const dots = relativeRefs.reduce((res, href) => {
-      const match = /^(\.\.\/)+/.exec(href); // eslint-disable-line prefer-named-capture-group
+      const match = /^(\.\.\/)+/.exec(href);
 
       return match && match[0].length > res.length ? match[0] : res;
     }, './');
@@ -491,7 +491,7 @@ function getStylesheetPath(document, file, options = {}) {
   }
 
   // Try to compute path based on document link tags with same name
-  const stylesheet = document.stylesheets.find(href => {
+  const stylesheet = document.stylesheets.find((href) => {
     const {pathname} = urlParse(href);
     const name = path.basename(pathname);
     return name === path.basename(file.path);
@@ -510,7 +510,7 @@ function getStylesheetPath(document, file, options = {}) {
   }
 
   // Try to find stylesheet path based on document link tags
-  const [unsafestylesheet] = document.stylesheets.sort(a => (isRemote(a) ? 1 : -1));
+  const [unsafestylesheet] = document.stylesheets.sort((a) => (isRemote(a) ? 1 : -1));
   if (unsafestylesheet && isRelative(unsafestylesheet) && document.virtualPath) {
     return normalizePath(
       joinPath(path.dirname(document.virtualPath), joinPath(path.dirname(unsafestylesheet), path.basename(file.path)))
@@ -560,8 +560,8 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   // Count directory hops
   const hops = normalized.split(path.sep).reduce((cnt, part) => (part === '..' ? cnt + 1 : cnt), 0);
   // Also findup first real dir path
-  const [first] = normalized.split(path.sep).filter(p => p && p !== '..');
-  const mappedAssetPaths = base ? assetPaths.map(a => joinPath(base, a)) : [];
+  const [first] = normalized.split(path.sep).filter((p) => p && p !== '..');
+  const mappedAssetPaths = base ? assetPaths.map((a) => joinPath(base, a)) : [];
 
   // Make a list of possible paths
   const paths = [
@@ -586,7 +586,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   ];
 
   // Filter non-existent paths
-  const filtered = await filterAsync(paths, f => {
+  const filtered = await filterAsync(paths, (f) => {
     if (!f) {
       return false;
     }
@@ -606,10 +606,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
 
       if (hops) {
         // Add additional directories based on dirHops
-        const additional = path
-          .relative(upDir, cwd)
-          .split(path.sep)
-          .slice(0, hops);
+        const additional = path.relative(upDir, cwd).split(path.sep).slice(0, hops);
         return [...result, upDir, path.join(upDir, ...additional)];
       }
 
@@ -722,7 +719,7 @@ async function getStylesheet(document, filepath, options = {}) {
   } else if (isRemote(rebase.to || stylepath)) {
     const from = rebase.from || stylepath;
     const to = rebase.to || stylepath;
-    const method = asset => (isRemote(asset.originUrl) ? asset.originUrl : urlResolve(to, asset.originUrl));
+    const method = (asset) => (isRemote(asset.originUrl) ? asset.originUrl : urlResolve(to, asset.originUrl));
     file.contents = rebaseAssets(file.contents, from, to, method);
 
     // Use relative path to document (local)
@@ -734,7 +731,7 @@ async function getStylesheet(document, filepath, options = {}) {
 
     // Make images absolute if we have an absolute positioned stylesheet
   } else if (path.isAbsolute(stylepath)) {
-    file.contents = rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', asset =>
+    file.contents = rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', (asset) =>
       normalizePath(asset.absolutePath)
     );
   } else {
@@ -758,16 +755,16 @@ async function getCss(document, options = {}) {
 
   if (css) {
     const files = await glob(css, options);
-    stylesheets = await mapAsync(files, file => getStylesheet(document, file, options));
+    stylesheets = await mapAsync(files, (file) => getStylesheet(document, file, options));
     debug('(getCss) css option set', files, stylesheets);
   } else {
-    stylesheets = await mapAsync(document.stylesheets, file => getStylesheet(document, file, options));
+    stylesheets = await mapAsync(document.stylesheets, (file) => getStylesheet(document, file, options));
     debug('(getCss) extract from document', document.stylesheets, stylesheets);
   }
 
   return stylesheets
-    .filter(stylesheet => !stylesheet.isNull())
-    .map(stylesheet => stylesheet.contents.toString())
+    .filter((stylesheet) => !stylesheet.isNull())
+    .map((stylesheet) => stylesheet.contents.toString())
     .join(os.EOL);
 }
 
@@ -783,13 +780,13 @@ async function preparePenthouseData(document) {
   const tmp = [];
   const stylesheets = document.stylesheets || [];
   const [stylesheet, ...canBeEmpty] = stylesheets
-    .filter(file => isRelative(file))
-    .map(file => file.replace(/\?.*$/, ''));
+    .filter((file) => isRelative(file))
+    .map((file) => file.replace(/\?.*$/, ''));
 
   // Make sure we go as deep inside the temp folder as required by relative stylesheet hrefs
   const subfolders = [stylesheet, ...canBeEmpty]
     .reduce((res, href) => {
-      const match = /^(\.\.\/)+/.exec(href || ''); // eslint-disable-line prefer-named-capture-group
+      const match = /^(\.\.\/)+/.exec(href || '');
       return match && match[0].length > res.length ? match[0] : res;
     }, './')
     .replace(/\.\.\//g, 'sub/');
@@ -801,7 +798,7 @@ async function preparePenthouseData(document) {
   // Inject all styles to make sure we have everything in place
   // because puppeteer doesn't seem to fetch protocol relative links
   // when served from file://
-  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`); // eslint-disable-line prefer-named-capture-group
+  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
   // Write html to temp file
   await fs.outputFile(file, injected);
 
@@ -815,7 +812,7 @@ async function preparePenthouseData(document) {
   }
 
   // Write empty string to rest of the linked stylesheets
-  await forEachAsync(canBeEmpty, dummy => {
+  await forEachAsync(canBeEmpty, (dummy) => {
     const filename = path.join(dir, dummy);
     tmp.push(filename);
     fs.outputFile(filename, '');

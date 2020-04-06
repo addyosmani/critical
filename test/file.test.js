@@ -68,8 +68,8 @@ test('Remote file detection', () => {
   const local = ['../test/foo.html', '/usr/tmp/bar'];
   const remote = ['https://test.io/', '//test.io/styles/main.css'];
 
-  local.forEach(p => expect(isRemote(p)).toBe(false));
-  remote.forEach(p => expect(isRemote(p)).toBe(true));
+  local.forEach((p) => expect(isRemote(p)).toBe(false));
+  remote.forEach((p) => expect(isRemote(p)).toBe(true));
 });
 
 test('Error for file not found', () => {
@@ -159,8 +159,8 @@ test('Vinylize local file', async () => {
     path.join(__dirname, 'fixtures/head.html'),
   ];
 
-  const contents = await Promise.all(files.map(f => fs.readFile(f)));
-  const result = await Promise.all(files.map(filepath => vinylize({filepath})));
+  const contents = await Promise.all(files.map((f) => fs.readFile(f)));
+  const result = await Promise.all(files.map((filepath) => vinylize({filepath})));
 
   expect.hasAssertions();
   expect(result.length).toBe(files.length);
@@ -184,10 +184,10 @@ test('Vinylize remote file', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const contents = await Promise.all(files.map(f => fs.readFile(path.join(__dirname, f))));
+  const contents = await Promise.all(files.map((f) => fs.readFile(path.join(__dirname, f))));
 
-  const urls = files.map(f => f.replace(/^fixtures/, `http://localhost:${port}`));
-  const result = await Promise.all(urls.map(filepath => vinylize({filepath})));
+  const urls = files.map((f) => f.replace(/^fixtures/, `http://localhost:${port}`));
+  const result = await Promise.all(urls.map((filepath) => vinylize({filepath})));
 
   // expect.assertions(files.length * 4 + 1);
   expect(result.length).toBe(files.length);
@@ -211,11 +211,11 @@ test('Append stylesheets to vinyl', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const vinyls = await Promise.all(files.map(f => vinylize({filepath: path.join(__dirname, f)})));
-  const result = vinyls.map(v => getStylesheetHrefs(v));
+  const vinyls = await Promise.all(files.map((f) => vinylize({filepath: path.join(__dirname, f)})));
+  const result = vinyls.map((v) => getStylesheetHrefs(v));
   expect.assertions(files.length + 6);
   expect(result.length).toBe(5);
-  result.forEach(stylesheets => expect(Array.isArray(stylesheets)).toBeTruthy());
+  result.forEach((stylesheets) => expect(Array.isArray(stylesheets)).toBeTruthy());
   expect(result[0].length).toBe(1);
   expect(result[1].length).toBe(2);
   expect(result[2].length).toBe(2);
@@ -232,11 +232,11 @@ test('Append assets to vinyl', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const vinyls = await Promise.all(files.map(f => vinylize({filepath: path.join(__dirname, f)})));
-  const result = vinyls.map(v => getAssets(v));
+  const vinyls = await Promise.all(files.map((f) => vinylize({filepath: path.join(__dirname, f)})));
+  const result = vinyls.map((v) => getAssets(v));
   expect.assertions(files.length + 6);
   expect(result.length).toBe(5);
-  result.forEach(assets => expect(Array.isArray(assets)).toBeTruthy());
+  result.forEach((assets) => expect(Array.isArray(assets)).toBeTruthy());
   expect(result[0].length).toBe(0);
   expect(result[1].length).toBe(0);
   expect(result[2].length).toBe(5);
@@ -257,10 +257,10 @@ test('Compute document base (with base option)', async () => {
       {filepath: path.join(__dirname, 'fixtures/head.html'), expected: '/'},
       {filepath: path.join(__dirname, 'fixtures/folder/subfolder/relative.html'), expected: '/folder/subfolder'},
       {filepath: path.join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder'},
-    ].map(f => vinylize(f).then(vinyl => ({...f, vinyl})))
+    ].map((f) => vinylize(f).then((vinyl) => ({...f, vinyl})))
   );
 
-  const files = vinyls.map(data => {
+  const files = vinyls.map((data) => {
     data.vinyl.stylesheets = getStylesheetHrefs(data.vinyl);
     return data;
   });
@@ -284,10 +284,10 @@ test('Compute document base (without base option)', async () => {
       {filepath: path.join(__dirname, 'fixtures/head.html'), expected: '/'},
       {filepath: path.join(__dirname, 'fixtures/folder/subfolder/relative.html'), expected: '/folder/subfolder'},
       {filepath: path.join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder'},
-    ].map(f => vinylize(f).then(vinyl => ({...f, vinyl})))
+    ].map((f) => vinylize(f).then((vinyl) => ({...f, vinyl})))
   );
 
-  const files = vinyls.map(data => {
+  const files = vinyls.map((data) => {
     data.vinyl.stylesheets = getStylesheetHrefs(data.vinyl);
     return data;
   });
@@ -391,7 +391,7 @@ test('Compute base for stylesheets', async () => {
       path.join(__dirname, 'fixtures/relative-different.html'),
       path.join(__dirname, 'fixtures/remote-different.html'),
     ],
-    async filepath => {
+    async (filepath) => {
       const document = await vinylize({filepath});
       document.stylesheets = await getStylesheetHrefs(document);
       document.virtualPath = await getDocumentPath(document);
@@ -448,7 +448,7 @@ test('Compute base for stylesheets', async () => {
 test('Get styles', async () => {
   const docs = await mapAsync(
     [`http://localhost:${port}/generate-image.html`, path.join(__dirname, 'fixtures/folder/generate-image.html')],
-    filepath => getDocument(filepath)
+    (filepath) => getDocument(filepath)
   );
 
   const tests = [
@@ -491,7 +491,7 @@ test('Get styles', async () => {
 
     {
       filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
-      options: {rebase: asset => `https://my-cdn.com${asset.absolutePath}`},
+      options: {rebase: (asset) => `https://my-cdn.com${asset.absolutePath}`},
       expected: ['https://my-cdn.com/images/critical.png', 'https://my-cdn.com/images/critical.png'],
     },
   ];
@@ -515,7 +515,7 @@ test('Get styles (without path)', async () => {
       path.join(__dirname, 'fixtures/relative-different.html'),
       path.join(__dirname, 'fixtures/remote-different.html'),
     ],
-    file => fs.readFile(file)
+    (file) => fs.readFile(file)
   );
 
   const tests = [
@@ -558,7 +558,7 @@ test('Does not rebase when rebase is disabled via option', async () => {
       path.join(__dirname, 'fixtures/relative-different.html'),
       path.join(__dirname, 'fixtures/remote-different.html'),
     ],
-    file => fs.readFile(file)
+    (file) => fs.readFile(file)
   );
 
   const tests = [

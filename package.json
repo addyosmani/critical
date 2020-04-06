@@ -51,7 +51,7 @@
     "postcss-discard": "^0.3.3",
     "postcss-image-inliner": "^3.0.9",
     "postcss-url": "^8.0.0",
-    "prettier": "^1.19.1",
+    "prettier": "^2.0.4",
     "replace-ext": "^1.0.0",
     "slash": "^3.0.0",
     "tempy": "^0.3.0",
@@ -69,13 +69,15 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.25.3"
+    "xo": "^0.28.3"
   },
   "xo": {
     "space": 2,
     "prettier": true,
     "rules": {
-      "capitalized-comments": "off"
+      "capitalized-comments": "off",
+      "unicorn/prevent-abbreviations": "off",
+      "unicorn/string-content": "off"
     },
     "overrides": [
       {

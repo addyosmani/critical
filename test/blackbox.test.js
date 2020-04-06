@@ -80,7 +80,7 @@ afterEach(() => {
 });
 
 describe('generate (local)', () => {
-  test('generate critical-path CSS', done => {
+  test('generate critical-path CSS', (done) => {
     const expected = read('expected/generate-default.css');
     const target = path.resolve('.critical.css');
 
@@ -96,10 +96,10 @@ describe('generate (local)', () => {
     );
   });
 
-  test('generate critical-path CSS from CSS files passed as Vinyl objects', done => {
+  test('generate critical-path CSS from CSS files passed as Vinyl objects', (done) => {
     const expected = read('expected/generate-default.css');
     const target = path.resolve('.critical.css');
-    const stylesheets = ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css'].map(filePath => {
+    const stylesheets = ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css'].map((filePath) => {
       return new Vinyl({
         cwd: '/',
         base: '/fixtures/',
@@ -121,7 +121,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should throw an error on timeout', done => {
+  test('should throw an error on timeout', (done) => {
     const target = path.join(__dirname, '.include.css');
 
     generate(
@@ -135,14 +135,14 @@ describe('generate (local)', () => {
         width: 1300,
         height: 900,
       },
-      err => {
+      (err) => {
         expect(err).toBeInstanceOf(Error);
         done();
       }
     );
   });
 
-  test('should throw a usable error when no stylesheets are found', done => {
+  test('should throw a usable error when no stylesheets are found', (done) => {
     const target = path.join(__dirname, '.error.css');
 
     generate(
@@ -156,14 +156,14 @@ describe('generate (local)', () => {
         width: 1300,
         height: 900,
       },
-      err => {
+      (err) => {
         expect(err).toBeInstanceOf(Error);
         fs.remove(target, () => done());
       }
     );
   });
 
-  test('should generate critical-path CSS with query string in file name', done => {
+  test('should generate critical-path CSS with query string in file name', (done) => {
     const expected = read('expected/generate-default.css');
     const target = path.resolve('.critical.css');
 
@@ -179,7 +179,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should ignore stylesheets blocked due to 403', done => {
+  test('should ignore stylesheets blocked due to 403', (done) => {
     const expected = '';
     const target = path.resolve('.403.css');
 
@@ -195,7 +195,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should ignore stylesheets blocked due to 404', done => {
+  test('should ignore stylesheets blocked due to 404', (done) => {
     const expected = '';
     const target = path.resolve('.404.css');
 
@@ -211,7 +211,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should generate multi-dimension critical-path CSS', done => {
+  test('should generate multi-dimension critical-path CSS', (done) => {
     const expected = read('expected/generate-adaptive.css', 'utf8');
     const target = path.resolve('.adaptive.css');
 
@@ -235,7 +235,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should generate minified critical-path CSS', done => {
+  test('should generate minified critical-path CSS', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.resolve('.critical.min.css');
 
@@ -252,7 +252,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should generate minified critical-path CSS successfully with external css file configured', done => {
+  test('should generate minified critical-path CSS successfully with external css file configured', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.resolve('.nostyle.css');
 
@@ -270,7 +270,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline relative images', done => {
+  test('should inline relative images', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.resolve('.image-relative.css');
 
@@ -288,7 +288,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline relative images from folder', done => {
+  test('should inline relative images from folder', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.resolve('.image-relative.css');
 
@@ -306,7 +306,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should rewrite relative images for html outside root', done => {
+  test('should rewrite relative images for html outside root', (done) => {
     const expected = read('expected/generate-image-relative.css');
     const target = path.resolve('fixtures/folder/.image-relative.css');
 
@@ -324,7 +324,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should rewrite relative images for html outside root with css file', done => {
+  test('should rewrite relative images for html outside root with css file', (done) => {
     const expected = read('expected/generate-image-relative-subfolder.css');
     const target = path.resolve('fixtures/folder/subfolder/.image-relative-subfolder.css');
 
@@ -341,7 +341,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should rewrite relative images for html outside root destFolder option', done => {
+  test('should rewrite relative images for html outside root destFolder option', (done) => {
     const expected = read('expected/generate-image-relative-subfolder.css');
     const target = path.resolve('.image-relative-subfolder.css');
 
@@ -359,7 +359,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should rewrite relative images for html inside root', done => {
+  test('should rewrite relative images for html inside root', (done) => {
     const expected = read('expected/generate-image-skip.css');
     const target = path.resolve('.image-relative.css');
 
@@ -378,7 +378,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline absolute images', done => {
+  test('should inline absolute images', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.resolve('.image-absolute.css');
 
@@ -397,7 +397,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should skip to big images', done => {
+  test('should skip to big images', (done) => {
     const expected = read('expected/generate-image-big.css');
     const target = path.resolve('.image-big.css');
 
@@ -416,7 +416,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('considers "inlineImages" option', done => {
+  test('considers "inlineImages" option', (done) => {
     const expected = read('expected/generate-image-skip.css');
     const target = path.resolve('.image-skip.css');
 
@@ -435,7 +435,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should not screw up win32 paths', done => {
+  test('should not screw up win32 paths', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.resolve('.image.css');
 
@@ -453,7 +453,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should respect pathPrefix', done => {
+  test('should respect pathPrefix', (done) => {
     const expected = read('expected/path-prefix.css');
     const target = path.resolve('.path-prefix1.css');
 
@@ -471,7 +471,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should detect pathPrefix', done => {
+  test('should detect pathPrefix', (done) => {
     const expected = read('expected/path-prefix.css');
     const target = path.resolve('.path-prefix2.css');
 
@@ -489,7 +489,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should generate and inline, if "inline" option is set', done => {
+  test('should generate and inline, if "inline" option is set', (done) => {
     const expected = read('expected/generateInline.html');
     const target = path.join(__dirname, '.generateInline1.html');
 
@@ -505,7 +505,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should generate and inline critical-path CSS', done => {
+  test('should generate and inline critical-path CSS', (done) => {
     const expected = read('expected/generateInline.html');
     const target = path.join(__dirname, '.generateInline2.html');
 
@@ -521,7 +521,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should generate and inline minified critical-path CSS', done => {
+  test('should generate and inline minified critical-path CSS', (done) => {
     const expected = read('expected/generateInline-minified.html');
     const target = path.join(__dirname, '.generateInline-minified3.html');
 
@@ -538,7 +538,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should handle multiple calls', done => {
+  test('should handle multiple calls', (done) => {
     const expected1 = read('expected/generateInline-unminified.html');
     const expected2 = read('expected/generateInline-minified.html');
 
@@ -580,7 +580,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline critical-path CSS ignoring remote stylesheets', done => {
+  test('should inline critical-path CSS ignoring remote stylesheets', (done) => {
     const expected = read('expected/generateInline-external-minified.html');
     const target = path.resolve('.generateInline-external.html');
 
@@ -597,7 +597,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline critical-path CSS with extract option ignoring remote stylesheets', done => {
+  test('should inline critical-path CSS with extract option ignoring remote stylesheets', (done) => {
     const expected = read('expected/generateInline-external-extract.html');
     const target = path.resolve('.generateInline-external-extract.html');
 
@@ -615,7 +615,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline critical-path CSS without screwing svg images ', done => {
+  test('should inline critical-path CSS without screwing svg images ', (done) => {
     const expected = read('expected/generateInline-svg.html');
     const target = path.resolve('.generateInline-svg.html');
 
@@ -631,7 +631,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline and extract critical-path CSS', done => {
+  test('should inline and extract critical-path CSS', (done) => {
     const expected = read('expected/generateInline-extract.html');
     const target = path.resolve('.generateInline-extract.html');
 
@@ -648,7 +648,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should inline and extract critical-path CSS from html source', done => {
+  test('should inline and extract critical-path CSS from html source', (done) => {
     const expected = read('expected/generateInline-extract.html');
     const target = path.resolve('.generateInline-extract-src.html');
 
@@ -665,7 +665,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should consider "ignore" option', done => {
+  test('should consider "ignore" option', (done) => {
     const expected = read('expected/generate-ignore.css');
     const target = path.resolve('.ignore.css');
 
@@ -683,7 +683,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should handle empty "ignore" array', done => {
+  test('should handle empty "ignore" array', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.join(__dirname, '.ignore.min.css');
 
@@ -701,7 +701,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should handle ignore "@font-face"', done => {
+  test('should handle ignore "@font-face"', (done) => {
     const expected = read('expected/generate-ignorefont.css', true);
     const target = path.join(__dirname, '.ignorefont.css');
 
@@ -719,7 +719,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should keep styles defined by the `include` option', done => {
+  test('should keep styles defined by the `include` option', (done) => {
     const expected = read('fixtures/styles/include.css');
     const target = path.join(__dirname, '.include.css');
 
@@ -736,7 +736,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('#192 - include option - generate', done => {
+  test('#192 - include option - generate', (done) => {
     const expected = read('expected/issue-192.css');
     const target = path.join(__dirname, '.issue-192.css');
 
@@ -775,7 +775,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should not complain about missing css if the css is passed via options', done => {
+  test('should not complain about missing css if the css is passed via options', (done) => {
     const expected = read('expected/generate-default-nostyle.css');
     const target = path.join(__dirname, '.generate-default-nostyle.css');
 
@@ -792,7 +792,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test('should not complain about missing css if the css is passed via options (inline)', done => {
+  test('should not complain about missing css if the css is passed via options (inline)', (done) => {
     const expected = read('expected/generate-default-nostyle.html');
     const target = path.join(__dirname, '.generate-default-nostyle.html');
 
@@ -810,7 +810,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', done => {
+  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', (done) => {
     const expected = read('fixtures/issue-314.html');
     const target = path.join(__dirname, '.issue-314.html');
 
@@ -828,7 +828,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error', done => {
+  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error', (done) => {
     const expected = '';
     const target = path.join(__dirname, '.issue-314.css');
 
@@ -847,7 +847,7 @@ describe('generate (local)', () => {
   });
 
   // external css changed
-  test.skip('external CSS with absolute url', done => {
+  test.skip('external CSS with absolute url', (done) => {
     const expected = read('expected/issue-395.css');
     const target = path.join(__dirname, '.issue-395.css');
 
@@ -865,8 +865,8 @@ describe('generate (local)', () => {
     );
   });
 
-  test('Correctly order css on multiple dimensions', done => {
-    const dimensions = [700, 600, 100, 200, 250, 150, 350, 400, 450, 500, 300, 550, 50].map(width => {
+  test('Correctly order css on multiple dimensions', (done) => {
+    const dimensions = [700, 600, 100, 200, 250, 150, 350, 400, 450, 500, 300, 550, 50].map((width) => {
       return {width, height: 1000};
     });
 
@@ -889,7 +889,7 @@ describe('generate (local)', () => {
 });
 
 describe('generate (remote)', () => {
-  test('should generate critical-path CSS', done => {
+  test('should generate critical-path CSS', (done) => {
     const expected = read('expected/generate-default.css');
     const target = path.join(__dirname, '.critical.css');
 
@@ -904,7 +904,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should generate multi-dimension critical-path CSS', done => {
+  test('should generate multi-dimension critical-path CSS', (done) => {
     const expected = read('expected/generate-adaptive.css', 'utf8');
     const target = path.join(__dirname, '.adaptive.css');
 
@@ -931,7 +931,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should generate minified critical-path CSS', done => {
+  test('should generate minified critical-path CSS', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.join(__dirname, '.critical.min.css');
 
@@ -948,7 +948,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should generate minified critical-path CSS successfully with external css file configured', done => {
+  test('should generate minified critical-path CSS successfully with external css file configured', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.join(__dirname, '.nostyle.css');
 
@@ -966,7 +966,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline relative images', done => {
+  test('should inline relative images', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.join(__dirname, '.image-relative.css');
     try {
@@ -985,7 +985,7 @@ describe('generate (remote)', () => {
     }
   });
 
-  test('should inline relative images fetched over http', done => {
+  test('should inline relative images fetched over http', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.join(__dirname, '.image-relative.css');
 
@@ -1003,7 +1003,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline absolute images', done => {
+  test('should inline absolute images', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.join(__dirname, '.image-absolute.css');
 
@@ -1021,7 +1021,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline absolute images fetched over http', done => {
+  test('should inline absolute images fetched over http', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.join(__dirname, '.image-absolute.css');
 
@@ -1040,7 +1040,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should skip to big images', done => {
+  test('should skip to big images', (done) => {
     const expected = read('expected/generate-image-big.css');
     const target = path.join(__dirname, '.image-big.css');
 
@@ -1058,7 +1058,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('considers "inlineImages" option', done => {
+  test('considers "inlineImages" option', (done) => {
     const expected = read('expected/generate-image-skip.css');
     const target = path.join(__dirname, '.image-skip.css');
 
@@ -1076,7 +1076,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should not screw up win32 paths', done => {
+  test('should not screw up win32 paths', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.join(__dirname, '.image.css');
 
@@ -1094,7 +1094,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should respect pathPrefix', done => {
+  test('should respect pathPrefix', (done) => {
     const expected = read('expected/path-prefix.css');
     const target = path.join(__dirname, '.path-prefix.css');
 
@@ -1113,7 +1113,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should detect pathPrefix', done => {
+  test('should detect pathPrefix', (done) => {
     const expected = read('expected/path-prefix.css');
     const target = path.join(__dirname, '.path-prefix.css');
 
@@ -1130,7 +1130,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should generate and inline, if "inline" option is set', done => {
+  test('should generate and inline, if "inline" option is set', (done) => {
     const expected = read('expected/generateInline.html');
     const target = path.join(__dirname, '.generateInline.html');
 
@@ -1145,7 +1145,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should generate and inline critical-path CSS', done => {
+  test('should generate and inline critical-path CSS', (done) => {
     const expected = read('expected/generateInline.html');
     const target = path.join(__dirname, '.generateInline.html');
 
@@ -1160,7 +1160,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should generate and inline minified critical-path CSS', done => {
+  test('should generate and inline minified critical-path CSS', (done) => {
     const expected = read('expected/generateInline-minified.html');
     const target = path.join(__dirname, '.generateInline-minified.html');
 
@@ -1176,7 +1176,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should handle multiple calls', done => {
+  test('should handle multiple calls', (done) => {
     const expected1 = read('expected/generateInline.html');
     const expected2 = read('expected/generateInline-minified.html');
     async.series(
@@ -1212,7 +1212,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline critical-path CSS handling remote stylesheets', done => {
+  test('should inline critical-path CSS handling remote stylesheets', (done) => {
     const expected = read('expected/generateInline-external-minified2.html');
     const target = path.join(__dirname, '.generateInline-external2.html');
 
@@ -1229,7 +1229,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline critical-path CSS with extract option handling remote stylesheets', done => {
+  test('should inline critical-path CSS with extract option handling remote stylesheets', (done) => {
     const expected = read('expected/generateInline-external-extract2.html');
     const target = path.join(__dirname, '.generateInline-external-extract.html');
 
@@ -1247,7 +1247,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline critical-path CSS without screwing svg images ', done => {
+  test('should inline critical-path CSS without screwing svg images ', (done) => {
     const expected = read('expected/generateInline-svg.html');
     const target = path.join(__dirname, '.generateInline-svg.html');
 
@@ -1263,7 +1263,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should inline and extract critical-path CSS', done => {
+  test('should inline and extract critical-path CSS', (done) => {
     const expected = read('expected/generateInline-extract.html');
     const target = path.join(__dirname, '.generateInline-extract.html');
 
@@ -1280,7 +1280,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should consider "ignore" option', done => {
+  test('should consider "ignore" option', (done) => {
     const expected = read('expected/generate-ignore.css');
     const target = path.join(__dirname, '.ignore.css');
 
@@ -1298,7 +1298,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should handle empty "ignore" array', done => {
+  test('should handle empty "ignore" array', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.join(__dirname, '.ignore.min.css');
 
@@ -1316,7 +1316,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should handle ignore "@font-face"', done => {
+  test('should handle ignore "@font-face"', (done) => {
     const expected = read('expected/generate-ignorefont.css', true);
     const target = path.join(__dirname, '.ignorefont.css');
 
@@ -1334,7 +1334,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should keep styles defined by the `include` option', done => {
+  test('should keep styles defined by the `include` option', (done) => {
     const expected = read('fixtures/styles/include.css');
     const target = path.join(__dirname, '.include.css');
 
@@ -1351,7 +1351,7 @@ describe('generate (remote)', () => {
     );
   });
 
-  test('should use the provided user agent to get the remote src', done => {
+  test('should use the provided user agent to get the remote src', (done) => {
     const expected = read('expected/generate-default.css');
     const target = path.join(__dirname, '.critical.css');
 

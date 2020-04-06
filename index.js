@@ -60,7 +60,7 @@ async function generate(params, cb) {
  */
 function stream(params) {
   // Return stream
-  return through2.obj(function(file, enc, cb) {
+  return through2.obj(function (file, enc, cb) {
     if (file.isNull()) {
       return cb(null, file);
     }
@@ -82,7 +82,7 @@ function stream(params) {
 
         cb(null, file);
       })
-      .catch(error => cb(new PluginError('critical', error.message)));
+      .catch((error) => cb(new PluginError('critical', error.message)));
   });
 }
 
