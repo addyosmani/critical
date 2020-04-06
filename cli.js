@@ -135,8 +135,10 @@ const isGroupArgsDefault = val => isObject(val) && Object.keys(val).length === 1
  */
 const mapRegExpStr = val => {
   if (isString(val)) {
-    const match = val.match(/^\/(.*)\/([igmy]+)?$/);
-    return (match && new RegExp(escapeRegExp(match[1]), match[2])) || val;
+    const {groups} = val.match(/^\/(?<regex>[^/]+)(?:\/?(?<flags>[igmy]+))?\/$/) || {};
+    const {regex, flags} = groups || {};
+
+    return (groups && new RegExp(escapeRegExp(regex), flags)) || val;
   }
 
   if (Array.isArray(val)) {

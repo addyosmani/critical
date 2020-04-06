@@ -39,7 +39,7 @@ function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 function isRemote(href) {
-  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
+  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:'); // eslint-disable-line prefer-named-capture-group
 }
 
 /**
@@ -49,11 +49,11 @@ function isRemote(href) {
  */
 function urlParse(str = '') {
   if (/^\w+:\/\//.test(str)) {
-    return new url.URL(str);
+    return new URL(str);
   }
 
   if (/^\/\//.test(str)) {
-    return new url.URL(str, 'https://ba.se');
+    return new URL(str, 'https://ba.se');
   }
 
   return {pathname: str};
@@ -69,7 +69,7 @@ function getFileUri(file) {
     throw new Error('Path must be absolute to compute file uri');
   }
 
-  const fileUrl = process.platform === 'win32' ? new url.URL(`file:///${file}`) : new url.URL(`file://${file}`);
+  const fileUrl = process.platform === 'win32' ? new URL(`file:///${file}`) : new URL(`file://${file}`);
 
   return fileUrl.href;
 }
@@ -83,7 +83,7 @@ function getFileUri(file) {
 function urlResolve(from = '', to = '') {
   if (isRemote(from)) {
     const {href: base} = urlParse(from);
-    const {href} = new url.URL(to, base);
+    const {href} = new URL(to, base);
     return href;
   }
 
@@ -428,7 +428,7 @@ async function getDocumentPath(file, options = {}) {
 
     // Compute path based on relative stylesheet links
     const dots = relativeRefs.reduce((res, href) => {
-      const match = /^(\.\.\/)+/.exec(href);
+      const match = /^(\.\.\/)+/.exec(href); // eslint-disable-line prefer-named-capture-group
 
       return match && match[0].length > res.length ? match[0] : res;
     }, './');
@@ -789,7 +789,7 @@ async function preparePenthouseData(document) {
   // Make sure we go as deep inside the temp folder as required by relative stylesheet hrefs
   const subfolders = [stylesheet, ...canBeEmpty]
     .reduce((res, href) => {
-      const match = /^(\.\.\/)+/.exec(href || '');
+      const match = /^(\.\.\/)+/.exec(href || ''); // eslint-disable-line prefer-named-capture-group
       return match && match[0].length > res.length ? match[0] : res;
     }, './')
     .replace(/\.\.\//g, 'sub/');
@@ -801,7 +801,7 @@ async function preparePenthouseData(document) {
   // Inject all styles to make sure we have everything in place
   // because puppeteer doesn't seem to fetch protocol relative links
   // when served from file://
-  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
+  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`); // eslint-disable-line prefer-named-capture-group
   // Write html to temp file
   await fs.outputFile(file, injected);
 
