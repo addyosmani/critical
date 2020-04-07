@@ -27,7 +27,7 @@
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "clean-css": "^4.2.3",
     "common-tags": "^1.8.0",
     "css-url-parser": "^1.1.3",
