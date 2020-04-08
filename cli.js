@@ -102,14 +102,14 @@ const grouped = {
  * @param {string} key Key to check
  * @returns {boolean} True for alias
  */
-const isAlias = key => {
+const isAlias = (key) => {
   if (isString(key) && key.length > 1) {
     return false;
   }
 
   const aliases = Object.keys(meowOpts.flags)
-    .filter(k => meowOpts.flags[k].alias)
-    .map(k => meowOpts.flags[k].alias);
+    .filter((k) => meowOpts.flags[k].alias)
+    .map((k) => meowOpts.flags[k].alias);
 
   return aliases.includes(key);
 };
@@ -119,28 +119,30 @@ const isAlias = key => {
  * @param {mixed} val Value to check
  * @returns {boolean} Whether or not this is an empty object
  */
-const isEmptyObj = val => isObject(val) && Object.keys(val).length === 0;
+const isEmptyObj = (val) => isObject(val) && Object.keys(val).length === 0;
 
 /**
  * Check if value is transformed to {default: val}
  * @param {mixed} val Value to check
  * @returns {boolean} True if it's been converted to {default: value}
  */
-const isGroupArgsDefault = val => isObject(val) && Object.keys(val).length === 1 && val.default;
+const isGroupArgsDefault = (val) => isObject(val) && Object.keys(val).length === 1 && val.default;
 
 /**
  * Return regex if value is a string like this: '/.../g'
  * @param {mixed} val Value to process
  * @returns {mixed} Mapped values
  */
-const mapRegExpStr = val => {
+const mapRegExpStr = (val) => {
   if (isString(val)) {
-    const match = val.match(/^\/(.*)\/([igmy]+)?$/);
-    return (match && new RegExp(escapeRegExp(match[1]), match[2])) || val;
+    const {groups} = val.match(/^\/(?<regex>[^/]+)(?:\/?(?<flags>[igmy]+))?\/$/) || {};
+    const {regex, flags} = groups || {};
+
+    return (groups && new RegExp(escapeRegExp(regex), flags)) || val;
   }
 
   if (Array.isArray(val)) {
-    return val.map(v => mapRegExpStr(v));
+    return val.map((v) => mapRegExpStr(v));
   }
 
   return val;
@@ -160,7 +162,7 @@ const normalizedFlags = reduce(
     }
 
     // Cleanup camelized group keys
-    if (groupKeys.find(k => key.includes(k)) && !validate(key, val)) {
+    if (groupKeys.find((k) => key.includes(k)) && !validate(key, val)) {
       return res;
     }
 
@@ -184,17 +186,17 @@ function run(data) {
   const {_: inputs = [], css, ...opts} = {...normalizedFlags};
 
   // Detect css globbing
-  const cssBegin = process.argv.findIndex(el => ['--css', '-c'].includes(el));
+  const cssBegin = process.argv.findIndex((el) => ['--css', '-c'].includes(el));
   const cssEnd = process.argv.findIndex((el, index) => index > cssBegin && el.startsWith('-'));
   const cssCheck = cssBegin >= 0 ? process.argv.slice(cssBegin, cssEnd > 0 ? cssEnd : undefined) : [];
-  const additionalCss = inputs.filter(file => cssCheck.includes(file));
+  const additionalCss = inputs.filter((file) => cssCheck.includes(file));
   // Just take the first html input as we don't support multiple html sources for
-  const [input] = inputs.filter(file => !additionalCss.includes(file));
+  const [input] = inputs.filter((file) => !additionalCss.includes(file));
 
   if (Array.isArray(css)) {
-    opts.css = [...css, ...additionalCss].filter(file => file);
+    opts.css = [...css, ...additionalCss].filter((file) => file);
   } else if (css || additionalCss.length > 0) {
-    opts.css = [css, ...additionalCss].filter(file => file);
+    opts.css = [css, ...additionalCss].filter((file) => file);
   }
 
   if (data) {

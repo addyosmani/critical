@@ -150,7 +150,7 @@ async function create(options = {}) {
       return [...new Set([...res, ...paths])];
     });
 
-    const filtered = searchpaths.filter(p => isRemote(p) || p.includes(process.cwd()) || (base && p.includes(base)));
+    const filtered = searchpaths.filter((p) => isRemote(p) || p.includes(process.cwd()) || (base && p.includes(base)));
 
     const inlineOptions = {
       assetPaths: [...filtered, ...assetPaths],
@@ -166,7 +166,7 @@ async function create(options = {}) {
   if (postProcess.length > 0) {
     criticalCSS = await postcss(postProcess)
       .process(criticalCSS, {from: undefined})
-      .then(contents => contents.css);
+      .then((contents) => contents.css);
   }
 
   // Minify or prettify
@@ -182,7 +182,7 @@ async function create(options = {}) {
 
   // Define uncritical as lazy evaluated property
   const lazyUncritical = (orig, diff) =>
-    function() {
+    function () {
       if (!this._uncritical) {
         this._uncritical = extractCss(orig, diff);
       }

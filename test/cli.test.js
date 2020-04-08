@@ -55,7 +55,7 @@ describe('CLI', () => {
     });
 
     test('Return version', async () => {
-      const {stdout, stderr} = await run(['--version', '--no-update-notifier']);
+      const {stdout, stderr} = await run(['--version']);
 
       expect(stderr).toBeFalsy();
       expect(stdout.trim()).toBe(version);

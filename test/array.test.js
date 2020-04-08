@@ -2,21 +2,21 @@
 
 const {mapAsync, reduceAsync, filterAsync, forEachAsync} = require('../src/array');
 
-const waitFor = ms => new Promise(resolve => setTimeout(resolve, ms));
+const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 const waitRandom = () => waitFor(Math.floor(Math.random() * Math.floor(50)));
 
 test('async map', async () => {
-  const afunc = async value => {
+  const afunc = async (value) => {
     await waitRandom();
     return value * value;
   };
 
-  const func = value => value * value;
+  const func = (value) => value * value;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = array.map(func);
 
-  const result1 = await mapAsync(array, v => func(v));
-  const result2 = await mapAsync(array, v => afunc(v));
+  const result1 = await mapAsync(array, (v) => func(v));
+  const result2 = await mapAsync(array, (v) => afunc(v));
 
   expect(result1).toEqual(expected);
   expect(result2).toEqual(expected);
@@ -64,12 +64,12 @@ test('async reduce (empty)', async () => {
 });
 
 test('async filter', async () => {
-  const afunc = async value => {
+  const afunc = async (value) => {
     await waitRandom();
     return value % 2;
   };
 
-  const func = value => value % 2;
+  const func = (value) => value % 2;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = array.filter(func);
 
@@ -97,10 +97,10 @@ test('async forEach', async () => {
   const expected = [];
   const result1 = [];
   const result2 = [];
-  array.forEach(v => expected.push(v));
+  array.forEach((v) => expected.push(v));
 
-  await forEachAsync(array, v => result1.push(v));
-  await forEachAsync(array, async v => {
+  await forEachAsync(array, (v) => result1.push(v));
+  await forEachAsync(array, async (v) => {
     await waitRandom();
     result2.push(v);
   });
