@@ -810,7 +810,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', (done) => {
+  test('should handle PAGE_UNLOADED_DURING_EXECUTION error (inline)', (done) => {
     const expected = read('fixtures/issue-314.html');
     const target = path.join(__dirname, '.issue-314.html');
 
@@ -828,7 +828,7 @@ describe('generate (local)', () => {
     );
   });
 
-  test.skip('should handle PAGE_UNLOADED_DURING_EXECUTION error', (done) => {
+  test('should handle PAGE_UNLOADED_DURING_EXECUTION error', (done) => {
     const expected = '';
     const target = path.join(__dirname, '.issue-314.css');
 
