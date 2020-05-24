@@ -135,7 +135,7 @@ async function fileExists(href, options = {}) {
       const {statusCode} = response;
 
       if (request.method === 'head') {
-        return parseInt(statusCode, 10) < 400;
+        return Number.parseInt(statusCode, 10) < 400;
       }
 
       return Boolean(response);

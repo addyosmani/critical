@@ -107,7 +107,7 @@ const isAlias = (key) => {
     return false;
   }
 
-  const aliases = Object.keys(meowOpts.flags)
+  const aliases = Object.keys(meowOpts.flags) // eslint-disable-line unicorn/prefer-set-has
     .filter((k) => meowOpts.flags[k].alias)
     .map((k) => meowOpts.flags[k].alias);
 
