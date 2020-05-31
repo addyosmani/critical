@@ -15,8 +15,6 @@ const {generate} = require('..');
 
 jest.setTimeout(60000);
 
-process.chdir(path.resolve(__dirname));
-
 const FIXTURES_DIR = path.join(__dirname, '/fixtures/');
 
 function assertCritical(target, expected, done, skipTarget) {
@@ -50,9 +48,8 @@ function assertCritical(target, expected, done, skipTarget) {
 let server;
 let port;
 beforeAll(async () => {
-  const root = path.join(__dirname, 'fixtures');
-  const serve = serveStatic(root, {index: ['index.html', 'index.htm']});
-  const serveUserAgent = serveStatic('fixtures/useragent', {
+  const serve = serveStatic(path.join(__dirname, 'fixtures'), {index: ['index.html', 'index.htm']});
+  const serveUserAgent = serveStatic(path.join(__dirname, 'fixtures/useragent'), {
     index: ['index.html', 'index.htm'],
   });
 
@@ -991,6 +988,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-image.html`,
         css: ['fixtures/styles/image-relative.css'],
         target,
@@ -1027,7 +1025,7 @@ describe('generate (remote)', () => {
 
     generate(
       {
-        base: './',
+        base: FIXTURES_DIR,
         src: `http://localhost:${port}/generate-image.html`,
         css: ['fixtures/styles/image-absolute.css'],
         target,

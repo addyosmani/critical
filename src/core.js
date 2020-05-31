@@ -31,6 +31,7 @@ function combineCss(cssArray) {
   }
 
   return new CleanCSS({
+    rebase: false,
     level: {
       1: {
         all: true,
@@ -86,7 +87,9 @@ function callPenthouse(document, options) {
  * @return {Promise<object>} Object with critical css & html
  */
 async function create(options = {}) {
-  const cleanCSS = new CleanCSS();
+  const cleanCSS = new CleanCSS({
+    rebase: false,
+  });
   const {
     base,
     src,
