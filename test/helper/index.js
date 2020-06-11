@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs-extra');
+const fs = require('fs');
 const array = require('stream-array');
 const Vinyl = require('vinyl');
 const nn = require('normalize-newline');

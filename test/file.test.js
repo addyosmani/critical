@@ -4,8 +4,9 @@
 
 const {createServer} = require('http');
 const path = require('path');
+const {promisify} = require('util');
 const getPort = require('get-port');
-const fs = require('fs-extra');
+const fs = require('fs');
 const Vinyl = require('vinyl');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
@@ -29,6 +30,8 @@ const {
   getStylesheet,
 } = require('../src/file');
 const {read} = require('./helper');
+
+const readFileAsync = promisify(fs.readFile);
 
 // Setup static fileserver to mimic remote requests
 let server;
@@ -159,7 +162,7 @@ test('Vinylize local file', async () => {
     path.join(__dirname, 'fixtures/head.html'),
   ];
 
-  const contents = await Promise.all(files.map((f) => fs.readFile(f)));
+  const contents = await Promise.all(files.map((f) => readFileAsync(f)));
   const result = await Promise.all(files.map((filepath) => vinylize({filepath})));
 
   expect.hasAssertions();
@@ -184,7 +187,7 @@ test('Vinylize remote file', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const contents = await Promise.all(files.map((f) => fs.readFile(path.join(__dirname, f))));
+  const contents = await Promise.all(files.map((f) => readFileAsync(path.join(__dirname, f))));
 
   const urls = files.map((f) => f.replace(/^fixtures/, `http://localhost:${port}`));
   const result = await Promise.all(urls.map((filepath) => vinylize({filepath})));
@@ -362,7 +365,7 @@ test('Get document from source with rebase option', async () => {
   for (const testdata of tests) {
     const {filepath, expected} = testdata;
     const rebase = {to: `/${normalizePath(path.relative(base, filepath))}`};
-    const source = await fs.readFile(filepath);
+    const source = await readFileAsync(filepath);
     const file = await getDocumentFromSource(source, {rebase, base});
     expect(file.virtualPath).toBe(expected);
   }
@@ -372,10 +375,10 @@ test('Get document from source with rebase option', async () => {
 
 test('Get document from source without path options', async () => {
   const filepath = path.join(__dirname, 'fixtures/folder/subfolder/head.html');
-  const source = await fs.readFile(filepath);
+  const source = await readFileAsync(filepath);
   const css = path.join(__dirname, 'fixtures/styles/image-relative.css');
   const file = await getDocumentFromSource(source, {css});
-  const styles = await fs.readFile(css, 'utf8');
+  const styles = await readFileAsync(css, 'utf8');
 
   // expect(file.path).toBe(undefined);
   expect(file.css).toMatch(styles);
@@ -515,7 +518,7 @@ test('Get styles (without path)', async () => {
       path.join(__dirname, 'fixtures/relative-different.html'),
       path.join(__dirname, 'fixtures/remote-different.html'),
     ],
-    (file) => fs.readFile(file)
+    (file) => readFileAsync(file)
   );
 
   const tests = [
@@ -558,7 +561,7 @@ test('Does not rebase when rebase is disabled via option', async () => {
       path.join(__dirname, 'fixtures/relative-different.html'),
       path.join(__dirname, 'fixtures/remote-different.html'),
     ],
-    (file) => fs.readFile(file)
+    (file) => readFileAsync(file)
   );
 
   const tests = [

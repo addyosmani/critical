@@ -1,7 +1,8 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs-extra');
+const {promisify} = require('util');
+const fs = require('fs');
 const vinylStream = require('vinyl-source-stream');
 const Vinyl = require('vinyl');
 const PluginError = require('plugin-error');
@@ -13,6 +14,8 @@ const {getVinyl, readAndRemove, read} = require('./helper');
 const {generate, stream} = require('..');
 
 jest.setTimeout(20000);
+
+const unlinkAsync = promisify(fs.unlink);
 
 let stderr;
 beforeEach(() => {
@@ -102,7 +105,11 @@ test('Write all targets relative to base', async () => {
   expect(html).toBe(data.html);
   expect(css).toBe(data.css);
 
-  await fs.remove(base);
+  try {
+    await unlinkAsync(base);
+  } catch {
+    // file not  there
+  }
 });
 
 test('Write all targets respecting absolute paths', async () => {
@@ -128,8 +135,12 @@ test('Write all targets respecting absolute paths', async () => {
   expect(html).toBe(data.html);
   expect(css).toBe(data.css);
 
-  await fs.remove(base);
-  await fs.remove(fileBase);
+  try {
+    await unlinkAsync(base);
+    await unlinkAsync(fileBase);
+  } catch {
+    // file already deleted
+  }
 });
 
 test('Reject with ConfigError on invalid config', () => {

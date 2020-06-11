@@ -3,8 +3,10 @@
 const path = require('path');
 const os = require('os');
 const url = require('url');
-const fs = require('fs-extra');
+const fs = require('fs');
+const {promisify} = require('util');
 const findUp = require('find-up');
+const makeDir = require('make-dir');
 const globby = require('globby');
 const isGlob = require('is-glob');
 const postcss = require('postcss');
@@ -23,6 +25,20 @@ const {FileNotFoundError} = require('./errors');
 const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
 
 const warn = (text) => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
+
+const unlinkAsync = promisify(fs.unlink);
+const readFileAsync = promisify(fs.readFile);
+const writeFileAsync = promisify(fs.writeFile);
+
+async function outputFileAsync(file, data) {
+  const dir = path.dirname(file);
+
+  if (!fs.existsSync(dir)) {
+    await makeDir(dir);
+  }
+
+  return writeFileAsync(file, data);
+}
 
 /**
  * Fixup slashes in file paths for Windows and remove volume definition in front
@@ -155,7 +171,7 @@ async function fileExists(href, options = {}) {
 const getCleanup = (files) => () =>
   forEachAsync(files, (file) => {
     try {
-      fs.remove(file);
+      unlinkAsync(file);
     } catch (_) {
       debug(`${file} was already deleted`);
     }
@@ -651,7 +667,7 @@ async function vinylize(src, options = {}) {
   } else if (filepath && fs.existsSync(filepath)) {
     file.path = filepath;
     file.virtualPath = filepath;
-    file.contents = await fs.readFile(filepath);
+    file.contents = await readFileAsync(filepath);
   } else {
     throw new FileNotFoundError(filepath);
   }
@@ -800,7 +816,7 @@ async function preparePenthouseData(document) {
   // when served from file://
   const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
   // Write html to temp file
-  await fs.outputFile(file, injected);
+  await outputFileAsync(file, injected);
 
   tmp.push(file);
 
@@ -808,14 +824,14 @@ async function preparePenthouseData(document) {
   if (stylesheet) {
     const filename = path.join(dir, stylesheet);
     tmp.push(filename);
-    await fs.outputFile(filename, document.css);
+    await outputFileAsync(filename, document.css);
   }
 
   // Write empty string to rest of the linked stylesheets
   await forEachAsync(canBeEmpty, (dummy) => {
     const filename = path.join(dir, dummy);
     tmp.push(filename);
-    fs.outputFile(filename, '');
+    outputFileAsync(filename, '');
   });
 
   return [getFileUri(file), getCleanup(tmp)];
@@ -913,4 +929,5 @@ module.exports = {
   getStylesheet,
   getDocument,
   getDocumentFromSource,
+  outputFileAsync,
 };

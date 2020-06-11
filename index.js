@@ -3,11 +3,11 @@
 'use strict';
 
 const path = require('path');
-const fs = require('fs-extra');
 const through2 = require('through2');
 const PluginError = require('plugin-error');
 const replaceExtension = require('replace-ext');
 const {create} = require('./src/core');
+const {outputFileAsync} = require('./src/file');
 const {getOptions} = require('./src/config');
 
 /**
@@ -23,17 +23,17 @@ async function generate(params, cb) {
     const result = await create(options);
     // Store generated css
     if (target.css) {
-      await fs.outputFile(path.resolve(base, target.css), result.css);
+      await outputFileAsync(path.resolve(base, target.css), result.css);
     }
 
     // Store generated html
     if (target.html) {
-      await fs.outputFile(path.resolve(base, target.html), result.html);
+      await outputFileAsync(path.resolve(base, target.html), result.html);
     }
 
     // Store extracted css
     if (target.uncritical) {
-      await fs.outputFile(path.resolve(base, target.uncritical), result.uncritical);
+      await outputFileAsync(path.resolve(base, target.uncritical), result.uncritical);
     }
 
     if (typeof cb === 'function') {
