@@ -6,7 +6,7 @@ const getPort = require('get-port');
 const Vinyl = require('vinyl');
 const nock = require('nock');
 const async = require('async');
-const fs = require('fs-extra');
+const fs = require('fs');
 const finalhandler = require('finalhandler');
 const serveStatic = require('serve-static');
 const nn = require('normalize-newline');
@@ -155,7 +155,7 @@ describe('generate (local)', () => {
       },
       (err) => {
         expect(err).toBeInstanceOf(Error);
-        fs.remove(target, () => done());
+        fs.unlink(target, () => done());
       }
     );
   });
