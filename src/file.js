@@ -155,7 +155,7 @@ async function fileExists(href, options = {}) {
       }
 
       return Boolean(response);
-    } catch (_) {
+    } catch {
       return false;
     }
   }
@@ -172,7 +172,7 @@ const getCleanup = (files) => () =>
   forEachAsync(files, (file) => {
     try {
       unlinkAsync(file);
-    } catch (_) {
+    } catch {
       debug(`${file} was already deleted`);
     }
   });
@@ -435,7 +435,7 @@ async function getDocumentPath(file, options = {}) {
       try {
         const filepath = await resolve(ref, paths, options);
         return normalizePath(`/${path.relative(normalizePath(filepath).replace(ref, ''), file.path)}`);
-      } catch (_) {
+      } catch {
         process.stderr.write(BASE_WARNING);
 
         return normalizePath(`/${path.relative(process.cwd(), file.path)}`);

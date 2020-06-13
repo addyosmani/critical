@@ -69,7 +69,7 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.30.0"
+    "xo": "^0.32.0"
   },
   "xo": {
     "space": 2,
@@ -78,6 +78,7 @@
       "capitalized-comments": "off",
       "unicorn/prevent-abbreviations": "off",
       "unicorn/string-content": "off",
+      "unicorn/no-reduce": "off",
       "unicorn/no-fn-reference-in-iterator": "off"
     },
     "overrides": [
