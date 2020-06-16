@@ -1,4 +1,4 @@
-# v2.0.0 / 2018-11-27
+# v2.0.0 / 2020-06-16
 
 - Drop support for Node.js < 10
 - Bump dependencies
