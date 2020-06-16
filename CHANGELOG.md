@@ -1,6 +1,6 @@
 # v2.0.0 / 2018-11-27
 
-- Drop support for Node.js < 8
+- Drop support for Node.js < 10
 - Bump dependencies
 - Use Jest for testing
 - Drop `include` and `timeout` options as they can be specified in the `penthouse` options.
