@@ -34,6 +34,6 @@ jobs:
 
       - name: Run Coveralls
         uses: coverallsapp/github-action@master
-        if: startsWith(matrix.os, 'ubuntu') && matrix.node == '10.x'
+        if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.node,'10')
         with:
           github-token: '${{ secrets.GITHUB_TOKEN }}'
