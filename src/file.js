@@ -307,8 +307,8 @@ const token = (user, pass) => Buffer.from([user, pass].join(':')).toString('base
  * @returns {Promise<Buffer|response>} Resolves to fetched content or response object for HEAD request
  */
 async function fetch(uri, options = {}, secure = true) {
-  const {user, pass, userAgent, request = {}} = options;
-  const {headers = {}, method = 'get'} = request;
+  const {user, pass, userAgent, request: requestOptions = {}} = options;
+  const {headers = {}, method = 'get', https} = requestOptions;
   let resourceUrl = uri;
   let protocolRelative = false;
 
@@ -318,7 +318,7 @@ async function fetch(uri, options = {}, secure = true) {
     resourceUrl = urlResolve(`http${secure ? 's' : ''}://te.st`, uri);
   }
 
-  request.rejectUnauthorized = false;
+  requestOptions.https = {rejectUnauthorized: true, ...(https || {})};
   if (user && pass) {
     headers.Authorization = `Basic ${token(user, pass)}`;
   }
@@ -327,10 +327,10 @@ async function fetch(uri, options = {}, secure = true) {
     headers['User-Agent'] = userAgent;
   }
 
-  debug(`Fetching resource: ${resourceUrl}`, {...request, headers});
+  debug(`Fetching resource: ${resourceUrl}`, {...requestOptions, headers});
 
   try {
-    const response = await got(resourceUrl, {...request, headers});
+    const response = await got(resourceUrl, {...requestOptions, headers});
     if (method === 'head') {
       return response;
     }
