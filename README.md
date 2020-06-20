@@ -78,9 +78,6 @@ critical.generate({
   // Extract inlined styles from referenced stylesheets
   extract: true,
 
-  // Complete Timeout for Operation
-  timeout: 30000,
-
   // ignore CSS rules
   ignore: {
     atrule: ['@font-face'],
