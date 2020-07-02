@@ -55,15 +55,15 @@
     "replace-ext": "^2.0.0",
     "slash": "^3.0.0",
     "tempy": "^0.5.0",
-    "through2": "^3.0.1",
+    "through2": "^4.0.2",
     "vinyl": "^2.2.0"
   },
   "devDependencies": {
     "async": "^3.2.0",
     "finalhandler": "^1.1.2",
     "get-port": "^5.1.1",
-    "jest": "^26.0.1",
-    "nock": "^12.0.3",
+    "jest": "^26.1.0",
+    "nock": "^13.0.2",
     "normalize-newline": "^3.0.0",
     "serve-static": "^1.14.1",
     "stream-array": "^1.1.2",
