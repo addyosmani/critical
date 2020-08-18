@@ -27,6 +27,7 @@ Options:
   -e, --extract           Extract inlined styles from referenced stylesheets
 
   --inlineImages          Inline images
+  --dimensioms            Pass dimensions e.g. 1300x900
   --ignore                RegExp, @type or selector to ignore
   --ignore-[OPTION]       Pass options to postcss-discard. See https://goo.gl/HGo5YV
   --include               RegExp, @type or selector to include
@@ -78,6 +79,10 @@ const meowOpts = {
     userAgent: {
       type: 'string',
       alias: 'ua',
+    },
+    dimensions: {
+      type: 'string',
+      isMultiple: true,
     },
   },
 };
@@ -192,6 +197,19 @@ function run(data) {
   const additionalCss = inputs.filter((file) => cssCheck.includes(file));
   // Just take the first html input as we don't support multiple html sources for
   const [input] = inputs.filter((file) => !additionalCss.includes(file)); // eslint-disable-line unicorn/prefer-array-find
+
+  if (Array.isArray(opts.dimensions)) {
+    opts.dimensions = opts.dimensions.reduce(
+      (result, data) => [
+        ...result,
+        ...data.split(',').map((dimension) => {
+          const [width, height] = dimension.split('x');
+          return {width: Number.parseInt(width, 10), height: Number.parseInt(height, 10)};
+        }),
+      ],
+      []
+    );
+  }
 
   if (Array.isArray(css)) {
     opts.css = [...css, ...additionalCss].filter((file) => file);

@@ -168,6 +168,19 @@ describe('CLI', () => {
         expect(error.stderr).toMatch('Usage:');
       }
     });
+
+    test('Generate multi-dimension critical-path CSS using cli', async () => {
+      const {stdout} = await pipe(path.normalize('fixtures/generate-adaptive.html'), [
+        '--base',
+        'fixtures',
+        '--dimensions',
+        '100x70',
+        '--dimensions',
+        '1000x70',
+      ]);
+      const expected = await read('expected/generate-adaptive.css', 'utf8');
+      expect(nn(stdout)).toBe(expected);
+    });
   });
 
   let exit;
@@ -214,6 +227,12 @@ describe('CLI', () => {
         'assetPath1',
         '--assetPaths',
         'assetPath2',
+        '--dimensions',
+        '1300x800',
+        '--dimensions',
+        '640x480',
+        '--dimensions',
+        '1x2,3x4,5x6',
       ]);
 
       expect(args).toMatchObject({
@@ -222,6 +241,13 @@ describe('CLI', () => {
         css: ['css'],
         inline: true,
         extract: true,
+        dimensions: [
+          {width: 1300, height: 800},
+          {width: 640, height: 480},
+          {width: 1, height: 2},
+          {width: 3, height: 4},
+          {width: 5, height: 6},
+        ],
       });
     });
 
