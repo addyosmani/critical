@@ -2,7 +2,7 @@
 
 const {mapAsync, reduceAsync, filterAsync, forEachAsync} = require('../src/array');
 
-const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // eslint-disable-line no-promise-executor-return
 const waitRandom = () => waitFor(Math.floor(Math.random() * Math.floor(50)));
 
 test('async map', async () => {

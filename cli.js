@@ -191,7 +191,7 @@ function run(data) {
   const cssCheck = cssBegin >= 0 ? process.argv.slice(cssBegin, cssEnd > 0 ? cssEnd : undefined) : [];
   const additionalCss = inputs.filter((file) => cssCheck.includes(file));
   // Just take the first html input as we don't support multiple html sources for
-  const [input] = inputs.filter((file) => !additionalCss.includes(file));
+  const [input] = inputs.filter((file) => !additionalCss.includes(file)); // eslint-disable-line unicorn/prefer-array-find
 
   if (Array.isArray(css)) {
     opts.css = [...css, ...additionalCss].filter((file) => file);

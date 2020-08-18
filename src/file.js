@@ -576,7 +576,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
   // Count directory hops
   const hops = normalized.split(path.sep).reduce((cnt, part) => (part === '..' ? cnt + 1 : cnt), 0);
   // Also findup first real dir path
-  const [first] = normalized.split(path.sep).filter((p) => p && p !== '..');
+  const [first] = normalized.split(path.sep).filter((p) => p && p !== '..'); // eslint-disable-line unicorn/prefer-array-find
   const mappedAssetPaths = base ? assetPaths.map((a) => joinPath(base, a)) : [];
 
   // Make a list of possible paths
