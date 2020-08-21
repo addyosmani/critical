@@ -197,7 +197,9 @@ _note:_ (your final output will be minified as to eliminate duplicate rule inclu
 critical.generate({
   base: 'test/',
   src: 'index.html',
-  dest: 'styles/main.css',
+  target: {
+    css: 'styles/main.css',
+  },
   dimensions: [
     {
       height: 200,
@@ -219,7 +221,9 @@ This is a useful option when you e.g. want to defer loading of webfonts or backg
 critical.generate({
   base: 'test/',
   src: 'index.html',
-  dest: 'styles/main.css',
+  target: {
+    css: 'styles/main.css',
+  },
   ignore: {
     atrule: ['@font-face'],
     decl: (node, value) => /url\(/.test(value),
@@ -233,7 +237,9 @@ critical.generate({
 critical.generate({
   base: 'test/',
   src: 'index.html',
-  dest: 'styles/main.css',
+  target: {
+    css: 'styles/main.css',
+  },
   rebase: {
     from: '/styles/main.css',
     to: '/folder/subfolder/index.html',
@@ -245,7 +251,9 @@ critical.generate({
 critical.generate({
   base: 'test/',
   src: 'index.html',
-  dest: 'styles/main.css',
+  target: {
+    css: 'styles/main.css',
+  },
   rebase: asset => `https://my-cdn.com${asset.absolutePath}`,
 });
 ```
