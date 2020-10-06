@@ -13,7 +13,7 @@ const nn = require('normalize-newline');
 const {read, readAndRemove} = require('./helper');
 const {generate} = require('..');
 
-jest.setTimeout(60000);
+jest.setTimeout(100000);
 
 const FIXTURES_DIR = path.join(__dirname, '/fixtures/');
 
