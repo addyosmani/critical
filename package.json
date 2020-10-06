@@ -23,7 +23,7 @@
     "optimization"
   ],
   "engines": {
-    "node": ">=10"
+    "node": "^10 || ^12 || >=14"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
@@ -47,14 +47,14 @@
     "p-all": "^3.0.0",
     "penthouse": "^2.3.2",
     "plugin-error": "^1.0.1",
-    "postcss": "^7.0.35",
+    "postcss": "^8.1.1",
     "postcss-discard": "^1.0.1",
     "postcss-image-inliner": "^4.0.3",
     "postcss-url": "^8.0.0",
     "prettier": "^2.1.2",
     "replace-ext": "^2.0.0",
     "slash": "^3.0.0",
-    "tempy": "^0.6.0",
+    "tempy": "^0.7.1",
     "through2": "^4.0.2",
     "vinyl": "^2.2.1"
   },
@@ -62,7 +62,7 @@
     "async": "^3.2.0",
     "finalhandler": "^1.1.2",
     "get-port": "^5.1.1",
-    "jest": "^26.5.0",
+    "jest": "^26.5.2",
     "nock": "^13.0.4",
     "normalize-newline": "^3.0.0",
     "serve-static": "^1.14.1",
