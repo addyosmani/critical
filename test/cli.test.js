@@ -13,7 +13,7 @@ const criticalBin = path.join(__dirname, '..', bin);
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
 
-jest.setTimeout(60000);
+jest.setTimeout(100000);
 
 const pExec = promisify(exec);
 const pExecFile = promisify(execFile);
