@@ -173,11 +173,7 @@ async function create(options = {}) {
   }
 
   // Minify or prettify
-  if (minify) {
-    criticalCSS = cleanCSS.minify(criticalCSS).styles;
-  } else {
-    criticalCSS = prettier.format(criticalCSS, {parser: 'css'});
-  }
+  criticalCSS = minify ? cleanCSS.minify(criticalCSS).styles : prettier.format(criticalCSS, {parser: 'css'});
 
   const result = {
     css: criticalCSS,
