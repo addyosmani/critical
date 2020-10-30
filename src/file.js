@@ -145,12 +145,12 @@ async function fileExists(href, options = {}) {
 
   if (isRemote(href)) {
     const {request = {}} = options;
-    request.method = request.method || 'head';
+    const method = request.method || 'head';
     try {
-      const response = await fetch(href, {...options, request});
+      const response = await fetch(href, {...options, request: {...request, method}});
       const {statusCode} = response;
 
-      if (request.method === 'head') {
+      if (method === 'head') {
         return Number.parseInt(statusCode, 10) < 400;
       }
 
