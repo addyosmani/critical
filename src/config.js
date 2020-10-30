@@ -85,7 +85,7 @@ function getOptions(options = {}) {
     throw new ConfigError(message);
   }
 
-  if (!dimensions) {
+  if (!dimensions || dimensions.length === 0) {
     value.dimensions = [
       {
         width: options.width || DEFAULT.width,
