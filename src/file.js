@@ -250,7 +250,7 @@ function glob(pattern, {base} = {}) {
  * @param {string|function} method Rebase method. See https://github.com/postcss/postcss-url#options-combinations
  * @returns {Buffer} Rebased css
  */
-function rebaseAssets(css, from, to, method = 'rebase') {
+async function rebaseAssets(css, from, to, method = 'rebase') {
   let rebased = css.toString();
 
   debug('Rebase assets', {from, to});
@@ -279,13 +279,15 @@ function rebaseAssets(css, from, to, method = 'rebase') {
       return method(assetNormalized, ...rest);
     };
 
-    rebased = postcss()
+    const result = await postcss()
       .use(postcssUrl({url: transform}))
-      .process(css, {from, to}).css;
+      .process(css, {from, to});
+    rebased = result.css;
   } else if (from && to) {
-    rebased = postcss()
+    const result = await postcss()
       .use(postcssUrl({url: method}))
-      .process(css, {from, to}).css;
+      .process(css, {from, to});
+    rebased = result.css;
   }
 
   return Buffer.from(rebased);
@@ -596,7 +598,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
       base && docpath && path.join(base, path.dirname(docpath)),
       base && to && path.join(base, path.dirname(to)),
       base && from && path.join(base, path.dirname(from)),
-      base && isRelative(file) && hops ? path.join(base, ...new Array(hops).fill('tmpdir'), file) : '',
+      base && isRelative(file) && hops ? path.join(base, ...Array.from({length: hops}).fill('tmpdir'), file) : '',
       process.cwd(),
     ]),
   ];
@@ -728,26 +730,26 @@ async function getStylesheet(document, filepath, options = {}) {
   }
 
   if (rebase.from && rebase.to) {
-    file.contents = rebaseAssets(file.contents, rebase.from, rebase.to);
+    file.contents = await rebaseAssets(file.contents, rebase.from, rebase.to);
   } else if (typeof rebase === 'function') {
-    file.contents = rebaseAssets(file.contents, stylepath, document.virtualPath, rebase);
+    file.contents = await rebaseAssets(file.contents, stylepath, document.virtualPath, rebase);
     // Next rebase to the stylesheet url
   } else if (isRemote(rebase.to || stylepath)) {
     const from = rebase.from || stylepath;
     const to = rebase.to || stylepath;
     const method = (asset) => (isRemote(asset.originUrl) ? asset.originUrl : urlResolve(to, asset.originUrl));
-    file.contents = rebaseAssets(file.contents, from, to, method);
+    file.contents = await rebaseAssets(file.contents, from, to, method);
 
     // Use relative path to document (local)
   } else if (document.virtualPath) {
-    file.contents = rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || document.virtualPath);
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || document.virtualPath);
   } else if (document.remote) {
     const {pathname} = document.urlObj;
-    file.contents = rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || pathname);
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || pathname);
 
     // Make images absolute if we have an absolute positioned stylesheet
   } else if (path.isAbsolute(stylepath)) {
-    file.contents = rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', (asset) =>
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', (asset) =>
       normalizePath(asset.absolutePath)
     );
   } else {

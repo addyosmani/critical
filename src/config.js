@@ -14,7 +14,7 @@ const DEFAULT = {
   strict: false,
   extract: false,
   inlineImages: false,
-  concurrency: Infinity,
+  concurrency: Number.POSITIVE_INFINITY,
   include: [],
 };
 

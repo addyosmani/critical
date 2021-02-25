@@ -74,7 +74,12 @@ function callPenthouse(document, options) {
 
   return sizes.map(({width, height}) => () => {
     const result = penthouse({...config, width, height});
-    debug('Call penthouse with:', {...config, width, height, cssString: `${(cssString || '').slice(0,10)} ... ${(cssString || '').slice(-10)}`});
+    debug('Call penthouse with:', {
+      ...config,
+      width,
+      height,
+      cssString: `${(cssString || '').slice(0, 10)} ... ${(cssString || '').slice(-10)}`,
+    });
 
     return result;
   });
@@ -103,7 +108,7 @@ async function create(options = {}) {
     maxImageFileSize,
     postcss: postProcess = [],
     strict,
-    concurrency = Infinity,
+    concurrency = Number.POSITIVE_INFINITY,
     assetPaths = [],
   } = options;
 
@@ -202,10 +207,8 @@ async function create(options = {}) {
     }
 
     // If replaceStylesheets is not set via option and and uncritical is empty
-    if (extract && replaceStylesheets === undefined) {
-      if (result.uncritical.trim() === '') {
-        inline.replaceStylesheets = [];
-      }
+    if (extract && replaceStylesheets === undefined && result.uncritical.trim() === '') {
+      inline.replaceStylesheets = [];
     }
 
     if (target.uncritical) {
