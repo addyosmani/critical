@@ -74,7 +74,12 @@ function callPenthouse(document, options) {
 
   return sizes.map(({width, height}) => () => {
     const result = penthouse({...config, width, height});
-    debug('Call penthouse with:', {...config, width, height, cssString: `${(cssString || '').slice(0,10)} ... ${(cssString || '').slice(-10)}`});
+    debug('Call penthouse with:', {
+      ...config,
+      width,
+      height,
+      cssString: `${(cssString || '').slice(0, 10)} ... ${(cssString || '').slice(-10)}`,
+    });
 
     return result;
   });
