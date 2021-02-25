@@ -45,7 +45,7 @@ function getVinyl(...args) {
     return new Vinyl();
   }
 
-  return array(args.map(create));
+  return array(args.map((value) => create(value)));
 }
 
 module.exports = {

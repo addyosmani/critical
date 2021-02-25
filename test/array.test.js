@@ -13,7 +13,7 @@ test('async map', async () => {
 
   const func = (value) => value * value;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
-  const expected = array.map(func);
+  const expected = array.map((value) => func(value));
 
   const result1 = await mapAsync(array, (v) => func(v));
   const result2 = await mapAsync(array, (v) => afunc(v));
@@ -42,7 +42,7 @@ test('async reduce', async () => {
 
   const func = (res, value, index) => [...res, value * index];
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
-  const expected = array.reduce(func, []);
+  const expected = array.reduce((res, value, index) => func(res, value, index), []);
 
   const result1 = await reduceAsync([], array, func);
   const result2 = await reduceAsync([], array, afunc);
@@ -71,7 +71,7 @@ test('async filter', async () => {
 
   const func = (value) => value % 2;
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
-  const expected = array.filter(func);
+  const expected = array.filter((value) => func(value));
 
   const result1 = await filterAsync(array, func);
   const result2 = await filterAsync(array, afunc);

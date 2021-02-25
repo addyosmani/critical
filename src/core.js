@@ -108,7 +108,7 @@ async function create(options = {}) {
     maxImageFileSize,
     postcss: postProcess = [],
     strict,
-    concurrency = Infinity,
+    concurrency = Number.POSITIVE_INFINITY,
     assetPaths = [],
   } = options;
 
@@ -207,10 +207,8 @@ async function create(options = {}) {
     }
 
     // If replaceStylesheets is not set via option and and uncritical is empty
-    if (extract && replaceStylesheets === undefined) {
-      if (result.uncritical.trim() === '') {
-        inline.replaceStylesheets = [];
-      }
+    if (extract && replaceStylesheets === undefined && result.uncritical.trim() === '') {
+      inline.replaceStylesheets = [];
     }
 
     if (target.uncritical) {

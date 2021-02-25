@@ -167,7 +167,7 @@ const normalizedFlags = reduce(
     }
 
     // Cleanup camelized group keys
-    if (groupKeys.find((k) => key.includes(k)) && !validate(key, val)) {
+    if (groupKeys.some((k) => key.includes(k)) && !validate(key, val)) {
       return res;
     }
 
