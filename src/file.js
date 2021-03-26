@@ -373,7 +373,12 @@ function getStylesheetHrefs(file) {
   const preloads = oust.raw(file.contents.toString(), 'preload');
 
   return [...stylesheets, ...preloads]
-    .filter((link) => link.$el.attr('media') !== 'print' && Boolean(link.value))
+    .filter(
+      (link) =>
+        (link.$el.attr('media') !== 'print' ||
+          (Boolean(link.$el.attr('onload')) && link.$el.attr('onload').includes('media'))) &&
+        Boolean(link.value)
+    )
     .map((link) => link.value);
 }
 
