@@ -334,6 +334,111 @@ gulp.task('critical', () => {
 });
 ```
 
+## Github Workflow
+Create a yaml file in the following directory in GitHub: .github/workflows/criticalcss.yml
+
+```sh
+name: Generate Critical CSS
+on:
+  # Only runs when a commit has CSS or HTML changes (not adviced for pull request version workflow)
+  push:
+    paths:
+      - "**.css"
+      - "**.html"
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  criticalcss:
+    runs-on: ubuntu-latest
+    steps:
+      # This fix "Missing write access to /usr/local/lib/node_modules" error
+      - name: Setup node 14 properly
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Install critical
+        run: |
+          npm i -g critical
+      - uses: actions/checkout@v2 # This is a premade github action
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+      - name: Run critical
+        run: | # Find each HTML file on root. remove online (critical)css. Add critical css to temp html file. Rename temp html file to original.
+          find . -type f \( -iname "*.htm" -o -iname "*.html" \)|while read fname; do
+            sed -i '/<style>.*<\/style>$/d' "$fname"
+            critical "$fname" --base . --inline --css assets/css/*.css > "$fname"-crit
+            mv "$fname"-crit "$fname"
+          done
+      - name: Commit files
+        run: |
+          git add .
+          git config --local user.email "actions@github.com"
+          git config --local user.name "github-actions[bot]"
+          git diff --quiet && git diff --staged --quiet || git commit -am "made critical CSS"
+      - name: Push changes
+        uses: ad-m/github-push-action@master # This is a premade github action
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+```
+The above will push directly the changes into the main branch. If instead a pull request should be made, the workflow below will work.
+Do mind that it's not possible to trigger the workflow based on html/css changes, as accepting the pull request will retrigger it again.
+While this might not be a problem, aslong as the changes aren't different. It will not create a pull request.
+```sh
+name: Generate Critical CSS
+on:
+  schedule:
+    # * is a special character in YAML so you have to quote this string
+    - cron: "0 0 * * *" # Every day at 00:00 UTC
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+jobs:
+  criticalcss:
+    runs-on: ubuntu-latest
+    steps:
+      # This fix "Missing write access to /usr/local/lib/node_modules" error
+      - name: Setup node 14 properly
+        uses: actions/setup-node@v2
+        with:
+          node-version: 14
+      - name: Install critical
+        run: |
+          npm i -g critical
+      - uses: actions/checkout@v2 # This is a premade github action
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+      - name: Run critical
+        run: | # Find each HTML file on root. remove online (critical)css. Add critical css to temp html file. Rename temp html file to original.
+          find . -type f \( -iname "*.htm" -o -iname "*.html" \)|while read fname; do
+            sed -i '/<style>.*<\/style>$/d' "$fname"
+            critical "$fname" --base . --inline --css assets/css/*.css > "$fname"-crit
+            mv "$fname"-crit "$fname"
+          done
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          delete-branch: true
+          title: 'Generate critical CSS'
+          branch: criticalcss
+          labels: criticalcss
+          body: |
+            What did this pull do?
+            - Start automatically at 0:00 UTC.
+            - Create critical css for all html files, based on all css files.
+      
+            Please review this pull carefully, as it will:
+            - Add code that may introduce bugs/timings issues
+      
+            If this pull recieves a conflict, just close this pull and continue with the newer one
+            As the newer pull will be based on a more recent commit and will include the current changes aswell
+    
+            Delete the Branch after the pull is merged.
+```
+
 ## Why?
 
 ### Why is critical-path CSS important?
