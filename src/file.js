@@ -372,9 +372,11 @@ function getStylesheetHrefs(file) {
   const stylesheets = oust.raw(file.contents.toString(), 'stylesheets');
   const preloads = oust.raw(file.contents.toString(), 'preload');
 
-  return [...stylesheets, ...preloads]
+  const hrefs = [...stylesheets, ...preloads]
     .filter((link) => link.$el.attr('media') !== 'print' && Boolean(link.value))
     .map((link) => link.value);
+
+  return [...new Set(hrefs)];
 }
 
 /**
