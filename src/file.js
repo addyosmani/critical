@@ -373,7 +373,7 @@ function getStylesheetHrefs(file) {
   const preloads = oust.raw(file.contents.toString(), 'preload');
 
   const hrefs = [...stylesheets, ...preloads]
-    .filter((link) => link.$el.attr('media') !== 'print' && Boolean(link.value))
+    .filter((link) => link.$el.attr('media') !== 'print' && Boolean(link.value) && !link.value.startsWith('data:text/css;base64'))
     .map((link) => link.value);
 
   return [...new Set(hrefs)];
