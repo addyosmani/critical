@@ -232,6 +232,54 @@ describe('generate (local)', () => {
     );
   });
 
+  test('should consider inline styles', (done) => {
+    const expected = read('expected/generate-adaptive.css', 'utf8');
+    const target = path.resolve('.adaptive-inline.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'generate-adaptive-inline.html',
+        target,
+        dimensions: [
+          {
+            width: 100,
+            height: 70,
+          },
+          {
+            width: 1000,
+            height: 70,
+          },
+        ],
+      },
+      assertCritical(target, expected, done)
+    );
+  });
+
+  test('should consider data uris in stylesheet hrefs', (done) => {
+    const expected = read('expected/generate-adaptive.css', 'utf8');
+    const target = path.resolve('.adaptive-base64.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'generate-adaptive-base64.html',
+        target,
+        dimensions: [
+          {
+            width: 100,
+            height: 70,
+          },
+          {
+            width: 1000,
+            height: 70,
+          },
+        ],
+      },
+      assertCritical(target, expected, done)
+    );
+  });
+
   test('should generate minified critical-path CSS', (done) => {
     const expected = read('expected/generate-default.css', true);
     const target = path.resolve('.critical.min.css');
