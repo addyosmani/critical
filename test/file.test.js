@@ -29,7 +29,7 @@ const {
   getDocumentFromSource,
   getStylesheet,
 } = require('../src/file');
-const {read} = require('./helper');
+const {read, strip} = require('./helper');
 
 const readFileAsync = promisify(fs.readFile);
 
@@ -508,6 +508,40 @@ test('Get styles', async () => {
       });
       expect(file.contents.toString()).toMatch(expected[index]);
     }
+  }
+});
+
+test('Get inline styles', async () => {
+  const docs = await mapAsync(
+    [
+      `http://localhost:${port}/generate-adaptive.html`,
+      `http://localhost:${port}/generate-adaptive-inline.html`,
+      path.join(__dirname, 'fixtures/generate-adaptive-inline.html'),
+    ],
+    (filepath) => getDocument(filepath)
+  );
+
+  const [expected, ...cssArray] = docs.map((doc) => strip(doc.css));
+
+  for (const css of cssArray) {
+    expect(css).toMatch(expected);
+  }
+});
+
+test('Get base64 styles', async () => {
+  const docs = await mapAsync(
+    [
+      `http://localhost:${port}/generate-adaptive.html`,
+      `http://localhost:${port}/generate-adaptive-base64.html`,
+      path.join(__dirname, 'fixtures/generate-adaptive-base64.html'),
+    ],
+    (filepath) => getDocument(filepath)
+  );
+
+  const [expected, ...cssArray] = docs.map((doc) => strip(doc.css));
+
+  for (const css of cssArray) {
+    expect(css).toMatch(expected);
   }
 });
 

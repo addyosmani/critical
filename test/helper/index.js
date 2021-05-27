@@ -48,8 +48,13 @@ function getVinyl(...args) {
   return array(args.map((value) => create(value)));
 }
 
+function strip(string) {
+  return nn(string.replace(/[\r\n]+/gm, ' ').replace(/\s+/gm, ''));
+}
+
 module.exports = {
   getVinyl,
   read,
+  strip,
   readAndRemove,
 };
