@@ -56,7 +56,7 @@ function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 function isRemote(href) {
-  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
+  return !Buffer.isBuffer(href) && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
 /**
