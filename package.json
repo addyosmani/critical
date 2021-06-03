@@ -52,7 +52,6 @@
     "postcss-discard": "^1.0.1",
     "postcss-image-inliner": "^4.0.4",
     "postcss-url": "^10.1.3",
-    "prettier": "^2.2.1",
     "replace-ext": "^2.0.0",
     "slash": "^3.0.0",
     "tempy": "^1.0.1",

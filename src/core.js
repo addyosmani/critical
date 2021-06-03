@@ -9,7 +9,6 @@ const pAll = require('p-all');
 const debug = require('debug')('critical:core');
 const postcss = require('postcss');
 const discard = require('postcss-discard');
-const prettier = require('prettier');
 const imageInliner = require('postcss-image-inliner');
 const penthouse = require('penthouse');
 const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/core');
@@ -178,7 +177,7 @@ async function create(options = {}) {
   }
 
   // Minify or prettify
-  criticalCSS = minify ? cleanCSS.minify(criticalCSS).styles : prettier.format(criticalCSS, {parser: 'css'});
+  criticalCSS = cleanCSS.minify(criticalCSS).styles;
 
   const result = {
     css: criticalCSS,

@@ -42,7 +42,6 @@ test('Generate critical-path CSS', async () => {
   try {
     const result = await create({
       src: `http://localhost:${port}/generate-default.html`,
-      minify: true,
     });
     expect(result.css).toBe(css);
     expect(result.html).toBe(html);

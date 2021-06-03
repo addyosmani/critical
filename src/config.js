@@ -9,7 +9,6 @@ const DEFAULT = {
   height: 900,
   timeout: 30000,
   maxImageFileSize: 10240,
-  minify: true,
   inline: false,
   strict: false,
   extract: false,
@@ -31,7 +30,6 @@ const schema = Joi.object()
     ignore: [Joi.array(), Joi.object().unknown(true)],
     width: Joi.number().default(DEFAULT.width),
     height: Joi.number().default(DEFAULT.height),
-    minify: Joi.boolean().default(DEFAULT.minify),
     dimensions: Joi.array().items({width: Joi.number(), height: Joi.number()}),
     inline: [Joi.boolean().default(DEFAULT.inline), Joi.object().unknown(true)],
     maxImageFileSize: Joi.number().default(DEFAULT.maxImageFileSize),
@@ -103,7 +101,7 @@ function getOptions(options = {}) {
   value.inline = Boolean(inline) && {
     minify: value.minify,
     basePath: value.base || process.cwd(),
-    ...(inline === true ? {} : inline),
+    ...(inline === true ? {strategy: 'media'} : inline),
   };
 
   if (value.inline.replaceStylesheets !== undefined && !Array.isArray(value.inline.replaceStylesheets)) {

@@ -239,7 +239,6 @@ test('#192 - include option - stream', (done) => {
   const critical = stream({
     base: path.join(__dirname, 'fixtures'),
     css: ['fixtures/styles/issue-192.css'],
-    minify: true,
     extract: false,
     ignore: ['@font-face', /url\(/],
     dimensions: [
@@ -318,7 +317,6 @@ test('issue 341', async () => {
 
   const options = {
     base: path.join(__dirname, 'fixtures'),
-    minify: true,
     extract: false,
     inline: false,
     dimensions: [
@@ -353,7 +351,6 @@ test('Replace stylesheet on extract-target', async () => {
     html: read('fixtures/generate-adaptive.html'),
     base: path.join(__dirname, 'fixtures'),
     target: {uncritical: target},
-    minify: true,
     extract: true,
     inline: true,
   });
@@ -368,7 +365,6 @@ test('Remove stylesheet on empty uncritical css', async () => {
   const result = await generate({
     html: read('fixtures/issue-304.html'),
     base: path.join(__dirname, 'fixtures'),
-    minify: true,
     extract: true,
     inline: true,
   });
@@ -382,7 +378,6 @@ test('Use async cb result for inline.replaceStylesheets', async () => {
   const result = await generate({
     html: read('fixtures/issue-304.html'),
     base: path.join(__dirname, 'fixtures'),
-    minify: true,
     extract: true,
     inline: {
       replaceStylesheets: cb,
