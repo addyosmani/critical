@@ -100,7 +100,6 @@ async function create(options = {}) {
     html,
     inline,
     ignore,
-    minify,
     extract,
     target = {},
     inlineImages,
