@@ -57,6 +57,7 @@ test('Target config on passed string', () => {
 test('Inline config on passed boolean', () => {
   expect(getOptions({src: '...', inline: true, base: 'BASE'})).toHaveProperty('inline', {
     basePath: 'BASE',
+    strategy: 'media',
   });
 });
 

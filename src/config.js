@@ -99,7 +99,6 @@ function getOptions(options = {}) {
 
   // Set inline options
   value.inline = Boolean(inline) && {
-    minify: value.minify,
     basePath: value.base || process.cwd(),
     ...(inline === true ? {strategy: 'media'} : inline),
   };
