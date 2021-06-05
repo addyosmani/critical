@@ -376,8 +376,11 @@ function getStylesheetHrefs(file) {
 
   const stylesheets = oust.raw(file.contents.toString(), ['stylesheets', 'preload', 'styles']);
 
+  const isNotPrint = (el) =>
+    el.attr('media') !== 'print' || (Boolean(el.attr('onload')) && el.attr('onload').includes('media'));
+
   const hrefs = stylesheets
-    .filter((link) => link.$el.attr('media') !== 'print' && Boolean(link.value))
+    .filter((link) => isNotPrint(link.$el) && Boolean(link.value))
     .map((link) => {
       // support base64 encoded styles
       if (link.value.startsWith('data:')) {
