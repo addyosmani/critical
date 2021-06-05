@@ -4,6 +4,7 @@ const path = require('path');
 const os = require('os');
 const url = require('url');
 const fs = require('fs');
+const dataUriToBuffer = require('data-uri-to-buffer');
 const {promisify} = require('util');
 const findUp = require('find-up');
 const makeDir = require('make-dir');
@@ -55,7 +56,7 @@ function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 function isRemote(href) {
-  return /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
+  return !Buffer.isBuffer(href) && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
 /**
@@ -116,7 +117,7 @@ function urlResolve(from = '', to = '') {
  * @returns {boolean} True if the path is relative
  */
 function isRelative(href) {
-  return !isRemote(href) && !path.isAbsolute(href);
+  return !Buffer.isBuffer(href) && !isRemote(href) && !path.isAbsolute(href);
 }
 
 /**
@@ -141,6 +142,10 @@ function isVinyl(file) {
 async function fileExists(href, options = {}) {
   if (isVinyl(href)) {
     return !href.isNull();
+  }
+
+  if (Buffer.isBuffer(href)) {
+    return true;
   }
 
   if (isRemote(href)) {
@@ -369,17 +374,25 @@ function getStylesheetHrefs(file) {
     throw new Error('Parameter file needs to be a vinyl object');
   }
 
-  const stylesheets = oust.raw(file.contents.toString(), 'stylesheets');
-  const preloads = oust.raw(file.contents.toString(), 'preload');
+  const stylesheets = oust.raw(file.contents.toString(), ['stylesheets', 'preload', 'styles']);
 
-  const hrefs = [...stylesheets, ...preloads]
-    .filter(
-      (link) =>
-        (link.$el.attr('media') !== 'print' ||
-          (Boolean(link.$el.attr('onload')) && link.$el.attr('onload').includes('media'))) &&
-        Boolean(link.value)
-    )
-    .map((link) => link.value);
+  const isNotPrint = (el) =>
+    el.attr('media') !== 'print' || (Boolean(el.attr('onload')) && el.attr('onload').includes('media'));
+
+  const hrefs = stylesheets
+    .filter((link) => isNotPrint(link.$el) && Boolean(link.value))
+    .map((link) => {
+      // support base64 encoded styles
+      if (link.value.startsWith('data:')) {
+        return dataUriToBuffer(link.value);
+      }
+
+      if (link.type === 'styles') {
+        return Buffer.from(link.value);
+      }
+
+      return link.value;
+    });
 
   return [...new Set(hrefs)];
 }
@@ -428,8 +441,8 @@ async function getDocumentPath(file, options = {}) {
 
   // Check local and assume base path based on relative stylesheets
   if (file.stylesheets) {
-    const relativeRefs = file.stylesheets.filter((href) => isRelative(href));
-    const absoluteRefs = file.stylesheets.filter((href) => path.isAbsolute(href));
+    const relativeRefs = file.stylesheets.filter((href) => !Buffer.isBuffer(href) && isRelative(href));
+    const absoluteRefs = file.stylesheets.filter((href) => !Buffer.isBuffer(href) && path.isAbsolute(href));
     // If we have no stylesheets inside, fall back to path relative to process cwd
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
@@ -499,6 +512,11 @@ function getRemoteStylesheetPath(fileObj, documentObj, filename) {
 function getStylesheetPath(document, file, options = {}) {
   let {base} = options;
 
+  // Check inline styles
+  if (file.inline) {
+    return normalizePath(`${document.virtualPath}.css`);
+  }
+
   // Check remote
   if (file.remote) {
     return getRemoteStylesheetPath(file.urlObj, document.urlObj);
@@ -516,11 +534,13 @@ function getStylesheetPath(document, file, options = {}) {
   }
 
   // Try to compute path based on document link tags with same name
-  const stylesheet = document.stylesheets.find((href) => {
-    const {pathname} = urlParse(href);
-    const name = path.basename(pathname);
-    return name === path.basename(file.path);
-  });
+  const stylesheet = document.stylesheets
+    .filter((href) => !Buffer.isBuffer(href))
+    .find((href) => {
+      const {pathname} = urlParse(href);
+      const name = path.basename(pathname);
+      return name === path.basename(file.path);
+    });
 
   if (stylesheet && isRelative(stylesheet) && document.virtualPath) {
     return normalizePath(joinPath(path.dirname(document.virtualPath), stylesheet));
@@ -535,7 +555,9 @@ function getStylesheetPath(document, file, options = {}) {
   }
 
   // Try to find stylesheet path based on document link tags
-  const [unsafestylesheet] = document.stylesheets.sort((a) => (isRemote(a) ? 1 : -1));
+  const [unsafestylesheet] = document.stylesheets
+    .filter((href) => !Buffer.isBuffer(href))
+    .sort((a) => (isRemote(a) ? 1 : -1));
   if (unsafestylesheet && isRelative(unsafestylesheet) && document.virtualPath) {
     return normalizePath(
       joinPath(path.dirname(document.virtualPath), joinPath(path.dirname(unsafestylesheet), path.basename(file.path)))
@@ -659,12 +681,18 @@ async function vinylize(src, options = {}) {
   const file = new Vinyl();
   file.cwd = '/';
   file.remote = false;
+  file.inline = false;
 
   if (html) {
     const {to} = rebase;
     file.contents = Buffer.from(html);
     file.path = to || '';
     file.virtualPath = to || '';
+  } else if (filepath && Buffer.isBuffer(filepath)) {
+    file.path = '';
+    file.virtualPath = '';
+    file.contents = filepath;
+    file.inline = true;
   } else if (filepath && isVinyl(filepath)) {
     return filepath;
   } else if (filepath && isRemote(filepath)) {
@@ -694,6 +722,7 @@ async function vinylize(src, options = {}) {
 async function getStylesheet(document, filepath, options = {}) {
   const {rebase = {}, css, strict} = options;
   const originalPath = filepath;
+
   const exists = await fileExists(filepath, options);
 
   if (!exists) {
@@ -711,19 +740,24 @@ async function getStylesheet(document, filepath, options = {}) {
 
   // Create absolute file paths for local files passed via css option
   // to prevent document relative stylesheet paths if they are not relative specified
-  if (!isVinyl(filepath) && !isRemote(filepath) && css) {
+  if (!Buffer.isBuffer(originalPath) && !isVinyl(filepath) && !isRemote(filepath) && css) {
     filepath = path.resolve(filepath);
   }
 
   const file = await vinylize({filepath}, options);
 
   // Restore original path for local files referenced from document and not from options
-  if (!isRemote(originalPath) && !css) {
+  if (!Buffer.isBuffer(originalPath) && !isRemote(originalPath) && !css) {
     file.path = originalPath;
   }
 
   // Get stylesheet path. Keeps stylesheet url if it differs from document url
   const stylepath = await getStylesheetPath(document, file, options);
+  if (Buffer.isBuffer(originalPath)) {
+    file.path = stylepath;
+    file.virtualPath = stylepath;
+  }
+
   debug('(getStylesheet) Virtual Stylesheet Path:', stylepath);
   // We can safely rebase assets if we have:
   // - a url to the stylesheet

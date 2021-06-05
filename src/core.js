@@ -9,12 +9,11 @@ const pAll = require('p-all');
 const debug = require('debug')('critical:core');
 const postcss = require('postcss');
 const discard = require('postcss-discard');
-const prettier = require('prettier');
 const imageInliner = require('postcss-image-inliner');
 const penthouse = require('penthouse');
 const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/core');
 const inlineCritical = require('inline-critical');
-const {extractCss} = require('inline-critical/src/css');
+const {removeDuplicateStyles} = require('inline-critical/src/css');
 const parseCssUrls = require('css-url-parser');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
@@ -101,7 +100,6 @@ async function create(options = {}) {
     html,
     inline,
     ignore,
-    minify,
     extract,
     target = {},
     inlineImages,
@@ -178,7 +176,7 @@ async function create(options = {}) {
   }
 
   // Minify or prettify
-  criticalCSS = minify ? cleanCSS.minify(criticalCSS).styles : prettier.format(criticalCSS, {parser: 'css'});
+  criticalCSS = cleanCSS.minify(criticalCSS).styles;
 
   const result = {
     css: criticalCSS,
@@ -188,7 +186,7 @@ async function create(options = {}) {
   const lazyUncritical = (orig, diff) =>
     function () {
       if (!this._uncritical) {
-        this._uncritical = extractCss(orig, diff);
+        this._uncritical = removeDuplicateStyles(orig, diff);
       }
 
       return this._uncritical;

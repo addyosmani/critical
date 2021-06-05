@@ -34,7 +34,6 @@ test('Returns config object', () => {
     width: DEFAULT.width,
     height: DEFAULT.height,
     maxImageFileSize: DEFAULT.maxImageFileSize,
-    minify: DEFAULT.minify,
     strict: DEFAULT.strict,
     extract: DEFAULT.extract,
     concurrency: DEFAULT.concurrency,
@@ -57,14 +56,13 @@ test('Target config on passed string', () => {
 
 test('Inline config on passed boolean', () => {
   expect(getOptions({src: '...', inline: true, base: 'BASE'})).toHaveProperty('inline', {
-    minify: DEFAULT.minify,
     basePath: 'BASE',
+    strategy: 'media',
   });
 });
 
 test('Inline config on passed object', () => {
   expect(getOptions({src: '...', inline: {check: true}, base: 'BASE'})).toHaveProperty('inline', {
-    minify: DEFAULT.minify,
     basePath: 'BASE',
     check: true,
   });
