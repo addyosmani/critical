@@ -565,7 +565,7 @@ describe('generate (local)', () => {
   });
 
   test('should generate and inline minified critical-path CSS', (done) => {
-    const expected = read('expected/generateInline-minified.html');
+    const expected = read('expected/generateInline.html');
     const target = path.join(__dirname, '.generateInline-minified3.html');
 
     generate(
@@ -581,8 +581,8 @@ describe('generate (local)', () => {
   });
 
   test('should handle multiple calls', (done) => {
-    const expected1 = read('expected/generateInline-unminified.html');
-    const expected2 = read('expected/generateInline-minified.html');
+    const expected1 = read('expected/generateInline.html');
+    const expected2 = read('expected/generateInline-svg.html');
 
     async.series(
       {
@@ -600,7 +600,7 @@ describe('generate (local)', () => {
           generate(
             {
               base: FIXTURES_DIR,
-              src: 'generateInline.html',
+              src: 'generateInline-svg.html',
               inline: true,
             },
             cb
@@ -1190,8 +1190,8 @@ describe('generate (remote)', () => {
   });
 
   test('should generate and inline minified critical-path CSS', (done) => {
-    const expected = read('expected/generateInline-minified.html');
-    const target = path.join(__dirname, '.generateInline-minified.html');
+    const expected = read('expected/generateInline.html');
+    const target = path.join(__dirname, '.generateInline.html');
 
     generate(
       {
@@ -1206,7 +1206,7 @@ describe('generate (remote)', () => {
 
   test('should handle multiple calls', (done) => {
     const expected1 = read('expected/generateInline.html');
-    const expected2 = read('expected/generateInline-minified.html');
+    const expected2 = read('expected/generateInline.html');
     async.series(
       {
         first(cb) {

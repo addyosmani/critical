@@ -13,7 +13,7 @@ const imageInliner = require('postcss-image-inliner');
 const penthouse = require('penthouse');
 const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/core');
 const inlineCritical = require('inline-critical');
-const {extractCss} = require('inline-critical/src/css');
+const {removeDuplicateStyles} = require('inline-critical/src/css');
 const parseCssUrls = require('css-url-parser');
 const {reduceAsync} = require('./array');
 const {NoCssError} = require('./errors');
@@ -187,7 +187,7 @@ async function create(options = {}) {
   const lazyUncritical = (orig, diff) =>
     function () {
       if (!this._uncritical) {
-        this._uncritical = extractCss(orig, diff);
+        this._uncritical = removeDuplicateStyles(orig, diff);
       }
 
       return this._uncritical;
