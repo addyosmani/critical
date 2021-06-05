@@ -12,12 +12,6 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 npm i -D critical
 ```
 
-The docs for the latest 1.x version can be found [here](https://github.com/addyosmani/critical/tree/1.x).
-
-## Breaking Changes
-
-We’ve introduced some breaking changes in this release so be sure to check out the [changelog](CHANGELOG.md).
-
 ## Build plugins
 
 - [grunt-critical](https://github.com/bezoerb/grunt-critical)
