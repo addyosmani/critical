@@ -379,6 +379,8 @@ function getStylesheetHrefs(file) {
   const isNotPrint = (el) =>
     el.attr('media') !== 'print' || (Boolean(el.attr('onload')) && el.attr('onload').includes('media'));
 
+  const hasMeaningfulMedia = (el) => el.attr('media') && el.attr('media') !== 'print' && el.attr('media') !== 'all';
+
   const hrefs = stylesheets
     .filter((link) => isNotPrint(link.$el) && Boolean(link.value))
     .map((link) => {
@@ -389,6 +391,14 @@ function getStylesheetHrefs(file) {
 
       if (link.type === 'styles') {
         return Buffer.from(link.value);
+      }
+
+      if (hasMeaningfulMedia(link.$el)) {
+        if (link.value.includes('?')) {
+          link.value += `&media=${encodeURI(link.$el.attr('media'))}`;
+        } else {
+          link.value += `?media=${encodeURI(link.$el.attr('media'))}`;
+        }
       }
 
       return link.value;
@@ -821,9 +831,26 @@ async function getCss(document, options = {}) {
     debug('(getCss) extract from document', document.stylesheets, stylesheets);
   }
 
+  const re = /[&?]media=(.*?)(?:&|$)/;
   return stylesheets
     .filter((stylesheet) => !stylesheet.isNull())
-    .map((stylesheet) => stylesheet.contents.toString())
+    .map((stylesheet) => {
+      let media = null;
+      if (stylesheet.urlObj && stylesheet.urlObj.searchParams) {
+        media = stylesheet.urlObj.searchParams.get('media');
+      } else {
+        const found = stylesheet.path.match(re);
+        if (found) {
+          media = decodeURI(found[1]);
+        }
+      }
+
+      if (media !== null) {
+        return `@media ${media} { ${stylesheet.contents.toString()} }`;
+      }
+
+      return stylesheet.contents.toString();
+    })
     .join(os.EOL);
 }
 
