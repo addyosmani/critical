@@ -831,9 +831,26 @@ async function getCss(document, options = {}) {
     debug('(getCss) extract from document', document.stylesheets, stylesheets);
   }
 
+  const re = /[&?]media=(.*?)(?:&|$)/;
   return stylesheets
     .filter((stylesheet) => !stylesheet.isNull())
-    .map((stylesheet) => stylesheet.contents.toString())
+    .map((stylesheet) => {
+      let media = null;
+      if (stylesheet.urlObj && stylesheet.urlObj.searchParams) {
+        media = stylesheet.urlObj.searchParams.get('media');
+      } else {
+        const found = stylesheet.path.match(re);
+        if (found) {
+          media = decodeURI(found[1]);
+        }
+      }
+
+      if (media !== null) {
+        return `@media ${media} { ${stylesheet.contents.toString()} }`;
+      }
+
+      return stylesheet.contents.toString();
+    })
     .join(os.EOL);
 }
 
