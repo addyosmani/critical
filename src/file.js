@@ -379,6 +379,8 @@ function getStylesheetHrefs(file) {
   const isNotPrint = (el) =>
     el.attr('media') !== 'print' || (Boolean(el.attr('onload')) && el.attr('onload').includes('media'));
 
+  const hasMeaningfulMedia = (el) => el.attr('media') && el.attr('media') !== 'print' && el.attr('media') !== 'all';
+
   const hrefs = stylesheets
     .filter((link) => isNotPrint(link.$el) && Boolean(link.value))
     .map((link) => {
@@ -389,6 +391,14 @@ function getStylesheetHrefs(file) {
 
       if (link.type === 'styles') {
         return Buffer.from(link.value);
+      }
+
+      if (hasMeaningfulMedia(link.$el)) {
+        if (link.value.includes('?')) {
+          link.value += `&media=${encodeURI(link.$el.attr('media'))}`;
+        } else {
+          link.value += `?media=${encodeURI(link.$el.attr('media'))}`;
+        }
       }
 
       return link.value;
