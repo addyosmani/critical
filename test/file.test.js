@@ -528,6 +528,20 @@ test('Get inline styles', async () => {
   }
 });
 
+test('Get styles with media attribute', async () => {
+  const docs = await mapAsync(
+    [`http://localhost:${port}/media-attr.html`, path.join(__dirname, 'fixtures/media-attr.html')],
+    (filepath) => getDocument(filepath)
+  );
+
+  const expected = '@media (max-width: 1024px)';
+
+  for (const document of docs) {
+    expect(document.stylesheets.toString()).toMatch('media=');
+    expect(document.css.toString()).toMatch(expected);
+  }
+});
+
 test('Get base64 styles', async () => {
   const docs = await mapAsync(
     [
