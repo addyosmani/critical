@@ -82,7 +82,7 @@ function urlParse(str = '') {
  * @returns {string} file uri
  */
 function getFileUri(file) {
-  if (!path.isAbsolute) {
+  if (!isAbsolute) {
     throw new Error('Path must be absolute to compute file uri');
   }
 
@@ -104,11 +104,15 @@ function urlResolve(from = '', to = '') {
     return href;
   }
 
-  if (path.isAbsolute(to)) {
+  if (isAbsolute(to)) {
     return to;
   }
 
   return path.join(from.replace(/[^/]+$/, ''), to);
+}
+
+function isAbsolute(href) {
+  return !Buffer.isBuffer(href) && path.isAbsolute(href);
 }
 
 /**
@@ -117,7 +121,7 @@ function urlResolve(from = '', to = '') {
  * @returns {boolean} True if the path is relative
  */
 function isRelative(href) {
-  return !Buffer.isBuffer(href) && !isRemote(href) && !path.isAbsolute(href);
+  return !Buffer.isBuffer(href) && !isRemote(href) && !isAbsolute(href);
 }
 
 /**
@@ -369,9 +373,13 @@ async function fetch(uri, options = {}, secure = true) {
  * @param {Vinyl} file Vinyl file object (document)
  * @returns {[string]} Stylesheet urls from document source
  */
-function getStylesheetHrefs(file) {
+function getStylesheetObjects(file) {
   if (!isVinyl(file)) {
     throw new Error('Parameter file needs to be a vinyl object');
+  }
+
+  if (file.stylesheetObjects) {
+    return file.stylesheetObjects;
   }
 
   const stylesheets = oust.raw(file.contents.toString(), ['stylesheets', 'preload', 'styles']);
@@ -379,22 +387,68 @@ function getStylesheetHrefs(file) {
   const isNotPrint = (el) =>
     el.attr('media') !== 'print' || (Boolean(el.attr('onload')) && el.attr('onload').includes('media'));
 
-  const hrefs = stylesheets
+  const isMediaQuery = (media) => typeof media === 'string' && !['all', 'print', 'screen'].includes(media);
+
+  const objects = stylesheets
     .filter((link) => isNotPrint(link.$el) && Boolean(link.value))
     .map((link) => {
+      const media = isMediaQuery(link.$el.attr('media')) ? link.$el.attr('media') : '';
+
       // support base64 encoded styles
       if (link.value.startsWith('data:')) {
-        return dataUriToBuffer(link.value);
+        return {
+          media,
+          value: dataUriToBuffer(link.value),
+        };
       }
 
       if (link.type === 'styles') {
-        return Buffer.from(link.value);
+        return {
+          media,
+          value: Buffer.from(link.value),
+        };
       }
 
-      return link.value;
+      return {
+        media,
+        value: link.value,
+      };
     });
 
-  return [...new Set(hrefs)];
+  const isEqual = (a, b) => Buffer.from(a).compare(Buffer.from(b)) === 0;
+  const compare = (a, b) => isEqual(a.media, b.media) && isEqual(a.value, b.value);
+
+  file.stylesheetObjects = objects.filter((a, index, array) => {
+    return array.findIndex((b) => compare(a, b)) === index;
+  });
+
+  return file.stylesheetObjects;
+}
+
+/**
+ * Extract stylesheet urls from html document
+ * @param {Vinyl} file Vinyl file object (document)
+ * @returns {[string]} Stylesheet urls from document source
+ */
+function getStylesheetHrefs(file) {
+  if (!isVinyl(file)) {
+    throw new Error('Parameter file needs to be a vinyl object');
+  }
+
+  return getStylesheetObjects(file).map((object) => object.value);
+}
+
+/**
+ * Extract stylesheet urls from html document
+ * @param {Vinyl} file Vinyl file object (document)
+ * @returns {[string]} Stylesheet urls from document source
+ */
+function getStylesheetsMedia(file) {
+  if (!isVinyl(file)) {
+    throw new Error('Parameter file needs to be a vinyl object');
+  }
+
+  return getStylesheetObjects(file).map((object) => object.media);
 }
 
 /**
@@ -441,8 +495,8 @@ async function getDocumentPath(file, options = {}) {
 
   // Check local and assume base path based on relative stylesheets
   if (file.stylesheets) {
-    const relativeRefs = file.stylesheets.filter((href) => !Buffer.isBuffer(href) && isRelative(href));
-    const absoluteRefs = file.stylesheets.filter((href) => !Buffer.isBuffer(href) && path.isAbsolute(href));
+    const relativeRefs = file.stylesheets.filter((href) => isRelative(href));
+    const absoluteRefs = file.stylesheets.filter((href) => isAbsolute(href));
     // If we have no stylesheets inside, fall back to path relative to process cwd
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
@@ -720,7 +774,7 @@ async function vinylize(src, options = {}) {
  * @returns {Promise<Vinyl>} Vinyl representation fo the stylesheet
  */
 async function getStylesheet(document, filepath, options = {}) {
-  const {rebase = {}, css, strict} = options;
+  const {rebase = {}, css, strict, media} = options;
   const originalPath = filepath;
 
   const exists = await fileExists(filepath, options);
@@ -745,6 +799,9 @@ async function getStylesheet(document, filepath, options = {}) {
   }
 
   const file = await vinylize({filepath}, options);
+  if (media) {
+    file.contents = Buffer.from(`@media ${media} { ${file.contents.toString()} }`);
+  }
 
   // Restore original path for local files referenced from document and not from options
   if (!Buffer.isBuffer(originalPath) && !isRemote(originalPath) && !css) {
@@ -789,7 +846,7 @@ async function getStylesheet(document, filepath, options = {}) {
     file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || pathname);
 
     // Make images absolute if we have an absolute positioned stylesheet
-  } else if (path.isAbsolute(stylepath)) {
+  } else if (isAbsolute(stylepath)) {
     file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', (asset) =>
       normalizePath(asset.absolutePath)
     );
@@ -817,7 +874,10 @@ async function getCss(document, options = {}) {
     stylesheets = await mapAsync(files, (file) => getStylesheet(document, file, options));
     debug('(getCss) css option set', files, stylesheets);
   } else {
-    stylesheets = await mapAsync(document.stylesheets, (file) => getStylesheet(document, file, options));
+    stylesheets = await mapAsync(document.stylesheets, (file, index) => {
+      const media = (document.stylesheetsMedia || [])[index];
+      return getStylesheet(document, file, {...options, media});
+    });
     debug('(getCss) extract from document', document.stylesheets, stylesheets);
   }
 
@@ -896,6 +956,7 @@ async function getDocument(filepath, options = {}) {
   const document = await vinylize({filepath}, options);
 
   document.stylesheets = await getStylesheetHrefs(document);
+  document.stylesheetsMedia = await getStylesheetsMedia(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
 
   document.cwd = base || process.cwd();
@@ -932,6 +993,7 @@ async function getDocumentFromSource(html, options = {}) {
   const document = await vinylize({html}, options);
 
   document.stylesheets = await getStylesheetHrefs(document);
+  document.stylesheetsMedia = await getStylesheetsMedia(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
   document.cwd = base || process.cwd();
 
