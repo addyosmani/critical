@@ -417,12 +417,15 @@ function getStylesheetObjects(file) {
 
   const isEqual = (a, b) => Buffer.from(a).compare(Buffer.from(b)) === 0;
   const compare = (a, b) => isEqual(a.media, b.media) && isEqual(a.value, b.value);
-
-  file.stylesheetObjects = objects.filter((a, index, array) => {
+  // Make objects unique
+  const stylesheetObjects = objects.filter((a, index, array) => {
     return array.findIndex((b) => compare(a, b)) === index;
   });
 
-  return file.stylesheetObjects;
+  // cache them for later use
+  file.stylesheetObjects = stylesheetObjects;
+
+  return stylesheetObjects;
 }
 
 /**
@@ -431,10 +434,6 @@ function getStylesheetObjects(file) {
  * @returns {[string]} Stylesheet urls from document source
  */
 function getStylesheetHrefs(file) {
-  if (!isVinyl(file)) {
-    throw new Error('Parameter file needs to be a vinyl object');
-  }
-
   return getStylesheetObjects(file).map((object) => object.value);
 }
 
@@ -444,10 +443,6 @@ function getStylesheetHrefs(file) {
  * @returns {[string]} Stylesheet urls from document source
  */
 function getStylesheetsMedia(file) {
-  if (!isVinyl(file)) {
-    throw new Error('Parameter file needs to be a vinyl object');
-  }
-
   return getStylesheetObjects(file).map((object) => object.media);
 }
 
