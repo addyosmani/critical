@@ -27,7 +27,7 @@ Options:
   -e, --extract           Extract inlined styles from referenced stylesheets
 
   --inlineImages          Inline images
-  --dimensioms            Pass dimensions e.g. 1300x900
+  --dimensions            Pass dimensions e.g. 1300x900
   --ignore                RegExp, @type or selector to ignore
   --ignore-[OPTION]       Pass options to postcss-discard. See https://goo.gl/HGo5YV
   --include               RegExp, @type or selector to include
