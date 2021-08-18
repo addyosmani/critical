@@ -48,6 +48,7 @@ const meowOpts = {
     css: {
       type: 'string',
       alias: 'c',
+      isMultiple: true,
     },
     width: {
       alias: 'w',
