@@ -864,7 +864,7 @@ async function getCss(document, options = {}) {
   const {css} = options;
   let stylesheets = [];
 
-  if (!Array.isArray(css) && css || (Array.isArray(css) && a.length !== 0)) {
+  if ((!Array.isArray(css) && css) || (Array.isArray(css) && a.length !== 0)) {
     const files = await glob(css, options);
     stylesheets = await mapAsync(files, (file) => getStylesheet(document, file, options));
     debug('(getCss) css option set', files, stylesheets);
