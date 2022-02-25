@@ -337,7 +337,11 @@ function getStylesheetHrefs(file) {
   const preloads = oust.raw(file.contents.toString(), 'preload');
 
   return [...stylesheets, ...preloads]
-    .filter(link => link.$el.attr('media') !== 'print' && Boolean(link.value))
+    .filter(link => {
+      return (link.$el.attr('media') !== 'print' && Boolean(link.value))
+        && (link.$el.attr('ezfontsrc') === undefined)
+        && (link.$el.attr('href') !== 'javascript: void(0)');
+    })
     .map(link => link.value);
 }
 
