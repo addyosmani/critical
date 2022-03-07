@@ -338,9 +338,12 @@ function getStylesheetHrefs(file) {
 
   return [...stylesheets, ...preloads]
     .filter(link => {
-      return (link.$el.attr('media') !== 'print' && Boolean(link.value))
-        && (link.$el.attr('ezfontsrc') === undefined)
-        && (link.$el.attr('href') !== 'javascript: void(0)');
+      return (
+        link.$el.attr('media') !== 'print' &&
+        Boolean(link.value) &&
+        link.$el.attr('ezfontsrc') === undefined &&
+        link.$el.attr('href') !== 'javascript: void(0)'
+      );
     })
     .map(link => link.value);
 }
