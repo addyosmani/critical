@@ -1,9 +1,8 @@
-'use strict';
+import process from 'node:process';
+import chalk from 'chalk';
+import {stripIndents, stripIndent} from 'common-tags';
 
-const chalk = require('chalk');
-const {stripIndents, stripIndent} = require('common-tags');
-
-class FileNotFoundError extends Error {
+export class FileNotFoundError extends Error {
   constructor(file = '', paths = [], ...params) {
     const message = chalk.red(stripIndent`
       Error: File not found: ${file}
@@ -21,7 +20,7 @@ class FileNotFoundError extends Error {
   }
 }
 
-class NoCssError extends Error {
+export class NoCssError extends Error {
   constructor(...params) {
     const message = chalk.red(stripIndents`
       Error: No stylesheets found in document and no css was specified in the options
@@ -35,7 +34,7 @@ class NoCssError extends Error {
   }
 }
 
-class ConfigError extends Error {
+export class ConfigError extends Error {
   constructor(msg, ...params) {
     const message = chalk.red(stripIndents`
       ConfigError: ${msg}
@@ -49,9 +48,3 @@ class ConfigError extends Error {
     }
   }
 }
-
-module.exports = {
-  FileNotFoundError,
-  NoCssError,
-  ConfigError,
-};

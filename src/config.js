@@ -1,14 +1,15 @@
-'use strict';
+import process from 'node:process';
+import Joi from 'joi';
+import debugModule from 'debug';
+import {ConfigError} from './errors.js';
 
-const Joi = require('joi');
-const debug = require('debug')('critical:config');
-const {ConfigError} = require('./errors');
+const debug = debugModule('critical:config');
 
-const DEFAULT = {
+export const DEFAULT = {
   width: 1300,
   height: 900,
-  timeout: 30000,
-  maxImageFileSize: 10240,
+  timeout: 30_000,
+  maxImageFileSize: 10_240,
   inline: false,
   strict: false,
   extract: false,
@@ -71,7 +72,7 @@ const schema = Joi.object()
   .label('options')
   .xor('html', 'src');
 
-function getOptions(options = {}) {
+export function getOptions(options = {}) {
   const {error, value} = schema.validate(options);
   const {inline, dimensions, penthouse = {}, target, ignore} = value || {};
 
@@ -136,17 +137,11 @@ function getOptions(options = {}) {
   return value;
 }
 
-const validate = (key, val) => {
+export const validate = (key, val) => {
   const {error} = schema.validate({[key]: val, html: '<html/>'});
   if (error) {
     return false;
   }
 
   return true;
-};
-
-module.exports = {
-  DEFAULT,
-  validate,
-  getOptions,
 };

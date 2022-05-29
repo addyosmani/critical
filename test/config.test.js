@@ -1,7 +1,8 @@
-'use strict';
+import {jest} from '@jest/globals';
+import {ConfigError} from '../src/errors.js';
+import {getOptions, DEFAULT} from '../src/config.js';
 
-const {ConfigError} = require('../src/errors');
-const {getOptions, DEFAULT} = require('../src/config');
+jest.useFakeTimers();
 
 test('Throws ConfigError on invalid config', () => {
   expect(() => {

@@ -1,20 +1,23 @@
-'use strict';
+import process from 'node:process';
+import {fileURLToPath} from 'node:url';
+import {createServer} from 'node:http';
+import {join, dirname} from 'node:path';
+import {jest} from '@jest/globals';
+import getPort from 'get-port';
+import finalhandler from 'finalhandler';
+import serveStatic from 'serve-static';
+import {create} from '../src/core.js';
+import {read} from './helper/index.js';
 
-const path = require('path');
-const {createServer} = require('http');
-const getPort = require('get-port');
-const finalhandler = require('finalhandler');
-const serveStatic = require('serve-static');
-const {create} = require('../src/core');
-const {read} = require('./helper');
-
-jest.setTimeout(20000);
+jest.useFakeTimers();
+jest.setTimeout(20_000);
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Set up static fileserver to mimic remote requests
 let server;
 let port;
 beforeAll(async () => {
-  const root = path.join(__dirname, 'fixtures');
+  const root = join(__dirname, 'fixtures');
   const serve = serveStatic(root, {index: ['index.html', 'index.htm']});
   port = await getPort();
 
