@@ -144,7 +144,7 @@ critical.generate({
     width: 1300,
     height: 900,
     inline: true
-}, (err, ({css, html, uncritical})) => {
+}, (err, {css, html, uncritical}) => {
     // You now have critical-path CSS as well as the modified HTML.
     // Works with and without target specified.
     ...
