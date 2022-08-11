@@ -1,6 +1,4 @@
-'use strict';
-
-const {mapAsync, reduceAsync, filterAsync, forEachAsync} = require('../src/array');
+import {mapAsync, reduceAsync, filterAsync, forEachAsync} from '../src/array.js';
 
 const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // eslint-disable-line no-promise-executor-return
 const waitRandom = () => waitFor(Math.floor(Math.random() * Math.floor(50)));

@@ -1,37 +1,41 @@
-'use strict';
+import path from 'node:path';
+import os from 'node:os';
+import url from 'node:url';
+import fs from 'node:fs';
+import {Buffer} from 'node:buffer';
+import process from 'node:process';
+import {promisify} from 'node:util';
+import dataUriToBuffer from 'data-uri-to-buffer';
+import {findUp} from 'find-up';
+import makeDir from 'make-dir';
+import {globby} from 'globby';
+import isGlob from 'is-glob';
+import postcss from 'postcss';
+import postcssUrl from 'postcss-url';
+import Vinyl from 'vinyl';
+import oust from 'oust';
+import got from 'got';
+import pico from 'picocolors';
+import parseCssUrls from 'css-url-parser';
+import {temporaryFile, temporaryDirectory} from 'tempy';
+import slash from 'slash';
+import debugBase from 'debug';
+import {mapAsync, filterAsync, reduceAsync, forEachAsync} from './array.js';
+import {FileNotFoundError} from './errors.js';
 
-const path = require('path');
-const os = require('os');
-const url = require('url');
-const fs = require('fs');
-const dataUriToBuffer = require('data-uri-to-buffer');
-const {promisify} = require('util');
-const findUp = require('find-up');
-const makeDir = require('make-dir');
-const globby = require('globby');
-const isGlob = require('is-glob');
-const postcss = require('postcss');
-const postcssUrl = require('postcss-url');
-const Vinyl = require('vinyl');
-const oust = require('oust');
-const got = require('got');
-const chalk = require('chalk');
-const parseCssUrls = require('css-url-parser');
-const tempy = require('tempy');
-const slash = require('slash');
-const debug = require('debug')('critical:file');
-const {mapAsync, filterAsync, reduceAsync, forEachAsync} = require('./array');
-const {FileNotFoundError} = require('./errors');
+const debug = debugBase('critical:file');
 
-const BASE_WARNING = `${chalk.yellow('Warning:')} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
+export const BASE_WARNING = `${pico.yellow(
+  'Warning:'
+)} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
 
-const warn = (text) => process.stderr.write(chalk.yellow(`${text}${os.EOL}`));
+const warn = (text) => process.stderr.write(pico.yellow(`${text}${os.EOL}`));
 
 const unlinkAsync = promisify(fs.unlink);
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
-async function outputFileAsync(file, data) {
+export async function outputFileAsync(file, data) {
   const dir = path.dirname(file);
 
   if (!fs.existsSync(dir)) {
@@ -46,7 +50,7 @@ async function outputFileAsync(file, data) {
  * @param {string} str Path
  * @returns {string} Normalized path
  */
-function normalizePath(str) {
+export function normalizePath(str) {
   return process.platform === 'win32' ? slash(str.replace(/^[a-zA-Z]:/, '')) : str;
 }
 
@@ -55,7 +59,7 @@ function normalizePath(str) {
  * @param {string} href Path
  * @returns {boolean} True if the path is remote
  */
-function isRemote(href) {
+export function isRemote(href) {
   return !Buffer.isBuffer(href) && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
@@ -64,7 +68,7 @@ function isRemote(href) {
  * @param {string} str The URL
  * @returns {URL|object} return new URL Object
  */
-function urlParse(str = '') {
+export function urlParse(str = '') {
   if (/^\w+:\/\//.test(str)) {
     return new URL(str);
   }
@@ -97,7 +101,7 @@ function getFileUri(file) {
  * @param {string} to Resolve to
  * @returns {string} The resolved url
  */
-function urlResolve(from = '', to = '') {
+export function urlResolve(from = '', to = '') {
   if (isRemote(from)) {
     const {href: base} = urlParse(from);
     const {href} = new URL(to, base);
@@ -143,7 +147,7 @@ function isVinyl(file) {
  * @param {object} options Critical options
  * @returns {Promise<boolean>} Resolves to true if the file exists
  */
-async function fileExists(href, options = {}) {
+export async function fileExists(href, options = {}) {
   if (isVinyl(href)) {
     return !href.isNull();
   }
@@ -192,7 +196,7 @@ const getCleanup = (files) => () =>
  * @param {string} part Path part to append
  * @returns {string} Joined path/url
  */
-function joinPath(base, part) {
+export function joinPath(base, part) {
   if (!part) {
     return base;
   }
@@ -211,7 +215,7 @@ function joinPath(base, part) {
  * @param {object} options Critical options
  * @returns {Promise<string>} Resolves to found path, rejects with FileNotFoundError otherwise
  */
-async function resolve(href, search = [], options = {}) {
+export async function resolve(href, search = [], options = {}) {
   let exists = await fileExists(href, options);
   if (exists) {
     return href;
@@ -308,7 +312,7 @@ async function rebaseAssets(css, from, to, method = 'rebase') {
  * @param  {String} pass Password.
  * @returns {String} Base64 encoded authentication token.
  */
-const token = (user, pass) => Buffer.from([user, pass].join(':')).toString('base64');
+export const token = (user, pass) => Buffer.from([user, pass].join(':')).toString('base64');
 
 /**
  * Get external resource. Try https and falls back to http
@@ -329,7 +333,7 @@ async function fetch(uri, options = {}, secure = true) {
     resourceUrl = urlResolve(`http${secure ? 's' : ''}://te.st`, uri);
   }
 
-  requestOptions.https = {rejectUnauthorized: true, ...(https || {})};
+  requestOptions.https = {rejectUnauthorized: true, ...https};
   if (user && pass) {
     headers.Authorization = `Basic ${token(user, pass)}`;
   }
@@ -433,7 +437,7 @@ function getStylesheetObjects(file) {
  * @param {Vinyl} file Vinyl file object (document)
  * @returns {[string]} Stylesheet urls from document source
  */
-function getStylesheetHrefs(file) {
+export function getStylesheetHrefs(file) {
   return getStylesheetObjects(file).map((object) => object.value);
 }
 
@@ -442,7 +446,7 @@ function getStylesheetHrefs(file) {
  * @param {Vinyl} file Vinyl file object (document)
  * @returns {[string]} Stylesheet urls from document source
  */
-function getStylesheetsMedia(file) {
+export function getStylesheetsMedia(file) {
   return getStylesheetObjects(file).map((object) => object.media);
 }
 
@@ -451,7 +455,7 @@ function getStylesheetsMedia(file) {
  * @param {Vinyl} file Vinyl file object (stylesheet)
  * @returns {[string]} Asset urls from stylesheet source
  */
-function getAssets(file) {
+export function getAssets(file) {
   if (!isVinyl(file)) {
     throw new Error('Parameter file needs to be a vinyl object');
   }
@@ -465,7 +469,7 @@ function getAssets(file) {
  * @param {object} options Critical options object
  * @returns {Promise<string>} Computed path
  */
-async function getDocumentPath(file, options = {}) {
+export async function getDocumentPath(file, options = {}) {
   let {base} = options;
 
   // Check remote
@@ -558,7 +562,7 @@ function getRemoteStylesheetPath(fileObj, documentObj, filename) {
  * @param {object} options Critical options object
  * @returns {Promise<string>} Computed path
  */
-function getStylesheetPath(document, file, options = {}) {
+export function getStylesheetPath(document, file, options = {}) {
   let {base} = options;
 
   // Check inline styles
@@ -640,7 +644,7 @@ function getStylesheetPath(document, file, options = {}) {
  * @param {boolean} strict Check for file existence
  * @returns {Promise<[string]>} List of asset paths
  */
-async function getAssetPaths(document, file, options = {}, strict = true) {
+export async function getAssetPaths(document, file, options = {}, strict = true) {
   const {base, rebase = {}, assetPaths = []} = options;
   const {history = [], url: docurl = '', urlObj} = document;
   const {from, to} = rebase;
@@ -724,7 +728,7 @@ async function getAssetPaths(document, file, options = {}, strict = true) {
  * @param {object} options Critical options
  * @returns {Promise<Vinyl>} The vinyl object
  */
-async function vinylize(src, options = {}) {
+export async function vinylize(src, options = {}) {
   const {filepath, html} = src;
   const {rebase = {}} = options;
   const file = new Vinyl();
@@ -768,7 +772,7 @@ async function vinylize(src, options = {}) {
  * @param {object} options Critical options
  * @returns {Promise<Vinyl>} Vinyl representation fo the stylesheet
  */
-async function getStylesheet(document, filepath, options = {}) {
+export async function getStylesheet(document, filepath, options = {}) {
   const {rebase = {}, css, strict, media} = options;
   const originalPath = filepath;
 
@@ -904,8 +908,8 @@ async function preparePenthouseData(document) {
       return match && match[0].length > res.length ? match[0] : res;
     }, './')
     .replace(/\.\.\//g, 'sub/');
-  const dir = path.join(tempy.directory(), subfolders);
-  const filename = path.basename(tempy.file({extension: 'html'}));
+  const dir = path.join(temporaryDirectory(), subfolders);
+  const filename = path.basename(temporaryFile({extension: 'html'}));
   const file = path.join(dir, filename);
 
   const htmlContent = document.contents.toString();
@@ -941,7 +945,7 @@ async function preparePenthouseData(document) {
  * @param {object} options Critical options
  * @returns {Promise<Vinyl>} Vinyl representation of HTML document
  */
-async function getDocument(filepath, options = {}) {
+export async function getDocument(filepath, options = {}) {
   const {rebase = {}, base} = options;
 
   if (!isVinyl(filepath) && !isRemote(filepath) && !fs.existsSync(filepath) && base) {
@@ -983,7 +987,7 @@ async function getDocument(filepath, options = {}) {
  * @param {object} options Critical options
  * @returns {Promise<*>} Vinyl representation of HTML document
  */
-async function getDocumentFromSource(html, options = {}) {
+export async function getDocumentFromSource(html, options = {}) {
   const {rebase = {}, base} = options;
   const document = await vinylize({html}, options);
 
@@ -1009,25 +1013,3 @@ async function getDocumentFromSource(html, options = {}) {
 
   return document;
 }
-
-module.exports = {
-  BASE_WARNING,
-  normalizePath,
-  isRemote,
-  token,
-  fileExists,
-  resolve,
-  urlParse,
-  urlResolve,
-  joinPath,
-  vinylize,
-  getStylesheetHrefs,
-  getAssets,
-  getAssetPaths,
-  getDocumentPath,
-  getStylesheetPath,
-  getStylesheet,
-  getDocument,
-  getDocumentFromSource,
-  outputFileAsync,
-};

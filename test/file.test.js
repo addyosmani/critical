@@ -1,18 +1,19 @@
 /* eslint-disable no-await-in-loop */
-
-'use strict';
-
-const {createServer} = require('http');
-const path = require('path');
-const {promisify} = require('util');
-const getPort = require('get-port');
-const fs = require('fs');
-const Vinyl = require('vinyl');
-const finalhandler = require('finalhandler');
-const serveStatic = require('serve-static');
-const {mapAsync} = require('../src/array');
-const {FileNotFoundError} = require('../src/errors');
-const {
+import {fileURLToPath} from 'node:url';
+import {createServer} from 'node:http';
+import {Buffer} from 'node:buffer';
+import process from 'node:process';
+import path from 'node:path';
+import {promisify} from 'node:util';
+import fs from 'node:fs';
+import {jest} from '@jest/globals';
+import getPort from 'get-port';
+import Vinyl from 'vinyl';
+import finalhandler from 'finalhandler';
+import serveStatic from 'serve-static';
+import {mapAsync} from '../src/array.js';
+import {FileNotFoundError} from '../src/errors.js';
+import {
   BASE_WARNING,
   isRemote,
   fileExists,
@@ -28,8 +29,10 @@ const {
   getDocument,
   getDocumentFromSource,
   getStylesheet,
-} = require('../src/file');
-const {read, strip} = require('./helper');
+} from '../src/file.js';
+import {read, strip} from './helper/index.js';
+
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 const readFileAsync = promisify(fs.readFile);
 
@@ -504,7 +507,7 @@ test('Get styles', async () => {
       const {filepath, expected, options = {}} = testdata;
       const file = await getStylesheet(document, filepath, {
         base: path.join(__dirname, 'fixtures'),
-        ...(options || {}),
+        ...options,
       });
       expect(file.contents.toString()).toMatch(expected[index]);
     }

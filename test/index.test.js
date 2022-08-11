@@ -1,20 +1,22 @@
-'use strict';
+import process from 'node:process';
+import path from 'node:path';
+import {promisify} from 'node:util';
+import {fileURLToPath} from 'node:url';
+import fs from 'node:fs';
+import {jest} from '@jest/globals';
+import vinylStream from 'vinyl-source-stream';
+import Vinyl from 'vinyl';
+import PluginError from 'plugin-error';
+import nn from 'normalize-newline';
+import streamAssert from 'stream-assert';
+import {temporaryDirectory} from 'tempy';
+import {ConfigError, FileNotFoundError, NoCssError} from '../src/errors.js';
+import {generate, stream} from '..';
+import {getVinyl, readAndRemove, read} from './helper/index.js';
 
-const path = require('path');
-const {promisify} = require('util');
-const fs = require('fs');
-const vinylStream = require('vinyl-source-stream');
-const Vinyl = require('vinyl');
-const PluginError = require('plugin-error');
-const nn = require('normalize-newline');
-const streamAssert = require('stream-assert');
-const tempy = require('tempy');
-const {ConfigError, FileNotFoundError, NoCssError} = require('../src/errors');
-const {getVinyl, readAndRemove, read} = require('./helper');
-const {generate, stream} = require('..');
+jest.setTimeout(20_000);
 
-jest.setTimeout(20000);
-
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const unlinkAsync = promisify(fs.unlink);
 
 let stderr;
@@ -84,7 +86,7 @@ test('Write all targets', async () => {
 });
 
 test('Write all targets relative to base', async () => {
-  const base = tempy.directory();
+  const base = temporaryDirectory();
   const getFile = (f) => path.join(base, f);
   const data = await generate({
     base,
@@ -113,8 +115,8 @@ test('Write all targets relative to base', async () => {
 });
 
 test('Write all targets respecting absolute paths', async () => {
-  const base = tempy.directory();
-  const fileBase = tempy.directory();
+  const base = temporaryDirectory();
+  const fileBase = temporaryDirectory();
   const getFile = (f) => path.join(fileBase, f);
   const data = await generate({
     base,

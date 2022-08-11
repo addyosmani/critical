@@ -1,14 +1,16 @@
-'use strict';
+import process from 'node:process';
+import {createServer} from 'node:http';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {jest} from '@jest/globals';
+import finalhandler from 'finalhandler';
+import getPort from 'get-port';
+import serveStatic from 'serve-static';
+import {create} from '../src/core.js';
+import {read} from './helper/index.js';
 
-const path = require('path');
-const {createServer} = require('http');
-const getPort = require('get-port');
-const finalhandler = require('finalhandler');
-const serveStatic = require('serve-static');
-const {create} = require('../src/core');
-const {read} = require('./helper');
-
-jest.setTimeout(20000);
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+jest.setTimeout(20_000);
 
 // Set up static fileserver to mimic remote requests
 let server;

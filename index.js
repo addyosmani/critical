@@ -1,14 +1,12 @@
-/* eslint-disable promise/prefer-await-to-then */
-
-'use strict';
-
-const path = require('path');
-const through2 = require('through2');
-const PluginError = require('plugin-error');
-const replaceExtension = require('replace-ext');
-const {create} = require('./src/core');
-const {outputFileAsync} = require('./src/file');
-const {getOptions} = require('./src/config');
+import path from 'node:path';
+import {Buffer} from 'node:buffer';
+import process from 'node:process';
+import through2 from 'through2';
+import PluginError from 'plugin-error';
+import replaceExtension from 'replace-ext';
+import {create} from './src/core.js';
+import {outputFileAsync} from './src/file.js';
+import {getOptions} from './src/config.js';
 
 /**
  * Critical path CSS generation
@@ -16,7 +14,7 @@ const {getOptions} = require('./src/config');
  * @param  {function} cb Callback
  * @return {Promise<object>} Result object with html, css & optional extracted original css
  */
-async function generate(params, cb) {
+export async function generate(params, cb) {
   try {
     const options = getOptions(params);
     const {target = {}, base = process.cwd()} = options;
@@ -58,7 +56,7 @@ async function generate(params, cb) {
  * @param {object} params Critical options
  * @returns {stream} Gulp stream
  */
-function stream(params) {
+export function stream(params) {
   // Return stream
   return through2.obj(function (file, enc, cb) {
     if (file.isNull()) {
@@ -87,8 +85,3 @@ function stream(params) {
 }
 
 generate.stream = stream;
-
-module.exports = {
-  generate,
-  stream,
-};

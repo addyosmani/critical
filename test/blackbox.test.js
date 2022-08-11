@@ -1,20 +1,23 @@
-'use strict';
+import path from 'node:path';
+import {createServer} from 'node:http';
+import {fileURLToPath} from 'node:url';
+import {Buffer} from 'node:buffer';
+import process from 'node:process';
+import fs from 'node:fs';
+import {jest} from '@jest/globals';
+import getPort from 'get-port';
+import Vinyl from 'vinyl';
+import nock from 'nock';
+import async from 'async';
+import finalhandler from 'finalhandler';
+import serveStatic from 'serve-static';
+import nn from 'normalize-newline';
+import {generate} from '..';
+import {read, readAndRemove} from './helper/index.js';
 
-const path = require('path');
-const {createServer} = require('http');
-const getPort = require('get-port');
-const Vinyl = require('vinyl');
-const nock = require('nock');
-const async = require('async');
-const fs = require('fs');
-const finalhandler = require('finalhandler');
-const serveStatic = require('serve-static');
-const nn = require('normalize-newline');
-const {read, readAndRemove} = require('./helper');
-const {generate} = require('..');
+jest.setTimeout(100_000);
 
-jest.setTimeout(100000);
-
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const FIXTURES_DIR = path.join(__dirname, '/fixtures/');
 
 function assertCritical(target, expected, done, skipTarget) {
@@ -944,7 +947,7 @@ describe('generate (remote)', () => {
         src: `http://localhost:${port}/generate-adaptive.html`,
         target,
         penthouse: {
-          timeout: 10000,
+          timeout: 10_000,
         },
         dimensions: [
           {

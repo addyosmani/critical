@@ -1,11 +1,10 @@
-'use strict';
+import process from 'node:process';
+import pico from 'picocolors';
+import {stripIndents, stripIndent} from 'common-tags';
 
-const chalk = require('chalk');
-const {stripIndents, stripIndent} = require('common-tags');
-
-class FileNotFoundError extends Error {
+export class FileNotFoundError extends Error {
   constructor(file = '', paths = [], ...params) {
-    const message = chalk.red(stripIndent`
+    const message = pico.red(stripIndent`
       Error: File not found: ${file}
              Current working directory: ${process.cwd()}
              Searched in: ${paths.length > 0 ? paths.join(', ') : '-'}
@@ -21,9 +20,9 @@ class FileNotFoundError extends Error {
   }
 }
 
-class NoCssError extends Error {
+export class NoCssError extends Error {
   constructor(...params) {
-    const message = chalk.red(stripIndents`
+    const message = pico.red(stripIndents`
       Error: No stylesheets found in document and no css was specified in the options
     `);
 
@@ -35,13 +34,12 @@ class NoCssError extends Error {
   }
 }
 
-class ConfigError extends Error {
+export class ConfigError extends Error {
   constructor(msg, ...params) {
-    const message = chalk.red(stripIndents`
+    const message = pico.red(stripIndents`
       ConfigError: ${msg}
     `);
-    // Const message = chalk.red(stripIndents`Error - ${msg}`);
-    //
+
     super([message, ...params]);
 
     if (Error.captureStackTrace) {
@@ -49,9 +47,3 @@ class ConfigError extends Error {
     }
   }
 }
-
-module.exports = {
-  FileNotFoundError,
-  NoCssError,
-  ConfigError,
-};
