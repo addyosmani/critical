@@ -40,8 +40,18 @@ jobs:
       - name: Run tests
         run: npm test
 
-      - name: Run Coveralls
+      - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
-        if: startsWith(matrix.os, 'ubuntu') && startsWith(matrix.node, '16')
         with:
-          github-token: '${{ secrets.GITHUB_TOKEN }}'
+          github-token: ${{ secrets.github_token }}
+          flag-name: run-${{ matrix.os }}-${{ matrix.node }}
+          parallel: true
+  finish:
+    needs: run
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
