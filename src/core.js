@@ -1,23 +1,25 @@
-'use strict';
+import {EOL} from 'node:os';
+import {Buffer} from 'node:buffer';
+import process from 'node:process';
+import path from 'node:path';
+import pico from 'picocolors';
+import CleanCSS from 'clean-css';
+import {invokeMap} from 'lodash-es';
+import pAll from 'p-all';
+import debugBase from 'debug';
+import postcss from 'postcss';
+import discard from 'postcss-discard';
+import imageInliner from 'postcss-image-inliner';
+import penthouse from 'penthouse';
+import {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} from 'penthouse/lib/core.js';
+import inlineCritical from 'inline-critical';
+import {removeDuplicateStyles} from 'inline-critical/src/css.js';
+import parseCssUrls from 'css-url-parser';
+import {reduceAsync} from './array.js';
+import {NoCssError} from './errors.js';
+import {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, normalizePath} from './file.js';
 
-const {EOL} = require('os');
-const path = require('path');
-const chalk = require('chalk');
-const CleanCSS = require('clean-css');
-const invokeMap = require('lodash/invokeMap');
-const pAll = require('p-all');
-const debug = require('debug')('critical:core');
-const postcss = require('postcss');
-const discard = require('postcss-discard');
-const imageInliner = require('postcss-image-inliner');
-const penthouse = require('penthouse');
-const {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} = require('penthouse/lib/core');
-const inlineCritical = require('inline-critical');
-const {removeDuplicateStyles} = require('inline-critical/src/css');
-const parseCssUrls = require('css-url-parser');
-const {reduceAsync} = require('./array');
-const {NoCssError} = require('./errors');
-const {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, normalizePath} = require('./file');
+const debug = debugBase('critical:core');
 
 /**
  * Returns a string of combined and deduped css rules.
@@ -60,7 +62,7 @@ function callPenthouse(document, options) {
   const config = {...params, cssString, url};
   // Dimensions need to be sorted from small to wide. Otherwise the order gets corrupted
   const sizes = Array.isArray(dimensions)
-    ? dimensions.slice().sort((a, b) => (a.width || 0) - (b.width || 0))
+    ? [...dimensions].sort((a, b) => (a.width || 0) - (b.width || 0))
     : [{width, height}];
 
   if (userAgent) {
@@ -90,7 +92,7 @@ function callPenthouse(document, options) {
  * @accepts src, base, width, height, dimensions, dest
  * @return {Promise<object>} Object with critical css & html
  */
-async function create(options = {}) {
+export async function create(options = {}) {
   const cleanCSS = new CleanCSS({
     rebase: false,
   });
@@ -132,7 +134,7 @@ async function create(options = {}) {
     criticalCSS = combineCss(criticalStyles);
   } catch (error) {
     if (error.message === PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE) {
-      process.stderr.write(chalk.yellow(PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE) + EOL);
+      process.stderr.write(pico.yellow(PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE) + EOL);
       return {
         css: '',
         html: document.contents.toString(),
@@ -231,7 +233,3 @@ async function create(options = {}) {
   // Cleanup output
   return result;
 }
-
-module.exports = {
-  create,
-};

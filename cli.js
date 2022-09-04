@@ -1,19 +1,14 @@
 #!/usr/bin/env node
-
-'use strict';
-
-const os = require('os');
-const chalk = require('chalk');
-const meow = require('meow');
-const groupArgs = require('group-args');
-const indentString = require('indent-string');
-const stdin = require('get-stdin');
-const reduce = require('lodash/reduce');
-const isString = require('lodash/isString');
-const isObject = require('lodash/isObject');
-const escapeRegExp = require('lodash/escapeRegExp');
-const {validate} = require('./src/config');
-const critical = require('.');
+import os from 'node:os';
+import process from 'node:process';
+import stdin from 'get-stdin';
+import groupArgs from 'group-args';
+import indentString from 'indent-string';
+import {escapeRegExp, isObject, isString, reduce} from 'lodash-es';
+import meow from 'meow';
+import pico from 'picocolors';
+import {validate} from './src/config.js';
+import {generate} from './index.js';
 
 const help = `
 Usage: critical <input> [<option>]
@@ -40,6 +35,7 @@ Options:
 `;
 
 const meowOpts = {
+  importMeta: import.meta,
   flags: {
     base: {
       type: 'string',
@@ -181,7 +177,7 @@ const normalizedFlags = reduce(
 );
 
 function showError(err) {
-  process.stderr.write(indentString(chalk.red('Error: ') + err.message || err, 3));
+  process.stderr.write(indentString(pico.red('Error: ') + err.message || err, 3));
   process.stderr.write(os.EOL);
   process.stderr.write(indentString(help, 3));
   process.exit(1);
@@ -212,9 +208,9 @@ function run(data) {
   }
 
   if (Array.isArray(css)) {
-    opts.css = [...css, ...additionalCss].filter((file) => file);
+    opts.css = [...css, ...additionalCss].filter(Boolean);
   } else if (css || additionalCss.length > 0) {
-    opts.css = [css, ...additionalCss].filter((file) => file);
+    opts.css = [css, ...additionalCss].filter(Boolean);
   }
 
   if (data) {
@@ -224,7 +220,7 @@ function run(data) {
   }
 
   try {
-    critical.generate(opts, (error, val) => {
+    generate(opts, (error, val) => {
       if (error) {
         showError(error);
       } else if (opts.inline) {
@@ -244,5 +240,5 @@ if (cli.input[0]) {
   run();
 } else {
   // Get stdin
-  stdin().then(run); /* eslint-disable-line promise/prefer-await-to-then */
+  stdin().then(run);
 }

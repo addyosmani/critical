@@ -1,7 +1,5 @@
-'use strict';
-
-const {ConfigError} = require('../src/errors');
-const {getOptions, DEFAULT} = require('../src/config');
+import {ConfigError} from '../src/errors.js';
+import {getOptions, DEFAULT} from '../src/config.js';
 
 test('Throws ConfigError on invalid config', () => {
   expect(() => {

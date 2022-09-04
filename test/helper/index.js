@@ -1,10 +1,12 @@
-'use strict';
+import {Buffer} from 'node:buffer';
+import fs from 'node:fs';
+import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import array from 'stream-array';
+import Vinyl from 'vinyl';
+import nn from 'normalize-newline';
 
-const path = require('path');
-const fs = require('fs');
-const array = require('stream-array');
-const Vinyl = require('vinyl');
-const nn = require('normalize-newline');
+export const __dirname = fileURLToPath(new URL('.', import.meta.url));
 
 function getFile(file) {
   const testBase = path.join(__dirname, '..');
@@ -15,7 +17,7 @@ function getFile(file) {
   return file;
 }
 
-function readAndRemove(file) {
+export function readAndRemove(file) {
   const fp = getFile(file);
   const content = read(fp);
 
@@ -24,13 +26,13 @@ function readAndRemove(file) {
   return content;
 }
 
-function read(file) {
+export function read(file) {
   const content = fs.readFileSync(getFile(file), 'utf8');
 
   return nn(content);
 }
 
-function getVinyl(...args) {
+export function getVinyl(...args) {
   function create(filepath) {
     if (filepath) {
       const file = path.join(__dirname, '../fixtures', filepath);
@@ -48,13 +50,6 @@ function getVinyl(...args) {
   return array(args.map((value) => create(value)));
 }
 
-function strip(string) {
+export function strip(string) {
   return nn(string.replace(/[\r\n]+/gm, ' ').replace(/\s+/gm, ''));
 }
-
-module.exports = {
-  getVinyl,
-  read,
-  strip,
-  readAndRemove,
-};
