@@ -1,4 +1,4 @@
-[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![dependencies Status][depstat-image]][depstat-url] [![devDependencies Status][devdepstat-image]][devdepstat-url] [![Coverage][coveralls-image]][coveralls-url]
+[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![Coverage][coveralls-image]][coveralls-url]
 
 # critical
 
@@ -397,9 +397,5 @@ This module is brought to you and maintained by the following people:
 [npm-image]: https://img.shields.io/npm/v/critical.svg
 [ci-url]: https://github.com/addyosmani/critical/actions?workflow=Tests
 [ci-image]: https://github.com/addyosmani/critical/workflows/Tests/badge.svg
-[depstat-url]: https://david-dm.org/addyosmani/critical
-[depstat-image]: https://img.shields.io/david/addyosmani/critical.svg
-[devdepstat-url]: https://david-dm.org/addyosmani/critical?type=dev
-[devdepstat-image]: https://img.shields.io/david/dev/addyosmani/critical.svg
 [coveralls-url]: https://coveralls.io/github/addyosmani/critical?branch=master
 [coveralls-image]: https://img.shields.io/coveralls/github/addyosmani/critical/master.svg
