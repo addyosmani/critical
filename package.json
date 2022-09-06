@@ -7,7 +7,7 @@
   "repository": "addyosmani/critical",
   "type": "module",
   "scripts": {
-    "jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage --runInBand",
+    "jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "xo": "xo",
     "test": "npm run xo && npm run jest"
   },
@@ -106,6 +106,16 @@
     "transform": {},
     "roots": [
       ""
+    ],
+    "collectCoverage": true,
+    "coverageReporters": [
+      [
+        "lcov",
+        {
+          "projectRoot": "./"
+        }
+      ],
+      "text-summary"
     ]
   }
 }

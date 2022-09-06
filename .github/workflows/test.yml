@@ -55,8 +55,6 @@ jobs:
     steps:
     - name: Coveralls Finished
       uses: coverallsapp/github-action@master
-      env:
-        NODE_COVERALLS_DEBUG: 1
       with:
         github-token: ${{ secrets.github_token }}
         parallel-finished: true
