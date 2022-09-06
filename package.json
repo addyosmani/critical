@@ -16,6 +16,7 @@
     "index.js",
     "src"
   ],
+  "exports": "./index.js",
   "bin": "cli.js",
   "keywords": [
     "critical",
