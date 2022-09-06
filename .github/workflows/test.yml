@@ -41,7 +41,7 @@ jobs:
         run: npm test
 
       - name: Patch lcov.info
-        run: sed -i -- 's/SF:..//SF:.\//g' ./coverage/lcov.info
+        run: sed -i -- 's/SF:..\//SF:.\//g' ./coverage/lcov.info
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
