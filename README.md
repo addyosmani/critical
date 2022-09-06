@@ -29,13 +29,13 @@ npm i -D critical
 Include:
 
 ```js
-const critical = require('critical');
+import {generate} from 'critical';
 ```
 
 Full blown example with available options:
 
 ```js
-critical.generate({
+generate({
   // Inline the generated critical-path CSS
   // - true generates HTML
   // - false generates CSS
@@ -83,7 +83,7 @@ critical.generate({
 Basic usage:
 
 ```js
-critical.generate({
+generate({
   inline: true,
   base: 'test/',
   src: 'index.html',
@@ -98,7 +98,7 @@ critical.generate({
 Basic usage:
 
 ```js
-critical.generate({
+generate({
   base: 'test/',
   src: 'index.html',
   target: 'styles/main.css',
@@ -110,7 +110,7 @@ critical.generate({
 Generate and minify critical-path CSS:
 
 ```js
-critical.generate({
+generate({
   base: 'test/',
   src: 'index.html',
   target: 'styles/styles.min.css',
@@ -122,7 +122,7 @@ critical.generate({
 Generate, minify and inline critical-path CSS:
 
 ```js
-critical.generate({
+generate({
   inline: true,
   base: 'test/',
   src: 'index.html',
@@ -138,7 +138,7 @@ critical.generate({
 Generate and return output via callback:
 
 ```js
-critical.generate({
+generate({
     base: 'test/',
     src: 'index.html',
     width: 1300,
@@ -154,7 +154,7 @@ critical.generate({
 Generate and return output via promise:
 
 ```js
-critical.generate({
+generate({
     base: 'test/',
     src: 'index.html',
     width: 1300,
@@ -171,7 +171,7 @@ critical.generate({
 Generate and return output via async function:
 
 ```js
-const {css, html, uncritical} = await critical.generate({
+const {css, html, uncritical} = await generate({
   base: 'test/',
   src: 'index.html',
   width: 1300,
@@ -185,7 +185,7 @@ When your site is adaptive and you want to deliver critical CSS for multiple scr
 _note:_ (your final output will be minified as to eliminate duplicate rule inclusion)
 
 ```js
-critical.generate({
+generate({
   base: 'test/',
   src: 'index.html',
   target: {
@@ -209,7 +209,7 @@ critical.generate({
 This is a useful option when you e.g. want to defer loading of webfonts or background images.
 
 ```js
-critical.generate({
+generate({
   base: 'test/',
   src: 'index.html',
   target: {
@@ -225,7 +225,7 @@ critical.generate({
 ### Generate critical-path CSS and specify asset rebase behaviour
 
 ```js
-critical.generate({
+generate({
   base: 'test/',
   src: 'index.html',
   target: {
@@ -239,7 +239,7 @@ critical.generate({
 ```
 
 ```js
-critical.generate({
+generate({
   base: 'test/',
   src: 'index.html',
   target: {
@@ -302,9 +302,9 @@ critical test/fixture/index.html --base test/fixture > critical.css
 ## Gulp
 
 ```js
-const gulp = require('gulp');
-const log = require('fancy-log');
-const critical = require('critical').stream;
+import gulp from 'gulp';
+import log from 'fancy-log';
+import {stream as critical} from 'critical';
 
 // Generate & Inline Critical-path CSS
 gulp.task('critical', () => {
