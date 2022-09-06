@@ -104,18 +104,6 @@
   },
   "jest": {
     "transform": {},
-    "roots": [
-      ""
-    ],
-    "collectCoverage": true,
-    "coverageReporters": [
-      [
-        "lcov",
-        {
-          "projectRoot": "./"
-        }
-      ],
-      "text-summary"
-    ]
+    "collectCoverage": true
   }
 }

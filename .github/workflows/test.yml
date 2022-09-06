@@ -40,8 +40,13 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Patch lcov.info
+        run: sed -i -- 's/SF:/SF:.\//g' ./coverage/lcov.info
+
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@master
+        env:
+          NODE_COVERALLS_DEBUG: 1
         with:
           github-token: ${{ secrets.github_token }}
           flag-name: run-${{ matrix.os }}-${{ matrix.node }}
