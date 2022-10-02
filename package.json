@@ -39,7 +39,7 @@
     "got": "^12.5.1",
     "group-args": "^0.1.0",
     "indent-string": "^5.0.0",
-    "inline-critical": "^9.0.1",
+    "inline-critical": "^10.0.1",
     "is-glob": "^4.0.3",
     "joi": "^17.6.2",
     "lodash": "^4.17.21",
