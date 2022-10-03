@@ -16,6 +16,7 @@ import {FileNotFoundError} from '../src/errors.js';
 import {
   BASE_WARNING,
   isRemote,
+  checkCssOption,
   fileExists,
   joinPath,
   urlParse,
@@ -59,6 +60,15 @@ beforeEach(() => {
 
 afterEach(() => {
   stderr.mockRestore();
+});
+
+test('checkCssOption', () => {
+  expect(checkCssOption(undefined)).toEqual(false);
+  expect(checkCssOption('')).toEqual(false);
+  expect(checkCssOption(false)).toEqual(false);
+  expect(checkCssOption([])).toEqual(false);
+  expect(checkCssOption(['abc'])).toEqual(true);
+  expect(checkCssOption('abc')).toEqual(true);
 });
 
 test('Normalize paths', () => {

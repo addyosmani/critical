@@ -35,6 +35,8 @@ const unlinkAsync = promisify(fs.unlink);
 const readFileAsync = promisify(fs.readFile);
 const writeFileAsync = promisify(fs.writeFile);
 
+export const checkCssOption = (css) => Boolean((!Array.isArray(css) && css) || (Array.isArray(css) && css.length > 0));
+
 export async function outputFileAsync(file, data) {
   const dir = path.dirname(file);
 
@@ -793,7 +795,7 @@ export async function getStylesheet(document, filepath, options = {}) {
 
   // Create absolute file paths for local files passed via css option
   // to prevent document relative stylesheet paths if they are not relative specified
-  if (!Buffer.isBuffer(originalPath) && !isVinyl(filepath) && !isRemote(filepath) && css) {
+  if (!Buffer.isBuffer(originalPath) && !isVinyl(filepath) && !isRemote(filepath) && checkCssOption(css)) {
     filepath = path.resolve(filepath);
   }
 
@@ -803,7 +805,7 @@ export async function getStylesheet(document, filepath, options = {}) {
   }
 
   // Restore original path for local files referenced from document and not from options
-  if (!Buffer.isBuffer(originalPath) && !isRemote(originalPath) && !css) {
+  if (!Buffer.isBuffer(originalPath) && !isRemote(originalPath) && !checkCssOption(css)) {
     file.path = originalPath;
   }
 
@@ -868,7 +870,7 @@ async function getCss(document, options = {}) {
   const {css} = options;
   let stylesheets = [];
 
-  if (css) {
+  if (checkCssOption(css)) {
     const files = await glob(css, options);
     stylesheets = await mapAsync(files, (file) => getStylesheet(document, file, options));
     debug('(getCss) css option set', files, stylesheets);
