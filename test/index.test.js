@@ -14,7 +14,7 @@ import {ConfigError, FileNotFoundError, NoCssError} from '../src/errors.js';
 import {generate, stream} from '..';
 import {getVinyl, readAndRemove, read} from './helper/index.js';
 
-jest.setTimeout(20_000);
+jest.setTimeout(100_000);
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const unlinkAsync = promisify(fs.unlink);
