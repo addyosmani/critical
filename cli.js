@@ -239,6 +239,6 @@ function run(data) {
 if (cli.input[0]) {
   run();
 } else {
-  // Get stdin
-  stdin().then(run);
+  const data = await stdin();
+  run(data);
 }
