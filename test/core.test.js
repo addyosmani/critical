@@ -10,7 +10,7 @@ import {create} from '../src/core.js';
 import {read} from './helper/index.js';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
-jest.setTimeout(20_000);
+jest.setTimeout(100_000);
 
 // Set up static fileserver to mimic remote requests
 let server;
