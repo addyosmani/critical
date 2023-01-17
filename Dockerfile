@@ -24,6 +24,7 @@ ARG PACKAGES="\
   libgtk-3-0\
   "
 RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+# hadolint ignore=DL3008
 RUN --mount=type=cache,id=build-apt-cache,sharing=locked,target=/var/cache/apt \
     --mount=type=cache,id=build-apt-lib,sharing=locked,target=/var/lib/apt \
     apt-get update -qq \
