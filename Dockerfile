@@ -36,4 +36,4 @@ RUN --mount=type=cache,id=build-npm-cache,sharing=locked,target=/root/.npm \
 
 WORKDIR /site
 
-CMD ["npm", "critical", "--help"]
+CMD ["critical", "--help"]
