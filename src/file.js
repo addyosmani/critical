@@ -315,6 +315,7 @@ async function rebaseAssets(css, from, to, options = {}) {
       if (inlined) {
         error.message = error.message.replace(from, 'Inlined stylesheet');
       }
+
       throw error;
     }
 
