@@ -262,11 +262,15 @@ function glob(pattern, {base} = {}) {
  * @param {Buffer|string} css Stylesheet
  * @param {string} from Rebase from url
  * @param {string} to Rebase to url
- * @param {string|function} method Rebase method. See https://github.com/postcss/postcss-url#options-combinations
+ * @param {opject} options
+ *    method: {string|function} method Rebase method. See https://github.com/postcss/postcss-url#options-combinations
+ *    strict: fail on invalid css
+ *    inlined: boolean flag indicating inlined css
  * @param {boolean} strict fail on invalid css
  * @returns {Buffer} Rebased css
  */
-async function rebaseAssets(css, from, to, method = 'rebase', strict = false) {
+async function rebaseAssets(css, from, to, options = {}) {
+  const {method = 'rebase', strict = false, inlined = false} = options;
   let rebased = css.toString();
 
   debug('Rebase assets', {from, to});
@@ -308,6 +312,9 @@ async function rebaseAssets(css, from, to, method = 'rebase', strict = false) {
     }
   } catch (error) {
     if (strict) {
+      if (inlined) {
+        error.message = error.message.replace(from, 'Inlined stylesheet');
+      }
       throw error;
     }
 
@@ -845,44 +852,50 @@ export async function getStylesheet(document, filepath, options = {}) {
   }
 
   if (rebase.from && rebase.to) {
-    file.contents = await rebaseAssets(file.contents, rebase.from, rebase.to, 'rebase', options.strict);
+    file.contents = await rebaseAssets(file.contents, rebase.from, rebase.to, {
+      method: 'rebase',
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
   } else if (typeof rebase === 'function') {
-    file.contents = await rebaseAssets(file.contents, stylepath, document.virtualPath, rebase, options.strict);
+    file.contents = await rebaseAssets(file.contents, stylepath, document.virtualPath, {
+      method: rebase,
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
     // Next rebase to the stylesheet url
   } else if (isRemote(rebase.to || stylepath)) {
     const from = rebase.from || stylepath;
     const to = rebase.to || stylepath;
     const method = (asset) => (isRemote(asset.originUrl) ? asset.originUrl : urlResolve(to, asset.originUrl));
-    file.contents = await rebaseAssets(file.contents, from, to, method, options.strict);
+    file.contents = await rebaseAssets(file.contents, from, to, {
+      method,
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
 
     // Use relative path to document (local)
   } else if (document.virtualPath) {
-    file.contents = await rebaseAssets(
-      file.contents,
-      rebase.from || stylepath,
-      rebase.to || document.virtualPath,
-      'rebase',
-      options.strict
-    );
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || document.virtualPath, {
+      method: 'rebase',
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
   } else if (document.remote) {
     const {pathname} = document.urlObj;
-    file.contents = await rebaseAssets(
-      file.contents,
-      rebase.from || stylepath,
-      rebase.to || pathname,
-      'rebase',
-      options.strict
-    );
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || pathname, {
+      method: 'rebase',
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
 
     // Make images absolute if we have an absolute positioned stylesheet
   } else if (isAbsolute(stylepath)) {
-    file.contents = await rebaseAssets(
-      file.contents,
-      rebase.from || stylepath,
-      rebase.to || '/index.html',
-      (asset) => normalizePath(asset.absolutePath),
-      options.strict
-    );
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', {
+      method: (asset) => normalizePath(asset.absolutePath),
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
   } else {
     warn(`Not rebasing assets for ${originalPath}. Use "rebase" option`);
   }
