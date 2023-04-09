@@ -919,6 +919,38 @@ describe('generate (local)', () => {
       assertCritical(target, expected, done)
     );
   });
+
+  test('Ignore inlined stylesheets (disabled)', (done) => {
+    const inlineStyles = '.test-selector{color:#00f}';
+    const target = path.join(__dirname, '.ignore-inlined-styles.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'ignoreInlinedStyles.html',
+        target,
+        ignoreInlinedStyles: false,
+        inline: false,
+        concurrency: 1,
+      },
+      assertCritical(target, inlineStyles, done)
+    );
+  });
+
+  test('Ignore inlined stylesheets (enabled)', (done) => {
+    const target = path.join(__dirname, '.ignore-inlined-styles.css');
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'ignoreInlinedStyles.html',
+        target,
+        ignoreInlinedStyles: true,
+        inline: false,
+        concurrency: 1,
+      },
+      assertCritical(target, '', done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
