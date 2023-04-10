@@ -13,12 +13,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [14.x, 16.x, 18.x]
+        node: [14, 16, 18]
         os: [ubuntu-latest, windows-latest]
 
     steps:
       - name: Clone repository
         uses: actions/checkout@v3
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
