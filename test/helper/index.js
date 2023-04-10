@@ -17,6 +17,11 @@ function getFile(file) {
   return file;
 }
 
+export function getPkg() {
+  const content = fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8');
+  return JSON.parse(content);
+}
+
 export function readAndRemove(file) {
   const fp = getFile(file);
   const content = read(fp);
