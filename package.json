@@ -46,7 +46,7 @@
     "lodash-es": "^4.17.21",
     "make-dir": "^3.1.0",
     "meow": "^11.0.0",
-    "oust": "^2.0.2",
+    "oust": "^2.0.3",
     "p-all": "^4.0.0",
     "penthouse": "^2.3.3",
     "picocolors": "^1.0.0",
@@ -74,7 +74,7 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.53.1"
+    "xo": "^0.54.0"
   },
   "xo": {
     "space": 2,
