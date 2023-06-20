@@ -25,13 +25,15 @@ Options:
   --dimensions            Pass dimensions e.g. 1300x900
   --ignore                RegExp, @type or selector to ignore
   --ignore-[OPTION]       Pass options to postcss-discard. See https://goo.gl/HGo5YV
+  --ignoreInlinedStyles   Ignore inlined stylesheets
   --include               RegExp, @type or selector to include
   --include-[OPTION]      Pass options to inline-critical. See https://goo.gl/w6SHJM
-  --assetPaths            Directories/Urls where the inliner should start looking for assets.
+  --assetPaths            Directories/Urls where the inliner should start looking for assets
   --user                  RFC2617 basic authorization user
   --pass                  RFC2617 basic authorization password
   --penthouse-[OPTION]    Pass options to penthouse. See https://goo.gl/PQ5HLL
   --ua, --userAgent       User agent to use when fetching remote src
+  --strict                Throw an error on css parsing errors or if no css is found
 `;
 
 const meowOpts = {
@@ -64,11 +66,19 @@ const meowOpts = {
     inlineImages: {
       type: 'boolean',
     },
+    ignoreInlinedStyles: {
+      type: 'boolean',
+      default: false,
+    },
     ignore: {
       type: 'string',
     },
     user: {
       type: 'string',
+    },
+    strict: {
+      type: 'boolean',
+      default: false,
     },
     pass: {
       type: 'string',

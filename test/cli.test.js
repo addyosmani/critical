@@ -1,5 +1,5 @@
 import {exec, execFile} from 'node:child_process';
-import {createRequire} from 'node:module';
+// import {createRequire} from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
 import {fileURLToPath} from 'node:url';
@@ -7,24 +7,24 @@ import {promisify} from 'node:util';
 import {globby} from 'globby';
 import {jest} from '@jest/globals';
 import nn from 'normalize-newline';
-import {read} from './helper/index.js';
+import {read, getPkg} from './helper/index.js';
+
+jest.setTimeout(100_000);
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+// const require = createRequire(import.meta.url);
+
+const {version, bin} = getPkg();
 
 jest.unstable_mockModule('../index.js', () => ({
   generate: jest.fn(),
   stream: jest.fn(),
 }));
 
-const require = createRequire(import.meta.url);
-const {version, bin} = require('../package.json');
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
 const criticalBin = path.join(__dirname, '..', bin);
 
 process.chdir(path.resolve(__dirname));
 process.setMaxListeners(0);
-
-jest.setTimeout(100_000);
 
 const pExec = promisify(exec);
 const pExecFile = promisify(execFile);
