@@ -1,8 +1,16 @@
+<<<<<<< HEAD
 import process from 'node:process';
 import path from 'node:path';
 import {promisify} from 'node:util';
 import {fileURLToPath} from 'node:url';
 import fs from 'node:fs';
+=======
+import {join, extname, dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import process from 'node:process';
+import {promisify} from 'node:util';
+import {unlink, existsSync, createReadStream} from 'node:fs';
+>>>>>>> origin/feature/bump
 import {jest} from '@jest/globals';
 import vinylStream from 'vinyl-source-stream';
 import Vinyl from 'vinyl';
@@ -11,6 +19,7 @@ import nn from 'normalize-newline';
 import streamAssert from 'stream-assert';
 import {temporaryDirectory} from 'tempy';
 import {ConfigError, FileNotFoundError, NoCssError} from '../src/errors.js';
+<<<<<<< HEAD
 import {generate, stream} from '..';
 import {getVinyl, readAndRemove, read} from './helper/index.js';
 
@@ -18,6 +27,18 @@ jest.setTimeout(100_000);
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 const unlinkAsync = promisify(fs.unlink);
+=======
+import {generate, stream} from '../index.js';
+import {getVinyl, readAndRemove, read} from './helper/index.js';
+
+jest.useFakeTimers();
+jest.setTimeout(20_000);
+
+const {length, nth, end} = streamAssert;
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+const unlinkAsync = promisify(unlink);
+>>>>>>> origin/feature/bump
 
 let stderr;
 beforeEach(() => {
@@ -38,7 +59,7 @@ test('Handle errors with passed callback method', (done) => {
 });
 
 test('Call callback function with object containing html, css and uncritical props', (done) => {
-  generate({src: path.join(__dirname, 'fixtures/generate-default.html')}, (error, data) => {
+  generate({src: join(__dirname, 'fixtures/generate-default.html')}, (error, data) => {
     expect(error).toBeFalsy();
     expect(data).toHaveProperty('css');
     expect(data).toHaveProperty('html');
@@ -48,20 +69,20 @@ test('Call callback function with object containing html, css and uncritical pro
 });
 
 test('Write css target', async () => {
-  const data = await generate({src: path.join(__dirname, 'fixtures/generate-default.html'), target: '.test.css'});
+  const data = await generate({src: join(__dirname, 'fixtures/generate-default.html'), target: '.test.css'});
   expect(data).toHaveProperty('css');
   expect(data).toHaveProperty('html');
-  expect(fs.existsSync('.test.css')).toBeTruthy();
+  expect(existsSync('.test.css')).toBeTruthy();
 
   const content = readAndRemove('.test.css');
   expect(content).toBe(data.css);
 });
 
 test('Write html target', async () => {
-  const data = await generate({src: path.join(__dirname, 'fixtures/generate-default.html'), target: '.test.html'});
+  const data = await generate({src: join(__dirname, 'fixtures/generate-default.html'), target: '.test.html'});
   expect(data).toHaveProperty('css');
   expect(data).toHaveProperty('html');
-  expect(fs.existsSync('.test.html')).toBeTruthy();
+  expect(existsSync('.test.html')).toBeTruthy();
 
   const content = readAndRemove('.test.html');
   expect(content).toBe(data.html);
@@ -69,14 +90,14 @@ test('Write html target', async () => {
 
 test('Write all targets', async () => {
   const data = await generate({
-    src: path.join(__dirname, 'fixtures/generate-default.html'),
+    src: join(__dirname, 'fixtures/generate-default.html'),
     target: {html: '.test.html', css: '.test.css', uncritical: '.uncritical.css'},
   });
   expect(data).toHaveProperty('css');
   expect(data).toHaveProperty('html');
-  expect(fs.existsSync('.test.css')).toBeTruthy();
-  expect(fs.existsSync('.uncritical.css')).toBeTruthy();
-  expect(fs.existsSync('.test.html')).toBeTruthy();
+  expect(existsSync('.test.css')).toBeTruthy();
+  expect(existsSync('.uncritical.css')).toBeTruthy();
+  expect(existsSync('.test.html')).toBeTruthy();
 
   const html = readAndRemove('.test.html');
   const css = readAndRemove('.test.css');
@@ -87,18 +108,22 @@ test('Write all targets', async () => {
 
 test('Write all targets relative to base', async () => {
   const base = temporaryDirectory();
+<<<<<<< HEAD
   const getFile = (f) => path.join(base, f);
+=======
+  const getFile = (f) => join(base, f);
+>>>>>>> origin/feature/bump
   const data = await generate({
     base,
-    src: path.join(__dirname, 'fixtures/generate-default.html'),
+    src: join(__dirname, 'fixtures/generate-default.html'),
     target: {html: '.test.html', css: '.test.css', uncritical: '.uncritical.css'},
   });
   expect(data).toHaveProperty('css');
   expect(data).toHaveProperty('html');
   expect(data).toHaveProperty('uncritical');
-  expect(fs.existsSync(getFile('.test.css'))).toBeTruthy();
-  expect(fs.existsSync(getFile('.uncritical.css'))).toBeTruthy();
-  expect(fs.existsSync(getFile('.test.html'))).toBeTruthy();
+  expect(existsSync(getFile('.test.css'))).toBeTruthy();
+  expect(existsSync(getFile('.uncritical.css'))).toBeTruthy();
+  expect(existsSync(getFile('.test.html'))).toBeTruthy();
 
   const html = readAndRemove(getFile('.test.html'));
   const css = readAndRemove(getFile('.test.css'));
@@ -117,18 +142,22 @@ test('Write all targets relative to base', async () => {
 test('Write all targets respecting absolute paths', async () => {
   const base = temporaryDirectory();
   const fileBase = temporaryDirectory();
+<<<<<<< HEAD
   const getFile = (f) => path.join(fileBase, f);
+=======
+  const getFile = (f) => join(fileBase, f);
+>>>>>>> origin/feature/bump
   const data = await generate({
     base,
-    src: path.join(__dirname, 'fixtures/generate-default.html'),
+    src: join(__dirname, 'fixtures/generate-default.html'),
     target: {html: getFile('.test.html'), css: getFile('.test.css'), uncritical: getFile('.uncritical.css')},
   });
   expect(data).toHaveProperty('css');
   expect(data).toHaveProperty('html');
   expect(data).toHaveProperty('uncritical');
-  expect(fs.existsSync(getFile('.test.css'))).toBeTruthy();
-  expect(fs.existsSync(getFile('.uncritical.css'))).toBeTruthy();
-  expect(fs.existsSync(getFile('.test.html'))).toBeTruthy();
+  expect(existsSync(getFile('.test.css'))).toBeTruthy();
+  expect(existsSync(getFile('.uncritical.css'))).toBeTruthy();
+  expect(existsSync(getFile('.test.html'))).toBeTruthy();
 
   const html = readAndRemove(getFile('.test.html'));
   const css = readAndRemove(getFile('.test.css'));
@@ -154,15 +183,15 @@ test('Throws FileNotFound error on missing file', () => {
 });
 
 test('Throws NoCssError error on empty styles in strict mode', () => {
-  expect(generate({src: path.join(__dirname, 'fixtures/error.html'), strict: true})).rejects.toThrow(NoCssError);
+  expect(generate({src: join(__dirname, 'fixtures/error.html'), strict: true})).rejects.toThrow(NoCssError);
 });
 
 test('Emit error on streamed file', (done) => {
-  const critical = stream({base: path.join(__dirname, 'fixtures')});
-  const fakeFilePath = path.join(__dirname, 'fixtures', 'generate-default.html');
+  const critical = stream({base: join(__dirname, 'fixtures')});
+  const fakeFilePath = join(__dirname, 'fixtures', 'generate-default.html');
 
   expect.hasAssertions();
-  fs.createReadStream(fakeFilePath)
+  createReadStream(fakeFilePath)
     .pipe(vinylStream())
     .pipe(critical)
     .on('data', () => done.fail(new Error('Should not emit data')))
@@ -186,7 +215,7 @@ test('Throws PluginError on critical.stream error', (done) => {
 });
 
 test('Support vinyl buffer streams and return critical css vinyl', (done) => {
-  const critical = stream({base: path.join(__dirname, 'fixtures')});
+  const critical = stream({base: join(__dirname, 'fixtures')});
 
   getVinyl('generate-default.html')
     .pipe(critical)
@@ -203,7 +232,7 @@ test('Support vinyl buffer streams and return critical css vinyl', (done) => {
 });
 
 test('Support vinyl buffer streams and returns html vinyl with inlined css', (done) => {
-  const critical = stream({base: path.join(__dirname, 'fixtures'), inline: true});
+  const critical = stream({base: join(__dirname, 'fixtures'), inline: true});
 
   getVinyl('generate-default.html')
     .pipe(critical)
@@ -221,7 +250,7 @@ test('Support vinyl buffer streams and returns html vinyl with inlined css', (do
 });
 
 test('Return empty vinyl on empty vinyl', (done) => {
-  const critical = stream({base: path.join(__dirname, 'fixtures')});
+  const critical = stream({base: join(__dirname, 'fixtures')});
 
   getVinyl(false)
     .pipe(critical)
@@ -239,7 +268,7 @@ test('Return empty vinyl on empty vinyl', (done) => {
 
 test('#192 - include option - stream', (done) => {
   const critical = stream({
-    base: path.join(__dirname, 'fixtures'),
+    base: join(__dirname, 'fixtures'),
     css: ['fixtures/styles/issue-192.css'],
     extract: false,
     ignore: ['@font-face', /url\(/],
@@ -270,14 +299,14 @@ test('#192 - include option - stream', (done) => {
 
   getVinyl('issue-192.html')
     .pipe(critical)
-    .pipe(streamAssert.length(1))
+    .pipe(length(1))
     .pipe(
-      streamAssert.nth(0, (d) => {
-        expect(path.extname(d.path)).toBe('.css');
+      nth(0, (d) => {
+        expect(extname(d.path)).toBe('.css');
         expect(nn(d.contents.toString('utf8'))).toBe(expected);
       })
     )
-    .pipe(streamAssert.end(done));
+    .pipe(end(done));
 });
 
 test('should generate multi-dimension critical-path CSS in stream mode', (done) => {
@@ -299,14 +328,14 @@ test('should generate multi-dimension critical-path CSS in stream mode', (done) 
 
   getVinyl('generate-adaptive.html')
     .pipe(critical)
-    .pipe(streamAssert.length(1))
+    .pipe(length(1))
     .pipe(
-      streamAssert.nth(0, (d) => {
-        expect(path.extname(d.path)).toBe('.css');
+      nth(0, (d) => {
+        expect(extname(d.path)).toBe('.css');
         expect(nn(d.contents.toString('utf8'))).toBe(expected);
       })
     )
-    .pipe(streamAssert.end(done));
+    .pipe(end(done));
 });
 
 test('issue 341', async () => {
@@ -318,7 +347,7 @@ test('issue 341', async () => {
   ];
 
   const options = {
-    base: path.join(__dirname, 'fixtures'),
+    base: join(__dirname, 'fixtures'),
     extract: false,
     inline: false,
     dimensions: [
@@ -348,10 +377,10 @@ test('issue 341', async () => {
 });
 
 test('Replace stylesheet on extract-target', async () => {
-  const target = path.join(__dirname, 'fixtures/styles/uncritical.css');
+  const target = join(__dirname, 'fixtures/styles/uncritical.css');
   const result = await generate({
     html: read('fixtures/generate-adaptive.html'),
-    base: path.join(__dirname, 'fixtures'),
+    base: join(__dirname, 'fixtures'),
     target: {uncritical: target},
     extract: true,
     inline: true,
@@ -366,7 +395,7 @@ test('Replace stylesheet on extract-target', async () => {
 test('Remove stylesheet on empty uncritical css', async () => {
   const result = await generate({
     html: read('fixtures/issue-304.html'),
-    base: path.join(__dirname, 'fixtures'),
+    base: join(__dirname, 'fixtures'),
     extract: true,
     inline: true,
   });
@@ -379,7 +408,7 @@ test('Use async cb result for inline.replaceStylesheets', async () => {
   const cb = () => Promise.resolve(['ab.css']);
   const result = await generate({
     html: read('fixtures/issue-304.html'),
-    base: path.join(__dirname, 'fixtures'),
+    base: join(__dirname, 'fixtures'),
     extract: true,
     inline: {
       replaceStylesheets: cb,

@@ -1,5 +1,9 @@
 import process from 'node:process';
+<<<<<<< HEAD
 import pico from 'picocolors';
+=======
+import chalk from 'chalk';
+>>>>>>> origin/feature/bump
 import {stripIndents, stripIndent} from 'common-tags';
 
 export class FileNotFoundError extends Error {

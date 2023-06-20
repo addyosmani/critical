@@ -1,9 +1,16 @@
 import process from 'node:process';
 import Joi from 'joi';
+<<<<<<< HEAD
 import debugBase from 'debug';
 import {ConfigError} from './errors.js';
 
 const debug = debugBase('critical:config');
+=======
+import debugModule from 'debug';
+import {ConfigError} from './errors.js';
+
+const debug = debugModule('critical:config');
+>>>>>>> origin/feature/bump
 
 export const DEFAULT = {
   width: 1300,

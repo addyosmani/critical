@@ -1,4 +1,5 @@
 import {exec, execFile} from 'node:child_process';
+<<<<<<< HEAD
 // import {createRequire} from 'node:module';
 import path from 'node:path';
 import process from 'node:process';
@@ -20,12 +21,32 @@ jest.unstable_mockModule('../index.js', () => ({
   generate: jest.fn(),
   stream: jest.fn(),
 }));
+=======
+import {createRequire} from 'node:module';
+import process from 'node:process';
+import {join, resolve, normalize, dirname} from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {promisify} from 'node:util';
+import {jest} from '@jest/globals';
+import nn from 'normalize-newline';
+import {globby} from 'globby';
+import {read} from './helper/index.js';
 
-const criticalBin = path.join(__dirname, '..', bin);
+const require = createRequire(import.meta.url);
+const {version, bin} = require('../package.json');
+>>>>>>> origin/feature/bump
 
-process.chdir(path.resolve(__dirname));
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const criticalBin = join(__dirname, '..', bin);
+
+process.chdir(resolve(__dirname));
 process.setMaxListeners(0);
 
+<<<<<<< HEAD
+=======
+jest.setTimeout(100_000);
+
+>>>>>>> origin/feature/bump
 const pExec = promisify(exec);
 const pExecFile = promisify(execFile);
 
@@ -33,9 +54,18 @@ const run = async (args = []) => pExecFile('node', [criticalBin, ...args]);
 
 const getArgs = async (params = []) => {
   const origArgv = process.argv;
+<<<<<<< HEAD
   process.argv = ['node', criticalBin, ...params];
 
   await import('../cli.js');
+=======
+  const critical = await import('../index.js'); // eslint-disable-line node/no-unsupported-features/es-syntax
+
+  critical.generate = jest.fn();
+  process.argv = ['node', criticalBin, ...params];
+
+  await import('../cli.js'); // eslint-disable-line node/no-unsupported-features/es-syntax
+>>>>>>> origin/feature/bump
   process.argv = origArgv;
   const {generate} = await import('../index.js');
   // console.log('GENERATE:', generate.mock);
@@ -89,7 +119,7 @@ describe('CLI', () => {
     });
 
     test('Take html file piped to critical', async () => {
-      const {stdout, stderr} = await pipe(path.normalize('fixtures/generate-default.html'), [
+      const {stdout, stderr} = await pipe(normalize('fixtures/generate-default.html'), [
         '--base',
         'fixtures',
         '--width',
@@ -105,7 +135,7 @@ describe('CLI', () => {
     });
 
     test('Pipe html file inside a folder to critical', async () => {
-      const {stdout, stderr} = await pipe(path.normalize('fixtures/folder/generate-default.html'), [
+      const {stdout, stderr} = await pipe(normalize('fixtures/folder/generate-default.html'), [
         '--base',
         'fixtures',
         '--width',
@@ -121,7 +151,7 @@ describe('CLI', () => {
     });
 
     test('Inline images to piped html file', async () => {
-      const {stdout, stderr} = await pipe(path.normalize('fixtures/generate-image.html'), [
+      const {stdout, stderr} = await pipe(normalize('fixtures/generate-image.html'), [
         '-c',
         'fixtures/styles/image-relative.css',
         '--inlineImages',
@@ -139,7 +169,7 @@ describe('CLI', () => {
     });
 
     test("Add an absolute image path to critical css if we can't determine document location", async () => {
-      const {stdout, stderr} = await pipe(path.normalize('fixtures/folder/generate-image.html'), [
+      const {stdout, stderr} = await pipe(normalize('fixtures/folder/generate-image.html'), [
         '-c',
         'fixtures/styles/image-relative.css',
         '--base',
@@ -156,7 +186,7 @@ describe('CLI', () => {
     });
 
     test('Add absolute image paths on piped html without relative links', async () => {
-      const {stdout, stderr} = await pipe(path.normalize('fixtures/folder/subfolder/generate-image-absolute.html'), [
+      const {stdout, stderr} = await pipe(normalize('fixtures/folder/subfolder/generate-image-absolute.html'), [
         '--base',
         'fixtures',
         '--width',
@@ -181,7 +211,7 @@ describe('CLI', () => {
     });
 
     test('Generate multi-dimension critical-path CSS using cli', async () => {
-      const {stdout} = await pipe(path.normalize('fixtures/generate-adaptive.html'), [
+      const {stdout} = await pipe(normalize('fixtures/generate-adaptive.html'), [
         '--base',
         'fixtures',
         '--dimensions',

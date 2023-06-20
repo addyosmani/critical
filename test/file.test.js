@@ -1,4 +1,5 @@
 /* eslint-disable no-await-in-loop */
+<<<<<<< HEAD
 import {fileURLToPath} from 'node:url';
 import {createServer} from 'node:http';
 import {Buffer} from 'node:buffer';
@@ -6,6 +7,16 @@ import process from 'node:process';
 import path from 'node:path';
 import {promisify} from 'node:util';
 import fs from 'node:fs';
+=======
+
+import {createServer} from 'node:http';
+import {fileURLToPath} from 'node:url';
+import process from 'node:process';
+import {Buffer} from 'node:buffer';
+import {join, dirname, relative} from 'node:path';
+import {promisify} from 'node:util';
+import {readFile} from 'node:fs';
+>>>>>>> origin/feature/bump
 import {jest} from '@jest/globals';
 import getPort from 'get-port';
 import Vinyl from 'vinyl';
@@ -32,16 +43,21 @@ import {
   getStylesheet,
 } from '../src/file.js';
 import {read, strip} from './helper/index.js';
+<<<<<<< HEAD
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
+=======
+>>>>>>> origin/feature/bump
 
-const readFileAsync = promisify(fs.readFile);
+jest.useFakeTimers();
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const readFileAsync = promisify(readFile);
 
 // Setup static fileserver to mimic remote requests
 let server;
 let port;
 beforeAll(async () => {
-  const root = path.join(__dirname, 'fixtures');
+  const root = join(__dirname, 'fixtures');
   const serve = serveStatic(root, {index: ['index.html', 'index.htm']});
   port = await getPort();
 
@@ -94,8 +110,8 @@ test('Error for file not found', () => {
 
 test('fileExists', async () => {
   const tests = [
-    {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: true},
-    {filepath: path.join(__dirname, 'fixtures/not-available'), expected: false},
+    {filepath: join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: true},
+    {filepath: join(__dirname, 'fixtures/not-available'), expected: false},
     {filepath: `http://localhost:${port}/head.html`, expected: true},
     {filepath: `http://localhost:${port}/styles/main.css`, expected: true},
     {filepath: `http://localhost:${port}/styles/nope.css`, expected: false},
@@ -137,12 +153,12 @@ test('resolve', async () => {
   const tests = [
     {
       filepath: '/folder/subfolder/head.html',
-      paths: [__dirname, path.join(__dirname, 'fixtures'), `http://localhost:${port}`],
-      expected: path.join(__dirname, 'fixtures/folder/subfolder/head.html'),
+      paths: [__dirname, join(__dirname, 'fixtures'), `http://localhost:${port}`],
+      expected: join(__dirname, 'fixtures/folder/subfolder/head.html'),
     },
     {
       filepath: '/folder/subfolder/head.html',
-      paths: [__dirname, `http://localhost:${port}`, path.join(__dirname, 'fixtures/folder/subfolder/head.html')],
+      paths: [__dirname, `http://localhost:${port}`, join(__dirname, 'fixtures/folder/subfolder/head.html')],
       expected: `http://localhost:${port}/folder/subfolder/head.html`,
     },
     {
@@ -151,7 +167,7 @@ test('resolve', async () => {
         __dirname,
         `http://localhost:${port}`,
         `http://localhost:${port}/folder/`,
-        path.join(__dirname, 'fixtures/folder/subfolder/head.html'),
+        join(__dirname, 'fixtures/folder/subfolder/head.html'),
       ],
       expected: `http://localhost:${port}/styles/main.css`,
     },
@@ -170,10 +186,7 @@ test('resolve error', () => {
 });
 
 test('Vinylize local file', async () => {
-  const files = [
-    path.join(__dirname, 'fixtures/folder/subfolder/head.html'),
-    path.join(__dirname, 'fixtures/head.html'),
-  ];
+  const files = [join(__dirname, 'fixtures/folder/subfolder/head.html'), join(__dirname, 'fixtures/head.html')];
 
   const contents = await Promise.all(files.map((f) => readFileAsync(f)));
   const result = await Promise.all(files.map((filepath) => vinylize({filepath})));
@@ -200,7 +213,7 @@ test('Vinylize remote file', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const contents = await Promise.all(files.map((f) => readFileAsync(path.join(__dirname, f))));
+  const contents = await Promise.all(files.map((f) => readFileAsync(join(__dirname, f))));
 
   const urls = files.map((f) => f.replace(/^fixtures/, `http://localhost:${port}`));
   const result = await Promise.all(urls.map((filepath) => vinylize({filepath})));
@@ -227,7 +240,7 @@ test('Append stylesheets to vinyl', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const vinyls = await Promise.all(files.map((f) => vinylize({filepath: path.join(__dirname, f)})));
+  const vinyls = await Promise.all(files.map((f) => vinylize({filepath: join(__dirname, f)})));
   const result = vinyls.map((v) => getStylesheetHrefs(v));
   expect.assertions(files.length + 6);
   expect(result.length).toBe(5);
@@ -248,7 +261,7 @@ test('Append assets to vinyl', async () => {
     'fixtures/images/critical.png',
   ];
 
-  const vinyls = await Promise.all(files.map((f) => vinylize({filepath: path.join(__dirname, f)})));
+  const vinyls = await Promise.all(files.map((f) => vinylize({filepath: join(__dirname, f)})));
   const result = vinyls.map((v) => getAssets(v));
   expect.assertions(files.length + 6);
   expect(result.length).toBe(5);
@@ -268,11 +281,11 @@ test('Compute document base (with base option)', async () => {
       {filepath: `http://localhost:${port}/generate-default.html`, expected: '/'},
       {filepath: `http://localhost:${port}/folder`, expected: '/'},
       {filepath: `http://localhost:${port}/folder/`, expected: '/folder'},
-      {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
-      {filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
-      {filepath: path.join(__dirname, 'fixtures/head.html'), expected: '/'},
-      {filepath: path.join(__dirname, 'fixtures/folder/subfolder/relative.html'), expected: '/folder/subfolder'},
-      {filepath: path.join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder'},
+      {filepath: join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
+      {filepath: join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
+      {filepath: join(__dirname, 'fixtures/head.html'), expected: '/'},
+      {filepath: join(__dirname, 'fixtures/folder/subfolder/relative.html'), expected: '/folder/subfolder'},
+      {filepath: join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder'},
     ].map((f) => vinylize(f).then((vinyl) => ({...f, vinyl})))
   );
 
@@ -283,8 +296,8 @@ test('Compute document base (with base option)', async () => {
 
   expect.hasAssertions();
   for (const file of files) {
-    const filepath = await getDocumentPath(file.vinyl, {base: path.join(__dirname, 'fixtures')});
-    expect(path.dirname(filepath)).toBe(file.expected);
+    const filepath = await getDocumentPath(file.vinyl, {base: join(__dirname, 'fixtures')});
+    expect(dirname(filepath)).toBe(file.expected);
   }
 
   expect(stderr).not.toHaveBeenCalled();
@@ -295,11 +308,11 @@ test('Compute document base (without base option)', async () => {
     [
       {filepath: `http://localhost:${port}/folder`, expected: '/'},
       {filepath: `http://localhost:${port}/folder/`, expected: '/folder'},
-      {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
-      {filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
-      {filepath: path.join(__dirname, 'fixtures/head.html'), expected: '/'},
-      {filepath: path.join(__dirname, 'fixtures/folder/subfolder/relative.html'), expected: '/folder/subfolder'},
-      {filepath: path.join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder'},
+      {filepath: join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
+      {filepath: join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
+      {filepath: join(__dirname, 'fixtures/head.html'), expected: '/'},
+      {filepath: join(__dirname, 'fixtures/folder/subfolder/relative.html'), expected: '/folder/subfolder'},
+      {filepath: join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder'},
     ].map((f) => vinylize(f).then((vinyl) => ({...f, vinyl})))
   );
 
@@ -311,7 +324,7 @@ test('Compute document base (without base option)', async () => {
   expect.hasAssertions();
   for (const file of files) {
     const filepath = await getDocumentPath(file.vinyl);
-    expect(path.dirname(filepath)).toBe(file.expected);
+    expect(dirname(filepath)).toBe(file.expected);
     if (file.noBase) {
       expect(stderr).toHaveBeenCalledWith(BASE_WARNING);
     }
@@ -319,7 +332,7 @@ test('Compute document base (without base option)', async () => {
 });
 
 test('Get document', async () => {
-  const file = path.join(__dirname, 'fixtures/folder/relative.html');
+  const file = join(__dirname, 'fixtures/folder/relative.html');
   const vinyl = new Vinyl({
     path: file,
     contents: Buffer.from(read(file)),
@@ -328,23 +341,23 @@ test('Get document', async () => {
   const tests = [
     {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
     {filepath: `http://localhost:${port}/folder/`, expected: '/folder/index.html'},
-    {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder/head.html'},
+    {filepath: join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder/head.html'},
     {
-      filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'),
+      filepath: join(__dirname, 'fixtures/folder/generate-default.html'),
       expected: '/folder/generate-default.html',
     },
-    {filepath: path.join(__dirname, 'fixtures/head.html'), expected: '/head.html'},
+    {filepath: join(__dirname, 'fixtures/head.html'), expected: '/head.html'},
     {
-      filepath: path.join(__dirname, 'fixtures/folder/subfolder/relative.html'),
+      filepath: join(__dirname, 'fixtures/folder/subfolder/relative.html'),
       expected: '/folder/subfolder/relative.html',
     },
-    {filepath: path.join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder/relative.html'},
+    {filepath: join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder/relative.html'},
     {
       filepath: 'folder/relative.html',
-      options: {base: path.join(__dirname, 'fixtures')},
+      options: {base: join(__dirname, 'fixtures')},
       expected: '/folder/relative.html',
     },
-    {filepath: vinyl, options: {base: path.join(__dirname, 'fixtures')}, expected: '/folder/relative.html'},
+    {filepath: vinyl, options: {base: join(__dirname, 'fixtures')}, expected: '/folder/relative.html'},
   ];
 
   expect.hasAssertions();
@@ -359,25 +372,25 @@ test('Get document', async () => {
 });
 
 test('Get document from source with rebase option', async () => {
-  const base = path.join(__dirname, 'fixtures');
+  const base = join(__dirname, 'fixtures');
   const tests = [
-    {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder/head.html'},
+    {filepath: join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder/head.html'},
     {
-      filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'),
+      filepath: join(__dirname, 'fixtures/folder/generate-default.html'),
       expected: '/folder/generate-default.html',
     },
-    {filepath: path.join(__dirname, 'fixtures/head.html'), expected: '/head.html'},
+    {filepath: join(__dirname, 'fixtures/head.html'), expected: '/head.html'},
     {
-      filepath: path.join(__dirname, 'fixtures/folder/subfolder/relative.html'),
+      filepath: join(__dirname, 'fixtures/folder/subfolder/relative.html'),
       expected: '/folder/subfolder/relative.html',
     },
-    {filepath: path.join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder/relative.html'},
+    {filepath: join(__dirname, 'fixtures/folder/relative.html'), expected: '/folder/relative.html'},
   ];
 
   // expect.assertions(tests.length + 1);
   for (const testdata of tests) {
     const {filepath, expected} = testdata;
-    const rebase = {to: `/${normalizePath(path.relative(base, filepath))}`};
+    const rebase = {to: `/${normalizePath(relative(base, filepath))}`};
     const source = await readFileAsync(filepath);
     const file = await getDocumentFromSource(source, {rebase, base});
     expect(file.virtualPath).toBe(expected);
@@ -387,9 +400,9 @@ test('Get document from source with rebase option', async () => {
 });
 
 test('Get document from source without path options', async () => {
-  const filepath = path.join(__dirname, 'fixtures/folder/subfolder/head.html');
+  const filepath = join(__dirname, 'fixtures/folder/subfolder/head.html');
   const source = await readFileAsync(filepath);
-  const css = path.join(__dirname, 'fixtures/styles/image-relative.css');
+  const css = join(__dirname, 'fixtures/styles/image-relative.css');
   const file = await getDocumentFromSource(source, {css});
   const styles = await readFileAsync(css, 'utf8');
 
@@ -402,10 +415,10 @@ test('Compute base for stylesheets', async () => {
   const docs = await mapAsync(
     [
       `http://localhost:${port}/generate-image.html`,
-      path.join(__dirname, 'fixtures/folder/generate-image.html'),
+      join(__dirname, 'fixtures/folder/generate-image.html'),
       `http://localhost:${port}/folder/relative-different.html`,
-      path.join(__dirname, 'fixtures/relative-different.html'),
-      path.join(__dirname, 'fixtures/remote-different.html'),
+      join(__dirname, 'fixtures/relative-different.html'),
+      join(__dirname, 'fixtures/remote-different.html'),
     ],
     async (filepath) => {
       const document = await vinylize({filepath});
@@ -437,7 +450,7 @@ test('Compute base for stylesheets', async () => {
       ],
     },
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       expected: [
         '/styles/image-relative.css',
         '/styles/image-relative.css',
@@ -463,7 +476,7 @@ test('Compute base for stylesheets', async () => {
 
 test('Get styles', async () => {
   const docs = await mapAsync(
-    [`http://localhost:${port}/generate-image.html`, path.join(__dirname, 'fixtures/folder/generate-image.html')],
+    [`http://localhost:${port}/generate-image.html`, join(__dirname, 'fixtures/folder/generate-image.html')],
     (filepath) => getDocument(filepath)
   );
 
@@ -491,22 +504,22 @@ test('Get styles', async () => {
       ],
     },
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       expected: ['images/critical.png', '../images/critical.png'],
     },
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       options: {rebase: {from: '/styles/main.css', to: '/index.html'}},
       expected: ['images/critical.png', 'images/critical.png'],
     },
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       options: {rebase: {from: '/styles/main.css', to: '/a/b/c/index.html'}},
       expected: ['../../../images/critical.png', '../../../images/critical.png'],
     },
 
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       options: {rebase: (asset) => `https://my-cdn.com${asset.absolutePath}`},
       expected: ['https://my-cdn.com/images/critical.png', 'https://my-cdn.com/images/critical.png'],
     },
@@ -516,7 +529,11 @@ test('Get styles', async () => {
     for (const testdata of tests) {
       const {filepath, expected, options = {}} = testdata;
       const file = await getStylesheet(document, filepath, {
+<<<<<<< HEAD
         base: path.join(__dirname, 'fixtures'),
+=======
+        base: join(__dirname, 'fixtures'),
+>>>>>>> origin/feature/bump
         ...options,
       });
       expect(file.contents.toString()).toMatch(expected[index]);
@@ -529,7 +546,7 @@ test('Get inline styles', async () => {
     [
       `http://localhost:${port}/generate-adaptive.html`,
       `http://localhost:${port}/generate-adaptive-inline.html`,
-      path.join(__dirname, 'fixtures/generate-adaptive-inline.html'),
+      join(__dirname, 'fixtures/generate-adaptive-inline.html'),
     ],
     (filepath) => getDocument(filepath)
   );
@@ -543,7 +560,7 @@ test('Get inline styles', async () => {
 
 test('Get styles with media attribute', async () => {
   const docs = await mapAsync(
-    [`http://localhost:${port}/media-attr.html`, path.join(__dirname, 'fixtures/media-attr.html')],
+    [`http://localhost:${port}/media-attr.html`, join(__dirname, 'fixtures/media-attr.html')],
     (filepath) => getDocument(filepath)
   );
 
@@ -561,7 +578,7 @@ test('Get base64 styles', async () => {
     [
       `http://localhost:${port}/generate-adaptive.html`,
       `http://localhost:${port}/generate-adaptive-base64.html`,
-      path.join(__dirname, 'fixtures/generate-adaptive-base64.html'),
+      join(__dirname, 'fixtures/generate-adaptive-base64.html'),
     ],
     (filepath) => getDocument(filepath)
   );
@@ -576,9 +593,9 @@ test('Get base64 styles', async () => {
 test('Get styles (without path)', async () => {
   const docs = await mapAsync(
     [
-      path.join(__dirname, 'fixtures/folder/generate-image.html'),
-      path.join(__dirname, 'fixtures/relative-different.html'),
-      path.join(__dirname, 'fixtures/remote-different.html'),
+      join(__dirname, 'fixtures/folder/generate-image.html'),
+      join(__dirname, 'fixtures/relative-different.html'),
+      join(__dirname, 'fixtures/remote-different.html'),
     ],
     (file) => readFileAsync(file)
   );
@@ -601,7 +618,7 @@ test('Get styles (without path)', async () => {
       ],
     },
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       expected: [`'/images/critical.png'`, `'/images/critical.png'`, `'/images/critical.png'`],
     },
   ];
@@ -610,7 +627,7 @@ test('Get styles (without path)', async () => {
     for (const testdata of tests) {
       const {filepath, expected} = testdata;
       const document = await getDocumentFromSource(element, {css: filepath});
-      const file = await getStylesheet(document, filepath, {base: path.join(__dirname, 'fixtures')});
+      const file = await getStylesheet(document, filepath, {base: join(__dirname, 'fixtures')});
       expect(file.contents.toString()).toMatch(expected[index]);
     }
   }
@@ -619,9 +636,9 @@ test('Get styles (without path)', async () => {
 test('Does not rebase when rebase is disabled via option', async () => {
   const docs = await mapAsync(
     [
-      path.join(__dirname, 'fixtures/folder/generate-image.html'),
-      path.join(__dirname, 'fixtures/relative-different.html'),
-      path.join(__dirname, 'fixtures/remote-different.html'),
+      join(__dirname, 'fixtures/folder/generate-image.html'),
+      join(__dirname, 'fixtures/relative-different.html'),
+      join(__dirname, 'fixtures/remote-different.html'),
     ],
     (file) => readFileAsync(file)
   );
@@ -636,7 +653,7 @@ test('Does not rebase when rebase is disabled via option', async () => {
       expected: [`'../images/critical.png'`, `'../images/critical.png'`, `'../images/critical.png'`],
     },
     {
-      filepath: path.join(__dirname, 'fixtures/styles/image-relative.css'),
+      filepath: join(__dirname, 'fixtures/styles/image-relative.css'),
       expected: [`'../images/critical.png'`, `'../images/critical.png'`, `'../images/critical.png'`],
     },
   ];
@@ -645,7 +662,7 @@ test('Does not rebase when rebase is disabled via option', async () => {
     for (const testdata of tests) {
       const {filepath, expected} = testdata;
       const document = await getDocumentFromSource(element, {css: filepath});
-      const file = await getStylesheet(document, filepath, {base: path.join(__dirname, 'fixtures'), rebase: false});
+      const file = await getStylesheet(document, filepath, {base: join(__dirname, 'fixtures'), rebase: false});
       expect(file.contents.toString()).toMatch(expected[index]);
     }
   }

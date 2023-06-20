@@ -1,7 +1,13 @@
 import path from 'node:path';
+<<<<<<< HEAD
 import {Buffer} from 'node:buffer';
 import process from 'node:process';
 import through2 from 'through2';
+=======
+import process from 'node:process';
+import {Buffer} from 'node:buffer';
+import {obj} from 'through2';
+>>>>>>> origin/feature/bump
 import PluginError from 'plugin-error';
 import replaceExtension from 'replace-ext';
 import {create} from './src/core.js';
@@ -58,7 +64,7 @@ export async function generate(params, cb) {
  */
 export function stream(params) {
   // Return stream
-  return through2.obj(function (file, enc, cb) {
+  return obj(function (file, enc, cb) {
     if (file.isNull()) {
       return cb(null, file);
     }
