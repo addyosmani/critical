@@ -1,22 +1,37 @@
 import process from 'node:process';
+<<<<<<< HEAD
 import {createServer} from 'node:http';
 import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {jest} from '@jest/globals';
 import finalhandler from 'finalhandler';
 import getPort from 'get-port';
+=======
+import {fileURLToPath} from 'node:url';
+import {createServer} from 'node:http';
+import {join, dirname} from 'node:path';
+import {jest} from '@jest/globals';
+import getPort from 'get-port';
+import finalhandler from 'finalhandler';
+>>>>>>> origin/feature/bump
 import serveStatic from 'serve-static';
 import {create} from '../src/core.js';
 import {read} from './helper/index.js';
 
+<<<<<<< HEAD
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 jest.setTimeout(100_000);
+=======
+jest.useFakeTimers();
+jest.setTimeout(20_000);
+const __dirname = dirname(fileURLToPath(import.meta.url));
+>>>>>>> origin/feature/bump
 
 // Set up static fileserver to mimic remote requests
 let server;
 let port;
 beforeAll(async () => {
-  const root = path.join(__dirname, 'fixtures');
+  const root = join(__dirname, 'fixtures');
   const serve = serveStatic(root, {index: ['index.html', 'index.htm']});
   port = await getPort();
 

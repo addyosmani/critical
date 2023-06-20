@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {Buffer} from 'node:buffer';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -30,17 +31,59 @@ export const BASE_WARNING = `${pico.yellow(
 )} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
 
 const warn = (text) => process.stderr.write(pico.yellow(`${text}${os.EOL}`));
+=======
+/* eslint-disable complexity */
 
-const unlinkAsync = promisify(fs.unlink);
-const readFileAsync = promisify(fs.readFile);
-const writeFileAsync = promisify(fs.writeFile);
+import process from 'node:process';
+import {Buffer} from 'node:buffer';
+import {dirname, join, isAbsolute as _isAbsolute, resolve as _resolve, relative, basename, sep} from 'node:path';
+import {EOL} from 'node:os';
+import {format} from 'node:url';
+import {unlink, readFile, writeFile, existsSync} from 'node:fs';
+import {promisify} from 'node:util';
+import dataUriToBuffer from 'data-uri-to-buffer';
+import {findUp} from 'find-up';
+import makeDir from 'make-dir';
+import {globby} from 'globby';
+import isGlob from 'is-glob';
+import postcss from 'postcss';
+import postcssUrl from 'postcss-url';
+import Vinyl from 'vinyl';
+import {raw} from 'oust';
+import got from 'got';
+import debugModule from 'debug';
+import chalk from 'chalk';
+import parseCssUrls from 'css-url-parser';
+import {temporaryDirectory, temporaryFile} from 'tempy';
+import slash from 'slash';
+import {mapAsync, filterAsync, reduceAsync, forEachAsync} from './array.js';
+import {FileNotFoundError} from './errors.js';
 
+const {isVinyl: _isVinyl} = Vinyl;
+const debug = debugModule('critical:file');
+
+export const BASE_WARNING = `${chalk.yellow(
+  'Warning:'
+)} Missing base path. Consider 'base' option. https://goo.gl/PwvFVb`;
+>>>>>>> origin/feature/bump
+
+const warn = (text) => process.stderr.write(chalk.yellow(`${text}${EOL}`));
+
+<<<<<<< HEAD
 export const checkCssOption = (css) => Boolean((!Array.isArray(css) && css) || (Array.isArray(css) && css.length > 0));
 
 export async function outputFileAsync(file, data) {
   const dir = path.dirname(file);
+=======
+const unlinkAsync = promisify(unlink);
+const readFileAsync = promisify(readFile);
+const writeFileAsync = promisify(writeFile);
+>>>>>>> origin/feature/bump
 
-  if (!fs.existsSync(dir)) {
+export async function outputFileAsync(file, data) {
+  const dir = dirname(file);
+
+  if (!existsSync(dir)) {
     await makeDir(dir);
   }
 
@@ -114,11 +157,11 @@ export function urlResolve(from = '', to = '') {
     return to;
   }
 
-  return path.join(from.replace(/[^/]+$/, ''), to);
+  return join(from.replace(/[^/]+$/, ''), to);
 }
 
-function isAbsolute(href) {
-  return !Buffer.isBuffer(href) && path.isAbsolute(href);
+export function isAbsolute(href) {
+  return !Buffer.isBuffer(href) && _isAbsolute(href);
 }
 
 /**
@@ -126,7 +169,7 @@ function isAbsolute(href) {
  * @param {string} href Path
  * @returns {boolean} True if the path is relative
  */
-function isRelative(href) {
+export function isRelative(href) {
   return !Buffer.isBuffer(href) && !isRemote(href) && !isAbsolute(href);
 }
 
@@ -137,7 +180,7 @@ function isRelative(href) {
  */
 function isVinyl(file) {
   return (
-    Vinyl.isVinyl(file) ||
+    _isVinyl(file) ||
     file instanceof Vinyl ||
     (file && /function File\(/.test(file.constructor.toString()) && file.contents && file.path)
   );
@@ -175,7 +218,7 @@ export async function fileExists(href, options = {}) {
     }
   }
 
-  return fs.existsSync(href) || fs.existsSync(href.replace(/\?.*$/, ''));
+  return existsSync(href) || existsSync(href.replace(/\?.*$/, ''));
 }
 
 /**
@@ -207,7 +250,7 @@ export function joinPath(base, part) {
     return urlResolve(base, part);
   }
 
-  return path.join(base, part.replace(/\?.*$/, ''));
+  return join(base, part.replace(/\?.*$/, ''));
 }
 
 /**
@@ -244,7 +287,7 @@ function glob(pattern, {base} = {}) {
   // Evaluate globs based on base path
   const patterns = Array.isArray(pattern) ? pattern : [pattern];
   // Prepend base if it's not empty & not remote
-  const prependBase = (pattern) => (base && !isRemote(base) ? [path.join(base, pattern)] : []);
+  const prependBase = (pattern) => (base && !isRemote(base) ? [join(base, pattern)] : []);
 
   return reduceAsync([], patterns, async (files, pattern) => {
     if (isGlob(pattern)) {
@@ -408,7 +451,7 @@ function getStylesheetObjects(file, options) {
     return file.stylesheetObjects;
   }
 
-  const stylesheets = oust.raw(file.contents.toString(), ['stylesheets', 'preload', 'styles']);
+  const stylesheets = raw(file.contents.toString(), ['stylesheets', 'preload', 'styles']);
 
   const isNotPrint = (el) =>
     el.attr('media') !== 'print' || (Boolean(el.attr('onload')) && el.attr('onload').includes('media'));
@@ -462,8 +505,13 @@ function getStylesheetObjects(file, options) {
  * @param {object} options Options passed to critical
  * @returns {[string]} Stylesheet urls from document source
  */
+<<<<<<< HEAD
 export function getStylesheetHrefs(file, options) {
   return getStylesheetObjects(file, options).map((object) => object.value);
+=======
+export function getStylesheetHrefs(file) {
+  return getStylesheetObjects(file).map((object) => object.value);
+>>>>>>> origin/feature/bump
 }
 
 /**
@@ -514,8 +562,8 @@ export async function getDocumentPath(file, options = {}) {
   }
 
   if (base) {
-    base = path.resolve(base);
-    return normalizePath(`/${path.relative(base, file.path || base)}`);
+    base = _resolve(base);
+    return normalizePath(`/${relative(base, file.path || base)}`);
   }
 
   // Check local and assume base path based on relative stylesheets
@@ -526,7 +574,7 @@ export async function getDocumentPath(file, options = {}) {
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
 
-      return normalizePath(`/${path.relative(process.cwd(), file.path)}`);
+      return normalizePath(`/${relative(process.cwd(), file.path)}`);
     }
 
     // Compute base path based on absolute links
@@ -535,11 +583,11 @@ export async function getDocumentPath(file, options = {}) {
       const paths = await getAssetPaths(file, ref, options);
       try {
         const filepath = await resolve(ref, paths, options);
-        return normalizePath(`/${path.relative(normalizePath(filepath).replace(ref, ''), file.path)}`);
+        return normalizePath(`/${relative(normalizePath(filepath).replace(ref, ''), file.path)}`);
       } catch {
         process.stderr.write(BASE_WARNING);
 
-        return normalizePath(`/${path.relative(process.cwd(), file.path)}`);
+        return normalizePath(`/${relative(process.cwd(), file.path)}`);
       }
     }
 
@@ -550,9 +598,9 @@ export async function getDocumentPath(file, options = {}) {
       return match && match[0].length > res.length ? match[0] : res;
     }, './');
 
-    const tmpBase = path.resolve(path.dirname(file.path), dots);
+    const tmpBase = _resolve(dirname(file.path), dots);
 
-    return normalizePath(`/${path.relative(tmpBase, file.path)}`);
+    return normalizePath(`/${relative(tmpBase, file.path)}`);
   }
 
   return '';
@@ -570,7 +618,7 @@ function getRemoteStylesheetPath(fileObj, documentObj, filename) {
   const {hostname: docHost, port: docPort} = documentObj || {};
 
   if (filename) {
-    pathname = joinPath(path.dirname(pathname), path.basename(filename));
+    pathname = joinPath(dirname(pathname), basename(filename));
     fileObj.pathname = normalizePath(pathname);
   }
 
@@ -578,7 +626,7 @@ function getRemoteStylesheetPath(fileObj, documentObj, filename) {
     return pathname;
   }
 
-  return url.format(fileObj);
+  return format(fileObj);
 }
 
 /**
@@ -604,12 +652,12 @@ export function getStylesheetPath(document, file, options = {}) {
   // Generate path relative to document if stylesheet is referenced relative
   //
   if (isRelative(file.path) && document.virtualPath) {
-    return normalizePath(joinPath(path.dirname(document.virtualPath), file.path));
+    return normalizePath(joinPath(dirname(document.virtualPath), file.path));
   }
 
-  if (base && path.resolve(file.path).includes(path.resolve(base))) {
-    base = path.resolve(base);
-    return normalizePath(`/${path.relative(path.resolve(base), path.resolve(file.path))}`);
+  if (base && _resolve(file.path).includes(_resolve(base))) {
+    base = _resolve(base);
+    return normalizePath(`/${relative(_resolve(base), _resolve(file.path))}`);
   }
 
   // Try to compute path based on document link tags with same name
@@ -617,12 +665,12 @@ export function getStylesheetPath(document, file, options = {}) {
     .filter((href) => !Buffer.isBuffer(href))
     .find((href) => {
       const {pathname} = urlParse(href);
-      const name = path.basename(pathname);
-      return name === path.basename(file.path);
+      const name = basename(pathname);
+      return name === basename(file.path);
     });
 
   if (stylesheet && isRelative(stylesheet) && document.virtualPath) {
-    return normalizePath(joinPath(path.dirname(document.virtualPath), stylesheet));
+    return normalizePath(joinPath(dirname(document.virtualPath), stylesheet));
   }
 
   if (stylesheet && isRemote(stylesheet)) {
@@ -639,12 +687,12 @@ export function getStylesheetPath(document, file, options = {}) {
     .sort((a) => (isRemote(a) ? 1 : -1));
   if (unsafestylesheet && isRelative(unsafestylesheet) && document.virtualPath) {
     return normalizePath(
-      joinPath(path.dirname(document.virtualPath), joinPath(path.dirname(unsafestylesheet), path.basename(file.path)))
+      joinPath(dirname(document.virtualPath), joinPath(dirname(unsafestylesheet), basename(file.path)))
     );
   }
 
   if (unsafestylesheet && isRemote(unsafestylesheet)) {
-    return getRemoteStylesheetPath(urlParse(unsafestylesheet), document.urlObj, path.basename(file.path));
+    return getRemoteStylesheetPath(urlParse(unsafestylesheet), document.urlObj, basename(file.path));
   }
 
   if (stylesheet) {
@@ -653,7 +701,7 @@ export function getStylesheetPath(document, file, options = {}) {
 
   process.stderr.write(BASE_WARNING);
   if (document.virtualPath && file.path) {
-    return normalizePath(joinPath(path.dirname(document.virtualPath), path.basename(file.path)));
+    return normalizePath(joinPath(dirname(document.virtualPath), basename(file.path)));
   }
 
   return '';
@@ -682,31 +730,31 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
   }
 
   // Remove double dots in the middle
-  const normalized = path.join(file);
-  // Count directory hops
-  const hops = normalized.split(path.sep).reduce((cnt, part) => (part === '..' ? cnt + 1 : cnt), 0);
+  const normalized = join(file);
+  // Count temporaryDirectory hops
+  const hops = normalized.split(sep).reduce((cnt, part) => (part === '..' ? cnt + 1 : cnt), 0);
   // Also findup first real dir path
-  const [first] = normalized.split(path.sep).filter((p) => p && p !== '..'); // eslint-disable-line unicorn/prefer-array-find
+  const [first] = normalized.split(sep).filter((p) => p && p !== '..'); // eslint-disable-line unicorn/prefer-array-find
   const mappedAssetPaths = base ? assetPaths.map((a) => joinPath(base, a)) : [];
 
   // Make a list of possible paths
   const paths = [
     ...new Set([
       base,
-      base && isRelative(base) && path.join(process.cwd(), base),
+      base && isRelative(base) && join(process.cwd(), base),
       docurl,
-      urlPath && urlResolve(urlObj.href, path.dirname(urlPath)),
-      urlPath && !/\/$/.test(path.dirname(urlPath)) && urlResolve(urlObj.href, `${path.dirname(urlPath)}/`),
+      urlPath && urlResolve(urlObj.href, dirname(urlPath)),
+      urlPath && !/\/$/.test(dirname(urlPath)) && urlResolve(urlObj.href, `${dirname(urlPath)}/`),
       docurl && urlResolve(docurl, file),
-      docpath && path.dirname(docpath),
+      docpath && dirname(docpath),
       ...assetPaths,
       ...mappedAssetPaths,
       to,
       from,
-      base && docpath && path.join(base, path.dirname(docpath)),
-      base && to && path.join(base, path.dirname(to)),
-      base && from && path.join(base, path.dirname(from)),
-      base && isRelative(file) && hops ? path.join(base, ...Array.from({length: hops}).fill('tmpdir'), file) : '',
+      base && docpath && join(base, dirname(docpath)),
+      base && to && join(base, dirname(to)),
+      base && from && join(base, dirname(from)),
+      base && isRelative(file) && hops ? join(base, ...Array.from({length: hops}).fill('tmpdir'), file) : '',
       process.cwd(),
     ]),
   ];
@@ -728,12 +776,12 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
 
     const up = await findUp(first, {cwd, type: 'directory'});
     if (up) {
-      const upDir = path.dirname(up);
+      const upDir = dirname(up);
 
       if (hops) {
         // Add additional directories based on dirHops
-        const additional = path.relative(upDir, cwd).split(path.sep).slice(0, hops);
-        return [...result, upDir, path.join(upDir, ...additional)];
+        const additional = relative(upDir, cwd).split(sep).slice(0, hops);
+        return [...result, upDir, join(upDir, ...additional)];
       }
 
       return [...result, upDir];
@@ -780,7 +828,7 @@ export async function vinylize(src, options = {}) {
     file.urlObj = urlParse(filepath);
     file.contents = await fetch(filepath, options);
     file.virtualPath = file.urlObj.pathname;
-  } else if (filepath && fs.existsSync(filepath)) {
+  } else if (filepath && existsSync(filepath)) {
     file.path = filepath;
     file.virtualPath = filepath;
     file.contents = await readFileAsync(filepath);
@@ -819,8 +867,13 @@ export async function getStylesheet(document, filepath, options = {}) {
 
   // Create absolute file paths for local files passed via css option
   // to prevent document relative stylesheet paths if they are not relative specified
+<<<<<<< HEAD
   if (!Buffer.isBuffer(originalPath) && !isVinyl(filepath) && !isRemote(filepath) && checkCssOption(css)) {
     filepath = path.resolve(filepath);
+=======
+  if (!Buffer.isBuffer(originalPath) && !isVinyl(filepath) && !isRemote(filepath) && css) {
+    filepath = _resolve(filepath);
+>>>>>>> origin/feature/bump
   }
 
   const file = await vinylize({filepath}, options);
@@ -841,6 +894,7 @@ export async function getStylesheet(document, filepath, options = {}) {
   }
 
   debug('(getStylesheet) Virtual Stylesheet Path:', stylepath);
+
   // We can safely rebase assets if we have:
   // - a url to the stylesheet
   // - if rebase.from and rebase.to is specified
@@ -931,7 +985,7 @@ async function getCss(document, options = {}) {
   return stylesheets
     .filter((stylesheet) => !stylesheet.isNull())
     .map((stylesheet) => stylesheet.contents.toString())
-    .join(os.EOL);
+    .join(EOL);
 }
 
 /**
@@ -956,9 +1010,15 @@ async function preparePenthouseData(document) {
       return match && match[0].length > res.length ? match[0] : res;
     }, './')
     .replace(/\.\.\//g, 'sub/');
+<<<<<<< HEAD
   const dir = path.join(temporaryDirectory(), subfolders);
   const filename = path.basename(temporaryFile({extension: 'html'}));
   const file = path.join(dir, filename);
+=======
+  const dir = join(temporaryDirectory(), subfolders);
+  const filename = basename(temporaryFile({extension: 'html'}));
+  const file = join(dir, filename);
+>>>>>>> origin/feature/bump
 
   const htmlContent = document.contents.toString();
   // Inject all styles to make sure we have everything in place
@@ -972,14 +1032,14 @@ async function preparePenthouseData(document) {
 
   // Write styles to first stylesheet
   if (stylesheet) {
-    const filename = path.join(dir, stylesheet);
+    const filename = join(dir, stylesheet);
     tmp.push(filename);
     await outputFileAsync(filename, document.css);
   }
 
   // Write empty string to rest of the linked stylesheets
   await forEachAsync(canBeEmpty, (dummy) => {
-    const filename = path.join(dir, dummy);
+    const filename = join(dir, dummy);
     tmp.push(filename);
     outputFileAsync(filename, '');
   });
@@ -996,14 +1056,19 @@ async function preparePenthouseData(document) {
 export async function getDocument(filepath, options = {}) {
   const {rebase = {}, base} = options;
 
-  if (!isVinyl(filepath) && !isRemote(filepath) && !fs.existsSync(filepath) && base) {
+  if (!isVinyl(filepath) && !isRemote(filepath) && !existsSync(filepath) && base) {
     filepath = joinPath(base, filepath);
   }
 
   const document = await vinylize({filepath}, options);
 
+<<<<<<< HEAD
   document.stylesheets = await getStylesheetHrefs(document, options);
   document.stylesheetsMedia = await getStylesheetsMedia(document, options);
+=======
+  document.stylesheets = getStylesheetHrefs(document);
+  document.stylesheetsMedia = getStylesheetsMedia(document);
+>>>>>>> origin/feature/bump
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
 
   document.cwd = base || process.cwd();
@@ -1039,8 +1104,8 @@ export async function getDocumentFromSource(html, options = {}) {
   const {rebase = {}, base} = options;
   const document = await vinylize({html}, options);
 
-  document.stylesheets = await getStylesheetHrefs(document);
-  document.stylesheetsMedia = await getStylesheetsMedia(document);
+  document.stylesheets = getStylesheetHrefs(document);
+  document.stylesheetsMedia = getStylesheetsMedia(document);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
   document.cwd = base || process.cwd();
 

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {EOL} from 'node:os';
 import {Buffer} from 'node:buffer';
 import process from 'node:process';
@@ -7,20 +8,41 @@ import CleanCSS from 'clean-css';
 import {invokeMap} from 'lodash-es';
 import pAll from 'p-all';
 import debugBase from 'debug';
+=======
+import process from 'node:process';
+import {Buffer} from 'node:buffer';
+import {EOL} from 'node:os';
+import path from 'node:path';
+import chalk from 'chalk';
+import CleanCSS from 'clean-css';
+import invokeMap from 'lodash/invokeMap.js';
+import pAll from 'p-all';
+import debugModule from 'debug';
+>>>>>>> origin/feature/bump
 import postcss from 'postcss';
 import discard from 'postcss-discard';
 import imageInliner from 'postcss-image-inliner';
 import penthouse from 'penthouse';
 import {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} from 'penthouse/lib/core.js';
+<<<<<<< HEAD
 import {inline as inlineCritical} from 'inline-critical';
 import {removeDuplicateStyles} from 'inline-critical/css'; // eslint-disable-line n/file-extension-in-import
+=======
+import inlineCritical from 'inline-critical';
+import {removeDuplicateStyles} from 'inline-critical/src/css.js';
+>>>>>>> origin/feature/bump
 import parseCssUrls from 'css-url-parser';
 import {reduceAsync} from './array.js';
 import {NoCssError} from './errors.js';
 import {getDocument, getDocumentFromSource, token, getAssetPaths, isRemote, normalizePath} from './file.js';
 
+<<<<<<< HEAD
 const debug = debugBase('critical:core');
+=======
+const debug = debugModule('critical:core');
+>>>>>>> origin/feature/bump
 
+const {dirname, relative, resolve} = path;
 /**
  * Returns a string of combined and deduped css rules.
  * @param {array} cssArray Array with css strings
@@ -151,7 +173,7 @@ export async function create(options = {}) {
 
   if (inlineImages) {
     const refAssets = [...parseCssUrls(criticalCSS), ...document.stylesheets];
-    const refAssetPaths = refAssets.reduce((res, file) => [...res, path.dirname(file)], []);
+    const refAssetPaths = refAssets.reduce((res, file) => [...res, dirname(file)], []);
 
     const searchpaths = await reduceAsync([], [...new Set(refAssetPaths)], async (res, file) => {
       const paths = await getAssetPaths(document, file, options, false);
@@ -212,7 +234,7 @@ export async function create(options = {}) {
     }
 
     if (target.uncritical) {
-      const uncriticalHref = normalizePath(path.relative(document.cwd, path.resolve(base, target.uncritical)));
+      const uncriticalHref = normalizePath(relative(document.cwd, resolve(base, target.uncritical)));
       // Only replace stylesheets if the uncriticalHref is inside document.cwd and replaceStylesheets is not set via options
       if (!/^\.\.\//.test(uncriticalHref) && replaceStylesheets === undefined) {
         inline.replaceStylesheets = [`/${uncriticalHref}`];

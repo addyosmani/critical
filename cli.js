@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+<<<<<<< HEAD
 import os from 'node:os';
 import process from 'node:process';
 import stdin from 'get-stdin';
@@ -7,6 +8,20 @@ import indentString from 'indent-string';
 import {escapeRegExp, isObject, isString, reduce} from 'lodash-es';
 import meow from 'meow';
 import pico from 'picocolors';
+=======
+
+import {EOL} from 'node:os';
+import process from 'node:process';
+import chalk from 'chalk';
+import meow from 'meow';
+import groupArgs from 'group-args';
+import indentString from 'indent-string';
+import stdin from 'get-stdin';
+import reduce from 'lodash/reduce.js';
+import isString from 'lodash/isString.js';
+import isObject from 'lodash/isObject.js';
+import escapeRegExp from 'lodash/escapeRegExp.js';
+>>>>>>> origin/feature/bump
 import {validate} from './src/config.js';
 import {generate} from './index.js';
 
@@ -188,8 +203,13 @@ const normalizedFlags = reduce(
 );
 
 function showError(err) {
+<<<<<<< HEAD
   process.stderr.write(indentString(pico.red('Error: ') + err.message || err, 3));
   process.stderr.write(os.EOL);
+=======
+  process.stderr.write(indentString(chalk.red('Error: ') + err.message || err, 3));
+  process.stderr.write(EOL);
+>>>>>>> origin/feature/bump
   process.stderr.write(indentString(help, 3));
   process.exit(1);
 }
@@ -250,6 +270,11 @@ function run(data) {
 if (cli.input[0]) {
   run();
 } else {
+<<<<<<< HEAD
   const data = await stdin();
   run(data);
+=======
+  // Get stdin
+  stdin().then(run);
+>>>>>>> origin/feature/bump
 }

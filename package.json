@@ -4,10 +4,15 @@
   "description": "Extract & Inline Critical-path CSS from HTML",
   "author": "Addy Osmani",
   "license": "Apache-2.0",
+  "type": "module",
   "repository": "addyosmani/critical",
   "type": "module",
   "scripts": {
+<<<<<<< HEAD
     "jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+=======
+    "jest": "NODE_OPTIONS=--experimental-vm-modules jest --coverage",
+>>>>>>> origin/feature/bump
     "xo": "xo",
     "test": "npm run xo && npm run jest"
   },
@@ -25,6 +30,7 @@
     "optimization"
   ],
   "engines": {
+<<<<<<< HEAD
     "node": ">=14.16"
   },
   "dependencies": {
@@ -42,9 +48,30 @@
     "inline-critical": "^10.0.1",
     "is-glob": "^4.0.3",
     "joi": "^17.9.1",
+=======
+    "node": ">=16"
+  },
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "clean-css": "^5.3.0",
+    "common-tags": "^1.8.2",
+    "css-url-parser": "^1.1.3",
+    "data-uri-to-buffer": "^4.0.0",
+    "debug": "^4.3.4",
+    "find-up": "^6.3.0",
+    "get-stdin": "^9.0.0",
+    "globby": "^13.1.1",
+    "got": "^12.1.0",
+    "group-args": "^0.1.0",
+    "indent-string": "^5.0.0",
+    "inline-critical": "^9.0.1",
+    "is-glob": "^4.0.3",
+    "joi": "^17.6.0",
+>>>>>>> origin/feature/bump
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "make-dir": "^3.1.0",
+<<<<<<< HEAD
     "meow": "^11.0.0",
     "oust": "^2.0.3",
     "p-all": "^4.0.0",
@@ -52,16 +79,29 @@
     "picocolors": "^1.0.0",
     "plugin-error": "^2.0.1",
     "postcss": "^8.4.21",
+=======
+    "meow": "^10.1.2",
+    "oust": "^1.2.0",
+    "p-all": "^4.0.0",
+    "penthouse": "^2.3.3",
+    "plugin-error": "^1.0.1",
+    "postcss": "^8.4.14",
+>>>>>>> origin/feature/bump
     "postcss-discard": "^2.0.0",
     "postcss-image-inliner": "^6.1.0",
     "postcss-url": "^10.1.3",
     "replace-ext": "^2.0.0",
+<<<<<<< HEAD
     "slash": "^5.0.0",
+=======
+    "slash": "^4.0.0",
+>>>>>>> origin/feature/bump
     "tempy": "^3.0.0",
     "through2": "^4.0.2",
     "vinyl": "^3.0.0"
   },
   "devDependencies": {
+<<<<<<< HEAD
     "async": "^3.2.4",
     "ava": "^5.2.0",
     "cross-env": "^7.0.3",
@@ -69,12 +109,26 @@
     "get-port": "^6.1.2",
     "jest": "^29.5.0",
     "nock": "^13.3.0",
+=======
+    "@babel/core": "^7.18.2",
+    "@babel/plugin-transform-modules-commonjs": "^7.18.2",
+    "async": "^3.2.3",
+    "babel-jest": "^28.1.0",
+    "finalhandler": "^1.2.0",
+    "get-port": "^6.1.2",
+    "jest": "^28.1.0",
+    "nock": "^13.2.4",
+>>>>>>> origin/feature/bump
     "normalize-newline": "^4.1.0",
     "serve-static": "^1.15.0",
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
+<<<<<<< HEAD
     "xo": "^0.54.0"
+=======
+    "xo": "^0.49.0"
+>>>>>>> origin/feature/bump
   },
   "xo": {
     "space": 2,
@@ -104,7 +158,16 @@
     "bracketSpacing": false
   },
   "jest": {
+<<<<<<< HEAD
     "transform": {},
     "collectCoverage": true
+=======
+    "moduleNameMapper": {
+      "#(.*)": "<rootDir>/node_modules/$1"
+    },
+    "roots": [
+      ""
+    ]
+>>>>>>> origin/feature/bump
   }
 }

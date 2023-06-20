@@ -1,5 +1,13 @@
+<<<<<<< HEAD
 import {ConfigError} from '../src/errors.js';
 import {getOptions, DEFAULT} from '../src/config.js';
+=======
+import {jest} from '@jest/globals';
+import {ConfigError} from '../src/errors.js';
+import {getOptions, DEFAULT} from '../src/config.js';
+
+jest.useFakeTimers();
+>>>>>>> origin/feature/bump
 
 test('Throws ConfigError on invalid config', () => {
   expect(() => {
