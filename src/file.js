@@ -6,7 +6,7 @@ import process from 'node:process';
 import url from 'node:url';
 import {promisify} from 'node:util';
 import parseCssUrls from 'css-url-parser';
-import dataUriToBuffer from 'data-uri-to-buffer';
+import {dataUriToBuffer} from 'data-uri-to-buffer';
 import debugBase from 'debug';
 import {findUp} from 'find-up';
 import {globby} from 'globby';
