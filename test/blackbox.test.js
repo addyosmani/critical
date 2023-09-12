@@ -951,6 +951,23 @@ describe('generate (local)', () => {
       assertCritical(target, '', done)
     );
   });
+
+  test('issue #566 - consider base tag', (done) => {
+    const expected = read('expected/issue-566.css');
+    const target = path.join(__dirname, '.issue-566.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'issue-566.html',
+        target,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
@@ -1453,5 +1470,22 @@ describe('generate (remote)', () => {
     });
 
     expect(mockHead).toHaveBeenCalled();
+  });
+
+  test('issue #566 - consider base tag', (done) => {
+    const expected = read('expected/issue-566.css');
+    const target = path.join(__dirname, '.issue-566.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: `http://localhost:${port}/issue-566.html`,
+        target,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
   });
 });
