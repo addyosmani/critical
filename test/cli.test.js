@@ -38,12 +38,10 @@ const getArgs = async (params = []) => {
   await import('../cli.js');
   process.argv = origArgv;
   const {generate} = await import('../index.js');
-  // console.log('GENERATE:', generate.mock);
   const [args] = generate.mock.calls;
   const [opts] = args || [{}];
   expect(generate).toHaveBeenCalledTimes(1);
   return opts || {};
-  // return {};
 };
 
 const pipe = async (filename, args = []) => {

@@ -8,7 +8,7 @@ import {promisify} from 'node:util';
 import parseCssUrls from 'css-url-parser';
 import {dataUriToBuffer} from 'data-uri-to-buffer';
 import debugBase from 'debug';
-import {findUp} from 'find-up';
+import {findUpMultiple} from 'find-up';
 import {globby} from 'globby';
 import got from 'got';
 import isGlob from 'is-glob';
@@ -62,7 +62,7 @@ export function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 export function isRemote(href) {
-  return !Buffer.isBuffer(href) && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
+  return typeof href === 'string' && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
 /**
@@ -88,8 +88,8 @@ export function urlParse(str = '') {
  * @returns {string} file uri
  */
 function getFileUri(file) {
-  if (!isAbsolute) {
-    throw new Error('Path must be absolute to compute file uri');
+  if (!isAbsolute(file)) {
+    throw new Error('Path must be absolute to compute file uri. Received: ' + file);
   }
 
   const fileUrl = process.platform === 'win32' ? new URL(`file:///${file}`) : new URL(`file://${file}`);
@@ -117,8 +117,12 @@ export function urlResolve(from = '', to = '') {
   return path.join(from.replace(/[^/]+$/, ''), to);
 }
 
-function isAbsolute(href) {
-  return !Buffer.isBuffer(href) && path.isAbsolute(href);
+function isFilePath(href) {
+  return typeof href === 'string' && !isRemote(href);
+}
+
+export function isAbsolute(href) {
+  return isFilePath(href) && path.isAbsolute(href);
 }
 
 /**
@@ -127,7 +131,7 @@ function isAbsolute(href) {
  * @returns {boolean} True if the path is relative
  */
 function isRelative(href) {
-  return !Buffer.isBuffer(href) && !isRemote(href) && !isAbsolute(href);
+  return isFilePath(href) && !isAbsolute(href);
 }
 
 /**
@@ -522,6 +526,7 @@ export async function getDocumentPath(file, options = {}) {
   if (file.stylesheets) {
     const relativeRefs = file.stylesheets.filter((href) => isRelative(href));
     const absoluteRefs = file.stylesheets.filter((href) => isAbsolute(href));
+
     // If we have no stylesheets inside, fall back to path relative to process cwd
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
@@ -681,6 +686,8 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
     return [];
   }
 
+  // consider base tag in document
+  const baseTagHref = document?.contents?.toString()?.match(/<base\s+href=['"]([^'"]+)['"]/)?.[1];
   // Remove double dots in the middle
   const normalized = path.join(file);
   // Count directory hops
@@ -693,6 +700,8 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
   const paths = [
     ...new Set([
       base,
+      baseTagHref,
+      baseTagHref && !isRemote(baseTagHref) && path.join(base, baseTagHref),
       base && isRelative(base) && path.join(process.cwd(), base),
       docurl,
       urlPath && urlResolve(urlObj.href, path.dirname(urlPath)),
@@ -713,7 +722,7 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
 
   // Filter non-existent paths
   const filtered = await filterAsync(paths, (f) => {
-    if (!f) {
+    if (!f || (isAbsolute(f) && !f?.includes(process.cwd()))) {
       return false;
     }
 
@@ -726,20 +735,22 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
       return [...result, cwd];
     }
 
-    const up = await findUp(first, {cwd, type: 'directory'});
-    if (up) {
-      const upDir = path.dirname(up);
+    // const up = await findUp(first, {cwd, type: 'directory'});
+    const up = await findUpMultiple(first, {cwd, type: 'directory', stopAt: process.cwd()});
+    const additionalDirectories = up.flatMap((u) => {
+      const upDir = path.dirname(u);
 
       if (hops) {
         // Add additional directories based on dirHops
         const additional = path.relative(upDir, cwd).split(path.sep).slice(0, hops);
-        return [...result, upDir, path.join(upDir, ...additional)];
+
+        return [upDir, path.join(upDir, ...additional)];
       }
 
-      return [...result, upDir];
-    }
+      return [upDir];
+    });
 
-    return result;
+    return [...result, ...additionalDirectories];
   });
 
   debug(`(getAssetPaths) Search file "${file}" in:`, [...new Set(all)]);

@@ -16,6 +16,7 @@ import {FileNotFoundError} from '../src/errors.js';
 import {
   BASE_WARNING,
   isRemote,
+  isAbsolute,
   checkCssOption,
   fileExists,
   joinPath,
@@ -86,6 +87,18 @@ test('Remote file detection', () => {
 
   local.forEach((p) => expect(isRemote(p)).toBe(false));
   remote.forEach((p) => expect(isRemote(p)).toBe(true));
+});
+
+test('Absolute file detection', () => {
+  const invalid = ['', false, {}];
+  const absolute = ['/usr/tmp/bar'];
+  const relative = ['../test/foo.html', './usr/tmp/bar'];
+  const remote = ['https://test.io/', '//test.io/styles/main.css'];
+
+  invalid.forEach((p) => expect(isAbsolute(p)).toBe(false));
+  relative.forEach((p) => expect(isAbsolute(p)).toBe(false));
+  remote.forEach((p) => expect(isAbsolute(p)).toBe(false));
+  absolute.forEach((p) => expect(isAbsolute(p)).toBe(true));
 });
 
 test('Error for file not found', () => {
