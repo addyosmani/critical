@@ -62,9 +62,7 @@ export function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 export function isRemote(href) {
-  return (
-    typeof href === 'string' && !Buffer.isBuffer(href) && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:')
-  );
+  return typeof href === 'string' && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
 /**
@@ -120,7 +118,7 @@ export function urlResolve(from = '', to = '') {
 }
 
 function isFilePath(href) {
-  return typeof href === 'string' && !Buffer.isBuffer(href) && !isRemote(href);
+  return typeof href === 'string' && !isRemote(href);
 }
 
 export function isAbsolute(href) {
