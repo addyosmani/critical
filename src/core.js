@@ -31,22 +31,7 @@ function combineCss(cssArray) {
     return cssArray[0].toString();
   }
 
-  return new CleanCSS({
-    rebase: false,
-    level: {
-      1: {
-        all: true,
-      },
-      2: {
-        all: false,
-        removeDuplicateFontRules: true,
-        removeDuplicateMediaBlocks: true,
-        removeDuplicateRules: true,
-        removeEmpty: true,
-        mergeMedia: true,
-      },
-    },
-  }).minify(invokeMap(cssArray, 'toString').join(' ')).styles;
+  return new CleanCSS().minify(invokeMap(cssArray, 'toString').join(' ')).styles;
 }
 
 /**
@@ -93,9 +78,6 @@ function callPenthouse(document, options) {
  * @return {Promise<object>} Object with critical css & html
  */
 export async function create(options = {}) {
-  const cleanCSS = new CleanCSS({
-    rebase: false,
-  });
   const {
     base,
     src,
@@ -108,6 +90,7 @@ export async function create(options = {}) {
     maxImageFileSize,
     postcss: postProcess = [],
     strict,
+    cleanCSS: cleanCSSOptions,
     concurrency = Number.POSITIVE_INFINITY,
     assetPaths = [],
   } = options;
@@ -178,6 +161,23 @@ export async function create(options = {}) {
   }
 
   // Minify or prettify
+  const cleanCSS = new CleanCSS(
+    cleanCSSOptions || {
+      level: {
+        1: {
+          all: true,
+        },
+        2: {
+          all: false,
+          removeDuplicateFontRules: true,
+          removeDuplicateMediaBlocks: true,
+          removeDuplicateRules: true,
+          removeEmpty: true,
+          mergeMedia: true,
+        },
+      },
+    }
+  );
   criticalCSS = cleanCSS.minify(criticalCSS).styles;
 
   const result = {

@@ -1,0 +1,16 @@
+@media all and (min-width: 768px) {
+  .title {
+    width: 200px;
+    height: 100px;
+  }
+}
+@media all and (min-width: 768px) {
+  .block {
+    width: 100px;
+  }
+
+  .title {
+    width: 200px;
+    color: #ffffff;
+  }
+}
