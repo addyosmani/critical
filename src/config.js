@@ -70,6 +70,7 @@ const schema = Joi.object()
     ],
     assetPaths: Joi.array().items(Joi.string()),
     userAgent: Joi.string(),
+    cleanCSS: Joi.object().unknown(true),
   })
   .label('options')
   .xor('html', 'src');

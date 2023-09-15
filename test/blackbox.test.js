@@ -354,7 +354,7 @@ describe('generate (local)', () => {
 
   test('should rewrite relative images for html outside root', (done) => {
     const expected = read('expected/generate-image-relative.css');
-    const target = path.resolve('fixtures/folder/.image-relative.css');
+    const target = path.resolve('fixtures/folder/.mage-relative.css');
 
     generate(
       {
