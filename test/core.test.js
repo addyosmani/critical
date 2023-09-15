@@ -6,9 +6,9 @@ import {jest} from '@jest/globals';
 import finalhandler from 'finalhandler';
 import getPort from 'get-port';
 import serveStatic from 'serve-static';
+import CleanCSS from 'clean-css';
 import {create} from '../src/core.js';
 import {read} from './helper/index.js';
-import CleanCSS from 'clean-css';
 
 const __dirname = fileURLToPath(new URL('.', import.meta.url));
 jest.setTimeout(100_000);
@@ -72,6 +72,7 @@ test('Generate critical-path CSS with custom cleancss config', async () => {
     const expected = new CleanCSS(options).minify(css).styles;
 
     try {
+      // eslint-disable-next-line no-await-in-loop
       const result = await create({
         src: `http://localhost:${port}/issue-562.html`,
         cleanCSS: options,
