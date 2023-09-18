@@ -158,7 +158,7 @@ describe('generate (local)', () => {
       },
       (err) => {
         expect(err).toBeInstanceOf(Error);
-        fs.unlink(target, () => done());
+        fs.promises.unlink(target).then(() => done());
       }
     );
   });
