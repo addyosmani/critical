@@ -41,26 +41,26 @@ const meowOpts = {
   flags: {
     base: {
       type: 'string',
-      alias: 'b',
+      shortFlag: 'b',
     },
     css: {
       type: 'string',
-      alias: 'c',
+      shortFlag: 'c',
       isMultiple: true,
     },
     width: {
-      alias: 'w',
+      shortFlag: 'w',
     },
     height: {
-      alias: 'h',
+      shortFlag: 'h',
     },
     inline: {
       type: 'boolean',
-      alias: 'i',
+      shortFlag: 'i',
     },
     extract: {
       type: 'boolean',
-      alias: 'e',
+      shortFlag: 'e',
       default: false,
     },
     inlineImages: {
@@ -85,7 +85,7 @@ const meowOpts = {
     },
     userAgent: {
       type: 'string',
-      alias: 'ua',
+      shortFlag: 'ua',
     },
     dimensions: {
       type: 'string',
@@ -120,8 +120,8 @@ const isAlias = (key) => {
   }
 
   const aliases = Object.keys(meowOpts.flags)
-    .filter((k) => meowOpts.flags[k].alias)
-    .map((k) => meowOpts.flags[k].alias);
+    .filter((k) => meowOpts.flags[k].shortFlag)
+    .map((k) => meowOpts.flags[k].shortFlag);
 
   return aliases.includes(key);
 };

@@ -56,5 +56,5 @@ export function getVinyl(...args) {
 }
 
 export function strip(string) {
-  return nn(string.replace(/[\r\n]+/gm, ' ').replace(/\s+/gm, ''));
+  return nn(string.replaceAll(/[\r\n]+/gm, ' ').replaceAll(/\s+/gm, ''));
 }

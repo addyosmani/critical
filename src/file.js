@@ -966,7 +966,7 @@ async function preparePenthouseData(document) {
       const match = /^(\.\.\/)+/.exec(href || '');
       return match && match[0].length > res.length ? match[0] : res;
     }, './')
-    .replace(/\.\.\//g, 'sub/');
+    .replaceAll('../', 'sub/');
   const dir = path.join(temporaryDirectory(), subfolders);
   const filename = path.basename(temporaryFile({extension: 'html'}));
   const file = path.join(dir, filename);
@@ -975,7 +975,7 @@ async function preparePenthouseData(document) {
   // Inject all styles to make sure we have everything in place
   // because puppeteer doesn't seem to fetch protocol relative links
   // when served from file://
-  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
+  const injected = htmlContent.replaceAll(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
   // Write html to temp file
   await outputFileAsync(file, injected);
 
