@@ -786,10 +786,19 @@ export async function vinylize(src, options = {}) {
   } else if (filepath && isVinyl(filepath)) {
     return filepath;
   } else if (filepath && isRemote(filepath)) {
+    let url = filepath;
+    try {
+      const response = await fetch(filepath, {options, request: {method: 'head'}});
+      if (response.url !== url) {
+        debug(`(vinylize) found redirect from ${url} to ${response.url}`);
+        url = response.url;
+      }
+    } catch {}
+
     file.remote = true;
-    file.url = filepath;
-    file.urlObj = urlParse(filepath);
-    file.contents = await fetch(filepath, options);
+    file.url = url;
+    file.urlObj = urlParse(url);
+    file.contents = await fetch(url, options);
     file.virtualPath = file.urlObj.pathname;
   } else if (filepath && fs.existsSync(filepath)) {
     file.path = filepath;
