@@ -279,7 +279,7 @@ test('Compute document base (with base option)', async () => {
       {filepath: `http://localhost:${port}/folder/generate-default.html`, expected: '/folder'},
       {filepath: `http://localhost:${port}/folder/head.html`, expected: '/folder'},
       {filepath: `http://localhost:${port}/generate-default.html`, expected: '/'},
-      {filepath: `http://localhost:${port}/folder`, expected: '/'},
+      {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
       {filepath: `http://localhost:${port}/folder/`, expected: '/folder'},
       {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
       {filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
@@ -306,7 +306,7 @@ test('Compute document base (with base option)', async () => {
 test('Compute document base (without base option)', async () => {
   const vinyls = await Promise.all(
     [
-      {filepath: `http://localhost:${port}/folder`, expected: '/'},
+      {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
       {filepath: `http://localhost:${port}/folder/`, expected: '/folder'},
       {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
       {filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
@@ -339,7 +339,7 @@ test('Get document', async () => {
   });
 
   const tests = [
-    {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
+    {filepath: `http://localhost:${port}/folder`, expected: '/folder/index.html'},
     {filepath: `http://localhost:${port}/folder/`, expected: '/folder/index.html'},
     {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder/head.html'},
     {
