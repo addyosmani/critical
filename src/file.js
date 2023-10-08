@@ -428,9 +428,10 @@ function getStylesheetObjects(file, options) {
 
       // support base64 encoded styles
       if (link.value.startsWith('data:')) {
+        const parsed = dataUriToBuffer(link.value);
         return {
           media,
-          value: dataUriToBuffer(link.value),
+          value: Buffer.from(parsed.buffer),
         };
       }
 
