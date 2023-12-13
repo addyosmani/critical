@@ -221,7 +221,11 @@ export async function create(options = {}) {
       inline.extract = extract;
     }
 
-    const inlined = inlineCritical(document.contents.toString(), criticalCSS, {...inline, basePath: document.cwd});
+    const inlined = inlineCritical(document.contents.toString(), criticalCSS, {
+      ...inline, 
+      basePath: document.cwd,
+      strategy: 'swap'
+    });
     document.contents = Buffer.from(inlined);
   }
 
