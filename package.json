@@ -16,7 +16,11 @@
     "index.js",
     "src"
   ],
-  "exports": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./file.js": "./src/file.js",
+    "./errors.js": "./src/errors.js"
+  },
   "bin": "cli.js",
   "keywords": [
     "critical",
