@@ -29,7 +29,7 @@
     "optimization"
   ],
   "engines": {
-    "node": ">=16.10"
+    "node": ">=18"
   },
   "dependencies": {
     "clean-css": "^5.3.3",
