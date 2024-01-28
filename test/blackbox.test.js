@@ -316,6 +316,23 @@ describe('generate (local)', () => {
     );
   });
 
+  test('should evaluate css passed as source string', (done) => {
+    const expected = 'html{display:block}';
+    const target = path.resolve('.source-string.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'generate-default-nostyle.html',
+        css: ['html{display:block}.someclass{color:red}'],
+        target,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
+
   test('should inline relative images', (done) => {
     const expected = read('expected/generate-image.css');
     const target = path.resolve('.image-relative.css');

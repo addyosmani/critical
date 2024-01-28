@@ -32,6 +32,7 @@
     "node": ">=18"
   },
   "dependencies": {
+    "@adobe/css-tools": "^4.3.3",
     "clean-css": "^5.3.3",
     "common-tags": "^1.8.2",
     "css-url-parser": "^1.1.3",

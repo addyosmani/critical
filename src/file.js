@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import {Buffer} from 'node:buffer';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -10,6 +11,7 @@ import {dataUriToBuffer} from 'data-uri-to-buffer';
 import debugBase from 'debug';
 import {findUpMultiple} from 'find-up';
 import {globby} from 'globby';
+import {parse} from '@adobe/css-tools';
 import got from 'got';
 import isGlob from 'is-glob';
 import makeDir from 'make-dir';
@@ -408,6 +410,7 @@ function getStylesheetObjects(file, options) {
     throw new Error('Parameter file needs to be a vinyl object');
   }
 
+  // Already computed stylesheetObjects
   if (file.stylesheetObjects) {
     return file.stylesheetObjects;
   }
@@ -927,18 +930,40 @@ export async function getStylesheet(document, filepath, options = {}) {
   return file;
 }
 
+const isCssSource = (string) => {
+  try {
+    parse(string);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 /**
  * Get css for document
  * @param {Vinyl} document Vinyl representation of HTML document
  * @param {object} options Critical options
  * @returns {Promise<string>} Css string unoptimized, Multiple stylesheets are concatenated with EOL
  */
-async function getCss(document, options = {}) {
+export async function getCss(document, options = {}) {
   const {css} = options;
   let stylesheets = [];
 
   if (checkCssOption(css)) {
-    const files = await glob(css, options);
+    const cssArray = Array.isArray(css) ? css : [css];
+
+    // merge css files & css source strings passed as css option
+    const filesRaw = await Promise.all(
+      cssArray.map((value) => {
+        if (isCssSource(value)) {
+          return Buffer.from(value);
+        }
+
+        return glob(value, options);
+      })
+    );
+
+    const files = filesRaw.flat();
     stylesheets = await mapAsync(files, (file) => getStylesheet(document, file, options));
     debug('(getCss) css option set', files, stylesheets);
   } else {
