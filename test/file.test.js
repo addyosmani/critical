@@ -25,6 +25,7 @@ import {
   vinylize,
   normalizePath,
   getStylesheetHrefs,
+  getCss,
   getAssets,
   getDocumentPath,
   getStylesheetPath,
@@ -662,4 +663,17 @@ test('Does not rebase when rebase is disabled via option', async () => {
       expect(file.contents.toString()).toMatch(expected[index]);
     }
   }
+});
+
+test('Handle css source option', async () => {
+  const document = await getDocument(path.join(__dirname, 'fixtures/generate-adaptive.html'));
+
+  const source1 = 'html{display:block;}';
+  const source2 = '.someclass{color:red}';
+  const css = await getCss(document, {
+    css: [source1, path.join(__dirname, 'fixtures/styles/adaptive.css'), source2],
+  });
+
+  expect(css.startsWith(source1)).toBeTruthy();
+  expect(css.endsWith(source2)).toBeTruthy();
 });
