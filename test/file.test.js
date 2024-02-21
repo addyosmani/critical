@@ -16,6 +16,7 @@ import {FileNotFoundError} from '../src/errors.js';
 import {
   BASE_WARNING,
   isRemote,
+  isAbsolute,
   checkCssOption,
   fileExists,
   joinPath,
@@ -24,6 +25,7 @@ import {
   vinylize,
   normalizePath,
   getStylesheetHrefs,
+  getCss,
   getAssets,
   getDocumentPath,
   getStylesheetPath,
@@ -86,6 +88,18 @@ test('Remote file detection', () => {
 
   local.forEach((p) => expect(isRemote(p)).toBe(false));
   remote.forEach((p) => expect(isRemote(p)).toBe(true));
+});
+
+test('Absolute file detection', () => {
+  const invalid = ['', false, {}];
+  const absolute = ['/usr/tmp/bar'];
+  const relative = ['../test/foo.html', './usr/tmp/bar'];
+  const remote = ['https://test.io/', '//test.io/styles/main.css'];
+
+  invalid.forEach((p) => expect(isAbsolute(p)).toBe(false));
+  relative.forEach((p) => expect(isAbsolute(p)).toBe(false));
+  remote.forEach((p) => expect(isAbsolute(p)).toBe(false));
+  absolute.forEach((p) => expect(isAbsolute(p)).toBe(true));
 });
 
 test('Error for file not found', () => {
@@ -266,7 +280,7 @@ test('Compute document base (with base option)', async () => {
       {filepath: `http://localhost:${port}/folder/generate-default.html`, expected: '/folder'},
       {filepath: `http://localhost:${port}/folder/head.html`, expected: '/folder'},
       {filepath: `http://localhost:${port}/generate-default.html`, expected: '/'},
-      {filepath: `http://localhost:${port}/folder`, expected: '/'},
+      {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
       {filepath: `http://localhost:${port}/folder/`, expected: '/folder'},
       {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
       {filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
@@ -293,7 +307,7 @@ test('Compute document base (with base option)', async () => {
 test('Compute document base (without base option)', async () => {
   const vinyls = await Promise.all(
     [
-      {filepath: `http://localhost:${port}/folder`, expected: '/'},
+      {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
       {filepath: `http://localhost:${port}/folder/`, expected: '/folder'},
       {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder'},
       {filepath: path.join(__dirname, 'fixtures/folder/generate-default.html'), expected: '/folder'},
@@ -326,7 +340,7 @@ test('Get document', async () => {
   });
 
   const tests = [
-    {filepath: `http://localhost:${port}/folder`, expected: '/folder'},
+    {filepath: `http://localhost:${port}/folder`, expected: '/folder/index.html'},
     {filepath: `http://localhost:${port}/folder/`, expected: '/folder/index.html'},
     {filepath: path.join(__dirname, 'fixtures/folder/subfolder/head.html'), expected: '/folder/subfolder/head.html'},
     {
@@ -649,4 +663,17 @@ test('Does not rebase when rebase is disabled via option', async () => {
       expect(file.contents.toString()).toMatch(expected[index]);
     }
   }
+});
+
+test('Handle css source option', async () => {
+  const document = await getDocument(path.join(__dirname, 'fixtures/generate-adaptive.html'));
+
+  const source1 = 'html{display:block;}';
+  const source2 = '.someclass{color:red}';
+  const css = await getCss(document, {
+    css: [source1, path.join(__dirname, 'fixtures/styles/adaptive.css'), source2],
+  });
+
+  expect(css.startsWith(source1)).toBeTruthy();
+  expect(css.endsWith(source2)).toBeTruthy();
 });

@@ -1,26 +1,28 @@
-import path from 'node:path';
-import os from 'node:os';
-import url from 'node:url';
-import fs from 'node:fs';
+/* eslint-disable complexity */
 import {Buffer} from 'node:buffer';
+import fs from 'node:fs';
+import os from 'node:os';
+import path from 'node:path';
 import process from 'node:process';
+import url from 'node:url';
 import {promisify} from 'node:util';
-import dataUriToBuffer from 'data-uri-to-buffer';
-import {findUp} from 'find-up';
-import makeDir from 'make-dir';
+import parseCssUrls from 'css-url-parser';
+import {dataUriToBuffer} from 'data-uri-to-buffer';
+import debugBase from 'debug';
+import {findUpMultiple} from 'find-up';
 import {globby} from 'globby';
+import {parse} from '@adobe/css-tools';
+import got from 'got';
 import isGlob from 'is-glob';
+import makeDir from 'make-dir';
+import oust from 'oust';
+import pico from 'picocolors';
 import postcss from 'postcss';
 import postcssUrl from 'postcss-url';
-import Vinyl from 'vinyl';
-import oust from 'oust';
-import got from 'got';
-import pico from 'picocolors';
-import parseCssUrls from 'css-url-parser';
-import {temporaryFile, temporaryDirectory} from 'tempy';
 import slash from 'slash';
-import debugBase from 'debug';
-import {mapAsync, filterAsync, reduceAsync, forEachAsync} from './array.js';
+import {temporaryDirectory, temporaryFile} from 'tempy';
+import Vinyl from 'vinyl';
+import {filterAsync, forEachAsync, mapAsync, reduceAsync} from './array.js';
 import {FileNotFoundError} from './errors.js';
 
 const debug = debugBase('critical:file');
@@ -62,7 +64,7 @@ export function normalizePath(str) {
  * @returns {boolean} True if the path is remote
  */
 export function isRemote(href) {
-  return !Buffer.isBuffer(href) && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
+  return typeof href === 'string' && /(^\/\/)|(:\/\/)/.test(href) && !href.startsWith('file:');
 }
 
 /**
@@ -88,8 +90,8 @@ export function urlParse(str = '') {
  * @returns {string} file uri
  */
 function getFileUri(file) {
-  if (!isAbsolute) {
-    throw new Error('Path must be absolute to compute file uri');
+  if (!isAbsolute(file)) {
+    throw new Error('Path must be absolute to compute file uri. Received: ' + file);
   }
 
   const fileUrl = process.platform === 'win32' ? new URL(`file:///${file}`) : new URL(`file://${file}`);
@@ -117,8 +119,12 @@ export function urlResolve(from = '', to = '') {
   return path.join(from.replace(/[^/]+$/, ''), to);
 }
 
-function isAbsolute(href) {
-  return !Buffer.isBuffer(href) && path.isAbsolute(href);
+function isFilePath(href) {
+  return typeof href === 'string' && !isRemote(href);
+}
+
+export function isAbsolute(href) {
+  return isFilePath(href) && path.isAbsolute(href);
 }
 
 /**
@@ -127,7 +133,7 @@ function isAbsolute(href) {
  * @returns {boolean} True if the path is relative
  */
 function isRelative(href) {
-  return !Buffer.isBuffer(href) && !isRemote(href) && !isAbsolute(href);
+  return isFilePath(href) && !isAbsolute(href);
 }
 
 /**
@@ -262,10 +268,15 @@ function glob(pattern, {base} = {}) {
  * @param {Buffer|string} css Stylesheet
  * @param {string} from Rebase from url
  * @param {string} to Rebase to url
- * @param {string|function} method Rebase method. See https://github.com/postcss/postcss-url#options-combinations
+ * @param {opject} options
+ *    method: {string|function} method Rebase method. See https://github.com/postcss/postcss-url#options-combinations
+ *    strict: fail on invalid css
+ *    inlined: boolean flag indicating inlined css
+ * @param {boolean} strict fail on invalid css
  * @returns {Buffer} Rebased css
  */
-async function rebaseAssets(css, from, to, method = 'rebase') {
+async function rebaseAssets(css, from, to, options = {}) {
+  const {method = 'rebase', strict = false, inlined = false} = options;
   let rebased = css.toString();
 
   debug('Rebase assets', {from, to});
@@ -283,26 +294,39 @@ async function rebaseAssets(css, from, to, method = 'rebase') {
     from = pathname;
   }
 
-  if (typeof method === 'function') {
-    const transform = (asset, ...rest) => {
-      const assetNormalized = {
-        ...asset,
-        absolutePath: normalizePath(asset.absolutePath),
-        relativePath: normalizePath(asset.relativePath),
+  try {
+    if (typeof method === 'function') {
+      const transform = (asset, ...rest) => {
+        const assetNormalized = {
+          ...asset,
+          absolutePath: normalizePath(asset.absolutePath),
+          relativePath: normalizePath(asset.relativePath),
+        };
+
+        return method(assetNormalized, ...rest);
       };
 
-      return method(assetNormalized, ...rest);
-    };
+      const result = await postcss()
+        .use(postcssUrl({url: transform}))
+        .process(css, {from, to});
+      rebased = result.css;
+    } else if (from && to) {
+      const result = await postcss()
+        .use(postcssUrl({url: method}))
+        .process(css, {from, to});
+      rebased = result.css;
+    }
+  } catch (error) {
+    if (strict) {
+      if (inlined) {
+        error.message = error.message.replace(from, 'Inlined stylesheet');
+      }
 
-    const result = await postcss()
-      .use(postcssUrl({url: transform}))
-      .process(css, {from, to});
-    rebased = result.css;
-  } else if (from && to) {
-    const result = await postcss()
-      .use(postcssUrl({url: method}))
-      .process(css, {from, to});
-    rebased = result.css;
+      throw error;
+    }
+
+    debug(`CSS parse error: ${error.message}`);
+    rebased = '';
   }
 
   return Buffer.from(rebased);
@@ -377,13 +401,16 @@ async function fetch(uri, options = {}, secure = true) {
 /**
  * Extract stylesheet urls from html document
  * @param {Vinyl} file Vinyl file object (document)
+ * @param {object} options Options passed to critical
  * @returns {[string]} Stylesheet urls from document source
  */
-function getStylesheetObjects(file) {
+function getStylesheetObjects(file, options) {
+  const {ignoreInlinedStyles} = options || {};
   if (!isVinyl(file)) {
     throw new Error('Parameter file needs to be a vinyl object');
   }
 
+  // Already computed stylesheetObjects
   if (file.stylesheetObjects) {
     return file.stylesheetObjects;
   }
@@ -395,16 +422,19 @@ function getStylesheetObjects(file) {
 
   const isMediaQuery = (media) => typeof media === 'string' && !['all', 'print', 'screen'].includes(media);
 
+  const allowedInlinedStylesheet = (type) => type !== 'styles' || !ignoreInlinedStyles;
+
   const objects = stylesheets
-    .filter((link) => isNotPrint(link.$el) && Boolean(link.value))
+    .filter((link) => isNotPrint(link.$el) && Boolean(link.value) && allowedInlinedStylesheet(link.type))
     .map((link) => {
       const media = isMediaQuery(link.$el.attr('media')) ? link.$el.attr('media') : '';
 
       // support base64 encoded styles
       if (link.value.startsWith('data:')) {
+        const parsed = dataUriToBuffer(link.value);
         return {
           media,
-          value: dataUriToBuffer(link.value),
+          value: Buffer.from(parsed.buffer),
         };
       }
 
@@ -437,19 +467,21 @@ function getStylesheetObjects(file) {
 /**
  * Extract stylesheet urls from html document
  * @param {Vinyl} file Vinyl file object (document)
+ * @param {object} options Options passed to critical
  * @returns {[string]} Stylesheet urls from document source
  */
-export function getStylesheetHrefs(file) {
-  return getStylesheetObjects(file).map((object) => object.value);
+export function getStylesheetHrefs(file, options) {
+  return getStylesheetObjects(file, options).map((object) => object.value);
 }
 
 /**
  * Extract stylesheet urls from html document
  * @param {Vinyl} file Vinyl file object (document)
+ * @param {object} options Options passed to critical
  * @returns {[string]} Stylesheet urls from document source
  */
-export function getStylesheetsMedia(file) {
-  return getStylesheetObjects(file).map((object) => object.media);
+export function getStylesheetsMedia(file, options) {
+  return getStylesheetObjects(file, options).map((object) => object.media);
 }
 
 /**
@@ -498,6 +530,7 @@ export async function getDocumentPath(file, options = {}) {
   if (file.stylesheets) {
     const relativeRefs = file.stylesheets.filter((href) => isRelative(href));
     const absoluteRefs = file.stylesheets.filter((href) => isAbsolute(href));
+
     // If we have no stylesheets inside, fall back to path relative to process cwd
     if (relativeRefs.length === 0 && absoluteRefs.length === 0) {
       process.stderr.write(BASE_WARNING);
@@ -657,6 +690,8 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
     return [];
   }
 
+  // consider base tag in document
+  const baseTagHref = document?.contents?.toString()?.match(/<base\s+href=['"]([^'"]+)['"]/)?.[1];
   // Remove double dots in the middle
   const normalized = path.join(file);
   // Count directory hops
@@ -669,6 +704,8 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
   const paths = [
     ...new Set([
       base,
+      baseTagHref,
+      baseTagHref && !isRemote(baseTagHref) && path.join(base, baseTagHref),
       base && isRelative(base) && path.join(process.cwd(), base),
       docurl,
       urlPath && urlResolve(urlObj.href, path.dirname(urlPath)),
@@ -689,7 +726,7 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
 
   // Filter non-existent paths
   const filtered = await filterAsync(paths, (f) => {
-    if (!f) {
+    if (!f || (isAbsolute(f) && !f?.includes(process.cwd()))) {
       return false;
     }
 
@@ -702,20 +739,22 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
       return [...result, cwd];
     }
 
-    const up = await findUp(first, {cwd, type: 'directory'});
-    if (up) {
-      const upDir = path.dirname(up);
+    // const up = await findUp(first, {cwd, type: 'directory'});
+    const up = await findUpMultiple(first, {cwd, type: 'directory', stopAt: process.cwd()});
+    const additionalDirectories = up.flatMap((u) => {
+      const upDir = path.dirname(u);
 
       if (hops) {
         // Add additional directories based on dirHops
         const additional = path.relative(upDir, cwd).split(path.sep).slice(0, hops);
-        return [...result, upDir, path.join(upDir, ...additional)];
+
+        return [upDir, path.join(upDir, ...additional)];
       }
 
-      return [...result, upDir];
-    }
+      return [upDir];
+    });
 
-    return result;
+    return [...result, ...additionalDirectories];
   });
 
   debug(`(getAssetPaths) Search file "${file}" in:`, [...new Set(all)]);
@@ -751,10 +790,19 @@ export async function vinylize(src, options = {}) {
   } else if (filepath && isVinyl(filepath)) {
     return filepath;
   } else if (filepath && isRemote(filepath)) {
+    let url = filepath;
+    try {
+      const response = await fetch(filepath, {options, request: {method: 'head'}});
+      if (response.url !== url) {
+        debug(`(vinylize) found redirect from ${url} to ${response.url}`);
+        url = response.url;
+      }
+    } catch {}
+
     file.remote = true;
-    file.url = filepath;
-    file.urlObj = urlParse(filepath);
-    file.contents = await fetch(filepath, options);
+    file.url = url;
+    file.urlObj = urlParse(url);
+    file.contents = await fetch(url, options);
     file.virtualPath = file.urlObj.pathname;
   } else if (filepath && fs.existsSync(filepath)) {
     file.path = filepath;
@@ -829,28 +877,50 @@ export async function getStylesheet(document, filepath, options = {}) {
   }
 
   if (rebase.from && rebase.to) {
-    file.contents = await rebaseAssets(file.contents, rebase.from, rebase.to);
+    file.contents = await rebaseAssets(file.contents, rebase.from, rebase.to, {
+      method: 'rebase',
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
   } else if (typeof rebase === 'function') {
-    file.contents = await rebaseAssets(file.contents, stylepath, document.virtualPath, rebase);
+    file.contents = await rebaseAssets(file.contents, stylepath, document.virtualPath, {
+      method: rebase,
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
     // Next rebase to the stylesheet url
   } else if (isRemote(rebase.to || stylepath)) {
     const from = rebase.from || stylepath;
     const to = rebase.to || stylepath;
     const method = (asset) => (isRemote(asset.originUrl) ? asset.originUrl : urlResolve(to, asset.originUrl));
-    file.contents = await rebaseAssets(file.contents, from, to, method);
+    file.contents = await rebaseAssets(file.contents, from, to, {
+      method,
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
 
     // Use relative path to document (local)
   } else if (document.virtualPath) {
-    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || document.virtualPath);
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || document.virtualPath, {
+      method: 'rebase',
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
   } else if (document.remote) {
     const {pathname} = document.urlObj;
-    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || pathname);
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || pathname, {
+      method: 'rebase',
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
 
     // Make images absolute if we have an absolute positioned stylesheet
   } else if (isAbsolute(stylepath)) {
-    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', (asset) =>
-      normalizePath(asset.absolutePath)
-    );
+    file.contents = await rebaseAssets(file.contents, rebase.from || stylepath, rebase.to || '/index.html', {
+      method: (asset) => normalizePath(asset.absolutePath),
+      strict: options.strict,
+      inlined: Buffer.isBuffer(originalPath),
+    });
   } else {
     warn(`Not rebasing assets for ${originalPath}. Use "rebase" option`);
   }
@@ -860,18 +930,40 @@ export async function getStylesheet(document, filepath, options = {}) {
   return file;
 }
 
+const isCssSource = (string) => {
+  try {
+    parse(string);
+    return true;
+  } catch {
+    return false;
+  }
+};
+
 /**
  * Get css for document
  * @param {Vinyl} document Vinyl representation of HTML document
  * @param {object} options Critical options
  * @returns {Promise<string>} Css string unoptimized, Multiple stylesheets are concatenated with EOL
  */
-async function getCss(document, options = {}) {
+export async function getCss(document, options = {}) {
   const {css} = options;
   let stylesheets = [];
 
   if (checkCssOption(css)) {
-    const files = await glob(css, options);
+    const cssArray = Array.isArray(css) ? css : [css];
+
+    // merge css files & css source strings passed as css option
+    const filesRaw = await Promise.all(
+      cssArray.map((value) => {
+        if (isCssSource(value)) {
+          return Buffer.from(value);
+        }
+
+        return glob(value, options);
+      })
+    );
+
+    const files = filesRaw.flat();
     stylesheets = await mapAsync(files, (file) => getStylesheet(document, file, options));
     debug('(getCss) css option set', files, stylesheets);
   } else {
@@ -909,7 +1001,7 @@ async function preparePenthouseData(document) {
       const match = /^(\.\.\/)+/.exec(href || '');
       return match && match[0].length > res.length ? match[0] : res;
     }, './')
-    .replace(/\.\.\//g, 'sub/');
+    .replaceAll('../', 'sub/');
   const dir = path.join(temporaryDirectory(), subfolders);
   const filename = path.basename(temporaryFile({extension: 'html'}));
   const file = path.join(dir, filename);
@@ -918,7 +1010,7 @@ async function preparePenthouseData(document) {
   // Inject all styles to make sure we have everything in place
   // because puppeteer doesn't seem to fetch protocol relative links
   // when served from file://
-  const injected = htmlContent.replace(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
+  const injected = htmlContent.replaceAll(/(<head(?:\s[^>]*)?>)/gi, `$1<style>${document.css.toString()}</style>`);
   // Write html to temp file
   await outputFileAsync(file, injected);
 
@@ -956,8 +1048,8 @@ export async function getDocument(filepath, options = {}) {
 
   const document = await vinylize({filepath}, options);
 
-  document.stylesheets = await getStylesheetHrefs(document);
-  document.stylesheetsMedia = await getStylesheetsMedia(document);
+  document.stylesheets = await getStylesheetHrefs(document, options);
+  document.stylesheetsMedia = await getStylesheetsMedia(document, options);
   document.virtualPath = rebase.to || (await getDocumentPath(document, options));
 
   document.cwd = base || process.cwd();

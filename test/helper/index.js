@@ -17,6 +17,11 @@ function getFile(file) {
   return file;
 }
 
+export function getPkg() {
+  const content = fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8');
+  return JSON.parse(content);
+}
+
 export function readAndRemove(file) {
   const fp = getFile(file);
   const content = read(fp);
@@ -51,5 +56,5 @@ export function getVinyl(...args) {
 }
 
 export function strip(string) {
-  return nn(string.replace(/[\r\n]+/gm, ' ').replace(/\s+/gm, ''));
+  return nn(string.replaceAll(/[\r\n]+/gm, ' ').replaceAll(/\s+/gm, ''));
 }

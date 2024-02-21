@@ -6,6 +6,7 @@ import {jest} from '@jest/globals';
 import finalhandler from 'finalhandler';
 import getPort from 'get-port';
 import serveStatic from 'serve-static';
+import CleanCSS from 'clean-css';
 import {create} from '../src/core.js';
 import {read} from './helper/index.js';
 
@@ -45,9 +46,53 @@ test('Generate critical-path CSS', async () => {
     const result = await create({
       src: `http://localhost:${port}/generate-default.html`,
     });
+
     expect(result.css).toBe(css);
     expect(result.html).toBe(html);
   } catch (error) {
     expect(error).toBe(undefined);
+  }
+});
+
+test('Generate critical-path CSS with custom cleancss config', async () => {
+  const css = read('fixtures/styles/issue-562.css');
+  const html = read('fixtures/issue-562.html');
+
+  const optionsArray = [
+    {
+      level: 2,
+      format: 'beautify',
+    },
+    {
+      level: 1,
+    },
+  ];
+
+  for (const options of optionsArray) {
+    const expected = new CleanCSS(options).minify(css).styles;
+
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      const result = await create({
+        src: `http://localhost:${port}/issue-562.html`,
+        cleanCSS: options,
+        inline: false,
+        dimensions: [
+          {
+            width: 100,
+            height: 70,
+          },
+          {
+            width: 1000,
+            height: 70,
+          },
+        ],
+      });
+
+      expect(result.css).toBe(expected);
+      expect(result.html).toBe(html);
+    } catch (error) {
+      expect(error).toBe(undefined);
+    }
   }
 });

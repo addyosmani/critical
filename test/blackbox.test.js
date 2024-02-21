@@ -158,7 +158,7 @@ describe('generate (local)', () => {
       },
       (err) => {
         expect(err).toBeInstanceOf(Error);
-        fs.unlink(target, () => done());
+        fs.promises.unlink(target).then(() => done());
       }
     );
   });
@@ -308,6 +308,23 @@ describe('generate (local)', () => {
         base: FIXTURES_DIR,
         src: 'generate-default-nostyle.html',
         css: ['fixtures/styles/main.css', 'fixtures/styles/bootstrap.css'],
+        target,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
+
+  test('should evaluate css passed as source string', (done) => {
+    const expected = 'html{display:block}';
+    const target = path.resolve('.source-string.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'generate-default-nostyle.html',
+        css: ['html{display:block}.someclass{color:red}'],
         target,
         width: 1300,
         height: 900,
@@ -919,6 +936,55 @@ describe('generate (local)', () => {
       assertCritical(target, expected, done)
     );
   });
+
+  test('Ignore inlined stylesheets (disabled)', (done) => {
+    const inlineStyles = '.test-selector{color:#00f}';
+    const target = path.join(__dirname, '.ignore-inlined-styles.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'ignoreInlinedStyles.html',
+        target,
+        ignoreInlinedStyles: false,
+        inline: false,
+        concurrency: 1,
+      },
+      assertCritical(target, inlineStyles, done)
+    );
+  });
+
+  test('Ignore inlined stylesheets (enabled)', (done) => {
+    const target = path.join(__dirname, '.ignore-inlined-styles.css');
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'ignoreInlinedStyles.html',
+        target,
+        ignoreInlinedStyles: true,
+        inline: false,
+        concurrency: 1,
+      },
+      assertCritical(target, '', done)
+    );
+  });
+
+  test('issue #566 - consider base tag', (done) => {
+    const expected = read('expected/issue-566.css');
+    const target = path.join(__dirname, '.issue-566.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'issue-566.html',
+        target,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
@@ -1421,5 +1487,22 @@ describe('generate (remote)', () => {
     });
 
     expect(mockHead).toHaveBeenCalled();
+  });
+
+  test('issue #566 - consider base tag', (done) => {
+    const expected = read('expected/issue-566.css');
+    const target = path.join(__dirname, '.issue-566.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: `http://localhost:${port}/issue-566.html`,
+        target,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
   });
 });

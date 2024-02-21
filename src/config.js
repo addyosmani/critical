@@ -14,6 +14,7 @@ export const DEFAULT = {
   strict: false,
   extract: false,
   inlineImages: false,
+  ignoreInlinedStyles: false,
   concurrency: Number.POSITIVE_INFINITY,
   include: [],
 };
@@ -25,6 +26,7 @@ const schema = Joi.object()
     css: [Joi.string(), Joi.array()],
     base: Joi.string(),
     strict: Joi.boolean().default(DEFAULT.strict),
+    ignoreInlinedStyles: Joi.boolean().default(DEFAULT.ignoreInlinedStyles),
     extract: Joi.boolean().default(DEFAULT.extract),
     inlineImages: Joi.boolean().default(DEFAULT.inlineImages),
     postcss: Joi.array(),
@@ -68,6 +70,7 @@ const schema = Joi.object()
     ],
     assetPaths: Joi.array().items(Joi.string()),
     userAgent: Joi.string(),
+    cleanCSS: Joi.object().unknown(true),
   })
   .label('options')
   .xor('html', 'src');
