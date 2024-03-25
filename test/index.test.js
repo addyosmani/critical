@@ -11,7 +11,7 @@ import nn from 'normalize-newline';
 import streamAssert from 'stream-assert';
 import {temporaryDirectory} from 'tempy';
 import {ConfigError, FileNotFoundError, NoCssError} from '../src/errors.js';
-import {generate, stream} from '..';
+import {generate, stream} from '../index.js';
 import {getVinyl, readAndRemove, read} from './helper/index.js';
 
 jest.setTimeout(100_000);
