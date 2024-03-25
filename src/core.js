@@ -13,7 +13,7 @@ import imageInliner from 'postcss-image-inliner';
 import penthouse from 'penthouse';
 import {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} from 'penthouse/lib/core.js';
 import {inline as inlineCritical} from 'inline-critical';
-import {removeDuplicateStyles} from 'inline-critical/css'; // eslint-disable-line n/file-extension-in-import
+import {removeDuplicateStyles} from 'inline-critical/css';
 import parseCssUrls from 'css-url-parser';
 import {reduceAsync} from './array.js';
 import {NoCssError} from './errors.js';
@@ -187,9 +187,7 @@ export async function create(options = {}) {
   // Define uncritical as lazy evaluated property
   const lazyUncritical = (orig, diff) =>
     function () {
-      if (!this._uncritical) {
-        this._uncritical = removeDuplicateStyles(orig, diff);
-      }
+      this._uncritical ||= removeDuplicateStyles(orig, diff);
 
       return this._uncritical;
     };
