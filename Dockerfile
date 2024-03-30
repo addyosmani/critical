@@ -1,4 +1,4 @@
-FROM node:lts-slim
+FROM node:20-slim
 
 ARG CRITICAL_VERSION=5.0.4
 
