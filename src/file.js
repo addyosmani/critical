@@ -792,7 +792,7 @@ export async function vinylize(src, options = {}) {
   } else if (filepath && isRemote(filepath)) {
     let url = filepath;
     try {
-      const response = await fetch(filepath, {options, request: {method: 'head'}});
+      const response = await fetch(filepath, {...options, request: {...options.request, method: 'head'}});
       if (response.url !== url) {
         debug(`(vinylize) found redirect from ${url} to ${response.url}`);
         url = response.url;
