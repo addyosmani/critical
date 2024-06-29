@@ -12,7 +12,7 @@ import async from 'async';
 import finalhandler from 'finalhandler';
 import serveStatic from 'serve-static';
 import nn from 'normalize-newline';
-import {generate} from '..';
+import {generate} from '../index.js';
 import {read, readAndRemove} from './helper/index.js';
 
 jest.setTimeout(100_000);

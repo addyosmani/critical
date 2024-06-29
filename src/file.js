@@ -771,7 +771,7 @@ export async function getAssetPaths(document, file, options = {}, strict = true)
  */
 export async function vinylize(src, options = {}) {
   const {filepath, html} = src;
-  const {rebase = {}} = options;
+  const {rebase = {}, request = {}} = options;
   const file = new Vinyl();
   file.cwd = '/';
   file.remote = false;
@@ -792,7 +792,7 @@ export async function vinylize(src, options = {}) {
   } else if (filepath && isRemote(filepath)) {
     let url = filepath;
     try {
-      const response = await fetch(filepath, {options, request: {method: 'head'}});
+      const response = await fetch(filepath, {...options, request: {...request, method: 'head'}});
       if (response.url !== url) {
         debug(`(vinylize) found redirect from ${url} to ${response.url}`);
         url = response.url;
