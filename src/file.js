@@ -14,7 +14,7 @@ import {globby} from 'globby';
 import {parse} from '@adobe/css-tools';
 import got from 'got';
 import isGlob from 'is-glob';
-import makeDir from 'make-dir';
+import {makeDirectory} from 'make-dir';
 import oust from 'oust';
 import pico from 'picocolors';
 import postcss from 'postcss';
@@ -43,7 +43,7 @@ export async function outputFileAsync(file, data) {
   const dir = path.dirname(file);
 
   if (!fs.existsSync(dir)) {
-    await makeDir(dir);
+    await makeDirectory(dir);
   }
 
   return writeFileAsync(file, data);
