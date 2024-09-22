@@ -50,7 +50,7 @@
     "joi": "^17.13.3",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
-    "make-dir": "^4.0.0",
+    "make-dir": "^5.0.0",
     "meow": "^13.2.0",
     "oust": "^2.0.4",
     "p-all": "^5.0.0",
@@ -79,13 +79,14 @@
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.58.0"
+    "xo": "^0.59.3"
   },
   "xo": {
     "space": 2,
     "prettier": true,
     "rules": {
       "capitalized-comments": "off",
+      "promise/prefer-await-to-then": "warn",
       "unicorn/prevent-abbreviations": "off",
       "unicorn/string-content": "off",
       "unicorn/no-reduce": "off",
