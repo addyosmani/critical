@@ -42,7 +42,7 @@
     "find-up": "^7.0.0",
     "get-stdin": "^9.0.0",
     "globby": "^14.0.2",
-    "got": "^13.0.0",
+    "got": "^14.4.2",
     "group-args": "^0.1.0",
     "indent-string": "^5.0.0",
     "inline-critical": "^12.1.0",
