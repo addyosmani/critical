@@ -16,7 +16,7 @@ import {getOptions} from './src/config.js';
  */
 export async function generate(params, cb) {
   try {
-    const options = getOptions(params);
+    const options = await getOptions(params);
     const {target = {}, base = process.cwd()} = options;
     const result = await create(options);
     // Store generated css
