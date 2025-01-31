@@ -57,7 +57,7 @@
     "penthouse": "^2.3.3",
     "picocolors": "^1.1.0",
     "plugin-error": "^2.0.1",
-    "postcss": "^8.4.47",
+    "postcss": "^8.5.0",
     "postcss-discard": "^2.0.0",
     "postcss-image-inliner": "^7.0.1",
     "postcss-url": "^10.1.3",
