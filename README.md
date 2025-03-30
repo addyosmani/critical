@@ -159,12 +159,11 @@ generate({
     src: 'index.html',
     width: 1300,
     height: 900
-}).then((({css, html, uncritical})) => {
+}).then(({ css, html, uncritical }) => {
     // You now have critical-path CSS as well as the modified HTML.
     // Works with and without target specified.
-    ...
-}).error(err => {
-    ...
+}).catch(err => {
+    // …
 });
 ```
 
