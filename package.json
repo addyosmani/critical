@@ -54,7 +54,7 @@
     "meow": "^13.2.0",
     "oust": "^2.0.4",
     "p-all": "^5.0.0",
-    "penthouse": "^2.3.3",
+    "penthouse": "github:bezoerb/penthouse",
     "picocolors": "^1.1.0",
     "plugin-error": "^2.0.1",
     "postcss": "^8.4.47",
