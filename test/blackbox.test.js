@@ -985,6 +985,23 @@ describe('generate (local)', () => {
       assertCritical(target, expected, done)
     );
   });
+
+  test('issue #580 - preserve modern CSS features (@container, @layer, :where, :has)', (done) => {
+    const expected = read('expected/modern-css-features.css');
+    const target = path.join(__dirname, '.modern-css-features.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'modern-css-features.html',
+        target,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
