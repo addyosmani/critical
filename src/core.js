@@ -10,7 +10,7 @@ import debugBase from 'debug';
 import postcss from 'postcss';
 import discard from 'postcss-discard';
 import imageInliner from 'postcss-image-inliner';
-import penthouse, {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} from 'penthouse';
+import penthouse, {PAGE_UNLOADED_DURING_EXECUTION_ERROR_MESSAGE} from 'penthouse-esm';
 import {inline as inlineCritical} from 'inline-critical';
 import {removeDuplicateStyles} from 'inline-critical/css';
 import parseCssUrls from 'css-url-parser';
