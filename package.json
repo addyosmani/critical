@@ -64,7 +64,7 @@
     "replace-ext": "^2.0.0",
     "slash": "^5.1.0",
     "tempy": "^3.2.0",
-    "through2": "^4.0.2",
+    "through2": "^5.0.1",
     "vinyl": "^3.0.1"
   },
   "devDependencies": {
