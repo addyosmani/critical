@@ -119,3 +119,22 @@ test('Generate critical-path CSS with modern CSS features', async () => {
     expect(error).toBe(undefined);
   }
 });
+
+test('Generate critical-path CSS with lazy loaded iframes (issue #615)', async () => {
+  const css = read('expected/lazy-iframe.css');
+
+  try {
+    const result = await create({
+      src: `http://localhost:${port}/lazy-iframe.html`,
+      width: 1300,
+      height: 900,
+    });
+
+    // Should not time out and should generate valid CSS
+    expect(result.css).toBeDefined();
+    expect(result.css.length).toBeGreaterThan(0);
+    expect(result.css).toBe(css);
+  } catch (error) {
+    expect(error).toBe(undefined);
+  }
+});

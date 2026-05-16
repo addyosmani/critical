@@ -1002,6 +1002,23 @@ describe('generate (local)', () => {
       assertCritical(target, expected, done)
     );
   });
+
+  test('issue #615 - should not time out with lazy loaded iframes', (done) => {
+    const expected = read('expected/lazy-iframe.css');
+    const target = path.join(__dirname, '.lazy-iframe.css');
+
+    generate(
+      {
+        base: FIXTURES_DIR,
+        src: 'lazy-iframe.html',
+        target,
+        inline: false,
+        width: 1300,
+        height: 900,
+      },
+      assertCritical(target, expected, done)
+    );
+  });
 });
 
 describe('generate (remote)', () => {
