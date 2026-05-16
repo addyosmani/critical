@@ -49,9 +49,11 @@ const meowOpts = {
       isMultiple: true,
     },
     width: {
+      type: 'number',
       shortFlag: 'w',
     },
     height: {
+      type: 'number',
       shortFlag: 'h',
     },
     inline: {
