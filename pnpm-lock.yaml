@@ -9,10 +9,10 @@ importers:
   .:
     dependencies:
       '@adobe/css-tools':
-        specifier: ^4.4.0
+        specifier: ^4.4.4
         version: 4.4.4
       async-traverse-tree:
-        specifier: ^1.1.0
+        specifier: ^1.1.1
         version: 1.1.1
       clean-css:
         specifier: ^5.3.3
@@ -27,7 +27,7 @@ importers:
         specifier: ^6.0.2
         version: 6.0.2
       debug:
-        specifier: ^4.3.7
+        specifier: ^4.4.3
         version: 4.4.3
       find-up:
         specifier: ^7.0.0
@@ -36,7 +36,7 @@ importers:
         specifier: ^9.0.0
         version: 9.0.0
       globby:
-        specifier: ^14.0.2
+        specifier: ^14.1.0
         version: 14.1.0
       got:
         specifier: ^13.0.0
@@ -57,13 +57,13 @@ importers:
         specifier: ^17.13.3
         version: 17.13.3
       lodash:
-        specifier: ^4.17.23
+        specifier: ^4.18.1
         version: 4.18.1
       lodash-es:
-        specifier: ^4.17.23
+        specifier: ^4.18.1
         version: 4.18.1
       make-dir:
-        specifier: ^5.0.0
+        specifier: ^5.1.0
         version: 5.1.0
       meow:
         specifier: ^13.2.0
@@ -72,19 +72,19 @@ importers:
         specifier: ^2.0.4
         version: 2.0.4
       p-all:
-        specifier: ^5.0.0
+        specifier: ^5.0.1
         version: 5.0.1
       penthouse-esm:
         specifier: ^3.0.0
         version: 3.0.0(typescript@5.9.3)
       picocolors:
-        specifier: ^1.1.0
+        specifier: ^1.1.1
         version: 1.1.1
       plugin-error:
         specifier: ^2.0.1
         version: 2.0.1
       postcss:
-        specifier: ^8.4.47
+        specifier: ^8.5.14
         version: 8.5.14
       postcss-discard:
         specifier: ^2.0.0
@@ -102,13 +102,13 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0
       tempy:
-        specifier: ^3.1.0
+        specifier: ^3.2.0
         version: 3.2.0
       through2:
         specifier: ^4.0.2
         version: 4.0.2
       vinyl:
-        specifier: ^3.0.0
+        specifier: ^3.0.1
         version: 3.0.1
     devDependencies:
       async:
@@ -118,22 +118,22 @@ importers:
         specifier: ^7.0.3
         version: 7.0.3
       finalhandler:
-        specifier: ^1.3.1
+        specifier: ^1.3.2
         version: 1.3.2
       get-port:
-        specifier: ^7.1.0
+        specifier: ^7.2.0
         version: 7.2.0
       jest:
         specifier: ^30.4.2
         version: 30.4.2(@types/node@25.8.0)
       nock:
-        specifier: ^13.5.5
+        specifier: ^13.5.6
         version: 13.5.6
       normalize-newline:
         specifier: ^4.1.0
         version: 4.1.0
       serve-static:
-        specifier: ^1.15.0
+        specifier: ^1.16.3
         version: 1.16.3
       stream-array:
         specifier: ^1.1.2
@@ -5812,7 +5812,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-import-resolver-webpack@0.13.11(eslint-plugin-import@2.32.0)(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14)):
+  eslint-import-resolver-webpack@0.13.11(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14)):
     dependencies:
       debug: 3.2.7
       enhanced-resolve: 0.9.1
@@ -5829,14 +5829,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-module-utils@2.12.1(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-webpack@0.13.11)(eslint@8.57.1):
+  eslint-module-utils@2.12.1(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-webpack@0.13.11(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14)))(eslint@8.57.1):
     dependencies:
       debug: 3.2.7
     optionalDependencies:
       '@typescript-eslint/parser': 7.18.0(eslint@8.57.1)(typescript@5.9.3)
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.10
-      eslint-import-resolver-webpack: 0.13.11(eslint-plugin-import@2.32.0)(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14))
+      eslint-import-resolver-webpack: 0.13.11(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14))
     transitivePeerDependencies:
       - supports-color
 
@@ -5876,7 +5876,7 @@ snapshots:
       doctrine: 2.1.0
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.10
-      eslint-module-utils: 2.12.1(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-webpack@0.13.11)(eslint@8.57.1)
+      eslint-module-utils: 2.12.1(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-node@0.3.10)(eslint-import-resolver-webpack@0.13.11(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14)))(eslint@8.57.1)
       hasown: 2.0.3
       is-core-module: 2.16.2
       is-glob: 4.0.3
@@ -8638,7 +8638,7 @@ snapshots:
       eslint-config-xo: 0.45.0(eslint@8.57.1)
       eslint-config-xo-typescript: 5.0.0(@typescript-eslint/eslint-plugin@7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3))(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1)(typescript@5.9.3)
       eslint-formatter-pretty: 6.0.1
-      eslint-import-resolver-webpack: 0.13.11(eslint-plugin-import@2.32.0)(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14))
+      eslint-import-resolver-webpack: 0.13.11(eslint-plugin-import@2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint@8.57.1))(webpack@5.106.2(clean-css@5.3.3)(postcss@8.5.14))
       eslint-plugin-ava: 14.0.0(eslint@8.57.1)
       eslint-plugin-eslint-comments: 3.2.0(eslint@8.57.1)
       eslint-plugin-import: 2.32.0(@typescript-eslint/parser@7.18.0(eslint@8.57.1)(typescript@5.9.3))(eslint-import-resolver-webpack@0.13.11)(eslint@8.57.1)
