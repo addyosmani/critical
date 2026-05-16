@@ -1,0 +1,3 @@
+allowBuilds:
+  puppeteer: true
+  unrs-resolver: true

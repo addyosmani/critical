@@ -9,7 +9,7 @@ Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
 ## Install
 
 ```sh
-npm i -D critical
+pnpm add -D critical
 ```
 
 ## Build plugins
@@ -279,7 +279,7 @@ generate({
 ## CLI
 
 ```sh
-npm install -g critical
+pnpm add -g critical
 ```
 
 critical works well with standard input.

@@ -9,7 +9,7 @@
   "scripts": {
     "jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
     "xo": "xo",
-    "test": "npm run xo && npm run jest"
+    "test": "pnpm run xo && pnpm run jest"
   },
   "files": [
     "cli.js",
