@@ -96,3 +96,45 @@ test('Generate critical-path CSS with custom cleancss config', async () => {
     }
   }
 });
+
+test('Generate critical-path CSS with modern CSS features', async () => {
+  const css = read('expected/modern-css-features.css');
+  const html = read('fixtures/modern-css-features.html');
+
+  try {
+    const result = await create({
+      src: `http://localhost:${port}/modern-css-features.html`,
+      width: 1300,
+      height: 900,
+    });
+
+    // Verify modern CSS features are preserved
+    expect(result.css).toContain('@container');
+    expect(result.css).toContain('@layer');
+    expect(result.css).toContain(':where');
+    expect(result.css).toContain(':has');
+    expect(result.css).toBe(css);
+    expect(result.html).toBe(html);
+  } catch (error) {
+    expect(error).toBe(undefined);
+  }
+});
+
+test('Generate critical-path CSS with lazy loaded iframes (issue #615)', async () => {
+  const css = read('expected/lazy-iframe.css');
+
+  try {
+    const result = await create({
+      src: `http://localhost:${port}/lazy-iframe.html`,
+      width: 1300,
+      height: 900,
+    });
+
+    // Should not time out and should generate valid CSS
+    expect(result.css).toBeDefined();
+    expect(result.css.length).toBeGreaterThan(0);
+    expect(result.css).toBe(css);
+  } catch (error) {
+    expect(error).toBe(undefined);
+  }
+});

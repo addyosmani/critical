@@ -29,7 +29,7 @@ process.setMaxListeners(0);
 const pExec = promisify(exec);
 const pExecFile = promisify(execFile);
 
-const run = async (args = []) => pExecFile('node', [criticalBin, ...args]);
+const run = async (args = []) => pExecFile('node', ['--no-deprecation', criticalBin, ...args]);
 
 const getArgs = async (params = []) => {
   const origArgv = process.argv;
@@ -46,7 +46,7 @@ const getArgs = async (params = []) => {
 
 const pipe = async (filename, args = []) => {
   const cat = process.platform === 'win32' ? 'type' : 'cat';
-  const cmd = `${cat} ${filename} | node ${criticalBin} ${args.join(' ')}`;
+  const cmd = `${cat} ${filename} | node --no-deprecation ${criticalBin} ${args.join(' ')}`;
   return pExec(cmd, {shell: true});
 };
 

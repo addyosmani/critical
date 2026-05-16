@@ -367,6 +367,9 @@ styles upfront, but this may provide a higher level of accuracy if you find Crit
 
 ### What other alternatives to Critical are available?
 
+[Beasties](https://github.com/danielroe/beasties) is a maintained alternative that inlines critical CSS without requiring a headless browser.
+It provides plugins for Webpack and Vite but does not include a CLI.
+
 FilamentGroup maintain a [criticalCSS](https://github.com/filamentgroup/criticalCSS) node module, which
 similar to [Penthouse](https://github.com/pocketjoso/penthouse) will find and output the critical-path CSS for
 your pages. The PageSpeed Optimization modules for nginx, apache, IIS, ATS, and Open Lightspeed can do all the heavy
