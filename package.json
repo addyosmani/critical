@@ -41,7 +41,7 @@
     "debug": "^4.4.3",
     "find-up": "^8.0.0",
     "get-stdin": "^10.0.0",
-    "globby": "^14.1.0",
+    "globby": "^16.2.0",
     "got": "^13.0.0",
     "group-args": "^0.1.0",
     "indent-string": "^5.0.0",
