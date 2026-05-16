@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: [22.12.0]
+        node: ["22"]
         os: [ubuntu-latest, windows-latest]
 
     steps:
@@ -27,6 +27,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: true
+          run-install: false
 
       - name: Install dependencies
         run: vp install --frozen-lockfile
@@ -40,6 +41,7 @@ jobs:
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           flag-name: run-${{ matrix.os }}-${{ matrix.node }}
           parallel: true
 
@@ -51,4 +53,5 @@ jobs:
       - name: Coveralls Finished
         uses: coverallsapp/github-action@v2
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
