@@ -214,7 +214,7 @@ test("Support vinyl buffer streams and return critical css vinyl", () => {
         expect(data.path).toMatch(/\.css/);
         resolve();
       })
-      .on("error", (err) => {
+      .on("error", (_err) => {
         reject(new Error("Should not emit error"));
       });
   });
@@ -233,7 +233,7 @@ test("Support vinyl buffer streams and returns html vinyl with inlined css", () 
         expect(data.contents.toString()).toMatch(/<style>/);
         resolve();
       })
-      .on("error", (err) => {
+      .on("error", (_err) => {
         reject(new Error("Should not emit error"));
       });
   });
@@ -251,7 +251,7 @@ test("Return empty vinyl on empty vinyl", () => {
         expect(data.isNull).toBeTruthy();
         resolve();
       })
-      .on("error", (err) => {
+      .on("error", (_err) => {
         reject(new Error("Should not emit error"));
       });
   });

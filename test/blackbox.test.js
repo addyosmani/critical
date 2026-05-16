@@ -129,7 +129,7 @@ describe("generate (local)", () => {
   });
 
   test("should throw an error on timeout", () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       const target = path.join(__dirname, ".include.css");
 
       generate(
@@ -152,7 +152,7 @@ describe("generate (local)", () => {
   });
 
   test("should throw a usable error when no stylesheets are found", () => {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve, _reject) => {
       const target = path.join(__dirname, ".error.css");
 
       generate(
