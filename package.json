@@ -65,6 +65,7 @@
     "vinyl": "^3.0.1"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^4.1.6",
     "async": "^3.2.6",
     "finalhandler": "^2.1.1",
     "get-port": "^7.2.0",
