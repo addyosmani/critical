@@ -29,7 +29,7 @@ pnpm add -D critical
 Include:
 
 ```js
-import {generate} from 'critical';
+import { generate } from "critical";
 ```
 
 Full blown example with available options:
@@ -42,16 +42,16 @@ generate({
   inline: true,
 
   // Your base directory
-  base: 'dist/',
+  base: "dist/",
 
   // HTML source
-  html: '<html>...</html>',
+  html: "<html>...</html>",
 
   // HTML source file
-  src: 'index.html',
+  src: "index.html",
 
   // Your CSS Files (optional)
-  css: ['dist/styles/main.css'],
+  css: ["dist/styles/main.css"],
 
   // Viewport width
   width: 1300,
@@ -61,9 +61,9 @@ generate({
 
   // Output results to file
   target: {
-    css: 'critical.css',
-    html: 'index-critical.html',
-    uncritical: 'uncritical.css',
+    css: "critical.css",
+    html: "index-critical.html",
+    uncritical: "uncritical.css",
   },
 
   // Extract inlined styles from referenced stylesheets
@@ -71,7 +71,7 @@ generate({
 
   // ignore CSS rules
   ignore: {
-    atrule: ['@font-face'],
+    atrule: ["@font-face"],
     rule: [/some-regexp/],
     decl: (node, value) => /big-image\.png/.test(value),
   },
@@ -85,9 +85,9 @@ Basic usage:
 ```js
 generate({
   inline: true,
-  base: 'test/',
-  src: 'index.html',
-  target: 'index-critical.html',
+  base: "test/",
+  src: "index.html",
+  target: "index-critical.html",
   width: 1300,
   height: 900,
 });
@@ -99,9 +99,9 @@ Basic usage:
 
 ```js
 generate({
-  base: 'test/',
-  src: 'index.html',
-  target: 'styles/main.css',
+  base: "test/",
+  src: "index.html",
+  target: "styles/main.css",
   width: 1300,
   height: 900,
 });
@@ -111,9 +111,9 @@ Generate and minify critical-path CSS:
 
 ```js
 generate({
-  base: 'test/',
-  src: 'index.html',
-  target: 'styles/styles.min.css',
+  base: "test/",
+  src: "index.html",
+  target: "styles/styles.min.css",
   width: 1300,
   height: 900,
 });
@@ -124,11 +124,11 @@ Generate, minify and inline critical-path CSS:
 ```js
 generate({
   inline: true,
-  base: 'test/',
-  src: 'index.html',
+  base: "test/",
+  src: "index.html",
   target: {
-    html: 'index-critical.html',
-    css: 'critical.css',
+    html: "index-critical.html",
+    css: "critical.css",
   },
   width: 1300,
   height: 900,
@@ -155,24 +155,26 @@ Generate and return output via promise:
 
 ```js
 generate({
-    base: 'test/',
-    src: 'index.html',
-    width: 1300,
-    height: 900
-}).then(({ css, html, uncritical }) => {
+  base: "test/",
+  src: "index.html",
+  width: 1300,
+  height: 900,
+})
+  .then(({ css, html, uncritical }) => {
     // You now have critical-path CSS as well as the modified HTML.
     // Works with and without target specified.
-}).catch(err => {
+  })
+  .catch((err) => {
     // …
-});
+  });
 ```
 
 Generate and return output via async function:
 
 ```js
-const {css, html, uncritical} = await generate({
-  base: 'test/',
-  src: 'index.html',
+const { css, html, uncritical } = await generate({
+  base: "test/",
+  src: "index.html",
   width: 1300,
   height: 900,
 });
@@ -185,10 +187,10 @@ _note:_ (your final output will be minified as to eliminate duplicate rule inclu
 
 ```js
 generate({
-  base: 'test/',
-  src: 'index.html',
+  base: "test/",
+  src: "index.html",
   target: {
-    css: 'styles/main.css',
+    css: "styles/main.css",
   },
   dimensions: [
     {
@@ -209,13 +211,13 @@ This is a useful option when you e.g. want to defer loading of webfonts or backg
 
 ```js
 generate({
-  base: 'test/',
-  src: 'index.html',
+  base: "test/",
+  src: "index.html",
   target: {
-    css: 'styles/main.css',
+    css: "styles/main.css",
   },
   ignore: {
-    atrule: ['@font-face'],
+    atrule: ["@font-face"],
     decl: (node, value) => /url\(/.test(value),
   },
 });
@@ -225,24 +227,24 @@ generate({
 
 ```js
 generate({
-  base: 'test/',
-  src: 'index.html',
+  base: "test/",
+  src: "index.html",
   target: {
-    css: 'styles/main.css',
+    css: "styles/main.css",
   },
   rebase: {
-    from: '/styles/main.css',
-    to: '/folder/subfolder/index.html',
+    from: "/styles/main.css",
+    to: "/folder/subfolder/index.html",
   },
 });
 ```
 
 ```js
 generate({
-  base: 'test/',
-  src: 'index.html',
+  base: "test/",
+  src: "index.html",
   target: {
-    css: 'styles/main.css',
+    css: "styles/main.css",
   },
   rebase: (asset) => `https://my-cdn.com${asset.absolutePath}`,
 });
@@ -255,7 +257,7 @@ generate({
 | inline              | `boolean`\|`object`    | `false`                                                                                                                                                                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
 | base                | `string`               | `path.dirname(src)` or `process.cwd()`                                                                                                                                                 | Base directory in which the source and destination are to be written                                                                                                                                                                                                                                                                                                            |
 | html                | `string`               |                                                                                                                                                                                        | HTML source to be operated against. This option takes precedence over the `src` option.                                                                                                                                                                                                                                                                                         |
-| css                 | `array`                | `[]`                                                                                                                                                                                   | An array of paths to css files, file globs, [Vinyl](https://www.npmjs.com/package/vinyl) file objects or source CSS strings.                                                                                                                                                                                                                                                                        |
+| css                 | `array`                | `[]`                                                                                                                                                                                   | An array of paths to css files, file globs, [Vinyl](https://www.npmjs.com/package/vinyl) file objects or source CSS strings.                                                                                                                                                                                                                                                    |
 | src                 | `string`               |                                                                                                                                                                                        | Location of the HTML source to be operated against                                                                                                                                                                                                                                                                                                                              |
 | target              | `string` or `object`   |                                                                                                                                                                                        | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both                                                                                                                                                                                                                                                       |
 | width               | `integer`              | `1300`                                                                                                                                                                                 | Width of the target viewport                                                                                                                                                                                                                                                                                                                                                    |
@@ -303,25 +305,25 @@ critical test/fixture/index.html --base test/fixture > critical.css
 ## Gulp
 
 ```js
-import gulp from 'gulp';
-import log from 'fancy-log';
-import {stream as critical} from 'critical';
+import gulp from "gulp";
+import log from "fancy-log";
+import { stream as critical } from "critical";
 
 // Generate & Inline Critical-path CSS
-gulp.task('critical', () => {
+gulp.task("critical", () => {
   return gulp
-    .src('dist/*.html')
+    .src("dist/*.html")
     .pipe(
       critical({
-        base: 'dist/',
+        base: "dist/",
         inline: true,
-        css: ['dist/styles/components.css', 'dist/styles/main.css'],
-      })
+        css: ["dist/styles/components.css", "dist/styles/main.css"],
+      }),
     )
-    .on('error', (err) => {
+    .on("error", (err) => {
       log.error(err.message);
     })
-    .pipe(gulp.dest('dist'));
+    .pipe(gulp.dest("dist"));
 });
 ```
 

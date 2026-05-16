@@ -2,34 +2,31 @@
   "name": "critical",
   "version": "7.2.1",
   "description": "Extract & Inline Critical-path CSS from HTML",
-  "author": "Addy Osmani",
+  "keywords": [
+    "critical",
+    "css",
+    "optimization",
+    "path"
+  ],
   "license": "Apache-2.0",
+  "author": "Addy Osmani",
   "repository": "addyosmani/critical",
-  "type": "module",
-  "scripts": {
-    "jest": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
-    "xo": "xo",
-    "test": "pnpm run xo && pnpm run jest"
-  },
+  "bin": "cli.js",
   "files": [
     "cli.js",
     "index.js",
     "src"
   ],
+  "type": "module",
   "exports": {
     ".": "./index.js",
     "./file.js": "./src/file.js",
     "./errors.js": "./src/errors.js"
   },
-  "bin": "cli.js",
-  "keywords": [
-    "critical",
-    "path",
-    "css",
-    "optimization"
-  ],
-  "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+  "scripts": {
+    "test": "vp test",
+    "check": "vp check",
+    "prepare": "vp config"
   },
   "dependencies": {
     "@adobe/css-tools": "^4.4.4",
@@ -69,49 +66,18 @@
   },
   "devDependencies": {
     "async": "^3.2.6",
-    "cross-env": "^10.1.0",
     "finalhandler": "^2.1.1",
     "get-port": "^7.2.0",
-    "jest": "^30.4.2",
     "nock": "^14.0.15",
     "normalize-newline": "^5.0.0",
     "serve-static": "^2.2.1",
     "stream-array": "^1.1.2",
     "stream-assert": "^2.0.3",
     "vinyl-source-stream": "^2.0.0",
-    "xo": "^0.59.3"
+    "vite-plus": "catalog:"
   },
-  "xo": {
-    "space": 2,
-    "prettier": true,
-    "rules": {
-      "capitalized-comments": "off",
-      "promise/prefer-await-to-then": "warn",
-      "unicorn/prevent-abbreviations": "off",
-      "unicorn/string-content": "off",
-      "unicorn/no-reduce": "off",
-      "unicorn/no-array-reduce": "off",
-      "unicorn/no-array-for-each": "off",
-      "unicorn/no-fn-reference-in-iterator": "off"
-    },
-    "overrides": [
-      {
-        "files": "test/*.js",
-        "envs": [
-          "jest"
-        ]
-      }
-    ]
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
   },
-  "prettier": {
-    "trailingComma": "es5",
-    "singleQuote": true,
-    "printWidth": 120,
-    "bracketSpacing": false
-  },
-  "jest": {
-    "transform": {},
-    "collectCoverage": true,
-    "maxWorkers": 2
-  }
+  "packageManager": "pnpm@11.1.2"
 }
