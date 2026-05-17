@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: vp install --frozen-lockfile
 
+      - name: Install Puppeteer browsers
+        run: npx puppeteer browsers install chrome
+
       - name: Run checks
         run: vp check
 
