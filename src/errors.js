@@ -1,13 +1,13 @@
-import process from 'node:process';
-import pico from 'picocolors';
-import {stripIndents, stripIndent} from 'common-tags';
+import process from "node:process";
+import pico from "picocolors";
+import { stripIndents, stripIndent } from "common-tags";
 
 export class FileNotFoundError extends Error {
-  constructor(file = '', paths = [], ...params) {
+  constructor(file = "", paths = [], ...params) {
     const message = pico.red(stripIndent`
       Error: File not found: ${file}
              Current working directory: ${process.cwd()}
-             Searched in: ${paths.length > 0 ? paths.join(', ') : '-'}
+             Searched in: ${paths.length > 0 ? paths.join(", ") : "-"}
     `);
 
     super([message, ...params]);

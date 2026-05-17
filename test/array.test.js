@@ -1,9 +1,9 @@
-import {mapAsync, reduceAsync, filterAsync, forEachAsync} from '../src/array.js';
+import { mapAsync, reduceAsync, filterAsync, forEachAsync } from "../src/array.js";
 
 const waitFor = (ms) => new Promise((resolve) => setTimeout(resolve, ms)); // eslint-disable-line no-promise-executor-return
 const waitRandom = () => waitFor(Math.floor(Math.random() * Math.floor(50)));
 
-test('async map', async () => {
+test("async map", async () => {
   const afunc = async (value) => {
     await waitRandom();
     return value * value;
@@ -20,19 +20,19 @@ test('async map', async () => {
   expect(result2).toEqual(expected);
 });
 
-test('async map (default)', async () => {
+test("async map (default)", async () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
 
   const result = await mapAsync(array);
   expect(result).toEqual(array);
 });
 
-test('async map (empty)', async () => {
+test("async map (empty)", async () => {
   const result = await mapAsync();
   expect(result).toEqual([]);
 });
 
-test('async reduce', async () => {
+test("async reduce", async () => {
   const afunc = async (res, value, index) => {
     await waitRandom();
     return [...res, value * index];
@@ -49,19 +49,19 @@ test('async reduce', async () => {
   expect(result2).toEqual(expected);
 });
 
-test('async reduce (default)', async () => {
+test("async reduce (default)", async () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
 
   const result = await reduceAsync(array);
   expect(result).toEqual(array);
 });
 
-test('async reduce (empty)', async () => {
+test("async reduce (empty)", async () => {
   const result = await reduceAsync();
   expect(result).toEqual(undefined);
 });
 
-test('async filter', async () => {
+test("async filter", async () => {
   const afunc = async (value) => {
     await waitRandom();
     return value % 2;
@@ -78,19 +78,19 @@ test('async filter', async () => {
   expect(result2).toEqual(expected);
 });
 
-test('async filter (default)', async () => {
+test("async filter (default)", async () => {
   const array = [1, 0, 3, false, 5, undefined, 7, null];
 
   const result = await filterAsync(array);
   expect(result).toEqual([1, 3, 5, 7]);
 });
 
-test('async filter (empty)', async () => {
+test("async filter (empty)", async () => {
   const result = await filterAsync();
   expect(result).toEqual([]);
 });
 
-test('async forEach', async () => {
+test("async forEach", async () => {
   const array = [1, 2, 3, 4, 5, 6, 7, 8];
   const expected = [];
   const result1 = [];
