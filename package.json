@@ -37,7 +37,6 @@
     "data-uri-to-buffer": "^8.0.0",
     "debug": "^4.4.3",
     "find-up": "^8.0.0",
-    "get-stdin": "^10.0.0",
     "globby": "^16.2.0",
     "got": "^15.0.5",
     "group-args": "^0.1.0",

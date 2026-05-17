@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import os from "node:os";
 import process from "node:process";
-import stdin from "get-stdin";
+import { text } from "node:stream/consumers";
 import groupArgs from "group-args";
 import indentString from "indent-string";
 import { escapeRegExp, isObject, isString, reduce } from "lodash-es";
@@ -253,6 +253,6 @@ function run(data) {
 if (cli.input[0]) {
   run();
 } else {
-  const data = await stdin();
+  const data = process.stdin.isTTY ? "" : await text(process.stdin);
   run(data);
 }
