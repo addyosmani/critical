@@ -1,7 +1,11 @@
 export async function mapAsync(array = [], callback = (a) => a) {
   const result = [];
   for (const index of array.keys()) {
-    const mapped = await callback(array[index], index, array); /* eslint-disable-line no-await-in-loop */
+    const mapped = await callback(
+      array[index],
+      index,
+      array,
+    ); /* eslint-disable-line no-await-in-loop */
     result.push(mapped);
   }
 
@@ -17,7 +21,11 @@ export async function forEachAsync(array = [], callback = () => {}) {
 export async function filterAsync(array = [], filter = (a) => a) {
   const result = [];
   for (const index of array.keys()) {
-    const active = await filter(array[index], index, array); /* eslint-disable-line no-await-in-loop */
+    const active = await filter(
+      array[index],
+      index,
+      array,
+    ); /* eslint-disable-line no-await-in-loop */
     if (active) {
       result.push(array[index]);
     }
@@ -28,7 +36,11 @@ export async function filterAsync(array = [], filter = (a) => a) {
 
 export async function reduceAsync(initial, array = [], reducer = (r) => r) {
   for (const index of array.keys()) {
-    initial = await reducer(initial, array[index], index); /* eslint-disable-line no-await-in-loop */
+    initial = await reducer(
+      initial,
+      array[index],
+      index,
+    ); /* eslint-disable-line no-await-in-loop */
   }
 
   return initial;

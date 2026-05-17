@@ -1,10 +1,10 @@
-import process from 'node:process';
-import Joi from 'joi';
-import debugBase from 'debug';
-import {traverse, STOP} from 'async-traverse-tree';
-import {ConfigError} from './errors.js';
+import process from "node:process";
+import Joi from "joi";
+import debugBase from "debug";
+import { traverse, STOP } from "async-traverse-tree";
+import { ConfigError } from "./errors.js";
 
-const debug = debugBase('critical:config');
+const debug = debugBase("critical:config");
 
 export const DEFAULT = {
   width: 1300,
@@ -34,7 +34,7 @@ const schema = Joi.object()
     ignore: [Joi.array(), Joi.object().unknown(true)],
     width: Joi.number().default(DEFAULT.width),
     height: Joi.number().default(DEFAULT.height),
-    dimensions: Joi.array().items({width: Joi.number(), height: Joi.number()}),
+    dimensions: Joi.array().items({ width: Joi.number(), height: Joi.number() }),
     inline: [Joi.boolean().default(DEFAULT.inline), Joi.object().unknown(true)],
     maxImageFileSize: Joi.number().default(DEFAULT.maxImageFileSize),
     include: Joi.any().default(DEFAULT.include),
@@ -73,16 +73,16 @@ const schema = Joi.object()
     userAgent: Joi.string(),
     cleanCSS: Joi.object().unknown(true),
   })
-  .label('options')
-  .xor('html', 'src');
+  .label("options")
+  .xor("html", "src");
 
 export async function getOptions(options = {}) {
   const parsedOptions = await traverse(options, (key, value) => {
-    if (['css', 'html', 'src'].includes(key)) {
+    if (["css", "html", "src"].includes(key)) {
       return STOP;
     }
 
-    if (typeof value === 'string') {
+    if (typeof value === "string") {
       try {
         return JSON.parse(value);
       } catch {}
@@ -91,14 +91,14 @@ export async function getOptions(options = {}) {
     return value;
   });
 
-  const {error, value} = schema.validate(parsedOptions);
+  const { error, value } = schema.validate(parsedOptions);
 
-  const {inline, dimensions, penthouse = {}, target, ignore} = value || {};
+  const { inline, dimensions, penthouse = {}, target, ignore } = value || {};
 
   if (error) {
-    const {details = []} = error;
+    const { details = [] } = error;
     const [detail = {}] = details;
-    const {message = 'invalid options'} = detail;
+    const { message = "invalid options" } = detail;
 
     throw new ConfigError(message);
   }
@@ -112,21 +112,24 @@ export async function getOptions(options = {}) {
     ];
   }
 
-  if (typeof target === 'string') {
-    const key = /\.css$/.test(target) ? 'css' : 'html';
-    value.target = {[key]: target};
+  if (typeof target === "string") {
+    const key = target.endsWith(".css") ? "css" : "html";
+    value.target = { [key]: target };
   }
 
   // Set inline options
   value.inline = Boolean(inline) && {
     basePath: value.base || process.cwd(),
-    ...(inline === true ? {strategy: 'media'} : inline),
+    ...(inline === true ? { strategy: "media" } : inline),
   };
 
-  if (value.inline.replaceStylesheets !== undefined && !Array.isArray(value.inline.replaceStylesheets)) {
-    if (value.inline.replaceStylesheets === 'false') {
+  if (
+    value.inline.replaceStylesheets !== undefined &&
+    !Array.isArray(value.inline.replaceStylesheets)
+  ) {
+    if (value.inline.replaceStylesheets === "false") {
       value.inline.replaceStylesheets = false;
-    } else if (typeof value.inline.replaceStylesheets !== 'function') {
+    } else if (typeof value.inline.replaceStylesheets !== "function") {
       value.inline.replaceStylesheets = [value.inline.replaceStylesheets];
     }
   }
@@ -157,7 +160,7 @@ export async function getOptions(options = {}) {
 }
 
 export const validate = (key, val) => {
-  const {error} = schema.validate({[key]: val, html: '<html/>'});
+  const { error } = schema.validate({ [key]: val, html: "<html/>" });
   if (error) {
     return false;
   }

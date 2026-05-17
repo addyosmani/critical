@@ -1,12 +1,12 @@
-import path from 'node:path';
-import {Buffer} from 'node:buffer';
-import process from 'node:process';
-import through2 from 'through2';
-import PluginError from 'plugin-error';
-import replaceExtension from 'replace-ext';
-import {create} from './src/core.js';
-import {outputFileAsync} from './src/file.js';
-import {getOptions} from './src/config.js';
+import path from "node:path";
+import { Buffer } from "node:buffer";
+import process from "node:process";
+import through2 from "through2";
+import PluginError from "plugin-error";
+import replaceExtension from "replace-ext";
+import { create } from "./src/core.js";
+import { outputFileAsync } from "./src/file.js";
+import { getOptions } from "./src/config.js";
 
 /**
  * Critical path CSS generation
@@ -17,7 +17,7 @@ import {getOptions} from './src/config.js';
 export async function generate(params, cb) {
   try {
     const options = await getOptions(params);
-    const {target = {}, base = process.cwd()} = options;
+    const { target = {}, base = process.cwd() } = options;
     const result = await create(options);
     // Store generated css
     if (target.css) {
@@ -34,14 +34,14 @@ export async function generate(params, cb) {
       await outputFileAsync(path.resolve(base, target.uncritical), result.uncritical);
     }
 
-    if (typeof cb === 'function') {
+    if (typeof cb === "function") {
       cb(null, result);
       return;
     }
 
     return result;
   } catch (error) {
-    if (typeof cb === 'function') {
+    if (typeof cb === "function") {
       cb(error);
       return;
     }
@@ -64,23 +64,23 @@ export function stream(params) {
     }
 
     if (file.isStream()) {
-      return this.emit('error', new PluginError('critical', 'Streaming not supported'));
+      return this.emit("error", new PluginError("critical", "Streaming not supported"));
     }
 
     Promise.resolve()
-      .then(() => generate({...params, src: file}))
-      .then(({css, html}) => {
+      .then(() => generate({ ...params, src: file }))
+      .then(({ css, html }) => {
         // Rename file if not inlined
         if (params.inline) {
           file.contents = Buffer.from(html);
         } else {
-          file.path = replaceExtension(file.path, '.css');
+          file.path = replaceExtension(file.path, ".css");
           file.contents = Buffer.from(css);
         }
 
         cb(null, file);
       })
-      .catch((error) => cb(new PluginError('critical', error.message)));
+      .catch((error) => cb(new PluginError("critical", error.message)));
   });
 }
 

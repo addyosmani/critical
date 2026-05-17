@@ -1,14 +1,14 @@
 #!/usr/bin/env node
-import os from 'node:os';
-import process from 'node:process';
-import stdin from 'get-stdin';
-import groupArgs from 'group-args';
-import indentString from 'indent-string';
-import {escapeRegExp, isObject, isString, reduce} from 'lodash-es';
-import meow from 'meow';
-import pico from 'picocolors';
-import {validate} from './src/config.js';
-import {generate} from './index.js';
+import os from "node:os";
+import process from "node:process";
+import stdin from "get-stdin";
+import groupArgs from "group-args";
+import indentString from "indent-string";
+import { escapeRegExp, isObject, isString, reduce } from "lodash-es";
+import meow from "meow";
+import pico from "picocolors";
+import { validate } from "./src/config.js";
+import { generate } from "./index.js";
 
 const help = `
 Usage: critical <input> [<option>]
@@ -40,55 +40,57 @@ const meowOpts = {
   importMeta: import.meta,
   flags: {
     base: {
-      type: 'string',
-      shortFlag: 'b',
+      type: "string",
+      shortFlag: "b",
     },
     css: {
-      type: 'string',
-      shortFlag: 'c',
+      type: "string",
+      shortFlag: "c",
       isMultiple: true,
     },
     width: {
-      shortFlag: 'w',
+      type: "number",
+      shortFlag: "w",
     },
     height: {
-      shortFlag: 'h',
+      type: "number",
+      shortFlag: "h",
     },
     inline: {
-      type: 'boolean',
-      shortFlag: 'i',
+      type: "boolean",
+      shortFlag: "i",
     },
     extract: {
-      type: 'boolean',
-      shortFlag: 'e',
+      type: "boolean",
+      shortFlag: "e",
       default: false,
     },
     inlineImages: {
-      type: 'boolean',
+      type: "boolean",
     },
     ignoreInlinedStyles: {
-      type: 'boolean',
+      type: "boolean",
       default: false,
     },
     ignore: {
-      type: 'string',
+      type: "string",
     },
     user: {
-      type: 'string',
+      type: "string",
     },
     strict: {
-      type: 'boolean',
+      type: "boolean",
       default: false,
     },
     pass: {
-      type: 'string',
+      type: "string",
     },
     userAgent: {
-      type: 'string',
-      shortFlag: 'ua',
+      type: "string",
+      shortFlag: "ua",
     },
     dimensions: {
-      type: 'string',
+      type: "string",
       isMultiple: true,
     },
   },
@@ -96,16 +98,16 @@ const meowOpts = {
 
 const cli = meow(help, meowOpts);
 
-const groupKeys = ['ignore', 'inline', 'penthouse', 'target', 'request'];
+const groupKeys = ["ignore", "inline", "penthouse", "target", "request"];
 // Group args for inline-critical and penthouse
 const grouped = {
   ...cli.flags,
   ...groupArgs(
     groupKeys,
     {
-      delimiter: '-',
+      delimiter: "-",
     },
-    meowOpts
+    meowOpts,
   ),
 };
 
@@ -147,8 +149,8 @@ const isGroupArgsDefault = (val) => isObject(val) && Object.keys(val).length ===
  */
 const mapRegExpStr = (val) => {
   if (isString(val)) {
-    const {groups} = val.match(/^\/(?<regex>[^/]+)(?:\/?(?<flags>[igmy]+))?\/$/) || {};
-    const {regex, flags} = groups || {};
+    const { groups } = val.match(/^\/(?<regex>[^/]+)(?:\/?(?<flags>[igmy]+))?\/$/) || {};
+    const { regex, flags } = groups || {};
 
     return (groups && new RegExp(escapeRegExp(regex), flags)) || val;
   }
@@ -184,23 +186,24 @@ const normalizedFlags = reduce(
 
     return res;
   },
-  {}
+  {},
 );
 
 function showError(err) {
-  process.stderr.write(indentString(pico.red('Error: ') + err.message || err, 3));
+  process.stderr.write(indentString(pico.red("Error: ") + err.message || err, 3));
   process.stderr.write(os.EOL);
   process.stderr.write(indentString(help, 3));
   process.exit(1);
 }
 
 function run(data) {
-  const {_: inputs = [], css, ...opts} = {...normalizedFlags};
+  const { _: inputs = [], css, ...opts } = { ...normalizedFlags };
 
   // Detect css globbing
-  const cssBegin = process.argv.findIndex((el) => ['--css', '-c'].includes(el));
-  const cssEnd = process.argv.findIndex((el, index) => index > cssBegin && el.startsWith('-'));
-  const cssCheck = cssBegin >= 0 ? process.argv.slice(cssBegin, cssEnd > 0 ? cssEnd : undefined) : [];
+  const cssBegin = process.argv.findIndex((el) => ["--css", "-c"].includes(el));
+  const cssEnd = process.argv.findIndex((el, index) => index > cssBegin && el.startsWith("-"));
+  const cssCheck =
+    cssBegin >= 0 ? process.argv.slice(cssBegin, cssEnd > 0 ? cssEnd : undefined) : [];
   const additionalCss = inputs.filter((file) => cssCheck.includes(file));
   // Just take the first html input as we don't support multiple html sources for
   const [input] = inputs.filter((file) => !additionalCss.includes(file)); // eslint-disable-line unicorn/prefer-array-find
@@ -209,12 +212,12 @@ function run(data) {
     opts.dimensions = opts.dimensions.reduce(
       (result, data) => [
         ...result,
-        ...data.split(',').map((dimension) => {
-          const [width, height] = dimension.split('x');
-          return {width: Number.parseInt(width, 10), height: Number.parseInt(height, 10)};
+        ...data.split(",").map((dimension) => {
+          const [width, height] = dimension.split("x");
+          return { width: Number.parseInt(width, 10), height: Number.parseInt(height, 10) };
         }),
       ],
-      []
+      [],
     );
   }
 
