@@ -253,6 +253,6 @@ function run(data) {
 if (cli.input[0]) {
   run();
 } else {
-  const data = await text(process.stdin);
+  const data = process.stdin.isTTY ? "" : await text(process.stdin);
   run(data);
 }
