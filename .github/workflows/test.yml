@@ -4,6 +4,7 @@ on: [push, pull_request]
 
 env:
   CI: true
+  PUPPETEER_SKIP_DOWNLOAD: true
 
 jobs:
   run:
@@ -22,6 +23,12 @@ jobs:
         with:
           persist-credentials: false
 
+      - name: Set up Chrome
+        uses: browser-actions/setup-chrome@v2
+        id: setup-chrome
+        with:
+          chrome-version: stable
+
       - name: Set up Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
@@ -32,14 +39,13 @@ jobs:
       - name: Install dependencies
         run: vp install --frozen-lockfile
 
-      - name: Install Puppeteer browsers
-        run: npx puppeteer browsers install chrome
-
       - name: Run checks
         run: vp check
 
       - name: Run tests
         run: vp test run --coverage
+        env:
+          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
 
       - name: Coveralls Parallel
         uses: coverallsapp/github-action@v2
