@@ -9,6 +9,7 @@ overrides:
   vite: "catalog:"
   vitest: "catalog:"
   minimatch: ">=3.1.4"
+nodeVersion: 22.22.3
 peerDependencyRules:
   allowAny:
     - vite

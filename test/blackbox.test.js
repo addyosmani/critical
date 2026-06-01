@@ -1124,6 +1124,25 @@ describe("generate (local)", () => {
       );
     });
   });
+
+  test("issue #613 - should write output when css variables start with a number", () => {
+    return new Promise((resolve, reject) => {
+      const expected = read("expected/issue-613.css");
+      const target = path.join(__dirname, ".issue-613.css");
+
+      generate(
+        {
+          base: FIXTURES_DIR,
+          src: "issue-613.html",
+          target,
+          inline: false,
+          width: 1300,
+          height: 900,
+        },
+        assertCritical(target, expected, resolve, reject),
+      );
+    });
+  });
 });
 
 describe("generate (remote)", () => {
