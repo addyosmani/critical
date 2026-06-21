@@ -5,35 +5,9 @@ export default defineConfig({
     "*": "vp check --fix",
   },
   fmt: {
-    ignorePatterns: ["test/fixtures/**", "test/expected/**"],
+    ignorePatterns: ["fixtures/**"],
   },
   lint: {},
-  test: {
-    globals: true,
-    testTimeout: 100_000,
-    pool: "threads",
-    projects: [
-      {
-        extends: true,
-        test: {
-          include: ["test/*.test.js"],
-          exclude: ["test/cli.test.js"],
-          name: "unit",
-          pool: "threads",
-        },
-      },
-      {
-        extends: true,
-        test: {
-          include: ["test/cli.test.js"],
-          name: "cli",
-          pool: "forks",
-        },
-      },
-    ],
-    coverage: {
-      provider: "v8",
-      reporter: ["text", "lcov"],
-    },
-  },
+  // Tests run on the platform runner (`node --test`), in keeping with v9's built-ins-first
+  // philosophy; vite-plus stays for what it's great at — formatting and linting.
 });

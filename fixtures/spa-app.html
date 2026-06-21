@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SPA — renders into an empty shell (render engine)</title>
+    <link rel="stylesheet" href="/app.css" />
+  </head>
+  <body>
+    <!-- This is ALL Beasties sees: an empty mount. No app CSS is "used" yet. -->
+    <div id="root"></div>
+    <script>
+      // The SPA renders its above-the-fold UI at runtime. linkedom/Beasties never run this;
+      // a real browser (v9 render engine) does.
+      document.getElementById("root").innerHTML = `
+        <nav class="nav">
+          <span class="logo">Critical</span>
+          <a href="/features">Features</a>
+          <a href="/pricing">Pricing</a>
+          <a href="/docs">Docs</a>
+        </nav>
+        <header class="hero">
+          <h1>Critical CSS that knows where the fold is</h1>
+          <p>Inline exactly what paints above the fold. Defer the rest. Automatically.</p>
+          <a class="cta" href="/start">Get started →</a>
+        </header>
+        <section class="features">
+          <div class="feature-card"><div class="icon"></div><h3>Two engines</h3><p>Static and render.</p></div>
+          <div class="feature-card"><div class="icon"></div><h3>Viewport-aware</h3><p>Above-the-fold only.</p></div>
+          <div class="feature-card"><div class="icon"></div><h3>Agent-native</h3><p>Structured output.</p></div>
+        </section>
+        <section class="pricing">
+          <h2>Pricing</h2>
+          <div class="price-grid">
+            <div class="price-card"><div class="amount">$0</div><ul><li>Static engine</li></ul></div>
+            <div class="price-card featured"><div class="amount">$9</div><ul><li>Render engine</li></ul></div>
+          </div>
+        </section>
+        <footer class="footer">
+          <div><h4>Critical</h4><a href="/">Home</a></div>
+          <div class="copyright">© 2026 Critical</div>
+        </footer>`;
+    </script>
+  </body>
+</html>

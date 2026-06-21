@@ -1,6 +1,6 @@
-FROM node:20-slim
+FROM node:22-slim
 
-ARG CRITICAL_VERSION=5.0.4
+ARG CRITICAL_VERSION=9.0.0
 
 ARG PACKAGES="\
   libx11-6\

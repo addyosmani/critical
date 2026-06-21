@@ -1,0 +1,52 @@
+/* ============================================================================
+ * app.css — a realistic stylesheet with a deliberate fold split.
+ * Above-the-fold: :root, reset, .nav, .hero, .cta. Everything else is pushed
+ * below 900px by the hero's min-height, so a viewport-aware engine should NOT
+ * inline it. Beasties (used-CSS, no viewport) inlines ALL of it.
+ * ========================================================================== */
+
+:root { --brand: #0a7; --ink: #111; --muted: #667; --bg: #fff; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; color: var(--ink); background: var(--bg); line-height: 1.5; }
+a { color: inherit; }
+
+/* ---- above the fold ---- */
+.nav { display: flex; align-items: center; gap: 1.5rem; height: 64px; padding: 0 2rem; border-bottom: 1px solid #eee; }
+.nav .logo { font-weight: 800; color: var(--brand); letter-spacing: -0.02em; }
+.nav a { color: var(--muted); text-decoration: none; font-size: 0.95rem; }
+.nav a:hover { color: var(--ink); }
+.hero { min-height: 900px; display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 1.5rem; padding: 0 3rem; background: linear-gradient(135deg, #f6fffb, #eafff6); }
+.hero h1 { font-size: clamp(2.5rem, 6vw, 4.5rem); margin: 0; max-width: 18ch; letter-spacing: -0.03em; }
+.hero p { font-size: 1.25rem; color: var(--muted); margin: 0; max-width: 44ch; }
+.cta { display: inline-flex; gap: 0.5rem; padding: 0.9rem 1.6rem; background: var(--brand); color: #fff; border-radius: 999px; font-weight: 600; text-decoration: none; }
+.cta:hover { filter: brightness(1.05); }
+
+/* ---- below the fold (should be excluded by a viewport-aware engine) ---- */
+.features { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; padding: 6rem 3rem; }
+.feature-card { padding: 2rem; border: 1px solid #eee; border-radius: 16px; }
+.feature-card h3 { margin: 0 0 0.5rem; font-size: 1.3rem; }
+.feature-card p { margin: 0; color: var(--muted); }
+.feature-card .icon { width: 48px; height: 48px; border-radius: 12px; background: #eafff6; margin-bottom: 1rem; }
+.testimonials { background: #fafafa; padding: 6rem 3rem; }
+.testimonials h2 { text-align: center; font-size: 2rem; margin: 0 0 3rem; }
+.quote { max-width: 60ch; margin: 0 auto 2rem; font-size: 1.4rem; font-style: italic; }
+.quote cite { display: block; margin-top: 1rem; font-size: 1rem; color: var(--muted); font-style: normal; }
+.pricing { padding: 6rem 3rem; }
+.pricing h2 { text-align: center; font-size: 2rem; margin: 0 0 3rem; }
+.price-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; max-width: 1000px; margin: 0 auto; }
+.price-card { padding: 2.5rem 2rem; border: 1px solid #eee; border-radius: 20px; text-align: center; }
+.price-card.featured { border-color: var(--brand); box-shadow: 0 20px 60px -20px rgba(0,170,119,0.4); }
+.price-card .amount { font-size: 3rem; font-weight: 800; }
+.price-card ul { list-style: none; padding: 0; margin: 1.5rem 0; }
+.price-card li { padding: 0.4rem 0; color: var(--muted); }
+.faq { max-width: 760px; margin: 0 auto; padding: 6rem 3rem; }
+.faq h2 { font-size: 2rem; margin: 0 0 2rem; }
+.faq-item { border-bottom: 1px solid #eee; padding: 1.5rem 0; }
+.faq-item summary { font-weight: 600; cursor: pointer; }
+.faq-item p { color: var(--muted); margin: 1rem 0 0; }
+.footer { background: var(--ink); color: #fff; padding: 5rem 3rem; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; }
+.footer h4 { margin: 0 0 1rem; }
+.footer a { color: #bbb; text-decoration: none; display: block; padding: 0.25rem 0; }
+.footer a:hover { color: #fff; }
+.footer .copyright { grid-column: 1 / -1; border-top: 1px solid #333; padding-top: 2rem; color: #888; }
