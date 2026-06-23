@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>SPA rendered by an external module script</title>
+    <!-- relative href: only resolves if the document URL is used as the base -->
+    <link rel="stylesheet" href="app.css" />
+  </head>
+  <body>
+    <!-- empty shell; the UI is built by an external module script, not inline -->
+    <div id="root"></div>
+    <script type="module" src="spa-external.js"></script>
+  </body>
+</html>

@@ -12,12 +12,13 @@
  * @param {object} input
  * @param {string} input.html      full HTML source (shell or rendered)
  * @param {string} input.css       combined stylesheet text to evaluate
+ * @param {string} [input.url]     URL/path the document came from (file:// or http(s))
  * @param {Array<{width:number,height:number}>} input.viewports
  * @param {number} [input.timeout=30000]
  * @param {string} [input.userAgent]
  * @returns {Promise<{ css: string, viewports: number }>}
  */
-export async function runRender({ html, css, viewports, timeout = 30_000, userAgent }) {
+export async function runRender({ html, css, url, viewports, timeout = 30_000, userAgent }) {
   const { chromium } = await loadPlaywright();
 
   const browser = await chromium.launch({ args: ["--no-sandbox"] });
@@ -31,11 +32,18 @@ export async function runRender({ html, css, viewports, timeout = 30_000, userAg
       });
       const page = await context.newPage();
       try {
-        // Load + run the document first (this is what renders an SPA into its shell), THEN
-        // inject our combined CSS as a known sheet so coverage maps back to *our* rules
-        // regardless of how the page links its own. Injecting before setContent would be wiped.
-        await page.setContent(html, { waitUntil: "networkidle", timeout });
-        await page.addStyleTag({ content: css });
+        // Load + run the document. Navigating to the real URL is what lets the browser fetch and
+        // execute everything a user would - external/module scripts that render an SPA, relative
+        // stylesheets, dynamic assets. A raw HTML string with no URL falls back to setContent,
+        // which can only run inline scripts and can't resolve relative resources.
+        if (url) {
+          await page.goto(url, { waitUntil: "networkidle", timeout });
+        } else {
+          await page.setContent(html, { waitUntil: "networkidle", timeout });
+        }
+        // Inject our resolved stylesheet bundle as a known sheet so coverage still maps back to
+        // our rules even if a linked sheet failed to load (e.g. a root-relative href under file://).
+        if (css) await page.addStyleTag({ content: css });
 
         const critical = await page.evaluate(extractAboveFold, { width, height });
         collected.push(critical);

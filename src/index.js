@@ -90,6 +90,7 @@ export async function critical(options = {}) {
     const r = await runRender({
       html: bundle.html,
       css: bundle.css,
+      url: bundle.url,
       viewports,
       timeout: opts.timeout,
       userAgent: opts.userAgent,

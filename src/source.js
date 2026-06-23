@@ -58,7 +58,7 @@ export async function loadBundle({ html, src, css, base }) {
     const href = link.getAttribute("href");
     if (!href) continue;
     stylesheets.push(href);
-    const text = await readStyleHref(href, resolvedBase);
+    const text = await readStyleHref(href, resolvedBase, url);
     if (text) parts.push(text);
   }
 
@@ -79,16 +79,24 @@ export async function loadBundle({ html, src, css, base }) {
   };
 }
 
-async function readStyleHref(href, base) {
+async function readStyleHref(href, base, docUrl) {
   try {
-    if (isRemote(href)) return await (await fetch(href)).text();
-    if (href.startsWith("//")) return await (await fetch(`https:${href}`)).text();
-    // Root-relative or relative to the document/base
+    if (isRemote(href)) return await fetchText(href);
+    if (href.startsWith("//")) return await fetchText(`https:${href}`);
+    // When the document itself was fetched from a URL, resolve relative/root-relative hrefs
+    // against that URL and fetch them - not against the local filesystem.
+    if (docUrl && isRemote(docUrl)) return await fetchText(new URL(href, docUrl).href);
+    // Local document: resolve root-relative or relative hrefs against the base directory.
     const rel = href.replace(/^\//, "");
     return await readFile(path.resolve(base, rel), "utf8");
   } catch {
     return ""; // a missing/blocked sheet shouldn't abort the whole run
   }
+}
+
+async function fetchText(url) {
+  const res = await fetch(url);
+  return res.ok ? res.text() : "";
 }
 
 async function resolveExplicitCss(css, base) {
