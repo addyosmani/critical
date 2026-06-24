@@ -55,3 +55,14 @@ test("deterministic output: identical input -> identical bytes", async () => {
   const b = await critical({ src: path.join(fixtures, "index.html") });
   assert.equal(a.css, b.css);
 });
+
+test("rebases relative url() refs from a nested stylesheet to the document", async () => {
+  const { css } = await critical({ src: path.join(fixtures, "rebase", "index.html") });
+  // styles/hero.css is one level down; ../images/hero.png must become images/hero.png so it
+  // still resolves once inlined into the root index.html.
+  assert.match(css, /url\(["']?images\/hero\.png["']?\)/);
+  assert.doesNotMatch(css, /\.\.\/images\/hero\.png/);
+  // root-relative and absolute URLs resolve independently of the stylesheet, so leave them alone
+  assert.match(css, /\/img\/border\.png/);
+  assert.match(css, /cdn\.test\/cur\.png/);
+});

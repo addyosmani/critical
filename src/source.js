@@ -10,6 +10,7 @@ import { glob } from "node:fs/promises";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseHTML } from "linkedom";
+import * as csstree from "css-tree";
 
 /**
  * @typedef {object} Bundle
@@ -58,8 +59,10 @@ export async function loadBundle({ html, src, css, base }) {
     const href = link.getAttribute("href");
     if (!href) continue;
     stylesheets.push(href);
-    const text = await readStyleHref(href, resolvedBase, url);
-    if (text) parts.push(text);
+    const { text, loc } = await loadStylesheet(href, resolvedBase, url);
+    // Rebase relative url() refs so they still resolve once the CSS is inlined into the
+    // document, which may sit in a different directory than the stylesheet did.
+    if (text) parts.push(rebaseCss(text, loc, resolvedBase));
   }
 
   for (const style of document.querySelectorAll("style")) {
@@ -79,24 +82,78 @@ export async function loadBundle({ html, src, css, base }) {
   };
 }
 
-async function readStyleHref(href, base, docUrl) {
+/**
+ * Resolve a stylesheet href to a concrete location, keeping its provenance so url() refs can be
+ * rebased later. Returns `{ url }` for anything fetched over the network or `{ file }` for a local
+ * path, plus the loaded `text` ("" if missing/blocked - a bad sheet shouldn't abort the run).
+ */
+async function loadStylesheet(href, base, docUrl) {
+  const loc = styleLocation(href, base, docUrl);
+  const text = loc.url ? await fetchText(loc.url) : await readFileSafe(loc.file);
+  return { text, loc };
+}
+
+function styleLocation(href, base, docUrl) {
+  if (isRemote(href)) return { url: href };
+  if (href.startsWith("//")) return { url: `https:${href}` };
+  // A relative/root-relative href on a remotely-fetched document resolves against that URL.
+  if (docUrl && isRemote(docUrl)) return { url: new URL(href, docUrl).href };
+  // Local document: resolve root-relative or relative hrefs against the base directory.
+  return { file: path.resolve(base, href.replace(/^\//, "")) };
+}
+
+// Leave alone anything that already resolves independently of the stylesheet's location:
+// absolute URLs, protocol-relative, data:, in-document fragments, and root-relative paths.
+const ABSOLUTE_URL = /^(?:[a-z][a-z\d+.-]*:|\/\/|#|\/)/i;
+
+/**
+ * Rewrite relative url() references in a stylesheet so they resolve from the document that will
+ * inline the CSS. For a remote stylesheet they become absolute URLs; for a local one they become
+ * paths relative to the base directory (where the document lives).
+ */
+function rebaseCss(css, loc, base) {
   try {
-    if (isRemote(href)) return await fetchText(href);
-    if (href.startsWith("//")) return await fetchText(`https:${href}`);
-    // When the document itself was fetched from a URL, resolve relative/root-relative hrefs
-    // against that URL and fetch them - not against the local filesystem.
-    if (docUrl && isRemote(docUrl)) return await fetchText(new URL(href, docUrl).href);
-    // Local document: resolve root-relative or relative hrefs against the base directory.
-    const rel = href.replace(/^\//, "");
-    return await readFile(path.resolve(base, rel), "utf8");
+    const ast = csstree.parse(css);
+    let changed = false;
+    csstree.walk(ast, {
+      visit: "Url",
+      enter(node) {
+        const value = node.value;
+        if (!value || ABSOLUTE_URL.test(value)) return;
+        const rebased = loc.url
+          ? new URL(value, loc.url).href
+          : toPosix(path.relative(base, path.resolve(path.dirname(loc.file), value)));
+        if (rebased && rebased !== value) {
+          node.value = rebased;
+          changed = true;
+        }
+      },
+    });
+    return changed ? csstree.generate(ast) : css;
   } catch {
-    return ""; // a missing/blocked sheet shouldn't abort the whole run
+    return css; // never let a rebase pass break an otherwise-valid stylesheet
+  }
+}
+
+function toPosix(p) {
+  return p.split(path.sep).join("/");
+}
+
+async function readFileSafe(file) {
+  try {
+    return await readFile(file, "utf8");
+  } catch {
+    return "";
   }
 }
 
 async function fetchText(url) {
-  const res = await fetch(url);
-  return res.ok ? res.text() : "";
+  try {
+    const res = await fetch(url);
+    return res.ok ? res.text() : "";
+  } catch {
+    return "";
+  }
 }
 
 async function resolveExplicitCss(css, base) {
@@ -105,16 +162,18 @@ async function resolveExplicitCss(css, base) {
   const out = [];
   for (const entry of list) {
     if (looksLikeCss(entry)) {
-      out.push(entry);
+      out.push(entry); // raw CSS string: no path to rebase against
       continue;
     }
     if (isGlob(entry)) {
       for await (const file of glob(entry, { cwd: base })) {
-        out.push(await readFile(path.resolve(base, file), "utf8"));
+        const abs = path.resolve(base, file);
+        out.push(rebaseCss(await readFileSafe(abs), { file: abs }, base));
       }
       continue;
     }
-    out.push(await readFile(path.resolve(base, entry), "utf8"));
+    const abs = path.resolve(base, entry);
+    out.push(rebaseCss(await readFileSafe(abs), { file: abs }, base));
   }
   return out;
 }
