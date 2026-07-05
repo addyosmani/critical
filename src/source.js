@@ -7,6 +7,7 @@
  */
 import { readFile } from "node:fs/promises";
 import { glob } from "node:fs/promises";
+import { Buffer } from "node:buffer";
 import path from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseHTML } from "linkedom";
@@ -51,6 +52,9 @@ export async function loadBundle({ html, src, css, base }) {
 
   const { document } = parseHTML(raw);
 
+  // A document <base href> re-points every relative URL in the page (stylesheets included).
+  const baseHref = document.querySelector("base[href]")?.getAttribute("href") || null;
+
   // Collect CSS from three sources, in cascade order: linked sheets, inline <style>, explicit.
   const parts = [];
   const stylesheets = [];
@@ -59,7 +63,7 @@ export async function loadBundle({ html, src, css, base }) {
     const href = link.getAttribute("href");
     if (!href) continue;
     stylesheets.push(href);
-    const { text, loc } = await loadStylesheet(href, resolvedBase, url);
+    const { text, loc } = await loadStylesheet(href, resolvedBase, url, baseHref);
     // Rebase relative url() refs so they still resolve once the CSS is inlined into the
     // document, which may sit in a different directory than the stylesheet did.
     if (text) parts.push(rebaseCss(text, loc, resolvedBase));
@@ -87,19 +91,53 @@ export async function loadBundle({ html, src, css, base }) {
  * rebased later. Returns `{ url }` for anything fetched over the network or `{ file }` for a local
  * path, plus the loaded `text` ("" if missing/blocked - a bad sheet shouldn't abort the run).
  */
-async function loadStylesheet(href, base, docUrl) {
-  const loc = styleLocation(href, base, docUrl);
+async function loadStylesheet(href, base, docUrl, baseHref) {
+  // Inline data: URIs carry their own CSS — decode instead of fetching/reading.
+  if (href.startsWith("data:")) return { text: decodeDataUri(href), loc: {} };
+  const loc = styleLocation(href, base, docUrl, baseHref);
   const text = loc.url ? await fetchText(loc.url) : await readFileSafe(loc.file);
   return { text, loc };
 }
 
-function styleLocation(href, base, docUrl) {
+function styleLocation(href, base, docUrl, baseHref) {
   if (isRemote(href)) return { url: href };
   if (href.startsWith("//")) return { url: `https:${href}` };
+
+  // An absolute <base href> makes the document base a remote URL; every relative/root-relative
+  // stylesheet then resolves (and fetches) against it. This is issue #566's core case.
+  if (baseHref && isRemote(baseHref)) return { url: new URL(href, baseHref).href };
+
   // A relative/root-relative href on a remotely-fetched document resolves against that URL.
   if (docUrl && isRemote(docUrl)) return { url: new URL(href, docUrl).href };
-  // Local document: resolve root-relative or relative hrefs against the base directory.
-  return { file: path.resolve(base, href.replace(/^\//, "")) };
+
+  // Local document: a path-style <base href> (e.g. "/assets/") prefixes relative hrefs; strip any
+  // ?query/#hash before hitting the filesystem, and resolve against the base directory.
+  let rel = href;
+  if (baseHref && !href.startsWith("/")) rel = posixJoin(baseHref, href);
+  return { file: path.resolve(base, stripQuery(rel).replace(/^\//, "")) };
+}
+
+// Strip the ?query/#fragment a browser ignores when fetching a stylesheet by path.
+function stripQuery(p) {
+  return p.replace(/[?#].*$/, "");
+}
+
+function posixJoin(a, b) {
+  return path.posix.join(a, b);
+}
+
+// Decode a data: URI stylesheet (base64 or percent-encoded). Returns "" on anything malformed.
+function decodeDataUri(uri) {
+  const match = /^data:([^,]*),([\s\S]*)$/.exec(uri);
+  if (!match) return "";
+  const [, meta, data] = match;
+  try {
+    return /;base64/i.test(meta)
+      ? Buffer.from(data, "base64").toString("utf8")
+      : decodeURIComponent(data);
+  } catch {
+    return "";
+  }
 }
 
 // Leave alone anything that already resolves independently of the stylesheet's location:
@@ -112,6 +150,7 @@ const ABSOLUTE_URL = /^(?:[a-z][a-z\d+.-]*:|\/\/|#|\/)/i;
  * paths relative to the base directory (where the document lives).
  */
 function rebaseCss(css, loc, base) {
+  if (!loc || (!loc.url && !loc.file)) return css; // data: URIs have no location to rebase against
   try {
     const ast = csstree.parse(css);
     let changed = false;
