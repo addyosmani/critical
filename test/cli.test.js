@@ -58,7 +58,7 @@ describe("CLI", () => {
     const { code, stdout } = await run([path.join(fixtures, "index.html"), "--inline"]);
     assert.equal(code, 0);
     assert.match(stdout, /<style data-critical/);
-    assert.match(stdout, /media="print"/); // stylesheet deferred
+    assert.match(stdout, /rel="preload"/); // stylesheet deferred via preload hint
   });
 
   test("--json emits the structured report", async () => {
