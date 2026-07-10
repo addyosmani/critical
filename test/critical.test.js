@@ -39,15 +39,24 @@ test("routing decision: SPA shell is detected without launching a browser", asyn
   assert.equal(routed.engine, "render");
 });
 
-test("inline injects critical <style> and defers the stylesheet", async () => {
+test("inline injects critical <style> and defers the stylesheet without inline JS", async () => {
   const { html, report } = await critical({
     src: path.join(fixtures, "index.html"),
     inline: true,
   });
   assert.match(html, /<style data-critical/);
-  assert.match(html, /media="print"/); // link deferred
-  assert.match(html, /<noscript>/); // safe fallback present
+  assert.match(html, /rel="preload"/); // non-blocking preload hint in the head
+  assert.match(html, /as="style"/);
+  assert.doesNotMatch(html, /onload=/); // no inline event handler -> strict-CSP safe
   assert.deepEqual(report.stylesheetsDeferred, ["/styles.css"]);
+});
+
+test("inline accepts a nonce for the critical <style> (strict style-src CSP)", async () => {
+  const { html } = await critical({
+    src: path.join(fixtures, "index.html"),
+    inline: { nonce: "r4nd0m" },
+  });
+  assert.match(html, /<style[^>]*nonce="r4nd0m"/);
 });
 
 test("deterministic output: identical input -> identical bytes", async () => {

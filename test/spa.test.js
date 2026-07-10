@@ -42,11 +42,11 @@ describe("SPA render engine", { skip: noBrowser && "requires Playwright" }, () =
     assert.match(res.css, /box-sizing:border-box/);
   });
 
-  test("inline mode injects critical <style> + defers the real sheet with a fallback", async () => {
+  test("inline mode injects critical <style> + defers the real sheet without inline JS", async () => {
     const { html, report } = await critical({ src: SPA, inline: true });
     assert.match(html, /<style data-critical/);
-    assert.match(html, /media="print"/);
-    assert.match(html, /<noscript>/);
+    assert.match(html, /rel="preload"/);
+    assert.doesNotMatch(html, /onload=/);
     assert.deepEqual(report.stylesheetsDeferred, ["/app.css"]);
   });
 

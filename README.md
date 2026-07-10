@@ -40,8 +40,9 @@ Given an HTML document and its stylesheets, Critical:
    rendering the page in a real viewport (accurate, handles SPAs). See [Two engines](#two-engines).
 2. **Inlines it.** The critical rules go into a `<style>` at the top of `<head>` so first paint
    needs only the HTML.
-3. **Defers the rest.** The original `<link rel="stylesheet">` tags are rewritten to load
-   asynchronously, with a `<noscript>` fallback so nothing breaks if JavaScript is unavailable.
+3. **Defers the rest.** Each `<link rel="stylesheet">` is replaced in the head by a
+   `<link rel="preload">` and moved to the end of the body, so it no longer blocks first paint.
+   No inline scripts are added, so it works under a strict Content Security Policy.
 
 The output is deterministic: the same input produces byte-identical output, so it's safe to run
 in CI and diff in version control.
@@ -161,10 +162,10 @@ import { critical } from "critical";
 
 The `inline` object accepts:
 
-| Key       | Type      | Default | Description                                                          |
-| --------- | --------- | ------- | -------------------------------------------------------------------- |
-| `async`   | `boolean` | `true`  | Rewrite blocking `<link>`s to load asynchronously.                   |
-| `preload` | `boolean` | `true`  | Add `<link rel="preload" as="style">` hints for the deferred sheets. |
+| Key       | Type      | Default | Description                                                                    |
+| --------- | --------- | ------- | ------------------------------------------------------------------------------ |
+| `preload` | `boolean` | `true`  | Insert a `<link rel="preload" as="style">` hint where each deferred sheet was. |
+| `nonce`   | `string`  | —       | Nonce to set on the injected `<style>`, for a strict `style-src` CSP.          |
 
 ### The result
 
@@ -201,22 +202,23 @@ With `inline: true`, Critical:
 
 1. Inserts `<style data-critical>…</style>` as the first child of `<head>` so it wins the
    cascade race against the deferred sheets.
-2. Rewrites each `<link rel="stylesheet">` to load without blocking render:
-   ```html
-   <link rel="preload" as="style" href="/styles.css" />
-   <link
-     rel="stylesheet"
-     href="/styles.css"
-     media="print"
-     onload="this.media='all'; this.onload=null;"
-   />
-   <noscript><link rel="stylesheet" href="/styles.css" /></noscript>
-   ```
-   The `media="print"` swap is a well-supported, polyfill-free async-CSS pattern. The
-   `<noscript>` copy guarantees a correct (if slightly slower) result when JavaScript is off or
-   anything fails — a broken run degrades to "all CSS loads normally", never to an unstyled page.
+2. Stops each `<link rel="stylesheet">` from blocking the first paint, using the preload strategy:
 
-Add `data-critical-skip` to a `<link>` to leave it untouched.
+   ```html
+   <!-- in the head, where the stylesheet was: -->
+   <link rel="preload" as="style" href="/styles.css" />
+
+   <!-- moved to the end of <body>: -->
+   <link rel="stylesheet" href="/styles.css" />
+   ```
+
+   The preload starts the download early; the stylesheet applies after the above-the-fold content
+   (already styled by the inlined critical CSS) has painted. There is **no inline event handler**,
+   so this works under a strict `script-src` Content Security Policy, and **no `<noscript>`
+   fallback is needed** — the stylesheet loads normally whether or not JavaScript runs.
+
+Add `data-critical-skip` to a `<link>` to leave it untouched. For a strict `style-src` CSP, pass
+`inline: { nonce: "…" }` to stamp the injected `<style>` with your nonce.
 
 ## Tuning the above-the-fold set
 
@@ -283,8 +285,8 @@ await critical({ src: "dist/index.html", engine: "render", inline: true });
   MCP SDK) are optional peers, imported lazily — you only pay for what you use.
 - **Deterministic and explainable.** Stable output bytes and a structured `report` that says
   what ran, why, and what it saved.
-- **Safe by default.** Nothing is written without an explicit flag; deferral always carries a
-  `<noscript>` fallback.
+- **Safe by default.** Nothing is written without an explicit flag; deferral adds no inline
+  scripts, so the output works under a strict Content Security Policy.
 
 ## Requirements
 

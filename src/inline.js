@@ -1,40 +1,41 @@
 /**
- * Inliner. Put the critical CSS in the document head as a <style>, and turn the now-non-blocking
- * stylesheet <link>s into asynchronous loads with a <noscript> fallback.
+ * Inliner. Put the critical CSS in the document head as a <style>, and stop the full stylesheets
+ * from blocking the first paint.
  *
- * The async pattern is the 2026-stable one: `media="print" onload="this.media='all'"`. It needs
- * no loadCSS polyfill (which v8 carried) and degrades safely — if anything goes wrong the
- * <noscript> copy loads every stylesheet the normal, blocking way. A broken run yields a slightly
- * slower page, never an unstyled one.
+ * We use the CSP-safe preload strategy instead of the old `media="print" onload="…"` swap: each
+ * blocking <link rel="stylesheet"> in the head is replaced by a <link rel="preload" as="style">
+ * (which starts the fetch early without blocking render) and the real stylesheet is moved to the
+ * end of <body>. No inline event handler, so it works under a strict `script-src` policy. It also
+ * needs no <noscript> fallback - the stylesheet still loads normally, just after the content.
  */
 
 /**
  * @param {Document} document     linkedom document to mutate in place
  * @param {string} criticalCss    the inlined critical CSS
  * @param {object} [opts]
- * @param {boolean} [opts.async=true]   convert blocking links to async loads
- * @param {boolean} [opts.preload=true] add <link rel=preload> hints for the deferred sheets
+ * @param {boolean} [opts.preload=true] insert <link rel="preload"> hints for the moved sheets
+ * @param {string}  [opts.nonce]        nonce to set on the injected <style> (strict style-src CSP)
  * @returns {{ stylesheets: string[] }} hrefs that were made non-blocking
  */
-export function inlineCritical(document, criticalCss, { async = true, preload = true } = {}) {
+export function inlineCritical(document, criticalCss, { preload = true, nonce } = {}) {
   const head = document.head ?? document.querySelector("head");
   if (!head) throw new Error("Document has no <head> to inline into");
 
-  // 1. Inject critical CSS first so it wins the cascade race against the async sheets.
+  // 1. Inject critical CSS first so it wins the cascade race against the deferred sheets.
   if (criticalCss.trim()) {
     const style = document.createElement("style");
     style.setAttribute("data-critical", "");
+    if (nonce) style.setAttribute("nonce", nonce);
     style.textContent = criticalCss;
     head.insertBefore(style, head.firstChild);
   }
 
-  if (!async) return { stylesheets: [] };
-
-  // 2. Defer the real stylesheets.
   const links = [...document.querySelectorAll('link[rel="stylesheet"]')].filter(
     (l) => !l.hasAttribute("data-critical-skip"),
   );
-  const fallback = [];
+  if (links.length === 0) return { stylesheets: [] };
+
+  const sink = document.body ?? document.querySelector("body") ?? head;
   const hrefs = [];
 
   for (const link of links) {
@@ -42,28 +43,25 @@ export function inlineCritical(document, criticalCss, { async = true, preload = 
     if (!href) continue;
     hrefs.push(href);
 
-    // Preserve the blocking version inside <noscript> for the JS-disabled / failure path.
-    fallback.push(link.outerHTML);
-
+    // Replace the render-blocking <link> position in the head with a non-blocking preload hint...
     if (preload) {
       const pre = document.createElement("link");
       pre.setAttribute("rel", "preload");
       pre.setAttribute("as", "style");
       pre.setAttribute("href", href);
-      link.parentNode.insertBefore(pre, link);
+      carry(link, pre, "media");
+      carry(link, pre, "crossorigin");
+      link.parentNode?.insertBefore(pre, link);
     }
 
-    link.setAttribute("media", "print");
-    link.setAttribute("onload", "this.media='all'; this.onload=null;");
-  }
-
-  if (fallback.length) {
-    const noscript = document.createElement("noscript");
-    noscript.innerHTML = fallback.join("");
-    // Place the fallback after the last deferred link.
-    const lastLink = links.at(-1);
-    lastLink.parentNode.insertBefore(noscript, lastLink.nextSibling);
+    // ...and move the real stylesheet to the end of the document so it applies after first paint.
+    link.remove();
+    sink.append(link);
   }
 
   return { stylesheets: hrefs };
+}
+
+function carry(from, to, attr) {
+  if (from.hasAttribute(attr)) to.setAttribute(attr, from.getAttribute(attr));
 }
