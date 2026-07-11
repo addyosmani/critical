@@ -1,0 +1,27 @@
+:root { --brand: #0a7; }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, sans-serif; color: #111; }
+
+/* used above the fold */
+.hero { padding: 4rem 2rem; background: var(--brand); color: #fff; }
+.hero h1 { font-size: 3rem; margin: 0; }
+.nav { display: flex; gap: 1rem; padding: 1rem; }
+.nav a { color: var(--brand); text-decoration: none; }
+.nav a:hover { text-decoration: underline; }
+
+/* used, animated */
+.spinner { width: 2rem; height: 2rem; animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 50% { opacity: .5; } } /* never referenced -> should be dropped */
+
+/* not present in the document at all -> should be dropped */
+.footer { padding: 8rem; background: #222; }
+.modal { position: fixed; inset: 0; }
+.pricing-table td { border: 1px solid #ccc; }
+.blog-post pre { background: #f5f5f5; }
+
+@media (min-width: 1000px) {
+  .hero h1 { font-size: 4rem; }     /* used */
+  .sidebar { width: 320px; }        /* unused -> media block trimmed */
+}
+@font-face { font-family: Brand; src: url(/brand.woff2) format("woff2"); }

@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 env:
   CI: true
-  PUPPETEER_SKIP_DOWNLOAD: true
 
 jobs:
   run:
@@ -23,12 +22,6 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Chrome
-        uses: browser-actions/setup-chrome@v2
-        id: setup-chrome
-        with:
-          chrome-version: stable
-
       - name: Set up Vite+
         uses: voidzero-dev/setup-vp@v1
         with:
@@ -39,28 +32,13 @@ jobs:
       - name: Install dependencies
         run: vp install --frozen-lockfile
 
-      - name: Run checks
+      # The render engine drives a real browser; install Chromium for the SPA + vs-Beasties
+      # suites. Without it those tests skip cleanly, but in CI we want them to actually run.
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Lint & format check
         run: vp check
 
       - name: Run tests
-        run: vp test run --coverage
-        env:
-          PUPPETEER_EXECUTABLE_PATH: ${{ steps.setup-chrome.outputs.chrome-path }}
-
-      - name: Coveralls Parallel
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.os }}-${{ matrix.node }}
-          parallel: true
-
-  finish:
-    needs: run
-    if: always()
-    runs-on: ubuntu-latest
-    steps:
-      - name: Coveralls Finished
-        uses: coverallsapp/github-action@v2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          parallel-finished: true
+        run: node --test

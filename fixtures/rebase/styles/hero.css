@@ -1,0 +1,7 @@
+/* This stylesheet lives in styles/. Its relative url() refs are written relative to *here*,
+ * so they must be rebased when inlined into a document that sits one level up. */
+.rebase-hero {
+  background: url("../images/hero.png") no-repeat;
+  border-image-source: url("/img/border.png"); /* root-relative: leave as-is */
+  cursor: url("https://cdn.test/cur.png"), auto; /* absolute: leave as-is */
+}

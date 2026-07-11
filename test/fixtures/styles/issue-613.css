@@ -1,7 +1,0 @@
-:root {
-  --0: red;
-}
-
-#issue-613 {
-  color: var(--0);
-}

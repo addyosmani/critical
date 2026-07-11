@@ -1,80 +1,61 @@
 {
   "name": "critical",
-  "version": "8.0.0",
-  "description": "Extract & Inline Critical-path CSS from HTML",
+  "version": "9.0.0-next.0",
+  "description": "Extract & inline critical-path CSS — two engines, automatic routing, agent-native.",
   "keywords": [
+    "above-the-fold",
     "critical",
     "css",
-    "optimization",
-    "path"
+    "inline",
+    "lcp",
+    "mcp",
+    "performance"
   ],
   "license": "Apache-2.0",
   "author": "Addy Osmani",
   "repository": "addyosmani/critical",
-  "bin": "cli.js",
+  "bin": {
+    "critical": "./cli.js"
+  },
   "files": [
     "cli.js",
-    "index.js",
     "src"
   ],
   "type": "module",
   "exports": {
-    ".": "./index.js",
-    "./file.js": "./src/file.js",
-    "./errors.js": "./src/errors.js"
+    ".": "./src/index.js",
+    "./mcp": "./src/mcp.js"
   },
   "scripts": {
-    "test": "vp test",
+    "test": "node --test",
+    "test:coverage": "node --test --experimental-test-coverage",
     "check": "vp check",
-    "prepare": "vp config"
+    "prepare": "vp config",
+    "bench": "node bench/vs-beasties.mjs",
+    "demo": "node cli.js ./fixtures --explain"
   },
   "dependencies": {
-    "@adobe/css-tools": "^4.4.4",
-    "async-traverse-tree": "^1.1.1",
-    "clean-css": "^5.3.3",
-    "common-tags": "^1.8.2",
-    "css-url-parser": "^1.1.4",
-    "data-uri-to-buffer": "^8.0.0",
-    "debug": "^4.4.3",
-    "find-up": "^8.0.0",
-    "globby": "^16.2.0",
-    "got": "^15.0.5",
-    "group-args": "^0.1.0",
-    "indent-string": "^5.0.0",
-    "inline-critical": "^12.1.0",
-    "is-glob": "^4.0.3",
-    "joi": "^18.2.1",
-    "lodash": "^4.18.1",
-    "lodash-es": "^4.18.1",
-    "make-dir": "^5.1.0",
-    "meow": "^14.1.0",
-    "oust": "^2.0.4",
-    "p-all": "^5.0.1",
-    "penthouse-esm": "^3.0.0",
-    "picocolors": "^1.1.1",
-    "plugin-error": "^2.0.1",
-    "postcss": "^8.5.14",
-    "postcss-discard": "^2.0.0",
-    "postcss-image-inliner": "^7.0.1",
-    "postcss-url": "^10.1.3",
-    "replace-ext": "^2.0.0",
-    "slash": "^5.1.0",
-    "tempy": "^3.2.0",
-    "through2": "^5.0.1",
-    "vinyl": "^3.0.1"
+    "css-tree": "^3.1.0",
+    "lightningcss": "^1.30.0",
+    "linkedom": "^0.18.6"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.6",
-    "async": "^3.2.6",
-    "finalhandler": "^2.1.1",
-    "get-port": "^7.2.0",
-    "nock": "^14.0.15",
-    "normalize-newline": "^5.0.0",
-    "serve-static": "^2.2.1",
-    "stream-array": "^1.1.2",
-    "stream-assert": "^2.0.3",
-    "vinyl-source-stream": "^2.0.0",
+    "beasties": "^0.3.0",
+    "playwright": "^1.50.0",
     "vite-plus": "catalog:"
+  },
+  "peerDependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0",
+    "playwright": "^1.50.0"
+  },
+  "peerDependenciesMeta": {
+    "playwright": {
+      "optional": true
+    },
+    "@modelcontextprotocol/sdk": {
+      "optional": true
+    }
   },
   "engines": {
     "node": ">=22.13.0"

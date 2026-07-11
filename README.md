@@ -1,407 +1,307 @@
-[![NPM version][npm-image]][npm-url] [![Build Status][ci-image]][ci-url] [![Coverage][coveralls-image]][coveralls-url]
-
 # critical
 
-Critical extracts & inlines critical-path (above-the-fold) CSS from HTML
+> Extract the critical-path (above-the-fold) CSS from your HTML, inline it, and load the rest
+> asynchronously — so the browser can paint the first screen without waiting on a full stylesheet.
 
-<img src="https://raw.githubusercontent.com/addyosmani/critical/master/preview.png" alt="Preview" width="378">
-
-## Install
+Critical removes render-blocking CSS from the critical path, which is one of the most direct
+levers on **Largest Contentful Paint** and first render. It works for static sites, MPAs, and
+single-page apps, and it's built to be driven by humans, build pipelines, and coding agents
+alike.
 
 ```sh
-pnpm add -D critical
+npm install --save-dev critical
 ```
 
-## Build plugins
+---
 
-- [grunt-critical](https://github.com/bezoerb/grunt-critical)
-- Gulp users should use Critical directly
-- For Webpack use [html-critical-webpack-plugin](https://github.com/anthonygore/html-critical-webpack-plugin)
+## Contents
 
-## Demo projects
+- [How it works](#how-it-works)
+- [Quick start](#quick-start)
+- [Two engines](#two-engines)
+- [CLI reference](#cli-reference)
+- [API reference](#api-reference)
+- [Inlining behavior](#inlining-behavior)
+- [Tuning the above-the-fold set](#tuning-the-above-the-fold-set)
+- [MCP server (agents)](#mcp-server-agents)
+- [Recipes](#recipes)
+- [Design principles](#design-principles)
+- [Requirements](#requirements)
+- [Alternatives](#alternatives)
 
-- [Optimize a basic page with Gulp](https://github.com/addyosmani/critical-path-css-demo) with a [tutorial](https://github.com/addyosmani/critical-path-css-demo#tutorial)
-- [Optimize an Angular boilerplate with Gulp](https://github.com/addyosmani/critical-path-angular-demo)
-- [Optimize a Weather app with Gulp](https://github.com/addyosmani/critical-css-weather-app)
+---
 
-## Usage
+## How it works
 
-Include:
+Given an HTML document and its stylesheets, Critical:
 
-```js
-import { generate } from "critical";
+1. **Determines what's critical.** It figures out which CSS rules style the content that paints
+   above the fold — either by matching rules against the delivered DOM (fast, no browser) or by
+   rendering the page in a real viewport (accurate, handles SPAs). See [Two engines](#two-engines).
+2. **Inlines it.** The critical rules go into a `<style>` at the top of `<head>` so first paint
+   needs only the HTML.
+3. **Defers the rest.** Each `<link rel="stylesheet">` is replaced in the head by a
+   `<link rel="preload">` and moved to the end of the body, so it no longer blocks first paint.
+   No inline scripts are added, so it works under a strict Content Security Policy.
+
+The output is deterministic: the same input produces byte-identical output, so it's safe to run
+in CI and diff in version control.
+
+## Quick start
+
+### CLI
+
+```sh
+# Optimize a build directory in place (inlines critical CSS, defers the rest)
+critical ./dist --inline --write
+
+# See what it would do and why, without writing anything
+critical ./dist --explain
+
+# A single file to stdout
+critical index.html --inline > index.critical.html
 ```
 
-Full blown example with available options:
+### API
 
 ```js
-generate({
-  // Inline the generated critical-path CSS
-  // - true generates HTML
-  // - false generates CSS
+import { critical } from "critical";
+
+const { html, css, report } = await critical({
+  src: "dist/index.html",
   inline: true,
-
-  // Your base directory
-  base: "dist/",
-
-  // HTML source
-  html: "<html>...</html>",
-
-  // HTML source file
-  src: "index.html",
-
-  // Your CSS Files (optional)
-  css: ["dist/styles/main.css"],
-
-  // Viewport width
-  width: 1300,
-
-  // Viewport height
-  height: 900,
-
-  // Output results to file
-  target: {
-    css: "critical.css",
-    html: "index-critical.html",
-    uncritical: "uncritical.css",
-  },
-
-  // Extract inlined styles from referenced stylesheets
-  extract: true,
-
-  // ignore CSS rules
-  ignore: {
-    atrule: ["@font-face"],
-    rule: [/some-regexp/],
-    decl: (node, value) => /big-image\.png/.test(value),
-  },
 });
+
+// `html`   — the document with critical CSS inlined and stylesheets deferred
+// `css`    — the critical CSS on its own (minified)
+// `report` — structured diagnostics (engine used, bytes, rules, warnings, timing)
 ```
 
-### Generate and inline critical-path CSS
+`critical()` never writes to disk on its own — it returns the result. Use the CLI's `--write`
+/ `--out`, or write `result.html` / `result.css` yourself.
 
-Basic usage:
+## Two engines
 
-```js
-generate({
-  inline: true,
-  base: "test/",
-  src: "index.html",
-  target: "index-critical.html",
-  width: 1300,
-  height: 900,
-});
+Critical picks the right strategy for each document automatically (`engine: "auto"`, the
+default), and tells you which it used and why.
+
+| Engine     | How it decides what's critical                                               | Needs a browser  | Best for                                                     |
+| ---------- | ---------------------------------------------------------------------------- | ---------------- | ------------------------------------------------------------ |
+| **static** | Matches CSS rules against the delivered DOM (the used CSS)                   | No               | SSG / SSR / MPA output that ships real markup                |
+| **render** | Loads the page at a real viewport and measures what's painted above the fold | Yes (Playwright) | SPA shells, and when you want a tight, viewport-accurate set |
+
+**Automatic routing.** When `engine` is `"auto"`, Critical inspects the delivered HTML. If the
+document already contains rendered content, the static engine is correct and runs in
+milliseconds. If the document is an empty application shell (e.g. `<div id="root"></div>` with
+no markup yet), there's nothing to match against statically, so Critical escalates to the render
+engine and measures the page the way a browser actually paints it.
+
+You can always pin the engine explicitly with `engine: "static"` or `engine: "render"`.
+
+> The render engine uses [Playwright](https://playwright.dev), declared as an **optional** peer
+> dependency. It's imported lazily, so the static path — and the default install — never pull in
+> a browser. To use the render engine: `npm i -D playwright && npx playwright install chromium`.
+
+## CLI reference
+
+```text
+critical <input> [options]
+
+  input        a directory (all *.html are processed), an .html file, or stdin
 ```
 
-### Generate critical-path CSS
+| Option                                | Description                                                | Default |
+| ------------------------------------- | ---------------------------------------------------------- | ------- |
+| `-e, --engine <auto\|static\|render>` | Engine selection                                           | `auto`  |
+| `-i, --inline`                        | Inline critical CSS and defer the rest                     | off     |
+| `-w, --width <px>`                    | Render-engine viewport width                               | `1300`  |
+| `-h, --height <px>`                   | Render-engine viewport height                              | `900`   |
+| `--dimensions <WxH,WxH>`              | Multiple render viewports (e.g. `390x844,1300x900`)        | —       |
+| `--no-fold`                           | Ignore `[data-critical-fold]` scoping in the static engine | —       |
+| `--no-minify`                         | Keep the critical CSS readable instead of minifying        | —       |
+| `-o, --out <file\|dir>`               | Write output here instead of stdout                        | stdout  |
+| `--write`                             | Rewrite the input file(s) in place (use with `--inline`)   | off     |
+| `--json`                              | Emit the structured result as JSON                         | off     |
+| `--explain`                           | Print the engine decision and stats to stderr              | off     |
+| `--help`                              | Show help                                                  | —       |
 
-Basic usage:
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  target: "styles/main.css",
-  width: 1300,
-  height: 900,
-});
-```
-
-Generate and minify critical-path CSS:
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  target: "styles/styles.min.css",
-  width: 1300,
-  height: 900,
-});
-```
-
-Generate, minify and inline critical-path CSS:
-
-```js
-generate({
-  inline: true,
-  base: "test/",
-  src: "index.html",
-  target: {
-    html: "index-critical.html",
-    css: "critical.css",
-  },
-  width: 1300,
-  height: 900,
-});
-```
-
-Generate and return output via callback:
-
-```js
-generate({
-    base: 'test/',
-    src: 'index.html',
-    width: 1300,
-    height: 900,
-    inline: true
-}, (err, {css, html, uncritical}) => {
-    // You now have critical-path CSS as well as the modified HTML.
-    // Works with and without target specified.
-    ...
-});
-```
-
-Generate and return output via promise:
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  width: 1300,
-  height: 900,
-})
-  .then(({ css, html, uncritical }) => {
-    // You now have critical-path CSS as well as the modified HTML.
-    // Works with and without target specified.
-  })
-  .catch((err) => {
-    // …
-  });
-```
-
-Generate and return output via async function:
-
-```js
-const { css, html, uncritical } = await generate({
-  base: "test/",
-  src: "index.html",
-  width: 1300,
-  height: 900,
-});
-```
-
-### Generate critical-path CSS with multiple resolutions
-
-When your site is adaptive and you want to deliver critical CSS for multiple screen resolutions this is a useful option.
-_note:_ (your final output will be minified as to eliminate duplicate rule inclusion)
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  target: {
-    css: "styles/main.css",
-  },
-  dimensions: [
-    {
-      height: 200,
-      width: 500,
-    },
-    {
-      height: 900,
-      width: 1200,
-    },
-  ],
-});
-```
-
-### Generate critical-path CSS and ignore specific selectors
-
-This is a useful option when you e.g. want to defer loading of webfonts or background images.
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  target: {
-    css: "styles/main.css",
-  },
-  ignore: {
-    atrule: ["@font-face"],
-    decl: (node, value) => /url\(/.test(value),
-  },
-});
-```
-
-### Generate critical-path CSS and specify asset rebase behaviour
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  target: {
-    css: "styles/main.css",
-  },
-  rebase: {
-    from: "/styles/main.css",
-    to: "/folder/subfolder/index.html",
-  },
-});
-```
-
-```js
-generate({
-  base: "test/",
-  src: "index.html",
-  target: {
-    css: "styles/main.css",
-  },
-  rebase: (asset) => `https://my-cdn.com${asset.absolutePath}`,
-});
-```
-
-### Options
-
-| Name                | Type                   | Default                                                                                                                                                                                | Description                                                                                                                                                                                                                                                                                                                                                                     |
-| ------------------- | ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| inline              | `boolean`\|`object`    | `false`                                                                                                                                                                                | Inline critical-path CSS using filamentgroup's loadCSS. Pass an object to configure [`inline-critical`](https://github.com/bezoerb/inline-critical#inlinehtml-styles-options)                                                                                                                                                                                                   |
-| base                | `string`               | `path.dirname(src)` or `process.cwd()`                                                                                                                                                 | Base directory in which the source and destination are to be written                                                                                                                                                                                                                                                                                                            |
-| html                | `string`               |                                                                                                                                                                                        | HTML source to be operated against. This option takes precedence over the `src` option.                                                                                                                                                                                                                                                                                         |
-| css                 | `array`                | `[]`                                                                                                                                                                                   | An array of paths to css files, file globs, [Vinyl](https://www.npmjs.com/package/vinyl) file objects or source CSS strings.                                                                                                                                                                                                                                                    |
-| src                 | `string`               |                                                                                                                                                                                        | Location of the HTML source to be operated against                                                                                                                                                                                                                                                                                                                              |
-| target              | `string` or `object`   |                                                                                                                                                                                        | Location of where to save the output of an operation. Use an object with 'html' and 'css' props if you want to store both                                                                                                                                                                                                                                                       |
-| width               | `integer`              | `1300`                                                                                                                                                                                 | Width of the target viewport                                                                                                                                                                                                                                                                                                                                                    |
-| height              | `integer`              | `900`                                                                                                                                                                                  | Height of the target viewport                                                                                                                                                                                                                                                                                                                                                   |
-| dimensions          | `array`                | `[]`                                                                                                                                                                                   | An array of objects containing height and width. Takes precedence over `width` and `height` if set                                                                                                                                                                                                                                                                              |
-| extract             | `boolean`              | `false`                                                                                                                                                                                | Remove the inlined styles from any stylesheets referenced in the HTML. It generates new references based on extracted content so it's safe to use for multiple HTML files referencing the same stylesheet. Use with caution. Removing the critical CSS per page results in a unique async loaded CSS file for every page. Meaning you can't rely on cache across multiple pages |
-| inlineImages        | `boolean`              | `false`                                                                                                                                                                                | Inline images                                                                                                                                                                                                                                                                                                                                                                   |
-| assetPaths          | `array`                | `[]`                                                                                                                                                                                   | List of directories/urls where the inliner should start looking for assets                                                                                                                                                                                                                                                                                                      |
-| maxImageFileSize    | `integer`              | `10240`                                                                                                                                                                                | Sets a max file size (in bytes) for base64 inlined images                                                                                                                                                                                                                                                                                                                       |
-| rebase              | `object` or `function` | `undefined`                                                                                                                                                                            | Critical tries it's best to rebase the asset paths relative to the document. If this doesn't work as expected you can always use this option to control the rebase paths. See [`postcss-url`](https://github.com/postcss/postcss-url) for details. (https://github.com/pocketjoso/penthouse#usage-1).                                                                           |
-| ignore              | `array` or `object`    | `undefined`                                                                                                                                                                            | Ignore CSS rules. See [`postcss-discard`](https://github.com/bezoerb/postcss-discard) for usage examples. If you pass an array all rules will be applied to atrules, rules and declarations;                                                                                                                                                                                    |
-| ignoreInlinedStyles | `boolean`              | `false`                                                                                                                                                                                | Ignore inlined stylesheets                                                                                                                                                                                                                                                                                                                                                      |
-| userAgent           | `string`               | `''`                                                                                                                                                                                   | User agent to use when fetching a remote src                                                                                                                                                                                                                                                                                                                                    |
-| penthouse           | `object`               | `{}`                                                                                                                                                                                   | Configuration options for [`penthouse`](https://github.com/pocketjoso/penthouse).                                                                                                                                                                                                                                                                                               |
-| request             | `object`               | `{}`                                                                                                                                                                                   | Configuration options for [`got`](https://github.com/sindresorhus/got).                                                                                                                                                                                                                                                                                                         |
-| cleanCSS            | `object`               | `{level: {  1: { all: true }, 2: { all: false, removeDuplicateFontRules: true, removeDuplicateMediaBlocks: true, removeDuplicateRules: true, removeEmpty: true, mergeMedia: true } }}` | Configuration options for [`CleanCSS`](https://github.com/clean-css/clean-css) which let's you configure the optimization level for the generated critical css                                                                                                                                                                                                                  |
-| user                | `string`               | `undefined`                                                                                                                                                                            | RFC2617 basic authorization: user                                                                                                                                                                                                                                                                                                                                               |
-| pass                | `string`               | `undefined`                                                                                                                                                                            | RFC2617 basic authorization: pass                                                                                                                                                                                                                                                                                                                                               |
-| strict              | `boolean`              | `false`                                                                                                                                                                                | Throw an error on css parsing errors or if no css is found.                                                                                                                                                                                                                                                                                                                     |
-
-## CLI
+### Examples
 
 ```sh
-pnpm add -g critical
+critical ./dist --inline --write              # whole build dir, in place
+critical index.html --explain                 # routing decision + size stats
+critical app.html -e render -i > out.html     # force a real-browser pass for an SPA
+critical page.html --dimensions 390x844,1300x900 -i   # union of mobile + desktop folds
+cat page.html | critical --inline             # stdin -> stdout
+critical ./dist --json                        # machine-readable report for CI/agents
 ```
 
-critical works well with standard input.
-
-```sh
-cat test/fixture/index.html | critical --base test/fixture --inline > index.critical.html
-```
-
-Or on Windows:
-
-```bat
-type test\fixture\index.html | critical --base test/fixture --inline > index.critical.html
-```
-
-You can also pass in the critical CSS file as an option.
-
-```sh
-critical test/fixture/index.html --base test/fixture > critical.css
-```
-
-## Gulp
+## API reference
 
 ```js
-import gulp from "gulp";
-import log from "fancy-log";
-import { stream as critical } from "critical";
-
-// Generate & Inline Critical-path CSS
-gulp.task("critical", () => {
-  return gulp
-    .src("dist/*.html")
-    .pipe(
-      critical({
-        base: "dist/",
-        inline: true,
-        css: ["dist/styles/components.css", "dist/styles/main.css"],
-      }),
-    )
-    .on("error", (err) => {
-      log.error(err.message);
-    })
-    .pipe(gulp.dest("dist"));
-});
+import { critical } from "critical";
 ```
 
-## Why?
+### `critical(options) → Promise<{ html, css, report }>`
 
-### Why is critical-path CSS important?
+| Option       | Type                             | Default                | Description                                                                             |
+| ------------ | -------------------------------- | ---------------------- | --------------------------------------------------------------------------------------- |
+| `src`        | `string`                         | —                      | Path or URL to an HTML file. Provide `src` **or** `html`.                               |
+| `html`       | `string`                         | —                      | Raw HTML source. Takes precedence over `src`.                                           |
+| `css`        | `string \| string[]`             | —                      | Extra CSS: file paths, globs, or raw CSS strings, beyond what the document links.       |
+| `base`       | `string`                         | dir of `src`, else cwd | Base directory for resolving stylesheet/asset paths.                                    |
+| `engine`     | `"auto" \| "static" \| "render"` | `"auto"`               | Engine selection (see [Two engines](#two-engines)).                                     |
+| `inline`     | `boolean \| object`              | `false`                | Inline critical CSS and defer the rest. Pass an object to configure inlining.           |
+| `minify`     | `boolean`                        | `true`                 | Minify the critical CSS (via Lightning CSS).                                            |
+| `foldAware`  | `boolean`                        | `true`                 | Honor `[data-critical-fold]` scoping in the static engine.                              |
+| `width`      | `number`                         | `1300`                 | Render-engine viewport width.                                                           |
+| `height`     | `number`                         | `900`                  | Render-engine viewport height.                                                          |
+| `dimensions` | `Array<{width, height}>`         | —                      | Multiple render viewports; their critical sets are unioned. Overrides `width`/`height`. |
+| `timeout`    | `number`                         | `30000`                | Render-engine navigation timeout (ms).                                                  |
+| `userAgent`  | `string`                         | —                      | User agent for the render engine.                                                       |
 
-> CSS is required to construct the render tree for your pages and JavaScript
-> will often block on CSS during initial construction of the page.
-> You should ensure that any non-essential CSS is marked as non-critical
-> (e.g. print and other media queries), and that the amount of critical CSS
-> and the time to deliver it is as small as possible.
+The `inline` object accepts:
 
-### Why should critical-path CSS be inlined?
+| Key       | Type      | Default | Description                                                                    |
+| --------- | --------- | ------- | ------------------------------------------------------------------------------ |
+| `preload` | `boolean` | `true`  | Insert a `<link rel="preload" as="style">` hint where each deferred sheet was. |
+| `nonce`   | `string`  | —       | Nonce to set on the injected `<style>`, for a strict `style-src` CSP.          |
 
-> For best performance, you may want to consider inlining the critical CSS
-> directly into the HTML document. This eliminates additional roundtrips
-> in the critical path and if done correctly can be used to deliver a
-> “one roundtrip” critical path length where only the HTML is a blocking resource.
+### The result
 
-## FAQ
+```js
+const { html, css, report } = await critical({ src: "dist/index.html", inline: true });
+```
 
-### Are there any sample projects available using Critical?
+- **`html`** — the document. Identical to the input unless `inline` is set.
+- **`css`** — the critical CSS, minified (unless `minify: false`).
+- **`report`** — structured diagnostics:
 
-Why, yes!. Take a look at [this](https://github.com/addyosmani/critical-path-css-demo) Gulp project
-which demonstrates using Critical to generate and inline critical-path CSS. It also includes a mini-tutorial
-that walks through how to use it in a simple webapp.
+```jsonc
+{
+  "engine": "static", // engine that actually ran
+  "reason": "rendered document (…) — matching used CSS without a browser",
+  "requestedEngine": "auto",
+  "rules": { "kept": 10, "total": 15 },
+  "bytes": { "stylesheets": 1107, "critical": 544, "savedBlocking": 1107 },
+  "stylesheetsDiscovered": ["/styles.css"],
+  "stylesheetsDeferred": ["/styles.css"], // present when inlined
+  "warnings": ["…"],
+  "durationMs": 13,
+  "deterministic": true,
+}
+```
 
-### When should I just use Penthouse directly?
+`report` is designed to be read by a program: it explains the decision, quantifies the win
+(`savedBlocking` = render-blocking bytes removed from the critical path), and surfaces any
+caveats as `warnings`.
 
-The main differences between Critical and [Penthouse](https://github.com/pocketjoso/penthouse), a module we
-use, are:
+## Inlining behavior
 
-- Critical will automatically extract stylesheets from your HTML from which to generate critical-path CSS from,
-  whilst other modules generally require you to specify this upfront.
-- Critical provides methods for inlining critical-path CSS (a common logical next-step once your CSS is generated)
-- Since we tackle both generation and inlining, we're able to abstract away some of the ugly boilerplate otherwise
-  involved in tackling these problems separately.
+With `inline: true`, Critical:
 
-That said, if your site or app has a large number of styles or styles which are being dynamically injected into
-the DOM (sometimes common in Angular apps) I recommend using Penthouse directly. It will require you to supply
-styles upfront, but this may provide a higher level of accuracy if you find Critical isn't serving your needs.
+1. Inserts `<style data-critical>…</style>` as the first child of `<head>` so it wins the
+   cascade race against the deferred sheets.
+2. Stops each `<link rel="stylesheet">` from blocking the first paint, using the preload strategy:
 
-### What other alternatives to Critical are available?
+   ```html
+   <!-- in the head, where the stylesheet was: -->
+   <link rel="preload" as="style" href="/styles.css" />
 
-[Beasties](https://github.com/danielroe/beasties) is a maintained alternative that inlines critical CSS without requiring a headless browser.
-It provides plugins for Webpack and Vite but does not include a CLI.
+   <!-- moved to the end of <body>: -->
+   <link rel="stylesheet" href="/styles.css" />
+   ```
 
-FilamentGroup maintain a [criticalCSS](https://github.com/filamentgroup/criticalCSS) node module, which
-similar to [Penthouse](https://github.com/pocketjoso/penthouse) will find and output the critical-path CSS for
-your pages. The PageSpeed Optimization modules for nginx, apache, IIS, ATS, and Open Lightspeed can do all the heavy
-lifting automatically when you enable the [prioritize_critical_css](https://developers.google.com/speed/docs/insights/OptimizeCSSDelivery) filter
+   The preload starts the download early; the stylesheet applies after the above-the-fold content
+   (already styled by the inlined critical CSS) has painted. There is **no inline event handler**,
+   so this works under a strict `script-src` Content Security Policy, and **no `<noscript>`
+   fallback is needed** — the stylesheet loads normally whether or not JavaScript runs.
 
-### Is Critical stable and suitable for production use?
+Add `data-critical-skip` to a `<link>` to leave it untouched. For a strict `style-src` CSP, pass
+`inline: { nonce: "…" }` to stamp the injected `<style>` with your nonce.
 
-Critical has been used on a number of production sites that have found it stable for everyday use.
-That said, we welcome you to try it out on your project and report bugs if you find them.
+## Tuning the above-the-fold set
 
-## Can I contribute?
+- **`[data-critical-fold]` (static engine).** By default the static engine inlines all _used_
+  CSS. Mark the container that holds your above-the-fold content with `data-critical-fold` and
+  the static engine scopes matching to that subtree, producing a tighter critical set without a
+  browser.
+- **Viewports (render engine).** Use `width`/`height` or `dimensions` to define exactly what
+  "above the fold" means. Multiple dimensions union their results — useful for shipping one
+  critical set that covers both mobile and desktop.
+- **`@font-face`, `@keyframes`, custom properties** are preserved when referenced; unused
+  `@keyframes` and empty `@media`/`@supports`/`@layer` blocks are pruned.
 
-Of course. We appreciate all of our [contributors](https://github.com/addyosmani/critical/graphs/contributors) and
-welcome contributions to improve the project further. If you're uncertain whether an addition should be made, feel
-free to open up an issue and we can discuss it.
+## MCP server (agents)
 
-## Maintainers
+Critical ships a [Model Context Protocol](https://modelcontextprotocol.io) server so an agent
+can call it as a tool and receive the structured report back directly:
 
-This module is brought to you and maintained by the following people:
+```sh
+node src/mcp.js     # stdio MCP server exposing `optimize_critical_css`
+```
 
-- Addy Osmani - Creator ([Github](https://github.com/addyosmani) / [Twitter](https://twitter.com/addyosmani))
-- Ben Zörb - Primary maintainer ([Github](https://github.com/bezoerb) / [Twitter](https://twitter.com/bezoerb))
+```js
+import { createServer } from "critical/mcp";
+```
+
+The tool takes `src`/`html` (plus optional `css`, `engine`, `inline`, `width`, `height`) and
+returns the critical CSS, the rewritten HTML, and the report as structured content. Requires the
+optional `@modelcontextprotocol/sdk` peer dependency.
+
+## Recipes
+
+**Optimize a static build directory (in CI):**
+
+```sh
+critical ./dist --inline --write
+```
+
+**Programmatically, writing both outputs:**
+
+```js
+import { writeFile } from "node:fs/promises";
+import { critical } from "critical";
+
+const { html, css } = await critical({ src: "dist/index.html", inline: true });
+await writeFile("dist/index.html", html);
+await writeFile("dist/critical.css", css);
+```
+
+**An SPA where the shell is empty until JS runs:**
+
+```js
+await critical({ src: "dist/index.html", engine: "render", inline: true });
+// auto-routing would also pick "render" here; pinning it just skips the sniff.
+```
+
+## Design principles
+
+- **Two engines, automatically routed.** The fast path runs whenever the delivered DOM is the
+  source of truth; the browser is used only when it's actually needed.
+- **Platform-first, few dependencies.** Three runtime dependencies — `lightningcss` (parse +
+  minify + dead-code), `linkedom` (DOM), `css-tree` (rule walking). Everything else is a Node
+  built-in (`fetch`, `parseArgs`, `styleText`, `fs.glob`). Heavy capabilities (`playwright`, the
+  MCP SDK) are optional peers, imported lazily — you only pay for what you use.
+- **Deterministic and explainable.** Stable output bytes and a structured `report` that says
+  what ran, why, and what it saved.
+- **Safe by default.** Nothing is written without an explicit flag; deferral adds no inline
+  scripts, so the output works under a strict Content Security Policy.
+
+## Requirements
+
+- **Node.js ≥ 22.13**
+- The **render engine** additionally needs `playwright` and a browser:
+  `npm i -D playwright && npx playwright install chromium`. The static engine needs neither.
+
+## Alternatives
+
+Critical isn't the only way to inline critical CSS, and it isn't always the right one — a purely
+prerendered site that just wants its used CSS inlined may be better served by a lighter,
+browser-free tool. For a thorough, fair comparison of Critical, Beasties (formerly Critters),
+Penthouse, and native platform approaches — including where each one is the better choice and a
+reproducible benchmark — see [COMPARISON.md](./COMPARISON.md).
 
 ## License
 
-[Apache-2.0 © Addy Osmani, Ben Zörb](license)
-
-[npm-url]: https://www.npmjs.com/package/critical
-[npm-image]: https://img.shields.io/npm/v/critical.svg
-[ci-url]: https://github.com/addyosmani/critical/actions?workflow=Tests
-[ci-image]: https://github.com/addyosmani/critical/workflows/Tests/badge.svg
-[coveralls-url]: https://coveralls.io/github/addyosmani/critical?branch=master
-[coveralls-image]: https://img.shields.io/coveralls/github/addyosmani/critical/master.svg
+[Apache-2.0](license) © Addy Osmani
