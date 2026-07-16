@@ -61,5 +61,8 @@
   "engines": {
     "node": ">=22.13.0"
   },
-  "packageManager": "pnpm@11.5.0"
+  "packageManager": "pnpm@11.5.0",
+  "bugs": {
+    "url": "https://github.com/addyosmani/critical/issues"
+  }
 }
