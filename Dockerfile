@@ -1,38 +1,23 @@
-FROM node:22-slim
+# Official Playwright image ships Chromium plus every system dependency it needs,
+# versioned and maintained upstream. PLAYWRIGHT_VERSION must match the playwright
+# npm version below, because the bundled browsers are tied to a specific release.
+ARG PLAYWRIGHT_VERSION=1.50.0
+FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble
 
-ARG CRITICAL_VERSION=9.0.0
+# Re-declare after FROM so the ARG is visible in the build stage.
+ARG PLAYWRIGHT_VERSION
 
-ARG PACKAGES="\
-  libx11-6\
-  libx11-xcb1\
-  libxcomposite1\
-  libxcursor1\
-  libxdamage1\
-  libxext6\
-  libxi6\
-  libxtst6\
-  libglib2.0-0\
-  libnss3\
-  libcups2\
-  libxss1\
-  libexpat1\
-  libxrandr2\
-  libasound2\
-  libatk1.0-0\
-  libatk-bridge2.0-0\
-  libpangocairo-1.0-0\
-  libgtk-3-0\
-  "
-RUN rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-# hadolint ignore=DL3008
-RUN --mount=type=cache,id=build-apt-cache,sharing=locked,target=/var/cache/apt \
-    --mount=type=cache,id=build-apt-lib,sharing=locked,target=/var/lib/apt \
-    apt-get update -qq \
-    && apt-get install --no-install-recommends -y ${PACKAGES} \
-    && rm -rf /var/lib/apt/lists /var/cache/apt/archives
+WORKDIR /app
 
-RUN --mount=type=cache,id=build-npm-cache,sharing=locked,target=/root/.npm \
-  npm install -g critical@${CRITICAL_VERSION}
+# Build critical from the committed source instead of pulling from npm, so the image
+# always matches this repo and never depends on a published (or unpublished) version.
+COPY package.json ./
+COPY cli.js ./
+COPY src ./src
+
+# Install critical globally along with playwright, the optional peer dependency the
+# render engine needs. The static engine works without it.
+RUN npm install -g . playwright@${PLAYWRIGHT_VERSION}
 
 WORKDIR /site
 
