@@ -309,7 +309,6 @@ This module is brought to you and maintained by the following people:
 - Addy Osmani - Creator ([Github](https://github.com/addyosmani))
 - Ben Zörb - Primary maintainer ([Github](https://github.com/bezoerb))
 
-
 ## License
 
 [Apache-2.0](license) © Addy Osmani
