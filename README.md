@@ -302,6 +302,14 @@ browser-free tool. For a thorough, fair comparison of Critical, Beasties (former
 Penthouse, and native platform approaches — including where each one is the better choice and a
 reproducible benchmark — see [COMPARISON.md](./COMPARISON.md).
 
+## Maintainers
+
+This module is brought to you and maintained by the following people:
+
+- Addy Osmani - Creator ([Github](https://github.com/addyosmani))
+- Ben Zörb - Primary maintainer ([Github](https://github.com/bezoerb))
+
+
 ## License
 
 [Apache-2.0](license) © Addy Osmani
