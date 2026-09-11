@@ -41,10 +41,12 @@
   },
   "devDependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
-    "@vitest/coverage-v8": "^4.1.6",
+    "@vitest/coverage-v8": "catalog:",
     "beasties": "^0.3.0",
     "playwright": "^1.50.0",
-    "vite-plus": "catalog:"
+    "vite": "catalog:",
+    "vite-plus": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "^1.0.0",
