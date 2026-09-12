@@ -80,6 +80,18 @@ const { html, css, report } = await critical({
 `critical()` never writes to disk on its own — it returns the result. Use the CLI's `--write`
 / `--out`, or write `result.html` / `result.css` yourself.
 
+### Docker
+
+The container image includes Playwright and Chromium, so both the static and render engines work
+without additional setup. Mount the generated site at `/site` and include `critical` before its
+arguments:
+
+```sh
+docker pull ghcr.io/addyosmani/critical:master
+docker run --rm -v "$PWD/dist:/site" ghcr.io/addyosmani/critical:master \
+  critical . --inline --write
+```
+
 ## Two engines
 
 Critical picks the right strategy for each document automatically (`engine: "auto"`, the

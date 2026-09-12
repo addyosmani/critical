@@ -15,9 +15,11 @@ COPY package.json ./
 COPY cli.js ./
 COPY src ./src
 
-# Install critical globally along with playwright, the optional peer dependency the
-# render engine needs. The static engine works without it.
-RUN npm install -g . playwright@${PLAYWRIGHT_VERSION}
+# Remove the repository-only prepare script, then install from a tarball so npm does
+# not create a global symlink whose dependencies cannot be resolved from /app.
+RUN npm pkg delete scripts.prepare \
+	&& npm pack \
+	&& npm install -g ./critical-*.tgz playwright@${PLAYWRIGHT_VERSION}
 
 WORKDIR /site
 

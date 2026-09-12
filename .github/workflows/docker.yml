@@ -35,6 +35,20 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
+      - name: Build Docker image for testing
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: critical:test
+
+      - name: Smoke test Docker image
+        run: |
+          docker run --rm critical:test critical --help > /dev/null
+          docker run --rm --volume "${{ github.workspace }}/fixtures:/site:ro" critical:test critical index.html --engine static --json > /dev/null
+          printf '%s' '<!doctype html><style>h1{color:red}.unused{color:blue}</style><h1>Visible</h1>' \
+            | docker run --rm --interactive critical:test critical --engine render --json > /dev/null
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
