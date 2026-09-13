@@ -1,6 +1,6 @@
 {
   "name": "critical",
-  "version": "9.0.0-next.0",
+  "version": "9.0.0",
   "description": "Extract & inline critical-path CSS — two engines, automatic routing, agent-native.",
   "keywords": [
     "above-the-fold",
