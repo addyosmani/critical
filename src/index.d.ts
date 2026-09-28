@@ -179,7 +179,9 @@ export interface CriticalResult {
  * @param options Options controlling the extraction. Provide `src` or `html` (exactly one).
  * @returns The rewritten document, the critical CSS, and a structured report.
  */
-export function critical(options: { src: string } & Omit<CriticalOptions, "html">): Promise<CriticalResult>;
+export function critical(
+  options: { src: string } & Omit<CriticalOptions, "html">,
+): Promise<CriticalResult>;
 
 /**
  * Extract and inline critical-path CSS from an HTML document.
@@ -195,6 +197,8 @@ export function critical(options: { src: string } & Omit<CriticalOptions, "html"
  * @param options Options controlling the extraction. Provide `src` or `html` (exactly one).
  * @returns The rewritten document, the critical CSS, and a structured report.
  */
-export function critical(options: { html: string } & Omit<CriticalOptions, "src">): Promise<CriticalResult>;
+export function critical(
+  options: { html: string } & Omit<CriticalOptions, "src">,
+): Promise<CriticalResult>;
 
 export default critical;
