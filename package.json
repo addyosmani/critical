@@ -22,9 +22,16 @@
     "src"
   ],
   "type": "module",
+  "types": "./src/index.d.ts",
   "exports": {
-    ".": "./src/index.js",
-    "./mcp": "./src/mcp.js"
+    ".": {
+      "types": "./src/index.d.ts",
+      "default": "./src/index.js"
+    },
+    "./mcp": {
+      "types": "./src/mcp.d.ts",
+      "default": "./src/mcp.js"
+    }
   },
   "scripts": {
     "test": "node --test",
