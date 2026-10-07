@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node: ["22", "24"]
+        node: ["22.22.3", "24.21.0"]
         os: [ubuntu-latest, windows-latest]
 
     steps:
@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1
+        uses: voidzero-dev/setup-vp@v1.21.1
         with:
           node-version: ${{ matrix.node }}
           cache: true

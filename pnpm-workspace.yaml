@@ -2,10 +2,10 @@ allowBuilds:
   puppeteer: true
   unrs-resolver: true
 catalog:
-  vite: npm:@voidzero-dev/vite-plus-core@0.2.9
-  vitest: 4.1.10
-  vite-plus: 0.2.9
-  "@vitest/coverage-v8": 4.1.10
+  vite: npm:@voidzero-dev/vite-plus-core@1.0.0
+  vitest: 5.0.1
+  vite-plus: 1.0.0
+  "@vitest/coverage-v8": 5.0.1
 overrides:
   vite@*: "catalog:"
   vitest@*: "catalog:"
