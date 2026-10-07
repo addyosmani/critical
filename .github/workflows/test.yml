@@ -23,7 +23,7 @@ jobs:
           persist-credentials: false
 
       - name: Set up Vite+
-        uses: voidzero-dev/setup-vp@v1
+        uses: voidzero-dev/setup-vp@v1.21.1
         with:
           node-version: ${{ matrix.node }}
           cache: true
