@@ -5,7 +5,7 @@
  * zero-config directory input, `--json` for machine output, `--explain` for the routing rationale.
  */
 import { parseArgs, styleText } from "node:util";
-import { writeFile, stat, glob } from "node:fs/promises";
+import { writeFile, mkdir, stat, glob } from "node:fs/promises";
 import { text } from "node:stream/consumers";
 import path from "node:path";
 import process from "node:process";
@@ -96,7 +96,7 @@ async function resolveInputs(positionals) {
     const s = await stat(p).catch(() => null);
     if (s?.isDirectory()) {
       for await (const file of glob("**/*.html", { cwd: p })) {
-        inputs.push({ src: path.join(p, file), label: path.join(p, file) });
+        inputs.push({ src: path.join(p, file), label: path.join(p, file), rel: file });
       }
     } else {
       inputs.push({ src: p, label: p });
@@ -130,9 +130,12 @@ async function emit(res, input, values) {
   }
 
   if (values.out) {
-    const dest = (await isDir(values.out))
-      ? path.join(values.out, path.basename(input.label))
-      : values.out;
+    let dest = values.out;
+    if (await isDir(values.out)) {
+      // Keep a directory input's layout so same-named pages in subfolders don't overwrite each other.
+      dest = path.join(values.out, input.rel ?? path.basename(input.label));
+      await mkdir(path.dirname(dest), { recursive: true });
+    }
     await writeFile(dest, payload);
     return;
   }
