@@ -109,3 +109,72 @@ describe("document <base href> (#566)", () => {
     }
   });
 });
+
+describe("stylesheet media scoping", () => {
+  // A screen sheet styles the hero; a print sheet HIDES it for paper. If the print sheet is
+  // folded into the critical set, the inlined CSS hides the hero on screen — the opposite of
+  // what the page asks for.
+  test('a media="print" <link> is not folded into the critical CSS', async () => {
+    const dir = await tmp();
+    try {
+      await writeFile(path.join(dir, "screen.css"), ".hero{color:red}");
+      await writeFile(path.join(dir, "print.css"), ".hero{display:none}");
+      const { css, report } = await critical({
+        html:
+          '<!doctype html><html><head><link rel="stylesheet" href="screen.css">' +
+          '<link rel="stylesheet" href="print.css" media="print"></head>' +
+          `${BODY}</html>`,
+        base: dir,
+        inline: true,
+      });
+
+      assert.match(css, /\.hero\{color:red\}/);
+      assert.doesNotMatch(css, /display:none/, "print-only rule must not reach the screen set");
+      // The sheet is still discovered and still deferred — it is untouched, just not inlined.
+      assert.deepEqual(report.stylesheetsDiscovered, ["screen.css", "print.css"]);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+
+  test('a media="print" <style> block is not folded into the critical CSS', async () => {
+    const { css } = await critical({
+      html:
+        "<!doctype html><html><head><style>.hero{color:red}</style>" +
+        '<style media="print">.hero{display:none}</style></head>' +
+        `${BODY}</html>`,
+    });
+    assert.match(css, /\.hero\{color:red\}/);
+    assert.doesNotMatch(css, /display:none/);
+  });
+
+  test("screen, all, feature-query and negated-print sheets are still included", async () => {
+    // Each of these matches a screen viewport, so dropping any of them would lose real styles.
+    for (const media of ["screen", "all", "(min-width: 600px)", "print, screen", "not print"]) {
+      const { css } = await critical({
+        html:
+          `<!doctype html><html><head><style media="${media}">.hero{color:red}</style></head>` +
+          `${BODY}</html>`,
+      });
+      assert.match(css, /\.hero\{color:red\}/, `media="${media}" must still be extracted`);
+    }
+  });
+
+  test('a media="print" sheet is still deferred with its media attribute intact', async () => {
+    const dir = await tmp();
+    try {
+      await writeFile(path.join(dir, "print.css"), ".hero{display:none}");
+      const { html } = await critical({
+        html:
+          '<!doctype html><html><head><link rel="stylesheet" href="print.css" media="print"></head>' +
+          `${BODY}</html>`,
+        base: dir,
+        inline: true,
+      });
+      // Deferral must not promote the sheet to a screen sheet.
+      assert.match(html, /<link rel="stylesheet" href="print\.css" media="print">/);
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  });
+});
