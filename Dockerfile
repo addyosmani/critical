@@ -1,7 +1,7 @@
 # Official Playwright image ships Chromium plus every system dependency it needs,
 # versioned and maintained upstream. PLAYWRIGHT_VERSION must match the playwright
 # npm version below, because the bundled browsers are tied to a specific release.
-ARG PLAYWRIGHT_VERSION=1.50.0
+ARG PLAYWRIGHT_VERSION=1.65.1
 FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-noble
 
 # Re-declare after FROM so the ARG is visible in the build stage.
