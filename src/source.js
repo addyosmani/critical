@@ -63,6 +63,10 @@ export async function loadBundle({ html, src, css, base }) {
     const href = link.getAttribute("href");
     if (!href) continue;
     stylesheets.push(href);
+    // A sheet scoped to a non-screen medium (typically media="print") never applies to the screen
+    // viewport, so its rules are not candidates for the critical set — and inlining them would
+    // apply them on screen. Skip it here, before paying for the fetch/read.
+    if (!appliesToScreen(link.getAttribute("media"))) continue;
     const { text, loc } = await loadStylesheet(href, resolvedBase, url, baseHref);
     // Rebase relative url() refs so they still resolve once the CSS is inlined into the
     // document, which may sit in a different directory than the stylesheet did.
@@ -71,6 +75,7 @@ export async function loadBundle({ html, src, css, base }) {
 
   for (const style of document.querySelectorAll("style")) {
     if (style.hasAttribute("data-critical")) continue; // ignore our own prior output
+    if (!appliesToScreen(style.getAttribute("media"))) continue;
     parts.push(style.textContent || "");
   }
 
@@ -120,6 +125,42 @@ function styleLocation(href, base, docUrl, baseHref) {
 // Strip the ?query/#fragment a browser ignores when fetching a stylesheet by path.
 function stripQuery(p) {
   return p.replace(/[?#].*$/, "");
+}
+
+/**
+ * Does a `<link media>` / `<style media>` value apply to the screen viewport we extract for?
+ *
+ * The attribute is a media query list; the sheet is a candidate for the critical set when its
+ * media matches `screen`. An absent/empty attribute means `all`. A parse failure keeps the sheet:
+ * dropping a sheet we can't classify risks a missing-style flash, which is worse than shipping an
+ * extra rule.
+ *
+ * @param {string|null} media
+ * @returns {boolean}
+ */
+export function appliesToScreen(media) {
+  if (!media) return true; // absent or "" === media="all"
+  let queries;
+  try {
+    queries = csstree.parse(media, { context: "mediaQueryList" });
+  } catch {
+    return true; // unclassifiable -> keep
+  }
+  return queries.children.toArray().some(isScreenQuery);
+}
+
+function isScreenQuery(query) {
+  // `only screen and (...)`, bare `screen`, and feature-only queries like `(min-width: 600px)`
+  // all match a screen viewport. `screen` with a condition is still screen.
+  const type = query.mediaType ? String(query.mediaType).toLowerCase() : null;
+  const modifier = query.modifier ? String(query.modifier).toLowerCase() : null;
+  if (type === null) return true; // feature-only query (incl. `not (color)`): applies to screen too
+  if (modifier === "not") {
+    // Negated types that still match a screen viewport: `not print`, `not speech`, ...
+    // `not screen` and `not all` never do.
+    return type !== "screen" && type !== "all";
+  }
+  return type === "screen" || type === "all";
 }
 
 function posixJoin(a, b) {
